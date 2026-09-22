@@ -2,7 +2,7 @@
   "name": "personal-calendar",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.7.0",
+  "packageManager": "pnpm@10.15.1",
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
