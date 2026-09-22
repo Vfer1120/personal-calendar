@@ -1,0 +1,38 @@
+{
+  "name": "@calendar/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.879.0",
+    "@aws-sdk/s3-request-presigner": "^3.879.0",
+    "@better-auth/passkey": "^1.3.7",
+    "@calendar/db": "workspace:*",
+    "@calendar/domain": "workspace:*",
+    "@hono/node-server": "^1.19.1",
+    "@hono/zod-validator": "^0.7.2",
+    "better-auth": "^1.3.7",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.9.6",
+    "nanoid": "^5.1.5",
+    "nodemailer": "^7.0.6",
+    "pg": "^8.16.3",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/nodemailer": "^7.0.1",
+    "@types/pg": "^8.15.5",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

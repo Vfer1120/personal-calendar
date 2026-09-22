@@ -1,0 +1,19 @@
+{
+  "name": "@calendar/domain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc -p tsconfig.json", "test": "vitest run" },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "luxon": "^3.7.1",
+    "rrule": "^2.8.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.7.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

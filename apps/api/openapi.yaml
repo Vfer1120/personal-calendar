@@ -1,0 +1,192 @@
+openapi: 3.1.0
+info:
+  title: Personal Calendar API
+  version: 0.1.0
+servers:
+  - url: /api/v1
+security:
+  - sessionCookie: []
+paths:
+  /items:
+    get:
+      summary: List items
+      parameters:
+        - { in: query, name: q, schema: { type: string } }
+        - { in: query, name: kind, schema: { enum: [event, task, both] } }
+        - { in: query, name: status, schema: { enum: [active, partial, completed, cancelled, deleted] } }
+      responses:
+        "200": { description: Item list }
+    post:
+      summary: Create an item
+      parameters:
+        - { in: query, name: force, schema: { type: boolean } }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/ItemInput" } } }
+      responses:
+        "201": { description: Created }
+        "409": { description: Conflict confirmation required }
+  /items/occurrences:
+    get:
+      summary: Expand occurrences in a time window
+      parameters:
+        - { in: query, name: from, required: true, schema: { type: string, format: date-time } }
+        - { in: query, name: to, required: true, schema: { type: string, format: date-time } }
+      responses: { "200": { description: Occurrences } }
+  /items/{id}:
+    patch:
+      summary: Update an item
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+        - { in: query, name: force, schema: { type: boolean } }
+      responses:
+        "200": { description: Updated }
+        "409": { description: Version or time conflict }
+    delete:
+      summary: Move an item to trash
+      responses: { "200": { description: Deleted } }
+  /items/{id}/rollover-suggestions:
+    get:
+      summary: Suggestions for postponing an unfinished item
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+        - { in: query, name: occurrenceKey, schema: { type: string } }
+      responses: { "200": { description: Up to three suggestions } }
+  /items/{id}/resolve:
+    post:
+      summary: Resolve an item occurrence as completed, partial, postponed or cancelled
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses: { "200": { description: Resolved item } }
+  /reviews:
+    get: { summary: List missed or end-confirmation reviews, responses: { "200": { description: Reviews } } }
+  /reviews/batch:
+    post: { summary: Resolve multiple reviews, responses: { "200": { description: Batch result } } }
+  /ai/status:
+    get:
+      summary: Read AI configuration and today usage quota
+      responses: { "200": { description: AI status } }
+  /ai/extract:
+    post:
+      summary: Extract calendar drafts from text and/or up to three images
+      requestBody: { required: true, content: { multipart/form-data: { schema: { type: object, properties: { text: { type: string }, images: { type: array, items: { type: string, format: binary } }, timezone: { type: string } } } } } }
+      responses:
+        "200": { description: Structured drafts with warnings and quota usage }
+        "400": { description: Empty or invalid input }
+        "413": { description: Text or image too large }
+        "429": { description: AI quota exhausted }
+        "502": { description: AI provider or response error }
+  /schedule-periods:
+    get:
+      summary: List editable timetable periods
+      responses: { "200": { description: Timetable periods } }
+    put:
+      summary: Replace the workspace timetable periods
+      responses: { "200": { description: Updated timetable periods } }
+  /settings:
+    get:
+      summary: Read workspace settings
+      responses: { "200": { description: Settings } }
+    patch:
+      summary: Update workspace settings, including semester start date
+      responses: { "200": { description: Updated settings } }
+  /tags:
+    get: { summary: List tags, responses: { "200": { description: Tags } } }
+    post: { summary: Create a tag, responses: { "201": { description: Created } } }
+  /sync/push:
+    post:
+      summary: Apply offline mutations idempotently
+      responses: { "200": { description: Applied, conflicts and cursor } }
+  /sync/pull:
+    get:
+      summary: Pull server changes after a cursor
+      parameters:
+        - { in: query, name: cursor, schema: { type: string } }
+      responses: { "200": { description: Ordered changes and next cursor } }
+  /attachments/{id}/content:
+    get:
+      summary: Decrypt and download an attachment
+      responses: { "200": { description: Binary content } }
+  /reminders/deliveries:
+    get:
+      summary: List active or missed reminder deliveries
+      responses: { "200": { description: Deliveries } }
+  /reminders/deliveries/{id}/ack:
+    post: { summary: Acknowledge reminder, responses: { "200": { description: Acknowledged } } }
+  /reminders/deliveries/{id}/snooze:
+    post: { summary: Snooze reminder, responses: { "200": { description: Rescheduled } } }
+  /exchange/export:
+    get:
+      summary: Export JSON, CSV or ICS
+      parameters:
+        - { in: query, name: format, schema: { enum: [json, csv, ics] } }
+      responses: { "200": { description: Download } }
+  /exchange/import:
+    post:
+      summary: Import JSON, CSV or ICS
+      responses: { "200": { description: Import report } }
+  /subscriptions:
+    get: { summary: List ICS subscriptions, responses: { "200": { description: Subscriptions } } }
+    post: { summary: Create ICS subscription, responses: { "201": { description: Created } } }
+  /demo/status:
+    get:
+      summary: Whether this instance is a demo and whether the browser has a demo session
+      security: []
+      responses: { "200": { description: Demo status } }
+  /demo/enter:
+    post:
+      summary: Enter the invite-only demo and create an isolated temporary workspace
+      security: []
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [password], properties: { password: { type: string } } } } }
+      responses:
+        "200": { description: Demo session cookie issued }
+        "401": { description: Invalid invite password }
+        "429": { description: Too many attempts }
+  /demo/reset:
+    post:
+      summary: Reset the current demo workspace to sample data
+      responses: { "200": { description: Reset } }
+  /demo/leave:
+    post:
+      summary: Delete the current demo workspace and clear the demo cookie
+      responses: { "200": { description: Left demo } }
+components:
+  securitySchemes:
+    sessionCookie:
+    demoCookie:
+      type: apiKey
+      in: cookie
+      name: calendar_demo_session
+
+      type: apiKey
+      in: cookie
+      name: better-auth.session_token
+  schemas:
+    ItemInput:
+      type: object
+      required: [title, kind]
+      properties:
+        id: { type: string, format: uuid }
+        kind: { enum: [event, task, both] }
+        title: { type: string }
+        description: { type: string }
+        location: { type: string }
+        startAt: { type: [string, "null"], format: date-time }
+        endAt: { type: [string, "null"], format: date-time }
+        dueAt: { type: [string, "null"], format: date-time }
+        isAllDay: { type: boolean }
+        timezone: { type: string }
+        priority: { enum: [none, low, medium, high, urgent] }
+        status: { enum: [active, partial, completed, cancelled, deleted] }
+        autoRollover: { type: boolean }
+        showInTimetable: { type: boolean }
+        parentId: { type: [string, "null"], format: uuid }
+        recurrence: { type: [object, "null"], properties: { weekParity: { enum: [all, odd, even] } } }
+        tagIds:
+          type: array
+          items: { type: string, format: uuid }
+        reminders:
+          type: array
+          items: { type: object, properties: { trigger: { enum: [before_start, at_start, at_end] }, offsetMinutes: { type: integer }, channels: { type: array, items: { enum: [in_app, browser_push, email] } } } }

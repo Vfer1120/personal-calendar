@@ -1,0 +1,35 @@
+{
+  "name": "@calendar/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "restore": "tsx src/restore.ts",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.879.0",
+    "@calendar/db": "workspace:*",
+    "@calendar/domain": "workspace:*",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.45.2",
+    "luxon": "^3.7.1",
+    "nodemailer": "^7.0.6",
+    "pg": "^8.16.3",
+    "pg-boss": "^10.3.2",
+    "web-push": "^3.6.7",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/nodemailer": "^7.0.1",
+    "@types/pg": "^8.15.5",
+    "@types/web-push": "^3.6.4",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
