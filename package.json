@@ -11,7 +11,8 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "vercel-build": "pnpm --filter @calendar/web build && node scripts/copy-web-dist.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.63.0",
