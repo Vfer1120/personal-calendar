@@ -4,6 +4,11 @@
   "buildCommand": "pnpm --filter @calendar/web build",
   "outputDirectory": "apps/web/dist",
   "regions": ["sin1"],
+  "build": {
+    "env": {
+      "PNPM_CONFIG_DANGEROUSLY_ALLOW_ALL_BUILDS": "true"
+    }
+  },
   "functions": {
     "api/[...route].ts": {
       "maxDuration": 60,
