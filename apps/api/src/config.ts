@@ -13,6 +13,8 @@ const envSchema = z.object({
   REGISTRATION_INVITE_CODE: z.string().min(8).optional(),
   CRON_SECRET: z.string().min(16).optional(),
   DB_POOL_MAX: z.coerce.number().int().min(1).max(20).default(10),
+  SERVE_WEB: z.string().default("false").transform((value) => value === "true" || value === "1"),
+  WEB_DIST: z.string().default("./apps/web/dist"),
   OWNER_EMAIL: z.string().email().optional(),
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
   S3_ENDPOINT: z.string().url().default("http://localhost:9000"),

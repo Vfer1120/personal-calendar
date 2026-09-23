@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -70,5 +71,9 @@ app.route("/api/v1", attachmentsRoute);
 app.route("/api/v1/exchange", interchangeRoute);
 app.route("/api/v1/subscriptions", subscriptionsRoute);
 app.route("/api/v1/ics", publicIcsRoute);
+if (config.SERVE_WEB) {
+  app.use("*", serveStatic({ root: config.WEB_DIST }));
+  app.get("*", serveStatic({ path: "index.html" }));
+}
 app.notFound((c) => c.json({ error: "NOT_FOUND" }, 404));
 app.onError((error, c) => { console.error(error); return c.json({ error: "INTERNAL_ERROR", message: config.NODE_ENV === "production" ? "服务暂时不可用" : error.message }, 500); });
