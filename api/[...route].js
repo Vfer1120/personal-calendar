@@ -1359,7 +1359,7 @@ var require_cert_signatures = __commonJS({
 var require_sasl = __commonJS({
   "node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/crypto/sasl.js"(exports2, module2) {
     "use strict";
-    var crypto3 = require_utils2();
+    var crypto2 = require_utils2();
     var { signatureAlgorithmHashFromCertificate } = require_cert_signatures();
     function saslprep(password) {
       const nonAsciiSpace = /[\u00A0\u1680\u2000-\u200B\u202F\u205F\u3000]/g;
@@ -1377,7 +1377,7 @@ var require_sasl = __commonJS({
       if (mechanism === "SCRAM-SHA-256-PLUS" && typeof stream2.getPeerCertificate !== "function") {
         throw new Error("SASL: Mechanism SCRAM-SHA-256-PLUS requires a certificate");
       }
-      const clientNonce = crypto3.randomBytes(18).toString("base64");
+      const clientNonce = crypto2.randomBytes(18).toString("base64");
       const gs2Header = mechanism === "SCRAM-SHA-256-PLUS" ? "p=tls-server-end-point" : stream2 ? "y" : "n";
       return {
         mechanism,
@@ -1419,20 +1419,20 @@ var require_sasl = __commonJS({
         const peerCert = stream2.getPeerCertificate().raw;
         let hashName = signatureAlgorithmHashFromCertificate(peerCert);
         if (hashName === "MD5" || hashName === "SHA-1") hashName = "SHA-256";
-        const certHash = await crypto3.hashByName(hashName, peerCert);
+        const certHash = await crypto2.hashByName(hashName, peerCert);
         const bindingData = Buffer.concat([Buffer.from("p=tls-server-end-point,,"), Buffer.from(certHash)]);
         channelBinding = bindingData.toString("base64");
       }
       const clientFinalMessageWithoutProof = "c=" + channelBinding + ",r=" + sv.nonce;
       const authMessage = clientFirstMessageBare + "," + serverFirstMessage + "," + clientFinalMessageWithoutProof;
       const saltBytes = Buffer.from(sv.salt, "base64");
-      const saltedPassword = await crypto3.deriveKey(saslprep(password), saltBytes, sv.iteration);
-      const clientKey2 = await crypto3.hmacSha256(saltedPassword, "Client Key");
-      const storedKey = await crypto3.sha256(clientKey2);
-      const clientSignature = await crypto3.hmacSha256(storedKey, authMessage);
+      const saltedPassword = await crypto2.deriveKey(saslprep(password), saltBytes, sv.iteration);
+      const clientKey2 = await crypto2.hmacSha256(saltedPassword, "Client Key");
+      const storedKey = await crypto2.sha256(clientKey2);
+      const clientSignature = await crypto2.hmacSha256(storedKey, authMessage);
       const clientProof = xorBuffers(Buffer.from(clientKey2), Buffer.from(clientSignature)).toString("base64");
-      const serverKey = await crypto3.hmacSha256(saltedPassword, "Server Key");
-      const serverSignatureBytes = await crypto3.hmacSha256(serverKey, authMessage);
+      const serverKey = await crypto2.hmacSha256(saltedPassword, "Server Key");
+      const serverSignatureBytes = await crypto2.hmacSha256(serverKey, authMessage);
       session2.message = "SASLResponse";
       session2.serverSignature = Buffer.from(serverSignatureBytes).toString("base64");
       session2.response = clientFinalMessageWithoutProof + ",p=" + clientProof;
@@ -3666,7 +3666,7 @@ var require_client = __commonJS({
     var Query2 = require_query();
     var defaults2 = require_defaults();
     var Connection2 = require_connection();
-    var crypto3 = require_utils2();
+    var crypto2 = require_utils2();
     var activeQueryDeprecationNotice = nodeUtils.deprecate(
       () => {
       },
@@ -3921,7 +3921,7 @@ var require_client = __commonJS({
       _handleAuthMD5Password(msg) {
         this._getPassword(async () => {
           try {
-            const hashedPassword = await crypto3.postgresMd5PasswordHash(this.user, this.password, msg.salt);
+            const hashedPassword = await crypto2.postgresMd5PasswordHash(this.user, this.password, msg.salt);
             this.connection.password(hashedPassword);
           } catch (e5) {
             this.emit("error", e5);
@@ -38822,20 +38822,20 @@ function getInflightQueryAbortHandler(abortStrategy = "ignore query", connection
     return;
   }
   if (abortStrategy === "cancel query") {
-    const handler = connection.cancelQuery;
-    if (!handler) {
+    const handler2 = connection.cancelQuery;
+    if (!handler2) {
       beforeThrow();
       throwUnsupportedInflightQueryAbortStrategyError(abortStrategy, connection.killSession ? "kill session" : void 0);
     }
-    return handler.bind(connection);
+    return handler2.bind(connection);
   }
   if (abortStrategy === "kill session") {
-    const handler = connection.killSession;
-    if (!handler) {
+    const handler2 = connection.killSession;
+    if (!handler2) {
       beforeThrow();
       throwUnsupportedInflightQueryAbortStrategyError(abortStrategy, connection.cancelQuery ? "cancel query" : void 0);
     }
-    return handler.bind(connection);
+    return handler2.bind(connection);
   }
   beforeThrow();
   throw new Error(`Unexpected \`inflightQueryAbortStrategy\`: "${abortStrategy}"`);
@@ -66110,16 +66110,16 @@ var require_lazy_helpers = __commonJS({
         return new Proxy(target, this.createHandler(delayedObject));
       }
       createHandler(delayedObject) {
-        const handler = {};
+        const handler2 = {};
         const install = (name) => {
-          handler[name] = (...args) => {
+          handler2[name] = (...args) => {
             args[0] = delayedObject();
             const method = Reflect[name];
             return method(...args);
           };
         };
         this.reflectMethods.forEach(install);
-        return handler;
+        return handler2;
       }
     };
     exports2.DelayedConstructor = DelayedConstructor;
@@ -68532,11 +68532,11 @@ var require_x509_cjs = __commonJS({
         return this.items[Symbol.iterator]();
       }
       get(key = _CryptoProvider.DEFAULT) {
-        const crypto3 = this.items.get(key.toLowerCase());
-        if (!crypto3) {
+        const crypto2 = this.items.get(key.toLowerCase());
+        if (!crypto2) {
           throw new Error(`Cannot get Crypto by name '${key}'`);
         }
-        return crypto3;
+        return crypto2;
       }
       set(key, value) {
         if (typeof key === "string") {
@@ -68764,15 +68764,15 @@ var require_x509_cjs = __commonJS({
       }
       async getThumbprint(...args) {
         var _a9;
-        let crypto3;
+        let crypto2;
         let algorithm2 = "SHA-1";
         if (args.length >= 1 && !((_a9 = args[0]) === null || _a9 === void 0 ? void 0 : _a9.subtle)) {
           algorithm2 = args[0] || algorithm2;
-          crypto3 = args[1] || cryptoProvider.get();
+          crypto2 = args[1] || cryptoProvider.get();
         } else {
-          crypto3 = args[0] || cryptoProvider.get();
+          crypto2 = args[0] || cryptoProvider.get();
         }
-        return await crypto3.subtle.digest(algorithm2, this.toArrayBuffer());
+        return await crypto2.subtle.digest(algorithm2, this.toArrayBuffer());
       }
     };
     var ERR_GN_CONSTRUCTOR = "Cannot initialize GeneralName from ASN.1 data.";
@@ -69173,14 +69173,14 @@ var require_x509_cjs = __commonJS({
       }
     };
     var PublicKey = class _PublicKey extends PemData {
-      static async create(data, crypto3 = cryptoProvider.get()) {
+      static async create(data, crypto2 = cryptoProvider.get()) {
         if (data instanceof _PublicKey) {
           return data;
         } else if (CryptoProvider.isCryptoKey(data)) {
           if (data.type !== "public") {
             throw new TypeError("Public key is required");
           }
-          const spki = await crypto3.subtle.exportKey("spki", data);
+          const spki = await crypto2.subtle.exportKey("spki", data);
           return new _PublicKey(spki);
         } else if (data.publicKey) {
           return data.publicKey;
@@ -69199,7 +69199,7 @@ var require_x509_cjs = __commonJS({
         this.tag = PemConverter.PublicKeyTag;
       }
       async export(...args) {
-        let crypto3;
+        let crypto2;
         let keyUsages = ["verify"];
         let algorithm2 = {
           hash: "SHA-256",
@@ -69208,16 +69208,16 @@ var require_x509_cjs = __commonJS({
         if (args.length > 1) {
           algorithm2 = args[0] || algorithm2;
           keyUsages = args[1] || keyUsages;
-          crypto3 = args[2] || cryptoProvider.get();
+          crypto2 = args[2] || cryptoProvider.get();
         } else {
-          crypto3 = args[0] || cryptoProvider.get();
+          crypto2 = args[0] || cryptoProvider.get();
         }
         let raw2 = this.rawData;
         const asnSpki = asn1Schema.AsnConvert.parse(this.rawData, asn1X509.SubjectPublicKeyInfo);
         if (asnSpki.algorithm.algorithm === asn1Rsa.id_RSASSA_PSS) {
           raw2 = convertSpkiToRsaPkcs1(asnSpki, raw2);
         }
-        return crypto3.subtle.importKey("spki", raw2, algorithm2, true, keyUsages);
+        return crypto2.subtle.importKey("spki", raw2, algorithm2, true, keyUsages);
       }
       onInit(asn) {
         const algProv = tsyringe.container.resolve(diAlgorithmProvider);
@@ -69234,34 +69234,34 @@ var require_x509_cjs = __commonJS({
       }
       async getThumbprint(...args) {
         var _a9;
-        let crypto3;
+        let crypto2;
         let algorithm2 = "SHA-1";
         if (args.length >= 1 && !((_a9 = args[0]) === null || _a9 === void 0 ? void 0 : _a9.subtle)) {
           algorithm2 = args[0] || algorithm2;
-          crypto3 = args[1] || cryptoProvider.get();
+          crypto2 = args[1] || cryptoProvider.get();
         } else {
-          crypto3 = args[0] || cryptoProvider.get();
+          crypto2 = args[0] || cryptoProvider.get();
         }
-        return await crypto3.subtle.digest(algorithm2, this.rawData);
+        return await crypto2.subtle.digest(algorithm2, this.rawData);
       }
       async getKeyIdentifier(...args) {
-        let crypto3;
+        let crypto2;
         let algorithm2 = "SHA-1";
         if (args.length === 1) {
           if (typeof args[0] === "string") {
             algorithm2 = args[0];
-            crypto3 = cryptoProvider.get();
+            crypto2 = cryptoProvider.get();
           } else {
-            crypto3 = args[0];
+            crypto2 = args[0];
           }
         } else if (args.length === 2) {
           algorithm2 = args[0];
-          crypto3 = args[1];
+          crypto2 = args[1];
         } else {
-          crypto3 = cryptoProvider.get();
+          crypto2 = cryptoProvider.get();
         }
         const asn = asn1Schema.AsnConvert.parse(this.rawData, asn1X509.SubjectPublicKeyInfo);
-        return await crypto3.subtle.digest(algorithm2, asn.subjectPublicKey);
+        return await crypto2.subtle.digest(algorithm2, asn.subjectPublicKey);
       }
       toTextObject() {
         const obj = this.toTextObjectEmpty();
@@ -69287,12 +69287,12 @@ var require_x509_cjs = __commonJS({
       return raw2;
     }
     var AuthorityKeyIdentifierExtension2 = class _AuthorityKeyIdentifierExtension extends Extension2 {
-      static async create(param, critical = false, crypto3 = cryptoProvider.get()) {
+      static async create(param, critical = false, crypto2 = cryptoProvider.get()) {
         if ("name" in param && "serialNumber" in param) {
           return new _AuthorityKeyIdentifierExtension(param, critical);
         }
-        const key = await PublicKey.create(param, crypto3);
-        const id = await key.getKeyIdentifier(crypto3);
+        const key = await PublicKey.create(param, crypto2);
+        const id = await key.getKeyIdentifier(crypto2);
         return new _AuthorityKeyIdentifierExtension(pvtsutils.Convert.ToHex(id), critical);
       }
       constructor(...args) {
@@ -69430,9 +69430,9 @@ var require_x509_cjs = __commonJS({
     };
     KeyUsagesExtension.NAME = "Key Usages";
     var SubjectKeyIdentifierExtension2 = class _SubjectKeyIdentifierExtension extends Extension2 {
-      static async create(publicKey, critical = false, crypto3 = cryptoProvider.get()) {
-        const key = await PublicKey.create(publicKey, crypto3);
-        const id = await key.getKeyIdentifier(crypto3);
+      static async create(publicKey, critical = false, crypto2 = cryptoProvider.get()) {
+        const key = await PublicKey.create(publicKey, crypto2);
+        const id = await key.getKeyIdentifier(crypto2);
         return new _SubjectKeyIdentifierExtension(pvtsutils.Convert.ToHex(id), critical);
       }
       constructor(...args) {
@@ -70170,12 +70170,12 @@ var require_x509_cjs = __commonJS({
       getExtensions(type) {
         return this.extensions.filter((o3) => o3.type === type);
       }
-      async verify(crypto3 = cryptoProvider.get()) {
+      async verify(crypto2 = cryptoProvider.get()) {
         const algorithm2 = {
           ...this.publicKey.algorithm,
           ...this.signatureAlgorithm
         };
-        const publicKey = await this.publicKey.export(algorithm2, ["verify"], crypto3);
+        const publicKey = await this.publicKey.export(algorithm2, ["verify"], crypto2);
         const signatureFormatters = tsyringe.container.resolveAll(diAsnSignatureFormatter).reverse();
         let signature = null;
         for (const signatureFormatter of signatureFormatters) {
@@ -70187,7 +70187,7 @@ var require_x509_cjs = __commonJS({
         if (!signature) {
           throw Error("Cannot convert WebCrypto signature value to ASN.1 format");
         }
-        const ok2 = await crypto3.subtle.verify(this.signatureAlgorithm, publicKey, signature, this.tbs);
+        const ok2 = await crypto2.subtle.verify(this.signatureAlgorithm, publicKey, signature, this.tbs);
         return ok2;
       }
       toTextObject() {
@@ -70218,14 +70218,14 @@ var require_x509_cjs = __commonJS({
     _Pkcs10CertificateRequest_tbs = /* @__PURE__ */ new WeakMap(), _Pkcs10CertificateRequest_subjectName = /* @__PURE__ */ new WeakMap(), _Pkcs10CertificateRequest_subject = /* @__PURE__ */ new WeakMap(), _Pkcs10CertificateRequest_signatureAlgorithm = /* @__PURE__ */ new WeakMap(), _Pkcs10CertificateRequest_signature = /* @__PURE__ */ new WeakMap(), _Pkcs10CertificateRequest_publicKey = /* @__PURE__ */ new WeakMap(), _Pkcs10CertificateRequest_attributes = /* @__PURE__ */ new WeakMap(), _Pkcs10CertificateRequest_extensions = /* @__PURE__ */ new WeakMap();
     Pkcs10CertificateRequest.NAME = "PKCS#10 Certificate Request";
     var Pkcs10CertificateRequestGenerator = class {
-      static async create(params, crypto3 = cryptoProvider.get()) {
+      static async create(params, crypto2 = cryptoProvider.get()) {
         if (!params.keys.privateKey) {
           throw new Error("Bad field 'keys' in 'params' argument. 'privateKey' is empty");
         }
         if (!params.keys.publicKey) {
           throw new Error("Bad field 'keys' in 'params' argument. 'publicKey' is empty");
         }
-        const spki = await crypto3.subtle.exportKey("spki", params.keys.publicKey);
+        const spki = await crypto2.subtle.exportKey("spki", params.keys.publicKey);
         const asnReq = new asn1Csr.CertificationRequest({
           certificationRequestInfo: new asn1Csr.CertificationRequestInfo({ subjectPKInfo: asn1Schema.AsnConvert.parse(spki, asn1X509.SubjectPublicKeyInfo) })
         });
@@ -70254,7 +70254,7 @@ var require_x509_cjs = __commonJS({
         const algProv = tsyringe.container.resolve(diAlgorithmProvider);
         asnReq.signatureAlgorithm = algProv.toAsnAlgorithm(signingAlgorithm);
         const tbs = asn1Schema.AsnConvert.serialize(asnReq.certificationRequestInfo);
-        const signature = await crypto3.subtle.sign(signingAlgorithm, params.keys.privateKey, tbs);
+        const signature = await crypto2.subtle.sign(signingAlgorithm, params.keys.privateKey, tbs);
         const signatureFormatters = tsyringe.container.resolveAll(diAsnSignatureFormatter).reverse();
         let asnSignature = null;
         for (const signatureFormatter of signatureFormatters) {
@@ -70414,7 +70414,7 @@ var require_x509_cjs = __commonJS({
           }
         });
       }
-      async verify(params = {}, crypto3 = cryptoProvider.get()) {
+      async verify(params = {}, crypto2 = cryptoProvider.get()) {
         let keyAlgorithm2;
         let publicKey;
         const paramsKey = params.publicKey;
@@ -70424,26 +70424,26 @@ var require_x509_cjs = __commonJS({
               ...this.publicKey.algorithm,
               ...this.signatureAlgorithm
             };
-            publicKey = await this.publicKey.export(keyAlgorithm2, ["verify"], crypto3);
+            publicKey = await this.publicKey.export(keyAlgorithm2, ["verify"], crypto2);
           } else if ("publicKey" in paramsKey) {
             keyAlgorithm2 = {
               ...paramsKey.publicKey.algorithm,
               ...this.signatureAlgorithm
             };
-            publicKey = await paramsKey.publicKey.export(keyAlgorithm2, ["verify"], crypto3);
+            publicKey = await paramsKey.publicKey.export(keyAlgorithm2, ["verify"], crypto2);
           } else if (paramsKey instanceof PublicKey) {
             keyAlgorithm2 = {
               ...paramsKey.algorithm,
               ...this.signatureAlgorithm
             };
-            publicKey = await paramsKey.export(keyAlgorithm2, ["verify"], crypto3);
+            publicKey = await paramsKey.export(keyAlgorithm2, ["verify"], crypto2);
           } else if (pvtsutils.BufferSourceConverter.isBufferSource(paramsKey)) {
             const key = new PublicKey(paramsKey);
             keyAlgorithm2 = {
               ...key.algorithm,
               ...this.signatureAlgorithm
             };
-            publicKey = await key.export(keyAlgorithm2, ["verify"], crypto3);
+            publicKey = await key.export(keyAlgorithm2, ["verify"], crypto2);
           } else {
             keyAlgorithm2 = {
               ...paramsKey.algorithm,
@@ -70465,7 +70465,7 @@ var require_x509_cjs = __commonJS({
         if (!signature) {
           throw Error("Cannot convert ASN.1 signature value to WebCrypto format");
         }
-        const ok2 = await crypto3.subtle.verify(this.signatureAlgorithm, publicKey, signature, this.tbs);
+        const ok2 = await crypto2.subtle.verify(this.signatureAlgorithm, publicKey, signature, this.tbs);
         if (params.signatureOnly) {
           return ok2;
         } else {
@@ -70475,21 +70475,21 @@ var require_x509_cjs = __commonJS({
         }
       }
       async getThumbprint(...args) {
-        let crypto3;
+        let crypto2;
         let algorithm2 = "SHA-1";
         if (args[0]) {
           if (!args[0].subtle) {
             algorithm2 = args[0] || algorithm2;
-            crypto3 = args[1];
+            crypto2 = args[1];
           } else {
-            crypto3 = args[0];
+            crypto2 = args[0];
           }
         }
-        crypto3 !== null && crypto3 !== void 0 ? crypto3 : crypto3 = cryptoProvider.get();
-        return await crypto3.subtle.digest(algorithm2, this.rawData);
+        crypto2 !== null && crypto2 !== void 0 ? crypto2 : crypto2 = cryptoProvider.get();
+        return await crypto2.subtle.digest(algorithm2, this.rawData);
       }
-      async isSelfSigned(crypto3 = cryptoProvider.get()) {
-        return this.subject === this.issuer && await this.verify({ signatureOnly: true }, crypto3);
+      async isSelfSigned(crypto2 = cryptoProvider.get()) {
+        return this.subject === this.issuer && await this.verify({ signatureOnly: true }, crypto2);
       }
       toTextObject() {
         const obj = this.toTextObjectEmpty();
@@ -70619,13 +70619,13 @@ var require_x509_cjs = __commonJS({
           this.certificates = params.certificates;
         }
       }
-      async build(cert, crypto3 = cryptoProvider.get()) {
+      async build(cert, crypto2 = cryptoProvider.get()) {
         const chain2 = new X509Certificates(cert);
         let current = cert;
-        while (current = await this.findIssuer(current, crypto3)) {
-          const thumbprint = await current.getThumbprint(crypto3);
+        while (current = await this.findIssuer(current, crypto2)) {
+          const thumbprint = await current.getThumbprint(crypto2);
           for (const item of chain2) {
-            const thumbprint2 = await item.getThumbprint(crypto3);
+            const thumbprint2 = await item.getThumbprint(crypto2);
             if (pvtsutils.isEqual(thumbprint, thumbprint2)) {
               throw new Error("Cannot build a certificate chain. Circular dependency.");
             }
@@ -70634,8 +70634,8 @@ var require_x509_cjs = __commonJS({
         }
         return chain2;
       }
-      async findIssuer(cert, crypto3 = cryptoProvider.get()) {
-        if (!await cert.isSelfSigned(crypto3)) {
+      async findIssuer(cert, crypto2 = cryptoProvider.get()) {
+        if (!await cert.isSelfSigned(crypto2)) {
           const akiExt = cert.getExtension(asn1X509__namespace.id_ce_authorityKeyIdentifier);
           for (const item of this.certificates) {
             if (item.subject !== cert.issuer) {
@@ -70659,11 +70659,11 @@ var require_x509_cjs = __commonJS({
                 ...item.publicKey.algorithm,
                 ...cert.signatureAlgorithm
               };
-              const publicKey = await item.publicKey.export(algorithm2, ["verify"], crypto3);
+              const publicKey = await item.publicKey.export(algorithm2, ["verify"], crypto2);
               const ok2 = await cert.verify({
                 publicKey,
                 signatureOnly: true
-              }, crypto3);
+              }, crypto2);
               if (!ok2) {
                 continue;
               }
@@ -70676,11 +70676,11 @@ var require_x509_cjs = __commonJS({
         return null;
       }
     };
-    function generateCertificateSerialNumber(input2, crypto3 = cryptoProvider.get()) {
+    function generateCertificateSerialNumber(input2, crypto2 = cryptoProvider.get()) {
       const inputView = pvtsutils.BufferSourceConverter.toUint8Array(pvtsutils.Convert.FromHex(input2 || ""));
       let serialNumber = inputView && inputView.length && inputView.some((o3) => o3 > 0) ? new Uint8Array(inputView) : void 0;
       if (!serialNumber) {
-        serialNumber = crypto3.getRandomValues(new Uint8Array(16));
+        serialNumber = crypto2.getRandomValues(new Uint8Array(16));
       }
       let firstNonZero = 0;
       while (firstNonZero < serialNumber.length - 1 && serialNumber[firstNonZero] === 0) {
@@ -70696,7 +70696,7 @@ var require_x509_cjs = __commonJS({
       return serialNumber.buffer;
     }
     var X509CertificateGenerator = class {
-      static async createSelfSigned(params, crypto3 = cryptoProvider.get()) {
+      static async createSelfSigned(params, crypto2 = cryptoProvider.get()) {
         if (!params.keys.privateKey) {
           throw new Error("Bad field 'keys' in 'params' argument. 'privateKey' is empty");
         }
@@ -70713,9 +70713,9 @@ var require_x509_cjs = __commonJS({
           signingKey: params.keys.privateKey,
           signingAlgorithm: params.signingAlgorithm,
           extensions: params.extensions
-        }, crypto3);
+        }, crypto2);
       }
-      static async create(params, crypto3 = cryptoProvider.get()) {
+      static async create(params, crypto2 = cryptoProvider.get()) {
         var _a9;
         let spki;
         if (params.publicKey instanceof PublicKey) {
@@ -70725,9 +70725,9 @@ var require_x509_cjs = __commonJS({
         } else if (pvtsutils.BufferSourceConverter.isBufferSource(params.publicKey)) {
           spki = params.publicKey;
         } else {
-          spki = await crypto3.subtle.exportKey("spki", params.publicKey);
+          spki = await crypto2.subtle.exportKey("spki", params.publicKey);
         }
-        const serialNumber = generateCertificateSerialNumber(params.serialNumber, crypto3);
+        const serialNumber = generateCertificateSerialNumber(params.serialNumber, crypto2);
         const notBefore = params.notBefore || /* @__PURE__ */ new Date();
         const notAfter = params.notAfter || new Date(notBefore.getTime() + 31536e6);
         const asnX509 = new asn1X509__namespace.Certificate({
@@ -70762,7 +70762,7 @@ var require_x509_cjs = __commonJS({
         const algProv = tsyringe.container.resolve(diAlgorithmProvider);
         asnX509.tbsCertificate.signature = asnX509.signatureAlgorithm = algProv.toAsnAlgorithm(signatureAlgorithm);
         const tbs = asn1Schema.AsnConvert.serialize(asnX509.tbsCertificate);
-        const signatureValue = "signingKey" in params ? await crypto3.subtle.sign(signatureAlgorithm, params.signingKey, tbs) : params.signature;
+        const signatureValue = "signingKey" in params ? await crypto2.subtle.sign(signatureAlgorithm, params.signingKey, tbs) : params.signature;
         const signatureFormatters = tsyringe.container.resolveAll(diAsnSignatureFormatter).reverse();
         let asnSignature = null;
         for (const signatureFormatter of signatureFormatters) {
@@ -70983,7 +70983,7 @@ var require_x509_cjs = __commonJS({
           }
         });
       }
-      async verify(params, crypto3 = cryptoProvider.get()) {
+      async verify(params, crypto2 = cryptoProvider.get()) {
         if (!this.certListSignatureAlgorithm.isEqual(this.tbsCertListSignatureAlgorithm)) {
           throw new Error("algorithm identifier in the sequence tbsCertList and CertificateList mismatch");
         }
@@ -71024,21 +71024,21 @@ var require_x509_cjs = __commonJS({
         if (!signature) {
           throw Error("Cannot convert ASN.1 signature value to WebCrypto format");
         }
-        return await crypto3.subtle.verify(this.signatureAlgorithm, publicKey, signature, this.tbs);
+        return await crypto2.subtle.verify(this.signatureAlgorithm, publicKey, signature, this.tbs);
       }
       async getThumbprint(...args) {
-        let crypto3;
+        let crypto2;
         let algorithm2 = "SHA-1";
         if (args[0]) {
           if (!args[0].subtle) {
             algorithm2 = args[0] || algorithm2;
-            crypto3 = args[1];
+            crypto2 = args[1];
           } else {
-            crypto3 = args[0];
+            crypto2 = args[0];
           }
         }
-        crypto3 !== null && crypto3 !== void 0 ? crypto3 : crypto3 = cryptoProvider.get();
-        return await crypto3.subtle.digest(algorithm2, this.rawData);
+        crypto2 !== null && crypto2 !== void 0 ? crypto2 : crypto2 = cryptoProvider.get();
+        return await crypto2.subtle.digest(algorithm2, this.rawData);
       }
       findRevoked(certOrSerialNumber) {
         const serialNumber = typeof certOrSerialNumber === "string" ? certOrSerialNumber : certOrSerialNumber.serialNumber;
@@ -71053,7 +71053,7 @@ var require_x509_cjs = __commonJS({
     };
     _X509Crl_tbs = /* @__PURE__ */ new WeakMap(), _X509Crl_signatureAlgorithm = /* @__PURE__ */ new WeakMap(), _X509Crl_issuerName = /* @__PURE__ */ new WeakMap(), _X509Crl_thisUpdate = /* @__PURE__ */ new WeakMap(), _X509Crl_nextUpdate = /* @__PURE__ */ new WeakMap(), _X509Crl_entries = /* @__PURE__ */ new WeakMap(), _X509Crl_extensions = /* @__PURE__ */ new WeakMap();
     var X509CrlGenerator = class {
-      static async create(params, crypto3 = cryptoProvider.get()) {
+      static async create(params, crypto2 = cryptoProvider.get()) {
         var _a9;
         const name = params.issuer instanceof Name4 ? params.issuer : new Name4(params.issuer);
         const asnX509Crl = new asn1X509__namespace.CertificateList({
@@ -71120,7 +71120,7 @@ var require_x509_cjs = __commonJS({
         const algProv = tsyringe.container.resolve(diAlgorithmProvider);
         asnX509Crl.tbsCertList.signature = asnX509Crl.signatureAlgorithm = algProv.toAsnAlgorithm(signingAlgorithm);
         const tbs = asn1Schema.AsnConvert.serialize(asnX509Crl.tbsCertList);
-        const signature = await crypto3.subtle.sign(signingAlgorithm, params.signingKey, tbs);
+        const signature = await crypto2.subtle.sign(signingAlgorithm, params.signingKey, tbs);
         const signatureFormatters = tsyringe.container.resolveAll(diAsnSignatureFormatter).reverse();
         let asnSignature = null;
         for (const signatureFormatter of signatureFormatters) {
@@ -71219,7 +71219,7 @@ var require_main = __commonJS({
     var fs2 = require("fs");
     var path2 = require("path");
     var os2 = require("os");
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var TIPS = [
       "\u25C8 encrypted .env [www.dotenvx.com]",
       "\u25C8 secrets for agents [www.dotenvx.com]",
@@ -71463,7 +71463,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto3.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto2.createDecipheriv("aes-256-gcm", key, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error64) {
@@ -71878,7 +71878,7 @@ var require_fetch = __commonJS({
       let finished = false;
       let cookies;
       let body;
-      let handler = parsed.protocol === "https:" ? https : http;
+      let handler2 = parsed.protocol === "https:" ? https : http;
       let headers = {
         "accept-encoding": "gzip,deflate",
         "user-agent": "nodemailer/" + packageData.version
@@ -71959,7 +71959,7 @@ var require_fetch = __commonJS({
         reqOptions.servername = parsed.hostname;
       }
       try {
-        req = handler.request(reqOptions);
+        req = handler2.request(reqOptions);
       } catch (E) {
         finished = true;
         setImmediate(() => {
@@ -76155,7 +76155,7 @@ var require_le_unix = __commonJS({
 var require_mime_node = __commonJS({
   "node_modules/.pnpm/nodemailer@7.0.13/node_modules/nodemailer/lib/mime-node/index.js"(exports2, module2) {
     "use strict";
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var fs2 = require("fs");
     var punycode = require_punycode();
     var PassThrough2 = require("stream").PassThrough;
@@ -76172,7 +76172,7 @@ var require_mime_node = __commonJS({
       constructor(contentType, options) {
         this.nodeCounter = 0;
         options = options || {};
-        this.baseBoundary = options.baseBoundary || crypto3.randomBytes(8).toString("hex");
+        this.baseBoundary = options.baseBoundary || crypto2.randomBytes(8).toString("hex");
         this.boundaryPrefix = options.boundaryPrefix || "--_NmP";
         this.disableFileAccess = !!options.disableFileAccess;
         this.disableUrlAccess = !!options.disableUrlAccess;
@@ -77115,8 +77115,8 @@ var require_mime_node = __commonJS({
       _generateMessageId() {
         return "<" + [2, 2, 2, 6].reduce(
           // crux to generate UUID-like random strings
-          (prev, len) => prev + "-" + crypto3.randomBytes(len).toString("hex"),
-          crypto3.randomBytes(4).toString("hex")
+          (prev, len) => prev + "-" + crypto2.randomBytes(len).toString("hex"),
+          crypto2.randomBytes(4).toString("hex")
         ) + "@" + // try to use the domain of the FROM address or fallback to server hostname
         (this.getEnvelope().from || this.hostname || "localhost").split("@").pop() + ">";
       }
@@ -77741,14 +77741,14 @@ var require_relaxed_body = __commonJS({
   "node_modules/.pnpm/nodemailer@7.0.13/node_modules/nodemailer/lib/dkim/relaxed-body.js"(exports2, module2) {
     "use strict";
     var Transform = require("stream").Transform;
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var RelaxedBody = class extends Transform {
       constructor(options) {
         super();
         options = options || {};
         this.chunkBuffer = [];
         this.chunkBufferLen = 0;
-        this.bodyHash = crypto3.createHash(options.hashAlgo || "sha1");
+        this.bodyHash = crypto2.createHash(options.hashAlgo || "sha1");
         this.remainder = "";
         this.byteLength = 0;
         this.debug = options.debug;
@@ -77851,7 +77851,7 @@ var require_sign = __commonJS({
     "use strict";
     var punycode = require_punycode();
     var mimeFuncs = require_mime_funcs();
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     module2.exports = (headers, hashAlgo, bodyHash, options) => {
       options = options || {};
       let defaultFieldNames = "From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive";
@@ -77860,7 +77860,7 @@ var require_sign = __commonJS({
       let dkimHeader = generateDKIMHeader(options.domainName, options.keySelector, canonicalizedHeaderData.fieldNames, hashAlgo, bodyHash);
       let signer, signature;
       canonicalizedHeaderData.headers += "dkim-signature:" + relaxedHeaderLine(dkimHeader);
-      signer = crypto3.createSign(("rsa-" + hashAlgo).toUpperCase());
+      signer = crypto2.createSign(("rsa-" + hashAlgo).toUpperCase());
       signer.update(canonicalizedHeaderData.headers);
       try {
         signature = signer.sign(options.privateKey, "base64");
@@ -77928,7 +77928,7 @@ var require_dkim = __commonJS({
     var PassThrough2 = require("stream").PassThrough;
     var fs2 = require("fs");
     var path2 = require("path");
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var DKIM_ALGO = "sha256";
     var MAX_MESSAGE_SIZE = 2 * 1024 * 1024;
     var DKIMSigner = class {
@@ -77941,7 +77941,7 @@ var require_dkim = __commonJS({
         this.chunks = [];
         this.chunklen = 0;
         this.readPos = 0;
-        this.cachePath = this.cacheDir ? path2.join(this.cacheDir, "message." + Date.now() + "-" + crypto3.randomBytes(14).toString("hex")) : false;
+        this.cachePath = this.cacheDir ? path2.join(this.cacheDir, "message." + Date.now() + "-" + crypto2.randomBytes(14).toString("hex")) : false;
         this.cache = false;
         this.headers = false;
         this.bodyHash = false;
@@ -78497,7 +78497,7 @@ var require_mailer = __commonJS({
     var MailMessage = require_mail_message();
     var net = require("net");
     var dns = require("dns");
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var Mail = class extends EventEmitter {
       constructor(transporter, options, defaults2) {
         super();
@@ -78831,7 +78831,7 @@ var require_mailer = __commonJS({
           }
           let cidCounter = 0;
           html2 = (html2 || "").toString().replace(/(<img\b[^<>]{0,1024} src\s{0,20}=[\s"']{0,20})(data:([^;]+);[^"'>\s]+)/gi, (match2, prefix, dataUri, mimeType) => {
-            let cid = crypto3.randomBytes(10).toString("hex") + "@localhost";
+            let cid = crypto2.randomBytes(10).toString("hex") + "@localhost";
             if (!mail.data.attachments) {
               mail.data.attachments = [];
             }
@@ -78958,7 +78958,7 @@ var require_smtp_connection = __commonJS({
     var net = require("net");
     var tls = require("tls");
     var os2 = require("os");
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var DataStream = require_data_stream();
     var PassThrough2 = require("stream").PassThrough;
     var shared = require_shared();
@@ -78969,7 +78969,7 @@ var require_smtp_connection = __commonJS({
     var SMTPConnection = class extends EventEmitter {
       constructor(options) {
         super(options);
-        this.id = crypto3.randomBytes(8).toString("base64").replace(/\W/g, "");
+        this.id = crypto2.randomBytes(8).toString("base64").replace(/\W/g, "");
         this.stage = "init";
         this.options = options || {};
         this.secureConnection = !!this.options.secure;
@@ -79243,7 +79243,7 @@ var require_smtp_connection = __commonJS({
           }
         }
         if (this.customAuth.has(this._authMethod)) {
-          let handler = this.customAuth.get(this._authMethod);
+          let handler2 = this.customAuth.get(this._authMethod);
           let lastResponse;
           let returned = false;
           let resolve = () => {
@@ -79271,7 +79271,7 @@ var require_smtp_connection = __commonJS({
             returned = true;
             callback(this._formatError(err, "EAUTH", lastResponse, "AUTH " + this._authMethod));
           };
-          let handlerResponse = handler({
+          let handlerResponse = handler2({
             auth: this._auth,
             method: this._authMethod,
             extensions: [].concat(this._supportedExtensions),
@@ -80090,7 +80090,7 @@ var require_smtp_connection = __commonJS({
         } else {
           challengeString = challengeMatch[1];
         }
-        let base64decoded = Buffer.from(challengeString, "base64").toString("ascii"), hmacMD5 = crypto3.createHmac("md5", this._auth.credentials.pass);
+        let base64decoded = Buffer.from(challengeString, "base64").toString("ascii"), hmacMD5 = crypto2.createHmac("md5", this._auth.credentials.pass);
         hmacMD5.update(base64decoded);
         let prepended = this._auth.credentials.user + " " + hmacMD5.digest("hex");
         this._responseActions.push((str2) => {
@@ -80401,7 +80401,7 @@ var require_xoauth2 = __commonJS({
     "use strict";
     var Stream = require("stream").Stream;
     var nmfetch = require_fetch();
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var shared = require_shared();
     var XOAuth2 = class extends Stream {
       constructor(options, logger4) {
@@ -80734,7 +80734,7 @@ var require_xoauth2 = __commonJS({
        */
       jwtSignRS256(payload) {
         payload = ['{"alg":"RS256","typ":"JWT"}', JSON.stringify(payload)].map((val) => this.toBase64URL(val)).join(".");
-        let signature = crypto3.createSign("RSA-SHA256").update(payload).sign(this.options.privateKey);
+        let signature = crypto2.createSign("RSA-SHA256").update(payload).sign(this.options.privateKey);
         return payload + "." + this.toBase64URL(signature);
       }
     };
@@ -83535,14 +83535,14 @@ var init_MiddlewareStack = __esm({
             identifyOnResolve = toggle;
           return identifyOnResolve;
         },
-        resolve: (handler, context) => {
+        resolve: (handler2, context) => {
           for (const middleware of getMiddlewareList().map((entry) => entry.middleware).reverse()) {
-            handler = middleware(handler, context);
+            handler2 = middleware(handler2, context);
           }
           if (identifyOnResolve) {
             console.log(stack.identify());
           }
-          return handler;
+          return handler2;
         }
       };
       return stack;
@@ -84173,27 +84173,27 @@ var init_client = __esm({
         const options = typeof optionsOrCb !== "function" ? optionsOrCb : void 0;
         const callback = typeof optionsOrCb === "function" ? optionsOrCb : cb;
         const useHandlerCache = options === void 0 && this.config.cacheMiddleware === true;
-        let handler;
+        let handler2;
         if (useHandlerCache) {
           if (!this.handlers) {
             this.handlers = /* @__PURE__ */ new WeakMap();
           }
           const handlers = this.handlers;
           if (handlers.has(command5.constructor)) {
-            handler = handlers.get(command5.constructor);
+            handler2 = handlers.get(command5.constructor);
           } else {
-            handler = command5.resolveMiddleware(this.middlewareStack, this.config, options);
-            handlers.set(command5.constructor, handler);
+            handler2 = command5.resolveMiddleware(this.middlewareStack, this.config, options);
+            handlers.set(command5.constructor, handler2);
           }
         } else {
           delete this.handlers;
-          handler = command5.resolveMiddleware(this.middlewareStack, this.config, options);
+          handler2 = command5.resolveMiddleware(this.middlewareStack, this.config, options);
         }
         if (callback) {
-          handler(command5).then((result) => callback(null, result.output), (err) => callback(err)).catch(() => {
+          handler2(command5).then((result) => callback(null, result.output), (err) => callback(err)).catch(() => {
           });
         } else {
-          return handler(command5).then((result) => result.output);
+          return handler2(command5).then((result) => result.output);
         }
       }
       destroy() {
@@ -92982,8 +92982,8 @@ var init_httpExtensionConfiguration = __esm({
         runtimeConfig.requestHandler?.updateHttpClientConfig?.(/* @__PURE__ */ Symbol.for("logger"), runtimeConfig.logger);
       }
       return {
-        setHttpHandler(handler) {
-          runtimeConfig.requestHandler = handler;
+        setHttpHandler(handler2) {
+          runtimeConfig.requestHandler = handler2;
         },
         httpHandler() {
           return runtimeConfig.requestHandler;
@@ -98037,11 +98037,11 @@ ${toHex3(hashedRequest)}`;
     var createScope = (shortDate, region, service) => `${shortDate}/${region}/${service}/${KEY_TYPE_IDENTIFIER}`;
     var getSigningKey = async (sha256Constructor, credentials, shortDate, region, service) => {
       const credsHash = await hmac3(sha256Constructor, credentials.secretAccessKey, credentials.accessKeyId);
-      const cacheKey2 = `${shortDate}:${region}:${service}:${toHex3(credsHash)}:${credentials.sessionToken}`;
-      if (cacheKey2 in signingKeyCache) {
-        return signingKeyCache[cacheKey2];
+      const cacheKey = `${shortDate}:${region}:${service}:${toHex3(credsHash)}:${credentials.sessionToken}`;
+      if (cacheKey in signingKeyCache) {
+        return signingKeyCache[cacheKey];
       }
-      cacheQueue.push(cacheKey2);
+      cacheQueue.push(cacheKey);
       while (cacheQueue.length > MAX_CACHE_SIZE) {
         delete signingKeyCache[cacheQueue.shift()];
       }
@@ -98049,12 +98049,12 @@ ${toHex3(hashedRequest)}`;
       for (const signable of [shortDate, region, service, KEY_TYPE_IDENTIFIER]) {
         key = await hmac3(sha256Constructor, key, signable);
       }
-      return signingKeyCache[cacheKey2] = key;
+      return signingKeyCache[cacheKey] = key;
     };
     var clearCredentialCache = () => {
       cacheQueue.length = 0;
-      Object.keys(signingKeyCache).forEach((cacheKey2) => {
-        delete signingKeyCache[cacheKey2];
+      Object.keys(signingKeyCache).forEach((cacheKey) => {
+        delete signingKeyCache[cacheKey];
       });
     };
     var hmac3 = (ctor, secret, data) => {
@@ -102967,7 +102967,7 @@ var require_dist_cjs7 = __commonJS({
     exports2.streamCollector = streamCollector7;
     var { buildQueryString: buildQueryString2, HttpResponse: HttpResponse2 } = (init_protocols(), __toCommonJS(protocols_exports));
     var node_https = require("node:https");
-    var { Readable: Readable10 } = require("node:stream");
+    var { Readable: Readable9 } = require("node:stream");
     var http2 = require("node:http2");
     function buildAbortError(abortSignal) {
       const reason = abortSignal && typeof abortSignal === "object" && "reason" in abortSignal ? abortSignal.reason : void 0;
@@ -103126,7 +103126,7 @@ var require_dist_cjs7 = __commonJS({
       }
     }
     function writeBody(httpRequest, body) {
-      if (body instanceof Readable10) {
+      if (body instanceof Readable9) {
         body.pipe(httpRequest);
         return;
       }
@@ -119087,8 +119087,8 @@ var require_dist_cjs17 = __commonJS({
         toMiddleware: "awsAuthMiddleware",
         override: true
       });
-      const handler = command5.resolveMiddleware(clientStack, client.config, {});
-      const { output: output2 } = await handler({ input: command5.input });
+      const handler2 = command5.resolveMiddleware(clientStack, client.config, {});
+      const { output: output2 } = await handler2({ input: command5.input });
       const { presigned } = output2;
       return formatUrl2(presigned);
     };
@@ -123850,14 +123850,14 @@ var require_buffer_equal_constant_time = __commonJS({
 var require_jwa = __commonJS({
   "node_modules/.pnpm/jwa@2.0.1/node_modules/jwa/index.js"(exports2, module2) {
     var Buffer2 = require_safe_buffer().Buffer;
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var formatEcdsa = require_ecdsa_sig_formatter();
     var util = require("util");
     var MSG_INVALID_ALGORITHM = '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".';
     var MSG_INVALID_SECRET = "secret must be a string or buffer";
     var MSG_INVALID_VERIFIER_KEY = "key must be a string or a buffer";
     var MSG_INVALID_SIGNER_KEY = "key must be a string, a buffer or an object";
-    var supportsKeyObjects = typeof crypto3.createPublicKey === "function";
+    var supportsKeyObjects = typeof crypto2.createPublicKey === "function";
     if (supportsKeyObjects) {
       MSG_INVALID_VERIFIER_KEY += " or a KeyObject";
       MSG_INVALID_SECRET += "or a KeyObject";
@@ -123947,17 +123947,17 @@ var require_jwa = __commonJS({
       return function sign3(thing, secret) {
         checkIsSecretKey(secret);
         thing = normalizeInput(thing);
-        var hmac3 = crypto3.createHmac("sha" + bits, secret);
+        var hmac3 = crypto2.createHmac("sha" + bits, secret);
         var sig2 = (hmac3.update(thing), hmac3.digest("base64"));
         return fromBase642(sig2);
       };
     }
     var bufferEqual;
-    var timingSafeEqual5 = "timingSafeEqual" in crypto3 ? function timingSafeEqual6(a5, b5) {
+    var timingSafeEqual5 = "timingSafeEqual" in crypto2 ? function timingSafeEqual6(a5, b5) {
       if (a5.byteLength !== b5.byteLength) {
         return false;
       }
-      return crypto3.timingSafeEqual(a5, b5);
+      return crypto2.timingSafeEqual(a5, b5);
     } : function timingSafeEqual6(a5, b5) {
       if (!bufferEqual) {
         bufferEqual = require_buffer_equal_constant_time();
@@ -123974,7 +123974,7 @@ var require_jwa = __commonJS({
       return function sign3(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto3.createSign("RSA-SHA" + bits);
+        var signer = crypto2.createSign("RSA-SHA" + bits);
         var sig2 = (signer.update(thing), signer.sign(privateKey, "base64"));
         return fromBase642(sig2);
       };
@@ -123984,7 +123984,7 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase644(signature);
-        var verifier = crypto3.createVerify("RSA-SHA" + bits);
+        var verifier = crypto2.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify(publicKey, signature, "base64");
       };
@@ -123993,11 +123993,11 @@ var require_jwa = __commonJS({
       return function sign3(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
-        var signer = crypto3.createSign("RSA-SHA" + bits);
+        var signer = crypto2.createSign("RSA-SHA" + bits);
         var sig2 = (signer.update(thing), signer.sign({
           key: privateKey,
-          padding: crypto3.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto3.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto2.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto2.constants.RSA_PSS_SALTLEN_DIGEST
         }, "base64"));
         return fromBase642(sig2);
       };
@@ -124007,12 +124007,12 @@ var require_jwa = __commonJS({
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase644(signature);
-        var verifier = crypto3.createVerify("RSA-SHA" + bits);
+        var verifier = crypto2.createVerify("RSA-SHA" + bits);
         verifier.update(thing);
         return verifier.verify({
           key: publicKey,
-          padding: crypto3.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto3.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: crypto2.constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: crypto2.constants.RSA_PSS_SALTLEN_DIGEST
         }, signature, "base64");
       };
     }
@@ -124343,7 +124343,7 @@ var require_urlsafe_base64_helper = __commonJS({
 var require_vapid_helper = __commonJS({
   "node_modules/.pnpm/web-push@3.6.7/node_modules/web-push/src/vapid-helper.js"(exports2, module2) {
     "use strict";
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var asn1 = require_asn1();
     var jws = require_jws();
     var { URL: URL2 } = require("url");
@@ -124370,7 +124370,7 @@ var require_vapid_helper = __commonJS({
       });
     }
     function generateVAPIDKeys() {
-      const curve = crypto3.createECDH("prime256v1");
+      const curve = crypto2.createECDH("prime256v1");
       curve.generateKeys();
       let publicKeyBuffer = curve.getPublicKey();
       let privateKeyBuffer = curve.getPrivateKey();
@@ -124520,7 +124520,7 @@ var require_vapid_helper = __commonJS({
 var require_ece = __commonJS({
   "node_modules/.pnpm/http_ece@1.2.0/node_modules/http_ece/ece.js"(exports2, module2) {
     "use strict";
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var AES_GCM = "aes-128-gcm";
     var PAD_SIZE = { "aes128gcm": 1, "aesgcm": 2 };
     var TAG_LENGTH = 16;
@@ -124547,7 +124547,7 @@ var require_ece = __commonJS({
       return b5;
     }
     function HMAC_hash(key, input2) {
-      var hmac3 = crypto3.createHmac("sha256", key);
+      var hmac3 = crypto2.createHmac("sha256", key);
       hmac3.update(input2);
       return hmac3.digest();
     }
@@ -124815,7 +124815,7 @@ var require_ece = __commonJS({
     function decryptRecord(key, counter, buffer, header, last) {
       keylog("decrypt", buffer);
       var nonce = generateNonce(key.nonce, counter);
-      var gcm = crypto3.createDecipheriv(AES_GCM, key.key, nonce);
+      var gcm = crypto2.createDecipheriv(AES_GCM, key.key, nonce);
       gcm.setAuthTag(buffer.slice(buffer.length - TAG_LENGTH));
       var data = gcm.update(buffer.slice(0, buffer.length - TAG_LENGTH));
       data = Buffer.concat([data, gcm.final()]);
@@ -124863,7 +124863,7 @@ var require_ece = __commonJS({
       keylog("encrypt", buffer);
       pad3 = pad3 || 0;
       var nonce = generateNonce(key.nonce, counter);
-      var gcm = crypto3.createCipheriv(AES_GCM, key.key, nonce);
+      var gcm = crypto2.createCipheriv(AES_GCM, key.key, nonce);
       var ciphertext = [];
       var padSize = PAD_SIZE[header.version];
       var padding = Buffer.alloc(pad3 + padSize);
@@ -124906,7 +124906,7 @@ var require_ece = __commonJS({
       }
       var header = parseParams(params);
       if (!header.salt) {
-        header.salt = crypto3.randomBytes(KEY_LENGTH);
+        header.salt = crypto2.randomBytes(KEY_LENGTH);
       }
       var result;
       if (header.version === "aes128gcm") {
@@ -124971,7 +124971,7 @@ var require_ece = __commonJS({
 var require_encryption_helper = __commonJS({
   "node_modules/.pnpm/web-push@3.6.7/node_modules/web-push/src/encryption-helper.js"(exports2, module2) {
     "use strict";
-    var crypto3 = require("crypto");
+    var crypto2 = require("crypto");
     var ece = require_ece();
     var encrypt3 = function(userPublicKey, userAuth, payload, contentEncoding) {
       if (!userPublicKey) {
@@ -124998,9 +124998,9 @@ var require_encryption_helper = __commonJS({
       if (typeof payload === "string" || payload instanceof String) {
         payload = Buffer.from(payload);
       }
-      const localCurve = crypto3.createECDH("prime256v1");
+      const localCurve = crypto2.createECDH("prime256v1");
       const localPublicKey = localCurve.generateKeys();
-      const salt = crypto3.randomBytes(16).toString("base64url");
+      const salt = crypto2.randomBytes(16).toString("base64url");
       const cipherText = ece.encrypt(payload, {
         version: contentEncoding,
         dh: userPublicKey,
@@ -126472,633 +126472,9 @@ var require_src2 = __commonJS({
 // apps/api/src/vercel.ts
 var vercel_exports = {};
 __export(vercel_exports, {
-  default: () => vercel_default
+  default: () => handler
 });
 module.exports = __toCommonJS(vercel_exports);
-
-// node_modules/.pnpm/@hono+node-server@1.19.17_hono@4.13.7/node_modules/@hono/node-server/dist/vercel.mjs
-var import_http2 = require("http2");
-var import_http22 = require("http2");
-var import_stream = require("stream");
-var import_crypto = __toESM(require("crypto"), 1);
-var RequestError = class extends Error {
-  constructor(message2, options) {
-    super(message2, options);
-    this.name = "RequestError";
-  }
-};
-var toRequestError = (e5) => {
-  if (e5 instanceof RequestError) {
-    return e5;
-  }
-  return new RequestError(e5.message, { cause: e5 });
-};
-var GlobalRequest = global.Request;
-var Request2 = class extends GlobalRequest {
-  constructor(input2, options) {
-    if (typeof input2 === "object" && getRequestCache in input2) {
-      input2 = input2[getRequestCache]();
-    }
-    if (typeof options?.body?.getReader !== "undefined") {
-      ;
-      options.duplex ??= "half";
-    }
-    super(input2, options);
-  }
-};
-var newHeadersFromIncoming = (incoming) => {
-  const headerRecord = [];
-  const rawHeaders = incoming.rawHeaders;
-  for (let i5 = 0; i5 < rawHeaders.length; i5 += 2) {
-    const { [i5]: key, [i5 + 1]: value } = rawHeaders;
-    if (key.charCodeAt(0) !== /*:*/
-    58) {
-      headerRecord.push([key, value]);
-    }
-  }
-  return new Headers(headerRecord);
-};
-var wrapBodyStream = /* @__PURE__ */ Symbol("wrapBodyStream");
-var newRequestFromIncoming = (method, url2, headers, incoming, abortController) => {
-  const init2 = {
-    method,
-    headers,
-    signal: abortController.signal
-  };
-  if (method === "TRACE") {
-    init2.method = "GET";
-    const req = new Request2(url2, init2);
-    Object.defineProperty(req, "method", {
-      get() {
-        return "TRACE";
-      }
-    });
-    return req;
-  }
-  if (!(method === "GET" || method === "HEAD")) {
-    if ("rawBody" in incoming && incoming.rawBody instanceof Buffer) {
-      init2.body = new ReadableStream({
-        start(controller) {
-          controller.enqueue(incoming.rawBody);
-          controller.close();
-        }
-      });
-    } else if (incoming[wrapBodyStream]) {
-      let reader;
-      init2.body = new ReadableStream({
-        async pull(controller) {
-          try {
-            reader ||= import_stream.Readable.toWeb(incoming).getReader();
-            const { done, value } = await reader.read();
-            if (done) {
-              controller.close();
-            } else {
-              controller.enqueue(value);
-            }
-          } catch (error64) {
-            controller.error(error64);
-          }
-        }
-      });
-    } else {
-      init2.body = import_stream.Readable.toWeb(incoming);
-    }
-  }
-  return new Request2(url2, init2);
-};
-var getRequestCache = /* @__PURE__ */ Symbol("getRequestCache");
-var requestCache = /* @__PURE__ */ Symbol("requestCache");
-var incomingKey = /* @__PURE__ */ Symbol("incomingKey");
-var urlKey = /* @__PURE__ */ Symbol("urlKey");
-var headersKey = /* @__PURE__ */ Symbol("headersKey");
-var abortControllerKey = /* @__PURE__ */ Symbol("abortControllerKey");
-var getAbortController = /* @__PURE__ */ Symbol("getAbortController");
-var requestPrototype = {
-  get method() {
-    return this[incomingKey].method || "GET";
-  },
-  get url() {
-    return this[urlKey];
-  },
-  get headers() {
-    return this[headersKey] ||= newHeadersFromIncoming(this[incomingKey]);
-  },
-  [getAbortController]() {
-    this[getRequestCache]();
-    return this[abortControllerKey];
-  },
-  [getRequestCache]() {
-    this[abortControllerKey] ||= new AbortController();
-    return this[requestCache] ||= newRequestFromIncoming(
-      this.method,
-      this[urlKey],
-      this.headers,
-      this[incomingKey],
-      this[abortControllerKey]
-    );
-  }
-};
-[
-  "body",
-  "bodyUsed",
-  "cache",
-  "credentials",
-  "destination",
-  "integrity",
-  "mode",
-  "redirect",
-  "referrer",
-  "referrerPolicy",
-  "signal",
-  "keepalive"
-].forEach((k5) => {
-  Object.defineProperty(requestPrototype, k5, {
-    get() {
-      return this[getRequestCache]()[k5];
-    }
-  });
-});
-["arrayBuffer", "blob", "clone", "formData", "json", "text"].forEach((k5) => {
-  Object.defineProperty(requestPrototype, k5, {
-    value: function() {
-      return this[getRequestCache]()[k5]();
-    }
-  });
-});
-Object.defineProperty(requestPrototype, /* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom"), {
-  value: function(depth, options, inspectFn) {
-    const props = {
-      method: this.method,
-      url: this.url,
-      headers: this.headers,
-      nativeRequest: this[requestCache]
-    };
-    return `Request (lightweight) ${inspectFn(props, { ...options, depth: depth == null ? null : depth - 1 })}`;
-  }
-});
-Object.setPrototypeOf(requestPrototype, Request2.prototype);
-var newRequest = (incoming, defaultHostname) => {
-  const req = Object.create(requestPrototype);
-  req[incomingKey] = incoming;
-  const incomingUrl = incoming.url || "";
-  if (incomingUrl[0] !== "/" && // short-circuit for performance. most requests are relative URL.
-  (incomingUrl.startsWith("http://") || incomingUrl.startsWith("https://"))) {
-    if (incoming instanceof import_http22.Http2ServerRequest) {
-      throw new RequestError("Absolute URL for :path is not allowed in HTTP/2");
-    }
-    try {
-      const url22 = new URL(incomingUrl);
-      req[urlKey] = url22.href;
-    } catch (e5) {
-      throw new RequestError("Invalid absolute URL", { cause: e5 });
-    }
-    return req;
-  }
-  const host = (incoming instanceof import_http22.Http2ServerRequest ? incoming.authority : incoming.headers.host) || defaultHostname;
-  if (!host) {
-    throw new RequestError("Missing host header");
-  }
-  let scheme;
-  if (incoming instanceof import_http22.Http2ServerRequest) {
-    scheme = incoming.scheme;
-    if (!(scheme === "http" || scheme === "https")) {
-      throw new RequestError("Unsupported scheme");
-    }
-  } else {
-    scheme = incoming.socket && incoming.socket.encrypted ? "https" : "http";
-  }
-  const url2 = new URL(`${scheme}://${host}${incomingUrl}`);
-  if (url2.hostname.length !== host.length && url2.hostname !== host.replace(/:\d+$/, "")) {
-    throw new RequestError("Invalid host header");
-  }
-  req[urlKey] = url2.href;
-  return req;
-};
-var responseCache = /* @__PURE__ */ Symbol("responseCache");
-var getResponseCache = /* @__PURE__ */ Symbol("getResponseCache");
-var cacheKey = /* @__PURE__ */ Symbol("cache");
-var GlobalResponse = global.Response;
-var Response2 = class _Response {
-  #body;
-  #init;
-  [getResponseCache]() {
-    delete this[cacheKey];
-    return this[responseCache] ||= new GlobalResponse(this.#body, this.#init);
-  }
-  constructor(body, init2) {
-    let headers;
-    this.#body = body;
-    if (init2 instanceof _Response) {
-      const cachedGlobalResponse = init2[responseCache];
-      if (cachedGlobalResponse) {
-        this.#init = cachedGlobalResponse;
-        this[getResponseCache]();
-        return;
-      } else {
-        this.#init = init2.#init;
-        headers = new Headers(init2.#init.headers);
-      }
-    } else {
-      this.#init = init2;
-    }
-    if (typeof body === "string" || typeof body?.getReader !== "undefined" || body instanceof Blob || body instanceof Uint8Array) {
-      ;
-      this[cacheKey] = [init2?.status || 200, body, headers || init2?.headers];
-    }
-  }
-  get headers() {
-    const cache7 = this[cacheKey];
-    if (cache7) {
-      if (!(cache7[2] instanceof Headers)) {
-        cache7[2] = new Headers(
-          cache7[2] || { "content-type": "text/plain; charset=UTF-8" }
-        );
-      }
-      return cache7[2];
-    }
-    return this[getResponseCache]().headers;
-  }
-  get status() {
-    return this[cacheKey]?.[0] ?? this[getResponseCache]().status;
-  }
-  get ok() {
-    const status = this.status;
-    return status >= 200 && status < 300;
-  }
-};
-["body", "bodyUsed", "redirected", "statusText", "trailers", "type", "url"].forEach((k5) => {
-  Object.defineProperty(Response2.prototype, k5, {
-    get() {
-      return this[getResponseCache]()[k5];
-    }
-  });
-});
-["arrayBuffer", "blob", "clone", "formData", "json", "text"].forEach((k5) => {
-  Object.defineProperty(Response2.prototype, k5, {
-    value: function() {
-      return this[getResponseCache]()[k5]();
-    }
-  });
-});
-Object.defineProperty(Response2.prototype, /* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom"), {
-  value: function(depth, options, inspectFn) {
-    const props = {
-      status: this.status,
-      headers: this.headers,
-      ok: this.ok,
-      nativeResponse: this[responseCache]
-    };
-    return `Response (lightweight) ${inspectFn(props, { ...options, depth: depth == null ? null : depth - 1 })}`;
-  }
-});
-Object.setPrototypeOf(Response2, GlobalResponse);
-Object.setPrototypeOf(Response2.prototype, GlobalResponse.prototype);
-async function readWithoutBlocking(readPromise) {
-  return Promise.race([readPromise, Promise.resolve().then(() => Promise.resolve(void 0))]);
-}
-function writeFromReadableStreamDefaultReader(reader, writable, currentReadPromise) {
-  const cancel = (error64) => {
-    reader.cancel(error64).catch(() => {
-    });
-  };
-  writable.on("close", cancel);
-  writable.on("error", cancel);
-  (currentReadPromise ?? reader.read()).then(flow, handleStreamError);
-  return reader.closed.finally(() => {
-    writable.off("close", cancel);
-    writable.off("error", cancel);
-  });
-  function handleStreamError(error64) {
-    if (error64) {
-      writable.destroy(error64);
-    }
-  }
-  function onDrain() {
-    reader.read().then(flow, handleStreamError);
-  }
-  function flow({ done, value }) {
-    try {
-      if (done) {
-        writable.end();
-      } else if (!writable.write(value)) {
-        writable.once("drain", onDrain);
-      } else {
-        return reader.read().then(flow, handleStreamError);
-      }
-    } catch (e5) {
-      handleStreamError(e5);
-    }
-  }
-}
-function writeFromReadableStream(stream2, writable) {
-  if (stream2.locked) {
-    throw new TypeError("ReadableStream is locked.");
-  } else if (writable.destroyed) {
-    return;
-  }
-  return writeFromReadableStreamDefaultReader(stream2.getReader(), writable);
-}
-var buildOutgoingHttpHeaders = (headers) => {
-  const res = {};
-  if (!(headers instanceof Headers)) {
-    headers = new Headers(headers ?? void 0);
-  }
-  const cookies = [];
-  for (const [k5, v] of headers) {
-    if (k5 === "set-cookie") {
-      cookies.push(v);
-    } else {
-      res[k5] = v;
-    }
-  }
-  if (cookies.length > 0) {
-    res["set-cookie"] = cookies;
-  }
-  res["content-type"] ??= "text/plain; charset=UTF-8";
-  return res;
-};
-var X_ALREADY_SENT = "x-hono-already-sent";
-if (typeof global.crypto === "undefined") {
-  global.crypto = import_crypto.default;
-}
-var outgoingEnded = /* @__PURE__ */ Symbol("outgoingEnded");
-var incomingDraining = /* @__PURE__ */ Symbol("incomingDraining");
-var DRAIN_TIMEOUT_MS = 500;
-var MAX_DRAIN_BYTES = 64 * 1024 * 1024;
-var drainIncoming = (incoming) => {
-  const incomingWithDrainState = incoming;
-  if (incoming.destroyed || incomingWithDrainState[incomingDraining]) {
-    return;
-  }
-  incomingWithDrainState[incomingDraining] = true;
-  if (incoming instanceof import_http2.Http2ServerRequest) {
-    try {
-      ;
-      incoming.stream?.close?.(import_http2.constants.NGHTTP2_NO_ERROR);
-    } catch {
-    }
-    return;
-  }
-  let bytesRead = 0;
-  const cleanup = () => {
-    clearTimeout(timer);
-    incoming.off("data", onData);
-    incoming.off("end", cleanup);
-    incoming.off("error", cleanup);
-  };
-  const forceClose = () => {
-    cleanup();
-    const socket = incoming.socket;
-    if (socket && !socket.destroyed) {
-      socket.destroySoon();
-    }
-  };
-  const timer = setTimeout(forceClose, DRAIN_TIMEOUT_MS);
-  timer.unref?.();
-  const onData = (chunk) => {
-    bytesRead += chunk.length;
-    if (bytesRead > MAX_DRAIN_BYTES) {
-      forceClose();
-    }
-  };
-  incoming.on("data", onData);
-  incoming.on("end", cleanup);
-  incoming.on("error", cleanup);
-  incoming.resume();
-};
-var handleRequestError = () => new Response(null, {
-  status: 400
-});
-var handleFetchError = (e5) => new Response(null, {
-  status: e5 instanceof Error && (e5.name === "TimeoutError" || e5.constructor.name === "TimeoutError") ? 504 : 500
-});
-var handleResponseError = (e5, outgoing) => {
-  const err = e5 instanceof Error ? e5 : new Error("unknown error", { cause: e5 });
-  if (err.code === "ERR_STREAM_PREMATURE_CLOSE") {
-    console.info("The user aborted a request.");
-  } else {
-    console.error(e5);
-    if (!outgoing.headersSent) {
-      outgoing.writeHead(500, { "Content-Type": "text/plain" });
-    }
-    outgoing.end(`Error: ${err.message}`);
-    outgoing.destroy(err);
-  }
-};
-var flushHeaders = (outgoing) => {
-  if ("flushHeaders" in outgoing && outgoing.writable) {
-    outgoing.flushHeaders();
-  }
-};
-var responseViaCache = async (res, outgoing) => {
-  let [status, body, header] = res[cacheKey];
-  let hasContentLength = false;
-  if (!header) {
-    header = { "content-type": "text/plain; charset=UTF-8" };
-  } else if (header instanceof Headers) {
-    hasContentLength = header.has("content-length");
-    header = buildOutgoingHttpHeaders(header);
-  } else if (Array.isArray(header)) {
-    const headerObj = new Headers(header);
-    hasContentLength = headerObj.has("content-length");
-    header = buildOutgoingHttpHeaders(headerObj);
-  } else {
-    for (const key in header) {
-      if (key.length === 14 && key.toLowerCase() === "content-length") {
-        hasContentLength = true;
-        break;
-      }
-    }
-  }
-  if (!hasContentLength) {
-    if (typeof body === "string") {
-      header["Content-Length"] = Buffer.byteLength(body);
-    } else if (body instanceof Uint8Array) {
-      header["Content-Length"] = body.byteLength;
-    } else if (body instanceof Blob) {
-      header["Content-Length"] = body.size;
-    }
-  }
-  outgoing.writeHead(status, header);
-  if (typeof body === "string" || body instanceof Uint8Array) {
-    outgoing.end(body);
-  } else if (body instanceof Blob) {
-    outgoing.end(new Uint8Array(await body.arrayBuffer()));
-  } else {
-    flushHeaders(outgoing);
-    await writeFromReadableStream(body, outgoing)?.catch(
-      (e5) => handleResponseError(e5, outgoing)
-    );
-  }
-  ;
-  outgoing[outgoingEnded]?.();
-};
-var isPromise = (res) => typeof res.then === "function";
-var responseViaResponseObject = async (res, outgoing, options = {}) => {
-  if (isPromise(res)) {
-    if (options.errorHandler) {
-      try {
-        res = await res;
-      } catch (err) {
-        const errRes = await options.errorHandler(err);
-        if (!errRes) {
-          return;
-        }
-        res = errRes;
-      }
-    } else {
-      res = await res.catch(handleFetchError);
-    }
-  }
-  if (cacheKey in res) {
-    return responseViaCache(res, outgoing);
-  }
-  const resHeaderRecord = buildOutgoingHttpHeaders(res.headers);
-  if (res.body) {
-    const reader = res.body.getReader();
-    const values = [];
-    let done = false;
-    let currentReadPromise = void 0;
-    if (resHeaderRecord["transfer-encoding"] !== "chunked") {
-      let maxReadCount = 2;
-      for (let i5 = 0; i5 < maxReadCount; i5++) {
-        currentReadPromise ||= reader.read();
-        const chunk = await readWithoutBlocking(currentReadPromise).catch((e5) => {
-          console.error(e5);
-          done = true;
-        });
-        if (!chunk) {
-          if (i5 === 1) {
-            await new Promise((resolve) => setTimeout(resolve));
-            maxReadCount = 3;
-            continue;
-          }
-          break;
-        }
-        currentReadPromise = void 0;
-        if (chunk.value) {
-          values.push(chunk.value);
-        }
-        if (chunk.done) {
-          done = true;
-          break;
-        }
-      }
-      if (done && !("content-length" in resHeaderRecord)) {
-        resHeaderRecord["content-length"] = values.reduce((acc, value) => acc + value.length, 0);
-      }
-    }
-    outgoing.writeHead(res.status, resHeaderRecord);
-    values.forEach((value) => {
-      ;
-      outgoing.write(value);
-    });
-    if (done) {
-      outgoing.end();
-    } else {
-      if (values.length === 0) {
-        flushHeaders(outgoing);
-      }
-      await writeFromReadableStreamDefaultReader(reader, outgoing, currentReadPromise);
-    }
-  } else if (resHeaderRecord[X_ALREADY_SENT]) {
-  } else {
-    outgoing.writeHead(res.status, resHeaderRecord);
-    outgoing.end();
-  }
-  ;
-  outgoing[outgoingEnded]?.();
-};
-var getRequestListener = (fetchCallback, options = {}) => {
-  const autoCleanupIncoming = options.autoCleanupIncoming ?? true;
-  if (options.overrideGlobalObjects !== false && global.Request !== Request2) {
-    Object.defineProperty(global, "Request", {
-      value: Request2
-    });
-    Object.defineProperty(global, "Response", {
-      value: Response2
-    });
-  }
-  return async (incoming, outgoing) => {
-    let res, req;
-    try {
-      req = newRequest(incoming, options.hostname);
-      let incomingEnded = !autoCleanupIncoming || incoming.method === "GET" || incoming.method === "HEAD";
-      if (!incomingEnded) {
-        ;
-        incoming[wrapBodyStream] = true;
-        incoming.on("end", () => {
-          incomingEnded = true;
-        });
-        if (incoming instanceof import_http2.Http2ServerRequest) {
-          ;
-          outgoing[outgoingEnded] = () => {
-            if (!incomingEnded) {
-              setTimeout(() => {
-                if (!incomingEnded) {
-                  setTimeout(() => {
-                    drainIncoming(incoming);
-                  });
-                }
-              });
-            }
-          };
-        }
-        outgoing.on("finish", () => {
-          if (!incomingEnded) {
-            drainIncoming(incoming);
-          }
-        });
-      }
-      outgoing.on("close", () => {
-        const abortController = req[abortControllerKey];
-        if (abortController) {
-          if (incoming.errored) {
-            req[abortControllerKey].abort(incoming.errored.toString());
-          } else if (!outgoing.writableFinished) {
-            req[abortControllerKey].abort("Client connection prematurely closed.");
-          }
-        }
-        if (!incomingEnded) {
-          setTimeout(() => {
-            if (!incomingEnded) {
-              setTimeout(() => {
-                drainIncoming(incoming);
-              });
-            }
-          });
-        }
-      });
-      res = fetchCallback(req, { incoming, outgoing });
-      if (cacheKey in res) {
-        return responseViaCache(res, outgoing);
-      }
-    } catch (e5) {
-      if (!res) {
-        if (options.errorHandler) {
-          res = await options.errorHandler(req ? e5 : toRequestError(e5));
-          if (!res) {
-            return;
-          }
-        } else if (!req) {
-          res = handleRequestError();
-        } else {
-          res = handleFetchError(e5);
-        }
-      } else {
-        return handleResponseError(e5, outgoing);
-      }
-    }
-    try {
-      return await responseViaResponseObject(res, outgoing, options);
-    } catch (e5) {
-      return handleResponseError(e5, outgoing);
-    }
-  };
-};
-var handle = (app2) => {
-  return getRequestListener(app2.fetch);
-};
 
 // node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/compose.js
 var compose = (middleware, onError, onNotFound) => {
@@ -127112,16 +126488,16 @@ var compose = (middleware, onError, onNotFound) => {
       index2 = i5;
       let res;
       let isError = false;
-      let handler;
+      let handler2;
       if (middleware[i5]) {
-        handler = middleware[i5][0][0];
+        handler2 = middleware[i5][0][0];
         context.req.routeIndex = i5;
       } else {
-        handler = i5 === middleware.length && next || void 0;
+        handler2 = i5 === middleware.length && next || void 0;
       }
-      if (handler) {
+      if (handler2) {
         try {
-          res = await handler(context, () => dispatch(i5 + 1));
+          res = await handler2(context, () => dispatch(i5 + 1));
         } catch (err) {
           if (err instanceof Error && onError) {
             context.error = err;
@@ -127297,15 +126673,15 @@ var getPattern = (label, next) => {
   }
   const match2 = label.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
   if (match2) {
-    const cacheKey2 = `${label}#${next}`;
-    if (!patternCache[cacheKey2]) {
+    const cacheKey = `${label}#${next}`;
+    if (!patternCache[cacheKey]) {
       if (match2[2]) {
-        patternCache[cacheKey2] = next && next[0] !== ":" && next[0] !== "*" ? [cacheKey2, match2[1], new RegExp(`^${match2[2]}(?=/${next})`)] : [label, match2[1], new RegExp(`^${match2[2]}$`)];
+        patternCache[cacheKey] = next && next[0] !== ":" && next[0] !== "*" ? [cacheKey, match2[1], new RegExp(`^${match2[2]}(?=/${next})`)] : [label, match2[1], new RegExp(`^${match2[2]}$`)];
       } else {
-        patternCache[cacheKey2] = [label, match2[1], true];
+        patternCache[cacheKey] = [label, match2[1], true];
       }
     }
-    return patternCache[cacheKey2];
+    return patternCache[cacheKey];
   }
   return null;
 };
@@ -128265,8 +127641,8 @@ var Hono = class _Hono {
         } else {
           this.#addRoute(methodName, this.#path, args1);
         }
-        args.forEach((handler) => {
-          this.#addRoute(methodName, this.#path, handler);
+        args.forEach((handler2) => {
+          this.#addRoute(methodName, this.#path, handler2);
         });
         return this;
       };
@@ -128276,8 +127652,8 @@ var Hono = class _Hono {
         this.#path = p3;
         for (const m3 of [method].flat()) {
           const methodName = m3.toUpperCase();
-          for (const handler of handlers) {
-            this.#addRoute(methodName, this.#path, handler);
+          for (const handler2 of handlers) {
+            this.#addRoute(methodName, this.#path, handler2);
           }
         }
       }
@@ -128290,8 +127666,8 @@ var Hono = class _Hono {
         this.#path = "*";
         handlers.unshift(arg1);
       }
-      handlers.forEach((handler) => {
-        this.#addRoute(METHOD_NAME_ALL, this.#path, handler);
+      handlers.forEach((handler2) => {
+        this.#addRoute(METHOD_NAME_ALL, this.#path, handler2);
       });
       return this;
     };
@@ -128333,14 +127709,14 @@ var Hono = class _Hono {
   route(path2, app2) {
     const subApp = this.basePath(path2);
     app2.routes.map((r5) => {
-      let handler;
+      let handler2;
       if (app2.errorHandler === errorHandler) {
-        handler = r5.handler;
+        handler2 = r5.handler;
       } else {
-        handler = async (c5, next) => (await compose([], app2.errorHandler)(c5, () => r5.handler(c5, next))).res;
-        handler[COMPOSED_HANDLER] = r5.handler;
+        handler2 = async (c5, next) => (await compose([], app2.errorHandler)(c5, () => r5.handler(c5, next))).res;
+        handler2[COMPOSED_HANDLER] = r5.handler;
       }
-      subApp.#addRoute(r5.method, r5.path, handler, r5.basePath);
+      subApp.#addRoute(r5.method, r5.path, handler2, r5.basePath);
     });
     return this;
   }
@@ -128378,8 +127754,8 @@ var Hono = class _Hono {
    * })
    * ```
    */
-  onError = (handler) => {
-    this.errorHandler = handler;
+  onError = (handler2) => {
+    this.errorHandler = handler2;
     return this;
   };
   /**
@@ -128397,8 +127773,8 @@ var Hono = class _Hono {
    * })
    * ```
    */
-  notFound = (handler) => {
-    this.#notFoundHandler = handler;
+  notFound = (handler2) => {
+    this.#notFoundHandler = handler2;
     return this;
   };
   /**
@@ -128468,25 +127844,25 @@ var Hono = class _Hono {
         return new Request(url2, request);
       };
     })();
-    const handler = async (c5, next) => {
+    const handler2 = async (c5, next) => {
       const res = await applicationHandler(replaceRequest(c5.req.raw), ...getOptions(c5));
       if (res) {
         return res;
       }
       await next();
     };
-    this.#addRoute(METHOD_NAME_ALL, mergePath(path2, "*"), handler);
+    this.#addRoute(METHOD_NAME_ALL, mergePath(path2, "*"), handler2);
     return this;
   }
-  #addRoute(method, path2, handler, baseRoutePath) {
+  #addRoute(method, path2, handler2, baseRoutePath) {
     path2 = mergePath(this._basePath, path2);
     const r5 = {
       basePath: baseRoutePath !== void 0 ? mergePath(this._basePath, baseRoutePath) : this._basePath,
       path: path2,
       method,
-      handler
+      handler: handler2
     };
-    this.router.add(method, path2, [handler, r5]);
+    this.router.add(method, path2, [handler2, r5]);
     this.routes.push(r5);
   }
   #handleError(err, c5) {
@@ -128830,7 +128206,7 @@ var RegExpRouter = class {
       throw e5 === PATH_ERROR ? new UnsupportedPathError(path2) : e5;
     }
   }
-  add(method, path2, handler) {
+  add(method, path2, handler2) {
     const middleware = this.#middleware;
     const routes = this.#routes;
     if (!middleware) {
@@ -128861,7 +128237,7 @@ var RegExpRouter = class {
       for (const handlerMap of [middleware, routes]) {
         for (const m3 of methods2) {
           for (const p3 in handlerMap[m3]) {
-            re.test(p3) && handlerMap[m3][p3].push([handler, path2]);
+            re.test(p3) && handlerMap[m3][p3].push([handler2, path2]);
           }
         }
       }
@@ -128874,7 +128250,7 @@ var RegExpRouter = class {
           this.#insertPath(m3, path22);
           routes[m3][path22] = findMiddleware(middleware[m3], path22) || findMiddleware(middleware[METHOD_NAME_ALL], path22) || [];
         }
-        routes[m3][path22].push([handler, path22]);
+        routes[m3][path22].push([handler2, path22]);
       }
     }
   }
@@ -128924,11 +128300,11 @@ var SmartRouter = class {
   constructor(init2) {
     this.#routers = init2.routers;
   }
-  add(method, path2, handler) {
+  add(method, path2, handler2) {
     if (!this.#routes) {
       throw new Error(MESSAGE_MATCHER_IS_ALREADY_BUILT);
     }
-    this.#routes.push([method, path2, handler]);
+    this.#routes.push([method, path2, handler2]);
   }
   match(method, path2) {
     if (!this.#routes) {
@@ -128980,7 +128356,7 @@ var Node2 = class _Node2 {
   #patterns = [];
   #pattern;
   #params = emptyParams;
-  insert(method, path2, handler) {
+  insert(method, path2, handler2) {
     let curNode = this;
     const parts = splitRoutingPath(path2);
     const possibleKeys = /* @__PURE__ */ new Set();
@@ -129002,7 +128378,7 @@ var Node2 = class _Node2 {
     }
     curNode.#methods.push({
       [method]: {
-        handler,
+        handler: handler2,
         possibleKeys: [...possibleKeys],
         score: ++order
       }
@@ -129127,7 +128503,7 @@ var Node2 = class _Node2 {
         return a5.score - b5.score;
       });
     }
-    return [handlerSets.map(({ handler, params }) => [handler, params])];
+    return [handlerSets.map(({ handler: handler2, params }) => [handler2, params])];
   }
 };
 
@@ -129135,9 +128511,9 @@ var Node2 = class _Node2 {
 var TrieRouter = class {
   name = "TrieRouter";
   #node = new Node2();
-  add(method, path2, handler) {
+  add(method, path2, handler2) {
     for (const result of checkOptionalParameter(path2) || [path2]) {
-      this.#node.insert(method, result, handler);
+      this.#node.insert(method, result, handler2);
     }
   }
   match(method, path2) {
@@ -129233,7 +128609,7 @@ var baseMimes = _baseMimes;
 var import_fs = require("fs");
 var import_path = require("path");
 var import_process = require("process");
-var import_stream2 = require("stream");
+var import_stream = require("stream");
 var COMPRESSIBLE_CONTENT_TYPE_REGEX = /^\s*(?:text\/[^;\s]+|application\/(?:javascript|json|xml|xml-dtd|ecmascript|dart|postscript|rtf|tar|toml|vnd\.dart|vnd\.ms-fontobject|vnd\.ms-opentype|wasm|x-httpd-php|x-javascript|x-ns-proxy-autoconfig|x-sh|x-tar|x-virtualbox-hdd|x-virtualbox-ova|x-virtualbox-ovf|x-virtualbox-vbox|x-virtualbox-vdi|x-virtualbox-vhd|x-virtualbox-vmdk|x-www-form-urlencoded)|font\/(?:otf|ttf)|image\/(?:bmp|vnd\.adobe\.photoshop|vnd\.microsoft\.icon|vnd\.ms-dds|x-icon|x-ms-bmp)|message\/rfc822|model\/gltf-binary|x-shader\/x-fragment|x-shader\/x-vertex|[^;\s]+?\+(?:json|text|xml|yaml))(?:[;\s]|$)/i;
 var ENCODINGS = {
   br: ".br",
@@ -129248,7 +128624,7 @@ var pr54206Applied = () => {
 var useReadableToWeb = pr54206Applied();
 var createStreamBody = (stream2) => {
   if (useReadableToWeb) {
-    return import_stream2.Readable.toWeb(stream2);
+    return import_stream.Readable.toWeb(stream2);
   }
   const body = new ReadableStream({
     start(controller) {
@@ -138988,11 +138364,11 @@ async function prepareKey(entry, key, usage) {
       return keyObject.export();
   }
   cache ||= /* @__PURE__ */ new WeakMap();
-  const cacheKey2 = key;
-  let cached2 = cache.get(cacheKey2);
+  const cacheKey = key;
+  let cached2 = cache.get(cacheKey);
   if (cached2?.[alg2])
     return cached2[alg2];
-  if (cached2 || cache.set(cacheKey2, cached2 = {}), keyObject && typeof keyObject.toCryptoKey == "function") {
+  if (cached2 || cache.set(cacheKey, cached2 = {}), keyObject && typeof keyObject.toCryptoKey == "function") {
     const isPublic = keyObject.type === "public", crv = nist[keyObject.asymmetricKeyDetails?.namedCurve], params = entry.resolve?.({ crv, asymmetricKeyType: keyObject.asymmetricKeyType }) ?? entry.subtle;
     return cached2[alg2] = keyObject.toCryptoKey(params, isPublic, entry.usages[isPublic ? 0 : 1]);
   }
@@ -141679,10 +141055,10 @@ function filterOutputFields(data, additionalFields) {
 // node_modules/.pnpm/better-auth@1.7.4_drizzle-k_ea2b04a29534e000cad1f28b0dbf5cf2/node_modules/better-auth/dist/db/schema.mjs
 var cache2 = /* @__PURE__ */ new WeakMap();
 function getFields(options, modelName, mode) {
-  const cacheKey2 = `${modelName}:${mode}`;
+  const cacheKey = `${modelName}:${mode}`;
   if (!cache2.has(options)) cache2.set(options, /* @__PURE__ */ new Map());
   const tableCache = cache2.get(options);
-  if (tableCache.has(cacheKey2)) return tableCache.get(cacheKey2);
+  if (tableCache.has(cacheKey)) return tableCache.get(cacheKey);
   const coreSchema2 = mode === "output" ? getAuthTables(options)[modelName]?.fields ?? {} : {};
   const additionalFields = modelName === "user" || modelName === "session" || modelName === "account" ? options[modelName]?.additionalFields : void 0;
   let schema3 = {
@@ -141693,7 +141069,7 @@ function getFields(options, modelName, mode) {
     ...schema3,
     ...plugin.schema[modelName].fields
   };
-  tableCache.set(cacheKey2, schema3);
+  tableCache.set(cacheKey, schema3);
   return schema3;
 }
 function parseUserOutput(options, user2) {
@@ -141827,7 +141203,7 @@ var getDate = (span, unit = "ms") => {
 };
 
 // node_modules/.pnpm/better-auth@1.7.4_drizzle-k_ea2b04a29534e000cad1f28b0dbf5cf2/node_modules/better-auth/dist/utils/is-promise.mjs
-function isPromise2(obj) {
+function isPromise(obj) {
   return !!obj && (typeof obj === "object" || typeof obj === "function") && typeof obj.then === "function";
 }
 
@@ -142483,7 +141859,7 @@ init_error();
 function createEndpoint(pathOrOptions, handlerOrOptions, handlerOrNever) {
   const path2 = typeof pathOrOptions === "string" ? pathOrOptions : void 0;
   const options = typeof handlerOrOptions === "object" ? handlerOrOptions : pathOrOptions;
-  const handler = typeof handlerOrOptions === "function" ? handlerOrOptions : handlerOrNever;
+  const handler2 = typeof handlerOrOptions === "function" ? handlerOrOptions : handlerOrNever;
   if ((options.method === "GET" || options.method === "HEAD") && options.body) throw new BetterCallError("Body is not allowed with GET or HEAD methods");
   if (path2 && /\/{2,}/.test(path2)) throw new BetterCallError("Path cannot contain consecutive slashes");
   const internalHandler = async (...inputCtx) => {
@@ -142503,7 +141879,7 @@ function createEndpoint(pathOrOptions, handlerOrOptions, handlerOrNever) {
         code: "VALIDATION_ERROR"
       });
     }
-    const response = await handler(internalContext).catch(async (e5) => {
+    const response = await handler2(internalContext).catch(async (e5) => {
       if (isAPIError(e5)) {
         const onAPIError = options.onAPIError;
         if (onAPIError) await onAPIError(e5);
@@ -142538,27 +141914,27 @@ function combineMiddleware(local, configured) {
 createEndpoint.create = (opts) => {
   function createConfiguredEndpoint(...args) {
     if (args.length === 3) {
-      const [path2, options2, handler2] = args;
+      const [path2, options2, handler3] = args;
       return createEndpoint(path2, {
         ...options2,
         use: combineMiddleware(options2.use, opts?.use)
-      }, handler2);
+      }, handler3);
     }
-    const [options, handler] = args;
+    const [options, handler2] = args;
     return createEndpoint({
       ...options,
       use: combineMiddleware(options.use, opts?.use)
-    }, handler);
+    }, handler2);
   }
   return createConfiguredEndpoint;
 };
 
 // node_modules/.pnpm/better-call@1.4.0_zod@4.6.5/node_modules/better-call/dist/middleware.mjs
 init_error();
-function createMiddleware(optionsOrHandler, handler) {
+function createMiddleware(optionsOrHandler, handler2) {
   const internalHandler = async (inputCtx) => {
     const context = inputCtx;
-    const _handler = typeof optionsOrHandler === "function" ? optionsOrHandler : handler;
+    const _handler = typeof optionsOrHandler === "function" ? optionsOrHandler : handler2;
     const internalContext = await createInternalContext(context, {
       options: typeof optionsOrHandler === "function" ? {} : optionsOrHandler,
       path: "/"
@@ -142586,14 +141962,14 @@ function createMiddleware(optionsOrHandler, handler) {
   return internalHandler;
 }
 createMiddleware.create = (opts) => {
-  function fn(optionsOrHandler, handler) {
+  function fn(optionsOrHandler, handler2) {
     if (typeof optionsOrHandler === "function") return createMiddleware({ use: opts?.use }, optionsOrHandler);
-    if (!handler) throw new Error("Middleware handler is required");
+    if (!handler2) throw new Error("Middleware handler is required");
     return createMiddleware({
       ...optionsOrHandler,
       method: "*",
       use: [...opts?.use || [], ...optionsOrHandler.use || []]
-    }, handler);
+    }, handler2);
   }
   return fn;
 };
@@ -143254,16 +142630,16 @@ var createRouter$1 = (endpoints, config5) => {
       else query[key] = [query[key], value];
       else query[key] = value;
     });
-    const handler = route.data;
+    const handler2 = route.data;
     try {
-      const allowedMediaTypes = handler.options.metadata?.allowedMediaTypes || config5?.allowedMediaTypes;
+      const allowedMediaTypes = handler2.options.metadata?.allowedMediaTypes || config5?.allowedMediaTypes;
       const context = {
         path: path2,
         method: request.method,
         headers: request.headers,
         params: route.params ? { ...route.params } : {},
         request,
-        body: handler.options.disableBody ? void 0 : await getBody(handler.options.cloneRequest ? request.clone() : request, allowedMediaTypes),
+        body: handler2.options.disableBody ? void 0 : await getBody(handler2.options.cloneRequest ? request.clone() : request, allowedMediaTypes),
         query,
         _flag: "router",
         asResponse: true,
@@ -143278,7 +142654,7 @@ var createRouter$1 = (endpoints, config5) => {
         });
         if (res instanceof Response) return res;
       }
-      return await handler(context);
+      return await handler2(context);
     } catch (error64) {
       if (config5?.onError) try {
         const errorResponse = await config5.onError(error64, request);
@@ -143632,7 +143008,7 @@ async function setCookieCache(ctx, session2, dontRememberMe) {
     if (typeof versionConfig === "string") version4 = versionConfig;
     else if (typeof versionConfig === "function") {
       const result = versionConfig(session2.session, session2.user);
-      version4 = isPromise2(result) ? await result : result;
+      version4 = isPromise(result) ? await result : result;
     }
   }
   const sessionData = {
@@ -144260,12 +143636,12 @@ var createAuthMiddleware = createMiddleware.create({ use: [optionsMiddleware, cr
   return {};
 })] });
 var createEndpointWithAuthContext = createEndpoint.create({ use: [optionsMiddleware] });
-function wrapEndpointHandler(handler, options) {
+function wrapEndpointHandler(handler2, options) {
   const noStore = options.metadata?.noStore === true;
   return async (context) => {
     if (noStore) for (const [name, value] of Object.entries(NO_STORE_HEADERS)) context.setHeader(name, value);
     try {
-      return await runWithEndpointContext(context, () => handler(context));
+      return await runWithEndpointContext(context, () => handler2(context));
     } catch (error64) {
       attachResponseHeadersToAPIError(context.responseHeaders, error64);
       throw error64;
@@ -144274,11 +143650,11 @@ function wrapEndpointHandler(handler, options) {
 }
 function createAuthEndpoint(...args) {
   if (args.length === 3) {
-    const [path2, options2, handler2] = args;
-    return createEndpointWithAuthContext(path2, options2, wrapEndpointHandler(handler2, options2));
+    const [path2, options2, handler3] = args;
+    return createEndpointWithAuthContext(path2, options2, wrapEndpointHandler(handler3, options2));
   }
-  const [options, handler] = args;
-  return createEndpointWithAuthContext(options, wrapEndpointHandler(handler, options));
+  const [options, handler2] = args;
+  return createEndpointWithAuthContext(options, wrapEndpointHandler(handler2, options));
 }
 function withServerOnly(options) {
   return {
@@ -144289,7 +143665,7 @@ function withServerOnly(options) {
     }
   };
 }
-createAuthEndpoint.serverOnly = (options, handler) => createAuthEndpoint(withServerOnly(options), handler);
+createAuthEndpoint.serverOnly = (options, handler2) => createAuthEndpoint(withServerOnly(options), handler2);
 
 // node_modules/.pnpm/better-auth@1.7.4_drizzle-k_ea2b04a29534e000cad1f28b0dbf5cf2/node_modules/better-auth/dist/api/middlewares/authorization.mjs
 function requireResourceOwnership(config5) {
@@ -146864,7 +146240,7 @@ async function runPluginInit(context) {
   for (const plugin of plugins) if (plugin.init) {
     const initPromise = plugin.init(context);
     let result;
-    if (isPromise2(initPromise)) result = await initPromise;
+    if (isPromise(initPromise)) result = await initPromise;
     else result = initPromise;
     if (typeof result === "object") {
       if (result.options) {
@@ -156194,7 +155570,7 @@ Most of the features of Better Auth will not work correctly.`);
     hasPlugin: hasPluginFn
   };
   const initOrPromise = runPluginInit(ctx);
-  if (isPromise2(initOrPromise)) await initOrPromise;
+  if (isPromise(initOrPromise)) await initOrPromise;
   ctx.checkSchema = schemaCheckFor(ctx.adapter);
   return ctx;
 }
@@ -156238,7 +155614,7 @@ var createBetterAuth = (options, initFn) => {
     };
     return acc;
   }, {});
-  const handler = async (request) => {
+  const handler2 = async (request) => {
     const ctx = await authContext;
     const basePath = ctx.options.basePath || "/api/auth";
     let handlerCtx;
@@ -156259,12 +155635,12 @@ var createBetterAuth = (options, initFn) => {
       handlerCtx.trustedOrigins = await getTrustedOrigins(trustOptions, request);
       handlerCtx.trustedProviders = await getTrustedProviders(trustOptions, request);
     }
-    const { handler: handler2 } = router(handlerCtx, options);
-    return runWithAdapter(handlerCtx.adapter, () => handler2(request));
+    const { handler: handler3 } = router(handlerCtx, options);
+    return runWithAdapter(handlerCtx.adapter, () => handler3(request));
   };
   return {
-    handler,
-    fetch: handler,
+    handler: handler2,
+    fetch: handler2,
     api,
     options,
     $context: authContext,
@@ -168698,7 +168074,33 @@ app.onError((error64, c5) => {
 });
 
 // apps/api/src/vercel.ts
-var vercel_default = handle(app);
+async function handler(incoming, outgoing) {
+  const chunks = [];
+  for await (const chunk of incoming) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  const body = chunks.length > 0 ? Buffer.concat(chunks) : void 0;
+  const forwardedProtocol = String(incoming.headers["x-forwarded-proto"] ?? "https").split(",")[0].trim();
+  const forwardedHost = String(incoming.headers["x-forwarded-host"] ?? incoming.headers.host ?? "localhost");
+  const url2 = new URL(incoming.url ?? "/", `${forwardedProtocol}://${forwardedHost}`);
+  const headers = new Headers();
+  for (let index2 = 0; index2 < incoming.rawHeaders.length; index2 += 2) {
+    const key = incoming.rawHeaders[index2];
+    const value = incoming.rawHeaders[index2 + 1];
+    if (key && value && !key.startsWith(":")) headers.append(key, value);
+  }
+  headers.delete("host");
+  if (body) headers.set("content-length", String(body.byteLength));
+  const request = new Request(url2, { method: incoming.method, headers, body });
+  const response = await app.fetch(request);
+  outgoing.statusCode = response.status;
+  outgoing.statusMessage = response.statusText;
+  const cookies = typeof response.headers.getSetCookie === "function" ? response.headers.getSetCookie() : [];
+  response.headers.forEach((value, key) => {
+    if (key.toLowerCase() === "set-cookie") return;
+    outgoing.setHeader(key, value);
+  });
+  for (const cookie of cookies) outgoing.appendHeader("set-cookie", cookie);
+  outgoing.end(Buffer.from(await response.arrayBuffer()));
+}
 /*! Bundled license information:
 
 pvtsutils/build/index.js:
