@@ -1,7 +1,5 @@
-import { app } from "../apps/api/src/app";
+import handler from "../apps/api/src/vercel";
 
 export const config = { maxDuration: 60 };
 
-export default async function handler(request: Request) {
-  return app.fetch(request);
-}
+export default handler;
