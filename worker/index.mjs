@@ -7,10 +7,11 @@ export default {
       const target = new URL(`${incoming.pathname}${incoming.search}`, API_ORIGIN);
       const headers = new Headers(request.headers);
       headers.delete("host");
+      headers.delete("content-length");
       headers.set("x-forwarded-host", incoming.host);
       headers.set("x-forwarded-proto", incoming.protocol.replace(":", ""));
       const init = { method: request.method, headers, redirect: "manual" };
-      if (request.method !== "GET" && request.method !== "HEAD") init.body = request.body;
+      if (request.method !== "GET" && request.method !== "HEAD") init.body = await request.arrayBuffer();
       try {
         return await fetch(target.toString(), init);
       } catch (error) {
