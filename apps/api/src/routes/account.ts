@@ -33,8 +33,6 @@ accountRoute.post("/register", async (c) => {
   return new Response(body, { status: response.status, headers: response.headers });
 });
 
-accountRoute.post("/echo", async (c) => c.json({ raw: await c.req.text() }));
-
 accountRoute.post("/username-available", async (c) => {
   const input = z.object({ username: z.string().trim().min(3).max(32).regex(/^[a-zA-Z0-9_-]+$/) }).parse(await c.req.json());
   const [existing] = await db.select({ id: user.id }).from(user).where(eq(user.email, accountEmail(input.username))).limit(1);

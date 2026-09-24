@@ -166760,7 +166760,6 @@ accountRoute.post("/register", async (c5) => {
   const body = await response.text();
   return new Response(body, { status: response.status, headers: response.headers });
 });
-accountRoute.post("/echo", async (c5) => c5.json({ raw: await c5.req.text() }));
 accountRoute.post("/username-available", async (c5) => {
   const input2 = external_exports.object({ username: external_exports.string().trim().min(3).max(32).regex(/^[a-zA-Z0-9_-]+$/) }).parse(await c5.req.json());
   const [existing] = await db.select({ id: user.id }).from(user).where(eq(user.email, accountEmail(input2.username))).limit(1);
