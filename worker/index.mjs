@@ -11,9 +11,16 @@ export default {
       headers.set("x-forwarded-proto", incoming.protocol.replace(":", ""));
       const init = { method: request.method, headers, redirect: "manual" };
       if (request.method !== "GET" && request.method !== "HEAD") {
-        const body = await request.arrayBuffer();
-        headers.set("content-length", String(body.byteLength));
-        init.body = body;
+        const contentType = request.headers.get("content-type") ?? "";
+        if (contentType.includes("application/json") || contentType.startsWith("text/")) {
+          const body = await request.text();
+          headers.set("content-length", String(new TextEncoder().encode(body).byteLength));
+          init.body = body;
+        } else {
+          const body = await request.arrayBuffer();
+          headers.set("content-length", String(body.byteLength));
+          init.body = body;
+        }
       }
       try {
         const upstream = await fetch(target.toString(), init);
