@@ -69,6 +69,21 @@ async function sendChannels(workspaceId: string, itemId: string, deliveryId: str
   return errors.length > 0 && !delivered ? { delivered: false, error: errors.join("; ") } : { delivered, error: errors.length ? errors.join("; ") : undefined };
 }
 
+export async function sendTestPush(workspaceId: string): Promise<number> {
+  if (!config.VAPID_PUBLIC_KEY || !config.VAPID_PRIVATE_KEY) return 0;
+  const subscriptions = await db.select().from(pushSubscriptions).where(eq(pushSubscriptions.workspaceId, workspaceId));
+  let sent = 0;
+  for (const subscription of subscriptions) {
+    try {
+      await webpush.sendNotification({ endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } }, JSON.stringify({ title: "个人日程测试通知", body: "后台提醒已连接，PWA 最小化时也能收到系统通知。", url: "/", tag: `test-${subscription.id}`, deliveryId: `test-${Date.now()}-${subscription.id}` }));
+      sent += 1;
+    } catch (error) {
+      const statusCode = (error as { statusCode?: number }).statusCode;
+      if (statusCode === 404 || statusCode === 410) await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, subscription.id));
+    }
+  }
+  return sent;
+}
 export async function runReminderTick(): Promise<{ generated: number; delivered: number; missed: number }> {
   const now = new Date(); const values = await loadExpandedItems(); const workspaceIds = [...new Set(values.map((item) => item.workspaceId))]; const semesterRows = workspaceIds.length > 0 ? await db.select().from(appSettings).where(inArray(appSettings.workspaceId, workspaceIds)) : []; const semesterByWorkspace = new Map(semesterRows.map((row) => [row.workspaceId, row.semesterStartDate ? new Date(`${row.semesterStartDate}T12:00:00`) : null])); let generated = 0;
   for (const item of values) {

@@ -16,7 +16,7 @@ self.addEventListener("push", (event) => {
   const fallback = { title: "日程提醒", body: "有一项日程需要处理", url: "/" };
   let payload = fallback;
   try { payload = { ...fallback, ...(event.data?.json() as Partial<typeof fallback>) }; } catch { payload = { ...fallback, body: event.data?.text() ?? fallback.body }; }
-  event.waitUntil((async () => { await self.registration.showNotification(payload.title, { body: payload.body, icon: "/pwa-192.svg", badge: "/pwa-192.svg", tag: payload.url, data: { url: payload.url }, requireInteraction: false, silent: false }); const deliveryId = (payload as typeof fallback & { deliveryId?: string }).deliveryId; const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true }); for (const client of clients) client.postMessage({ type: "reminder-push", deliveryId }); })());
+  event.waitUntil((async () => { const notificationDeliveryId = (payload as typeof fallback & { deliveryId?: string }).deliveryId; await self.registration.showNotification(payload.title, { body: payload.body, icon: "/pwa-192.png", badge: "/pwa-192.png", tag: notificationDeliveryId ?? payload.url, data: { url: payload.url }, requireInteraction: false, silent: false }); const deliveryId = (payload as typeof fallback & { deliveryId?: string }).deliveryId; const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true }); for (const client of clients) client.postMessage({ type: "reminder-push", deliveryId }); })());
 });
 
 self.addEventListener("notificationclick", (event) => {

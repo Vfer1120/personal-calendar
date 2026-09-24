@@ -166899,6 +166899,21 @@ async function sendChannels(workspaceId, itemId, deliveryId, channels, title, st
   }
   return errors.length > 0 && !delivered ? { delivered: false, error: errors.join("; ") } : { delivered, error: errors.length ? errors.join("; ") : void 0 };
 }
+async function sendTestPush(workspaceId) {
+  if (!config4.VAPID_PUBLIC_KEY || !config4.VAPID_PRIVATE_KEY) return 0;
+  const subscriptions = await db2.select().from(pushSubscriptions).where(eq(pushSubscriptions.workspaceId, workspaceId));
+  let sent = 0;
+  for (const subscription of subscriptions) {
+    try {
+      await import_web_push.default.sendNotification({ endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } }, JSON.stringify({ title: "\u4E2A\u4EBA\u65E5\u7A0B\u6D4B\u8BD5\u901A\u77E5", body: "\u540E\u53F0\u63D0\u9192\u5DF2\u8FDE\u63A5\uFF0CPWA \u6700\u5C0F\u5316\u65F6\u4E5F\u80FD\u6536\u5230\u7CFB\u7EDF\u901A\u77E5\u3002", url: "/", tag: `test-${subscription.id}`, deliveryId: `test-${Date.now()}-${subscription.id}` }));
+      sent += 1;
+    } catch (error64) {
+      const statusCode = error64.statusCode;
+      if (statusCode === 404 || statusCode === 410) await db2.delete(pushSubscriptions).where(eq(pushSubscriptions.id, subscription.id));
+    }
+  }
+  return sent;
+}
 async function runReminderTick() {
   const now2 = /* @__PURE__ */ new Date();
   const values = await loadExpandedItems();
@@ -167671,6 +167686,11 @@ remindersRoute.post("/push-subscriptions", async (c5) => {
   return c5.json({ subscription }, 201);
 });
 remindersRoute.get("/vapid-public-key", (c5) => c5.json({ publicKey: config3.VAPID_PUBLIC_KEY ?? null }));
+remindersRoute.post("/test-push", async (c5) => {
+  if (!config3.VAPID_PUBLIC_KEY || !config3.VAPID_PRIVATE_KEY) return c5.json({ error: "VAPID_NOT_CONFIGURED", message: "\u670D\u52A1\u5668\u5C1A\u672A\u914D\u7F6E VAPID \u5BC6\u94A5" }, 503);
+  const sent = await sendTestPush(c5.get("auth").workspaceId);
+  return c5.json({ sent });
+});
 
 // apps/api/src/routes/schedule-periods.ts
 var schedulePeriodsRoute = new Hono2();

@@ -1,11 +1,13 @@
 import { and, desc, eq, lte, or } from "drizzle-orm";
 import { Hono } from "hono";
+
 import { z } from "zod";
 import { deliveries, items, pushSubscriptions, reminderRules } from "@calendar/db/schema";
 import { config } from "../config";
 import { db } from "../context";
 import { blockDemoFeature, requireAuth, type AppEnv } from "../middleware";
 import { publish } from "../events";
+import { sendTestPush } from "../../../worker/src/reminders";
 
 export const remindersRoute = new Hono<AppEnv>();
 remindersRoute.use("*", requireAuth, blockDemoFeature("reminders"));
@@ -45,3 +47,9 @@ remindersRoute.post("/push-subscriptions", async (c) => {
 });
 
 remindersRoute.get("/vapid-public-key", (c) => c.json({ publicKey: config.VAPID_PUBLIC_KEY ?? null }));
+
+remindersRoute.post("/test-push", async (c) => {
+  if (!config.VAPID_PUBLIC_KEY || !config.VAPID_PRIVATE_KEY) return c.json({ error: "VAPID_NOT_CONFIGURED", message: "服务器尚未配置 VAPID 密钥" }, 503);
+  const sent = await sendTestPush(c.get("auth").workspaceId);
+  return c.json({ sent });
+});
