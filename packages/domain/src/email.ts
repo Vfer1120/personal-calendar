@@ -17,3 +17,22 @@ export async function sendBrevoEmail(input: BrevoEmailInput): Promise<void> {
     throw new Error(`邮件服务发送失败（${response.status}）${detail ? `: ${detail.slice(0, 300)}` : ""}`);
   }
 }
+export interface Smtp2goEmailInput {
+  apiKey: string;
+  sender: string;
+  to: string;
+  subject: string;
+  text: string;
+}
+
+export async function sendSmtp2goEmail(input: Smtp2goEmailInput): Promise<void> {
+  const response = await fetch("https://api.smtp2go.com/v3/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ api_key: input.apiKey, sender: input.sender, to: [input.to], subject: input.subject, text_body: input.text })
+  });
+  const payload = await response.json().catch(() => null) as { data?: { succeeded?: number; failures?: unknown[] } } | null;
+  if (!response.ok || (payload?.data?.succeeded ?? 0) < 1) {
+    throw new Error(`邮件服务发送失败（${response.status}）`);
+  }
+}

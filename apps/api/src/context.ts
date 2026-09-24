@@ -1,7 +1,7 @@
 import { createDatabase, type Database } from "@calendar/db";
 import { eq, sql } from "drizzle-orm";
 import { user, workspaces } from "@calendar/db/schema";
-import { sendBrevoEmail } from "@calendar/domain";
+import { sendBrevoEmail, sendSmtp2goEmail } from "@calendar/domain";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { emailOTP } from "better-auth/plugins";
@@ -42,6 +42,10 @@ export const auth = betterAuth({
         }
         if (config.NODE_ENV !== "production") {
           console.info(`[auth] email OTP for ${email}: ${otp}`);
+          return;
+        }
+        if (config.SMTP2GO_API_KEY) {
+          await sendSmtp2goEmail({ apiKey: config.SMTP2GO_API_KEY, sender: `个人日程 <${config.OWNER_EMAIL ?? email}>`, to: email, subject: "个人日程登录验证码", text: `验证码：${otp}，5 分钟内有效。` });
           return;
         }
         if (config.BREVO_API_KEY) {
