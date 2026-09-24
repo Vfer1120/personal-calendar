@@ -1,24 +1,20 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm -w run vercel-build",
-  "outputDirectory": "dist",
-  "regions": ["sin1"],
-  "build": {
-    "env": {
-      "PNPM_CONFIG_DANGEROUSLY_ALLOW_ALL_BUILDS": "true"
-    }
-  },
-  "functions": {
-    "api/[...route].ts": {
-      "maxDuration": 60,
-      "memory": 1024
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/:path((?!api/)(?!.*\\.).*)",
-      "destination": "/index.html"
-    }
-  ]
+    "$schema":  "https://openapi.vercel.sh/vercel.json",
+    "installCommand":  "pnpm install --frozen-lockfile",
+    "buildCommand":  "pnpm -w run vercel-build",
+    "outputDirectory":  "dist",
+    "regions":  [
+                    "sin1"
+                ],
+    "build":  {
+                  "env":  {
+                              "PNPM_CONFIG_DANGEROUSLY_ALLOW_ALL_BUILDS":  "true"
+                          }
+              },
+    "functions":  {
+                      "api/[...route].ts":  {
+                                                "maxDuration":  60,
+                                                "memory":  1024
+                                            }
+                  }
 }
