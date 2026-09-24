@@ -13,7 +13,9 @@ export default {
       const init = { method: request.method, headers, redirect: "manual" };
       if (request.method !== "GET" && request.method !== "HEAD") init.body = await request.arrayBuffer();
       try {
-        return await fetch(target.toString(), init);
+        const upstream = await fetch(target.toString(), init);
+        const body = await upstream.arrayBuffer();
+        return new Response(body, { status: upstream.status, statusText: upstream.statusText, headers: upstream.headers });
       } catch (error) {
         return new Response(`proxy-error: ${error instanceof Error ? error.message : String(error)}`, { status: 502 });
       }
