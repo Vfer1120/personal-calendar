@@ -13,6 +13,7 @@ import { config, corsOrigins } from "./config";
 import { subscribe } from "./events";
 import { requireAuth, type AppEnv } from "./middleware";
 import { aiRoute } from "./routes/ai";
+import { accountRoute } from "./routes/account";
 import { cronRoute } from "./routes/cron";
 import { demoRoute } from "./routes/demo";
 import { reviewsRoute } from "./routes/reviews";

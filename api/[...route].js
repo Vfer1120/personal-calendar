@@ -166755,7 +166755,7 @@ var auth = betterAuth({
   secret: config3.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "pg" }),
   trustedOrigins: [...corsOrigins, config3.APP_URL],
-  emailAndPassword: { enabled: false },
+  emailAndPassword: { enabled: true, requireEmailVerification: false, minPasswordLength: 8 },
   plugins: [
     emailOTP({
       disableSignUp: false,
