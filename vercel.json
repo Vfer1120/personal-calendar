@@ -12,7 +12,7 @@
                           }
               },
     "functions":  {
-                      "api/[...route].ts":  {
+                      "api/[...route].js":  {
                                                 "maxDuration":  60,
                                                 "memory":  1024
                                             }
