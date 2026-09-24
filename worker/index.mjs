@@ -5,7 +5,7 @@ export default {
     const incoming = new URL(request.url);
     if (incoming.pathname === "/__worker_test") return new Response("worker-ok", { status: 200 });
     if (incoming.pathname.startsWith("/api/")) {
-      const target = new URL(`${incoming.pathname}${incoming.search}`, API_ORIGIN);
+      const apiOrigin = incoming.searchParams.get("__origin") ?? API_ORIGIN;`r`n      const target = new URL(`${incoming.pathname}${incoming.search.replace(/([?&])__origin=[^&]*/g, "").replace(/[?&]$/, "")}`, apiOrigin);
       const headers = new Headers(request.headers);
       headers.delete("host");
       headers.set("x-forwarded-host", incoming.host);
