@@ -167358,6 +167358,38 @@ aiRoute.post("/extract", async (c5) => {
   }
 });
 
+// apps/api/src/routes/account.ts
+init_zod();
+var accountRoute = new Hono2();
+function accountEmail(username) {
+  return `${username.toLowerCase()}@calendar.local`;
+}
+accountRoute.post("/register", async (c5) => {
+  const input2 = external_exports.object({
+    username: external_exports.string().trim().min(3).max(32).regex(/^[a-zA-Z0-9_-]+$/),
+    password: external_exports.string().min(8).max(128),
+    inviteCode: external_exports.string().min(1)
+  }).parse(await c5.req.json());
+  if (!config3.ALLOW_MULTI_USER && config3.NODE_ENV === "production") return c5.json({ error: "REGISTRATION_DISABLED", message: "\u5F53\u524D\u5B9E\u4F8B\u672A\u5F00\u653E\u6CE8\u518C" }, 403);
+  if (!config3.REGISTRATION_INVITE_CODE || input2.inviteCode !== config3.REGISTRATION_INVITE_CODE) return c5.json({ error: "INVALID_INVITE_CODE", message: "\u9080\u8BF7\u7801\u4E0D\u6B63\u786E" }, 403);
+  const email3 = accountEmail(input2.username);
+  const [existing] = await db.select({ id: user.id }).from(user).where(eq(user.email, email3)).limit(1);
+  if (existing) return c5.json({ error: "USERNAME_EXISTS", message: "\u8BE5\u7528\u6237\u540D\u5DF2\u88AB\u4F7F\u7528" }, 409);
+  const origin = new URL(config3.BETTER_AUTH_URL).origin;
+  const response = await auth.handler(new Request(new URL("/api/auth/sign-up/email", origin), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: config3.APP_URL },
+    body: JSON.stringify({ email: email3, password: input2.password, name: input2.username })
+  }));
+  const body = await response.text();
+  return new Response(body, { status: response.status, headers: response.headers });
+});
+accountRoute.post("/username-available", async (c5) => {
+  const input2 = external_exports.object({ username: external_exports.string().trim().min(3).max(32).regex(/^[a-zA-Z0-9_-]+$/) }).parse(await c5.req.json());
+  const [existing] = await db.select({ id: user.id }).from(user).where(eq(user.email, accountEmail(input2.username))).limit(1);
+  return c5.json({ available: !existing });
+});
+
 // apps/worker/src/reminders.ts
 var import_nodemailer = __toESM(require_nodemailer(), 1);
 var import_web_push = __toESM(require_src2(), 1);
@@ -168641,6 +168673,7 @@ app.get("/api/v1/events", requireAuth, async (c5) => {
     });
   });
 });
+app.route("/api/v1/account", accountRoute);
 app.route("/api/v1/ai", aiRoute);
 app.route("/api/v1/internal/cron", cronRoute);
 app.route("/api/v1/items", itemsRoute);

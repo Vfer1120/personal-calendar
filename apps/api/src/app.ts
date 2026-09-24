@@ -59,6 +59,7 @@ app.get("/api/v1/events", requireAuth, async (c) => {
     await new Promise<void>((resolve) => { c.req.raw.signal.addEventListener("abort", () => resolve(), { once: true }); });
   });
 });
+app.route("/api/v1/account", accountRoute);
 app.route("/api/v1/ai", aiRoute);
 app.route("/api/v1/internal/cron", cronRoute);
 app.route("/api/v1/items", itemsRoute);
