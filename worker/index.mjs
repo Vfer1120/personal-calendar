@@ -1,4 +1,4 @@
-const API_ORIGIN = "https://personal-calendar-git-master-cjk-calendar.vercel.app";
+const API_ORIGIN = "https://personal-calendar-rouge.vercel.app";
 
 export default {
   async fetch(request, env) {
