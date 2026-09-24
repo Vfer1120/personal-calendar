@@ -10,6 +10,7 @@ interface SettingsPanelProps { open: boolean; dark: boolean; onDarkChange: (valu
 
 interface Subscription { id: string; name: string; url: string; lastFetchedAt: string | null; lastError: string | null; }
 function normalizeSemesterDate(value: string | null | undefined): string { return value ? String(value).slice(0, 10) : ""; }
+function urlBase64ToUint8Array(value: string): Uint8Array { const padding = "=".repeat((4 - value.length % 4) % 4); const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/"); const raw = atob(base64); return Uint8Array.from(raw, (character) => character.charCodeAt(0)); }
 
 export function SettingsPanel({ open, dark, onDarkChange, onClose, onDataChanged, demoMode = false, demoExpiresAt = null, onDemoReset, onDemoLeave }: SettingsPanelProps) {
   const semesterTouched = useRef(false); const installPrompt = useInstallPrompt(); const [message, setMessage] = useState(""); const [storagePersisted, setStoragePersisted] = useState(false); const [pushStatus, setPushStatus] = useState<"unsupported" | "default" | "denied" | "granted" | "subscribed">("default"); const [pushBusy, setPushBusy] = useState(false); const [subscriptions, setSubscriptions] = useState<Subscription[]>([]); const [subscriptionName, setSubscriptionName] = useState(""); const [subscriptionUrl, setSubscriptionUrl] = useState(""); const [icsUrl, setIcsUrl] = useState(""); const [semesterStartDate, setSemesterStartDate] = useState(""); const [reminderSoundEnabled, setReminderSoundEnabled] = useState(true); const [tagName, setTagName] = useState("");
@@ -36,7 +37,7 @@ export function SettingsPanel({ open, dark, onDarkChange, onClose, onDataChanged
       const publicKey = (await api<{ publicKey: string | null }>("/api/v1/reminders/vapid-public-key")).publicKey;
       if (!publicKey) throw new Error("服务器尚未配置 VAPID 密钥");
       const registration = await navigator.serviceWorker.ready;
-      const subscription = (await registration.pushManager.getSubscription()) ?? await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: publicKey });
+      const subscription = (await registration.pushManager.getSubscription()) ?? await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(publicKey) as BufferSource });
       await apiJson("/api/v1/reminders/push-subscriptions", "POST", subscription.toJSON());
       setPushStatus("subscribed");
       setMessage("后台提醒已启用，最小化后也可接收系统通知");
