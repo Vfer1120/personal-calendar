@@ -13,7 +13,11 @@ export default {
       const init = { method: request.method, headers, redirect: "manual" };
       if (request.method !== "GET" && request.method !== "HEAD") init.body = request.body;
       try {
-        return await fetch(target.toString(), init);
+        const response = await fetch(target.toString(), init);
+        if (incoming.searchParams.get("__debug") === "1") {
+          return Response.json({ target: target.toString(), status: response.status, contentType: response.headers.get("content-type") });
+        }
+        return response;
       } catch (error) {
         return new Response(`proxy-error: ${error instanceof Error ? error.message : String(error)}`, { status: 502 });
       }
