@@ -36,3 +36,23 @@ export async function sendSmtp2goEmail(input: Smtp2goEmailInput): Promise<void> 
     throw new Error(`邮件服务发送失败（${response.status}）`);
   }
 }
+export interface MailjetEmailInput {
+  apiKey: string;
+  secretKey: string;
+  sender: { name: string; email: string };
+  to: string;
+  subject: string;
+  text: string;
+}
+
+export async function sendMailjetEmail(input: MailjetEmailInput): Promise<void> {
+  const response = await fetch("https://api.mailjet.com/v3.1/send", {
+    method: "POST",
+    headers: { Authorization: `Basic ${btoa(`${input.apiKey}:${input.secretKey}`)}`, "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ Messages: [{ From: input.sender, To: [{ Email: input.to }], Subject: input.subject, TextPart: input.text }] })
+  });
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`邮件服务发送失败（${response.status}）${detail ? `: ${detail.slice(0, 300)}` : ""}`);
+  }
+}

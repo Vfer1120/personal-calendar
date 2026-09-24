@@ -2,7 +2,7 @@ import { and, eq, inArray, isNull, lte, or } from "drizzle-orm";
 import nodemailer from "nodemailer";
 import webpush from "web-push";
 import { appSettings, deliveries, itemTags, items, pushSubscriptions, recurrenceExceptions, reminderRules } from "@calendar/db/schema";
-import { expandItems, sendBrevoEmail, sendSmtp2goEmail, type ExpandedItem, type ExpandedOccurrence } from "@calendar/domain";
+import { expandItems, sendBrevoEmail, sendMailjetEmail, sendSmtp2goEmail, type ExpandedItem, type ExpandedOccurrence } from "@calendar/domain";
 import { db } from "./db";
 import { config } from "./config";
 
@@ -51,7 +51,10 @@ async function sendChannels(workspaceId: string, itemId: string, deliveryId: str
   }
   if (channels.includes("email") && process.env.OWNER_EMAIL) {
     try {
-      if (config.SMTP2GO_API_KEY) {
+      if (config.MAILJET_API_KEY && config.MAILJET_SECRET_KEY) {
+        await sendMailjetEmail({ apiKey: config.MAILJET_API_KEY, secretKey: config.MAILJET_SECRET_KEY, sender: { name: "个人日程", email: process.env.OWNER_EMAIL }, to: process.env.OWNER_EMAIL, subject: message.title, text: message.body });
+        delivered = true;
+      } else if (config.SMTP2GO_API_KEY) {
         await sendSmtp2goEmail({ apiKey: config.SMTP2GO_API_KEY, sender: `个人日程 <${process.env.OWNER_EMAIL}>`, to: process.env.OWNER_EMAIL, subject: message.title, text: message.body });
         delivered = true;
       } else if (config.BREVO_API_KEY) {

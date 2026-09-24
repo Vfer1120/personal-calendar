@@ -137875,6 +137875,17 @@ async function sendSmtp2goEmail(input2) {
     throw new Error(`\u90AE\u4EF6\u670D\u52A1\u53D1\u9001\u5931\u8D25\uFF08${response.status}\uFF09`);
   }
 }
+async function sendMailjetEmail(input2) {
+  const response = await fetch("https://api.mailjet.com/v3.1/send", {
+    method: "POST",
+    headers: { Authorization: `Basic ${btoa(`${input2.apiKey}:${input2.secretKey}`)}`, "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ Messages: [{ From: input2.sender, To: [{ Email: input2.to }], Subject: input2.subject, TextPart: input2.text }] })
+  });
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`\u90AE\u4EF6\u670D\u52A1\u53D1\u9001\u5931\u8D25\uFF08${response.status}\uFF09${detail ? `: ${detail.slice(0, 300)}` : ""}`);
+  }
+}
 
 // node_modules/.pnpm/better-auth@1.7.4_drizzle-k_ea2b04a29534e000cad1f28b0dbf5cf2/node_modules/better-auth/dist/utils/wildcard.mjs
 function escapeRegExpChar(char2) {
@@ -166706,6 +166717,8 @@ var envSchema = external_exports.object({
   SMTP_URL: external_exports.string().optional(),
   BREVO_API_KEY: external_exports.string().optional(),
   SMTP2GO_API_KEY: external_exports.string().optional(),
+  MAILJET_API_KEY: external_exports.string().optional(),
+  MAILJET_SECRET_KEY: external_exports.string().optional(),
   SMTP_FROM: external_exports.string().default("Calendar <calendar@example.com>"),
   VAPID_PUBLIC_KEY: external_exports.string().optional(),
   VAPID_PRIVATE_KEY: external_exports.string().optional(),
@@ -166767,6 +166780,10 @@ var auth = betterAuth({
         }
         if (config3.NODE_ENV !== "production") {
           console.info(`[auth] email OTP for ${email3}: ${otp}`);
+          return;
+        }
+        if (config3.MAILJET_API_KEY && config3.MAILJET_SECRET_KEY) {
+          await sendMailjetEmail({ apiKey: config3.MAILJET_API_KEY, secretKey: config3.MAILJET_SECRET_KEY, sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: config3.OWNER_EMAIL ?? email3 }, to: email3, subject: "\u4E2A\u4EBA\u65E5\u7A0B\u767B\u5F55\u9A8C\u8BC1\u7801", text: `\u9A8C\u8BC1\u7801\uFF1A${otp}\uFF0C5 \u5206\u949F\u5185\u6709\u6548\u3002` });
           return;
         }
         if (config3.SMTP2GO_API_KEY) {
@@ -167356,6 +167373,8 @@ var config4 = external_exports.object({
   SMTP_URL: external_exports.string().optional(),
   BREVO_API_KEY: external_exports.string().optional(),
   SMTP2GO_API_KEY: external_exports.string().optional(),
+  MAILJET_API_KEY: external_exports.string().optional(),
+  MAILJET_SECRET_KEY: external_exports.string().optional(),
   SMTP_FROM: external_exports.string().default("Calendar <calendar@example.com>"),
   VAPID_PUBLIC_KEY: external_exports.string().optional(),
   VAPID_PRIVATE_KEY: external_exports.string().optional(),
@@ -167450,7 +167469,10 @@ async function sendChannels(workspaceId, itemId, deliveryId, channels, title, st
   }
   if (channels.includes("email") && process.env.OWNER_EMAIL) {
     try {
-      if (config4.SMTP2GO_API_KEY) {
+      if (config4.MAILJET_API_KEY && config4.MAILJET_SECRET_KEY) {
+        await sendMailjetEmail({ apiKey: config4.MAILJET_API_KEY, secretKey: config4.MAILJET_SECRET_KEY, sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: process.env.OWNER_EMAIL }, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
+        delivered = true;
+      } else if (config4.SMTP2GO_API_KEY) {
         await sendSmtp2goEmail({ apiKey: config4.SMTP2GO_API_KEY, sender: `\u4E2A\u4EBA\u65E5\u7A0B <${process.env.OWNER_EMAIL}>`, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
         delivered = true;
       } else if (config4.BREVO_API_KEY) {

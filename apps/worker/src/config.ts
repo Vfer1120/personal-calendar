@@ -10,6 +10,8 @@ export const config = z.object({
   SMTP_URL: z.string().optional(),
   BREVO_API_KEY: z.string().optional(),
   SMTP2GO_API_KEY: z.string().optional(),
+  MAILJET_API_KEY: z.string().optional(),
+  MAILJET_SECRET_KEY: z.string().optional(),
   SMTP_FROM: z.string().default("Calendar <calendar@example.com>"),
   VAPID_PUBLIC_KEY: z.string().optional(),
   VAPID_PRIVATE_KEY: z.string().optional(),
