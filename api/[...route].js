@@ -5317,1071 +5317,6 @@ var require_lib2 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/env-impl.mjs
-function toBoolean(val) {
-  return val ? val !== "false" : false;
-}
-function getEnvVar(key, fallback2) {
-  if (typeof process !== "undefined" && process.env) return process.env[key] ?? fallback2;
-  if (typeof Deno !== "undefined") return Deno.env.get(key) ?? fallback2;
-  if (typeof Bun !== "undefined") return Bun.env[key] ?? fallback2;
-  return fallback2;
-}
-function getBooleanEnvVar(key, fallback2 = true) {
-  const value = getEnvVar(key);
-  if (!value) return fallback2;
-  return value !== "0" && value.toLowerCase() !== "false" && value !== "";
-}
-var _envShim, _getEnv, env, nodeENV, isProduction, isDevelopment, isTest, ENV;
-var init_env_impl = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/env-impl.mjs"() {
-    _envShim = /* @__PURE__ */ Object.create(null);
-    _getEnv = (useShim) => globalThis.process?.env || globalThis.Deno?.env.toObject() || globalThis.__env__ || (useShim ? _envShim : globalThis);
-    env = new Proxy(_envShim, {
-      get(_, prop) {
-        return _getEnv()[prop] ?? _envShim[prop];
-      },
-      has(_, prop) {
-        return prop in _getEnv() || prop in _envShim;
-      },
-      set(_, prop, value) {
-        const env3 = _getEnv(true);
-        env3[prop] = value;
-        return true;
-      },
-      deleteProperty(_, prop) {
-        if (!prop) return false;
-        const env3 = _getEnv(true);
-        delete env3[prop];
-        return true;
-      },
-      ownKeys() {
-        const env3 = _getEnv(true);
-        return Object.keys(env3);
-      }
-    });
-    nodeENV = env.NODE_ENV ?? "";
-    isProduction = nodeENV === "production";
-    isDevelopment = () => nodeENV === "dev" || nodeENV === "development";
-    isTest = () => nodeENV === "test" || toBoolean(env.TEST);
-    ENV = Object.freeze({
-      get BETTER_AUTH_SECRET() {
-        return getEnvVar("BETTER_AUTH_SECRET");
-      },
-      get AUTH_SECRET() {
-        return getEnvVar("AUTH_SECRET");
-      },
-      get BETTER_AUTH_TELEMETRY() {
-        return getEnvVar("BETTER_AUTH_TELEMETRY");
-      },
-      get BETTER_AUTH_TELEMETRY_ID() {
-        return getEnvVar("BETTER_AUTH_TELEMETRY_ID");
-      },
-      get NODE_ENV() {
-        return getEnvVar("NODE_ENV", "development");
-      },
-      get PACKAGE_VERSION() {
-        return getEnvVar("PACKAGE_VERSION", "0.0.0");
-      },
-      get BETTER_AUTH_TELEMETRY_ENDPOINT() {
-        return getEnvVar("BETTER_AUTH_TELEMETRY_ENDPOINT", "");
-      }
-    });
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/color-depth.mjs
-function getColorDepth() {
-  if (getEnvVar("FORCE_COLOR") !== void 0) switch (getEnvVar("FORCE_COLOR")) {
-    case "":
-    case "1":
-    case "true":
-      return COLORS_16;
-    case "2":
-      return COLORS_256;
-    case "3":
-      return COLORS_16m;
-    default:
-      return COLORS_2;
-  }
-  if (getEnvVar("NODE_DISABLE_COLORS") !== void 0 && getEnvVar("NODE_DISABLE_COLORS") !== "" || getEnvVar("NO_COLOR") !== void 0 && getEnvVar("NO_COLOR") !== "" || getEnvVar("TERM") === "dumb") return COLORS_2;
-  if (getEnvVar("TMUX")) return COLORS_16m;
-  if ("TF_BUILD" in env && "AGENT_NAME" in env) return COLORS_16;
-  if ("CI" in env) {
-    for (const { 0: envName, 1: colors } of CI_ENVS_MAP) if (envName in env) return colors;
-    if (getEnvVar("CI_NAME") === "codeship") return COLORS_256;
-    return COLORS_2;
-  }
-  if ("TEAMCITY_VERSION" in env) return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.exec(getEnvVar("TEAMCITY_VERSION")) !== null ? COLORS_16 : COLORS_2;
-  switch (getEnvVar("TERM_PROGRAM")) {
-    case "iTerm.app":
-      if (!getEnvVar("TERM_PROGRAM_VERSION") || /^[0-2]\./.exec(getEnvVar("TERM_PROGRAM_VERSION")) !== null) return COLORS_256;
-      return COLORS_16m;
-    case "HyperTerm":
-    case "MacTerm":
-      return COLORS_16m;
-    case "Apple_Terminal":
-      return COLORS_256;
-  }
-  if (getEnvVar("COLORTERM") === "truecolor" || getEnvVar("COLORTERM") === "24bit") return COLORS_16m;
-  if (getEnvVar("TERM")) {
-    if (/truecolor/.exec(getEnvVar("TERM")) !== null) return COLORS_16m;
-    if (/^xterm-256/.exec(getEnvVar("TERM")) !== null) return COLORS_256;
-    const termEnv = getEnvVar("TERM").toLowerCase();
-    if (TERM_ENVS[termEnv]) return TERM_ENVS[termEnv];
-    if (TERM_ENVS_REG_EXP.some((term) => term.exec(termEnv) !== null)) return COLORS_16;
-  }
-  if (getEnvVar("COLORTERM")) return COLORS_16;
-  return COLORS_2;
-}
-var COLORS_2, COLORS_16, COLORS_256, COLORS_16m, TERM_ENVS, CI_ENVS_MAP, TERM_ENVS_REG_EXP;
-var init_color_depth = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/color-depth.mjs"() {
-    init_env_impl();
-    COLORS_2 = 1;
-    COLORS_16 = 4;
-    COLORS_256 = 8;
-    COLORS_16m = 24;
-    TERM_ENVS = {
-      eterm: COLORS_16,
-      cons25: COLORS_16,
-      console: COLORS_16,
-      cygwin: COLORS_16,
-      dtterm: COLORS_16,
-      gnome: COLORS_16,
-      hurd: COLORS_16,
-      jfbterm: COLORS_16,
-      konsole: COLORS_16,
-      kterm: COLORS_16,
-      mlterm: COLORS_16,
-      mosh: COLORS_16m,
-      putty: COLORS_16,
-      st: COLORS_16,
-      "rxvt-unicode-24bit": COLORS_16m,
-      terminator: COLORS_16m,
-      "xterm-kitty": COLORS_16m
-    };
-    CI_ENVS_MAP = new Map(Object.entries({
-      APPVEYOR: COLORS_256,
-      BUILDKITE: COLORS_256,
-      CIRCLECI: COLORS_16m,
-      DRONE: COLORS_256,
-      GITEA_ACTIONS: COLORS_16m,
-      GITHUB_ACTIONS: COLORS_16m,
-      GITLAB_CI: COLORS_256,
-      TRAVIS: COLORS_256
-    }));
-    TERM_ENVS_REG_EXP = [
-      /ansi/,
-      /color/,
-      /linux/,
-      /direct/,
-      /^con[0-9]*x[0-9]/,
-      /^rxvt/,
-      /^screen/,
-      /^xterm/,
-      /^vt100/,
-      /^vt220/
-    ];
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/context/global.mjs
-function __getBetterAuthGlobal() {
-  if (!globalThis[symbol]) {
-    globalThis[symbol] = {
-      version: __betterAuthVersion,
-      epoch: 1,
-      context: __context
-    };
-    bind = globalThis[symbol];
-  }
-  bind = globalThis[symbol];
-  if (bind.version !== __betterAuthVersion) {
-    bind.version = __betterAuthVersion;
-    bind.epoch++;
-  }
-  return globalThis[symbol];
-}
-function __getCurrentEndpointContext() {
-  return __getBetterAuthGlobal().context.endpointContextAsyncStorage?.getStore();
-}
-function getBetterAuthVersion() {
-  return __getBetterAuthGlobal().version;
-}
-var symbol, bind, __context, __betterAuthVersion;
-var init_global = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/context/global.mjs"() {
-    symbol = /* @__PURE__ */ Symbol.for("better-auth:global");
-    bind = null;
-    __context = {};
-    __betterAuthVersion = "1.7.4";
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/logger.mjs
-function shouldPublishLog(currentLogLevel, logLevel) {
-  return levels.indexOf(logLevel) >= levels.indexOf(currentLogLevel);
-}
-var TTY_COLORS, levels, levelColors, formatMessage, createLogger, defaultLogger, getCurrentLogger, logger2;
-var init_logger = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/logger.mjs"() {
-    init_global();
-    init_color_depth();
-    TTY_COLORS = {
-      reset: "\x1B[0m",
-      bright: "\x1B[1m",
-      dim: "\x1B[2m",
-      undim: "\x1B[22m",
-      underscore: "\x1B[4m",
-      blink: "\x1B[5m",
-      reverse: "\x1B[7m",
-      hidden: "\x1B[8m",
-      fg: {
-        black: "\x1B[30m",
-        red: "\x1B[31m",
-        green: "\x1B[32m",
-        yellow: "\x1B[33m",
-        blue: "\x1B[34m",
-        magenta: "\x1B[35m",
-        cyan: "\x1B[36m",
-        white: "\x1B[37m"
-      },
-      bg: {
-        black: "\x1B[40m",
-        red: "\x1B[41m",
-        green: "\x1B[42m",
-        yellow: "\x1B[43m",
-        blue: "\x1B[44m",
-        magenta: "\x1B[45m",
-        cyan: "\x1B[46m",
-        white: "\x1B[47m"
-      }
-    };
-    levels = [
-      "debug",
-      "info",
-      "success",
-      "warn",
-      "error"
-    ];
-    levelColors = {
-      info: TTY_COLORS.fg.blue,
-      success: TTY_COLORS.fg.green,
-      warn: TTY_COLORS.fg.yellow,
-      error: TTY_COLORS.fg.red,
-      debug: TTY_COLORS.fg.magenta
-    };
-    formatMessage = (level, message2, colorsEnabled) => {
-      const timestamp2 = (/* @__PURE__ */ new Date()).toISOString();
-      if (colorsEnabled) return `${TTY_COLORS.dim}${timestamp2}${TTY_COLORS.reset} ${levelColors[level]}${level.toUpperCase()}${TTY_COLORS.reset} ${TTY_COLORS.bright}[Better Auth]:${TTY_COLORS.reset} ${message2}`;
-      return `${timestamp2} ${level.toUpperCase()} [Better Auth]: ${message2}`;
-    };
-    createLogger = (options) => {
-      const enabled = options?.disabled !== true;
-      const logLevel = options?.level ?? "warn";
-      const colorsEnabled = options?.disableColors !== void 0 ? !options.disableColors : getColorDepth() !== 1;
-      const LogFunc = (level, message2, args = []) => {
-        if (!enabled || !shouldPublishLog(logLevel, level)) return;
-        const formattedMessage = formatMessage(level, message2, colorsEnabled);
-        if (!options || typeof options.log !== "function") {
-          if (level === "error") console.error(formattedMessage, ...args);
-          else if (level === "warn") console.warn(formattedMessage, ...args);
-          else console.log(formattedMessage, ...args);
-          return;
-        }
-        options.log(level === "success" ? "info" : level, message2, ...args);
-      };
-      return {
-        ...Object.fromEntries(levels.map((level) => [level, (...[message2, ...args]) => LogFunc(level, message2, args)])),
-        get level() {
-          return logLevel;
-        }
-      };
-    };
-    defaultLogger = createLogger();
-    getCurrentLogger = () => {
-      const currentLogger = __getCurrentEndpointContext()?.context.logger;
-      return currentLogger && currentLogger !== logger2 ? currentLogger : defaultLogger;
-    };
-    logger2 = {
-      debug: (...params) => getCurrentLogger().debug(...params),
-      info: (...params) => getCurrentLogger().info(...params),
-      success: (...params) => getCurrentLogger().success(...params),
-      warn: (...params) => getCurrentLogger().warn(...params),
-      error: (...params) => getCurrentLogger().error(...params),
-      get level() {
-        return getCurrentLogger().level;
-      }
-    };
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/index.mjs
-var init_env = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/index.mjs"() {
-    init_env_impl();
-    init_logger();
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/utils/error-codes.mjs
-function defineErrorCodes(codes) {
-  return Object.fromEntries(Object.entries(codes).map(([key, value]) => [key, {
-    code: key,
-    message: value,
-    toString: () => key
-  }]));
-}
-var init_error_codes = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/utils/error-codes.mjs"() {
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/codes.mjs
-var BASE_ERROR_CODES;
-var init_codes = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/codes.mjs"() {
-    init_error_codes();
-    BASE_ERROR_CODES = defineErrorCodes({
-      USER_NOT_FOUND: "User not found",
-      FAILED_TO_CREATE_USER: "Failed to create user",
-      FAILED_TO_CREATE_SESSION: "Failed to create session",
-      FAILED_TO_UPDATE_USER: "Failed to update user",
-      FAILED_TO_GET_SESSION: "Failed to get session",
-      INVALID_PASSWORD: "Invalid password",
-      INVALID_EMAIL: "Invalid email",
-      INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
-      INVALID_USER: "Invalid user",
-      SOCIAL_ACCOUNT_ALREADY_LINKED: "Social account already linked",
-      PROVIDER_NOT_FOUND: "Provider not found",
-      INVALID_TOKEN: "Invalid token",
-      TOKEN_EXPIRED: "Token expired",
-      ID_TOKEN_NOT_SUPPORTED: "id_token not supported",
-      FAILED_TO_GET_USER_INFO: "Failed to get user info",
-      USER_EMAIL_NOT_FOUND: "User email not found",
-      EMAIL_NOT_VERIFIED: "Email not verified",
-      PASSWORD_TOO_SHORT: "Password too short",
-      PASSWORD_TOO_LONG: "Password too long",
-      USER_ALREADY_EXISTS: "User already exists.",
-      USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: "User already exists. Use another email.",
-      EMAIL_CAN_NOT_BE_UPDATED: "Email can not be updated",
-      CHANGE_EMAIL_DISABLED: "Change email is disabled",
-      CREDENTIAL_ACCOUNT_NOT_FOUND: "Credential account not found",
-      SESSION_EXPIRED: "Session expired. Re-authenticate to perform this action.",
-      FAILED_TO_UNLINK_LAST_ACCOUNT: "You can't unlink your last account",
-      ACCOUNT_NOT_FOUND: "Account not found",
-      USER_ALREADY_HAS_PASSWORD: "User already has a password. Provide that to delete the account.",
-      CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: "Cross-site navigation login blocked. This request appears to be a CSRF attack.",
-      VERIFICATION_EMAIL_NOT_ENABLED: "Verification email isn't enabled",
-      EMAIL_ALREADY_VERIFIED: "Email is already verified",
-      EMAIL_MISMATCH: "Email mismatch",
-      SESSION_NOT_FRESH: "Session is not fresh",
-      LINKED_ACCOUNT_ALREADY_EXISTS: "Linked account already exists",
-      INVALID_ORIGIN: "Invalid origin",
-      INVALID_CALLBACK_URL: "Invalid callbackURL",
-      INVALID_REDIRECT_URL: "Invalid redirectURL",
-      INVALID_ERROR_CALLBACK_URL: "Invalid errorCallbackURL",
-      INVALID_NEW_USER_CALLBACK_URL: "Invalid newUserCallbackURL",
-      MISSING_OR_NULL_ORIGIN: "Missing or null Origin",
-      CALLBACK_URL_REQUIRED: "callbackURL is required",
-      FAILED_TO_CREATE_VERIFICATION: "Unable to create verification",
-      FIELD_NOT_ALLOWED: "Field not allowed to be set",
-      ASYNC_VALIDATION_NOT_SUPPORTED: "Async validation is not supported",
-      VALIDATION_ERROR: "Validation Error",
-      MISSING_FIELD: "Field is required",
-      METHOD_NOT_ALLOWED_DEFER_SESSION_REQUIRED: "POST method requires deferSessionRefresh to be enabled in session config",
-      BODY_MUST_BE_AN_OBJECT: "Body must be an object",
-      PASSWORD_ALREADY_SET: "User already has a password set"
-    });
-  }
-});
-
-// node_modules/.pnpm/better-call@1.4.0_zod@4.6.5/node_modules/better-call/dist/error.mjs
-function isErrorStackTraceLimitWritable() {
-  const desc2 = Object.getOwnPropertyDescriptor(Error, "stackTraceLimit");
-  if (desc2 === void 0) return Object.isExtensible(Error);
-  return Object.prototype.hasOwnProperty.call(desc2, "writable") ? desc2.writable : desc2.set !== void 0;
-}
-function hideInternalStackFrames(stack) {
-  const lines = stack.split("\n    at ");
-  if (lines.length <= 1) return stack;
-  lines.splice(1, 1);
-  return lines.join("\n    at ");
-}
-function makeErrorForHideStackFrame(Base, clazz) {
-  class HideStackFramesError extends Base {
-    #hiddenStack;
-    constructor(...args) {
-      if (isErrorStackTraceLimitWritable()) {
-        const limit = Error.stackTraceLimit;
-        Error.stackTraceLimit = 0;
-        super(...args);
-        Error.stackTraceLimit = limit;
-      } else super(...args);
-      const stack = (/* @__PURE__ */ new Error()).stack;
-      if (stack) this.#hiddenStack = hideInternalStackFrames(stack.replace(/^Error/, this.name));
-    }
-    get errorStack() {
-      return this.#hiddenStack;
-    }
-  }
-  Object.defineProperty(HideStackFramesError.prototype, "constructor", {
-    get() {
-      return clazz;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  return HideStackFramesError;
-}
-var statusCodes, InternalAPIError, ValidationError, BetterCallError, kAPIErrorHeaderSymbol, APIError;
-var init_error = __esm({
-  "node_modules/.pnpm/better-call@1.4.0_zod@4.6.5/node_modules/better-call/dist/error.mjs"() {
-    statusCodes = {
-      OK: 200,
-      CREATED: 201,
-      ACCEPTED: 202,
-      NO_CONTENT: 204,
-      MULTIPLE_CHOICES: 300,
-      MOVED_PERMANENTLY: 301,
-      FOUND: 302,
-      SEE_OTHER: 303,
-      NOT_MODIFIED: 304,
-      TEMPORARY_REDIRECT: 307,
-      BAD_REQUEST: 400,
-      UNAUTHORIZED: 401,
-      PAYMENT_REQUIRED: 402,
-      FORBIDDEN: 403,
-      NOT_FOUND: 404,
-      METHOD_NOT_ALLOWED: 405,
-      NOT_ACCEPTABLE: 406,
-      PROXY_AUTHENTICATION_REQUIRED: 407,
-      REQUEST_TIMEOUT: 408,
-      CONFLICT: 409,
-      GONE: 410,
-      LENGTH_REQUIRED: 411,
-      PRECONDITION_FAILED: 412,
-      PAYLOAD_TOO_LARGE: 413,
-      URI_TOO_LONG: 414,
-      UNSUPPORTED_MEDIA_TYPE: 415,
-      RANGE_NOT_SATISFIABLE: 416,
-      EXPECTATION_FAILED: 417,
-      "I'M_A_TEAPOT": 418,
-      MISDIRECTED_REQUEST: 421,
-      UNPROCESSABLE_ENTITY: 422,
-      LOCKED: 423,
-      FAILED_DEPENDENCY: 424,
-      TOO_EARLY: 425,
-      UPGRADE_REQUIRED: 426,
-      PRECONDITION_REQUIRED: 428,
-      TOO_MANY_REQUESTS: 429,
-      REQUEST_HEADER_FIELDS_TOO_LARGE: 431,
-      UNAVAILABLE_FOR_LEGAL_REASONS: 451,
-      INTERNAL_SERVER_ERROR: 500,
-      NOT_IMPLEMENTED: 501,
-      BAD_GATEWAY: 502,
-      SERVICE_UNAVAILABLE: 503,
-      GATEWAY_TIMEOUT: 504,
-      HTTP_VERSION_NOT_SUPPORTED: 505,
-      VARIANT_ALSO_NEGOTIATES: 506,
-      INSUFFICIENT_STORAGE: 507,
-      LOOP_DETECTED: 508,
-      NOT_EXTENDED: 510,
-      NETWORK_AUTHENTICATION_REQUIRED: 511
-    };
-    InternalAPIError = class extends Error {
-      status;
-      body;
-      headers;
-      statusCode;
-      constructor(status = "INTERNAL_SERVER_ERROR", body = void 0, headers = {}, statusCode = typeof status === "number" ? status : statusCodes[status]) {
-        super(body?.message, body?.cause ? { cause: body.cause } : void 0);
-        this.status = status;
-        this.body = body;
-        this.headers = headers;
-        this.statusCode = statusCode;
-        this.name = "APIError";
-        this.status = status;
-        this.headers = headers;
-        this.statusCode = statusCode;
-        this.body = body;
-      }
-    };
-    ValidationError = class extends InternalAPIError {
-      message;
-      issues;
-      constructor(message2, issues) {
-        super(400, {
-          message: message2,
-          code: "VALIDATION_ERROR"
-        });
-        this.message = message2;
-        this.issues = issues;
-        this.issues = issues;
-      }
-    };
-    BetterCallError = class extends Error {
-      constructor(message2) {
-        super(message2);
-        this.name = "BetterCallError";
-      }
-    };
-    kAPIErrorHeaderSymbol = /* @__PURE__ */ Symbol.for("better-call:api-error-headers");
-    APIError = makeErrorForHideStackFrame(InternalAPIError, Error);
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/index.mjs
-var BetterAuthError, APIError2;
-var init_error2 = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/index.mjs"() {
-    init_codes();
-    init_error();
-    BetterAuthError = class extends Error {
-      constructor(message2, options) {
-        super(message2, options);
-        this.name = "BetterAuthError";
-        this.message = message2;
-        this.stack = "";
-      }
-    };
-    APIError2 = class APIError3 extends APIError {
-      constructor(...args) {
-        super(...args);
-      }
-      static fromStatus(status, body) {
-        return new APIError3(status, body);
-      }
-      static from(status, error64) {
-        return new APIError3(status, {
-          message: error64.message,
-          code: error64.code
-        });
-      }
-    };
-  }
-});
-
-// node_modules/.pnpm/@better-auth+utils@0.4.2/node_modules/@better-auth/utils/dist/random.mjs
-function expandAlphabet(alphabet) {
-  switch (alphabet) {
-    case "a-z":
-      return "abcdefghijklmnopqrstuvwxyz";
-    case "A-Z":
-      return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    case "0-9":
-      return "0123456789";
-    case "-_":
-      return "-_";
-    default:
-      throw new Error(`Unsupported alphabet: ${alphabet}`);
-  }
-}
-function createRandomStringGenerator(...baseAlphabets) {
-  const baseCharSet = baseAlphabets.map(expandAlphabet).join("");
-  if (baseCharSet.length === 0) {
-    throw new Error(
-      "No valid characters provided for random string generation."
-    );
-  }
-  const baseCharSetLength = baseCharSet.length;
-  return (length, ...alphabets) => {
-    if (length <= 0) {
-      throw new Error("Length must be a positive integer.");
-    }
-    let charSet = baseCharSet;
-    let charSetLength = baseCharSetLength;
-    if (alphabets.length > 0) {
-      charSet = alphabets.map(expandAlphabet).join("");
-      charSetLength = charSet.length;
-    }
-    const maxValid = Math.floor(256 / charSetLength) * charSetLength;
-    const buf = new Uint8Array(length * 2);
-    const bufLength = buf.length;
-    let result = "";
-    let bufIndex = bufLength;
-    let rand;
-    while (result.length < length) {
-      if (bufIndex >= bufLength) {
-        crypto.getRandomValues(buf);
-        bufIndex = 0;
-      }
-      rand = buf[bufIndex++];
-      if (rand < maxValid) {
-        result += charSet[rand % charSetLength];
-      }
-    }
-    return result;
-  };
-}
-var init_random = __esm({
-  "node_modules/.pnpm/@better-auth+utils@0.4.2/node_modules/@better-auth/utils/dist/random.mjs"() {
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/database-index.mjs
-function getPortableDatabaseIdentifierKey(identifier) {
-  return identifier.toLowerCase();
-}
-function getUtf8ByteLength(value) {
-  return new TextEncoder().encode(value).length;
-}
-function truncateUtf8(value, maxBytes) {
-  let result = "";
-  let byteLength = 0;
-  for (const character of value) {
-    const characterByteLength = getUtf8ByteLength(character);
-    if (byteLength + characterByteLength > maxBytes) break;
-    result += character;
-    byteLength += characterByteLength;
-  }
-  return result;
-}
-function getStableIndexNameHash(value) {
-  let hash2 = 2166136261;
-  for (let index2 = 0; index2 < value.length; index2++) {
-    hash2 ^= value.charCodeAt(index2);
-    hash2 = Math.imul(hash2, 16777619);
-  }
-  return (hash2 >>> 0).toString(16).padStart(8, "0");
-}
-function getDatabaseIndexName(tableName, index2) {
-  if (index2.name !== void 0) {
-    if (index2.name.trim().length === 0) throw new BetterAuthError("Database index names must contain at least one visible character.");
-    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(index2.name)) throw new BetterAuthError("Database index names must start with a letter or underscore and contain only letters, numbers, and underscores.");
-    if (getUtf8ByteLength(index2.name) > MAX_DATABASE_INDEX_NAME_BYTES) throw new BetterAuthError(`Database index names must be at most ${MAX_DATABASE_INDEX_NAME_BYTES} UTF-8 bytes.`);
-    return index2.name;
-  }
-  const indexKind = index2.unique ? "uidx" : "idx";
-  const generatedName = `${tableName}_${index2.fields.join("_")}_${indexKind}`;
-  if (getUtf8ByteLength(generatedName) <= MAX_DATABASE_INDEX_NAME_BYTES) return generatedName;
-  const suffix = `_${getStableIndexNameHash(generatedName)}_${indexKind}`;
-  return `${truncateUtf8(generatedName.slice(0, -indexKind.length - 1), MAX_DATABASE_INDEX_NAME_BYTES - getUtf8ByteLength(suffix))}${suffix}`;
-}
-function getDatabaseFieldIndexName(tableName, columnName, unique) {
-  return getDatabaseIndexName(tableName, {
-    fields: [columnName],
-    unique
-  });
-}
-function resolveDatabaseTableIndexes({ fields, indexes, tableName }) {
-  const resolvedIndexes = (indexes ?? []).map((index2) => {
-    if (index2.fields.length === 0) throw new BetterAuthError(`Index on table "${tableName}" must include at least one field.`);
-    if (index2.fields.length > MAX_DATABASE_INDEX_FIELDS) throw new BetterAuthError(`Index on table "${tableName}" can include at most ${MAX_DATABASE_INDEX_FIELDS} fields so it works across supported databases.`);
-    if (new Set(index2.fields).size !== index2.fields.length) throw new BetterAuthError(`Index on table "${tableName}" contains the same field more than once.`);
-    if (index2.unique && index2.fields.some((fieldName) => fields[fieldName]?.required === false)) throw new BetterAuthError(`Unique index on table "${tableName}" can only include required fields so its behavior is consistent across databases.`);
-    const unsupportedField = index2.fields.find((fieldName) => {
-      const fieldType = fields[fieldName]?.type;
-      return fieldType === "json" || fieldType === "string[]" || fieldType === "number[]";
-    });
-    if (unsupportedField) throw new BetterAuthError(`Index on table "${tableName}" references field "${unsupportedField}", whose type is not portably indexable.`);
-    const resolveFieldName = (fieldName) => {
-      const field = fields[fieldName];
-      if (!field) throw new BetterAuthError(`Index on table "${tableName}" references unknown field "${fieldName}".`);
-      return field.fieldName || fieldName;
-    };
-    const [firstField, ...remainingFields] = index2.fields;
-    const columns = [resolveFieldName(firstField), ...remainingFields.map(resolveFieldName)];
-    if (new Set(columns.map(getPortableDatabaseIdentifierKey)).size !== columns.length) throw new BetterAuthError(`Index on table "${tableName}" resolves more than one field to the same database column.`);
-    return {
-      columns,
-      name: getDatabaseIndexName(tableName, {
-        ...index2,
-        fields: columns
-      }),
-      unique: index2.unique
-    };
-  });
-  const definitionsByName = /* @__PURE__ */ new Map();
-  const deduplicatedIndexes = [];
-  for (const index2 of resolvedIndexes) {
-    const definition = JSON.stringify([index2.columns, index2.unique ?? false]);
-    const identifierKey = getPortableDatabaseIdentifierKey(index2.name);
-    const existingDefinition = definitionsByName.get(identifierKey);
-    if (existingDefinition && existingDefinition !== definition) throw new BetterAuthError(`Database index name "${index2.name}" identifies more than one index on table "${tableName}".`);
-    if (existingDefinition) continue;
-    definitionsByName.set(identifierKey, definition);
-    deduplicatedIndexes.push(index2);
-  }
-  return deduplicatedIndexes;
-}
-function getDatabaseIndexStringLength({ columnName, dialect, fields, indexes }) {
-  const fieldsByColumn = new Map(Object.entries(fields).map(([fieldName, field]) => [field.fieldName || fieldName, field]));
-  const containingIndexes = indexes.filter((index2) => index2.columns.includes(columnName));
-  if (containingIndexes.length === 0) return void 0;
-  const byteBudget = dialect === "mysql" ? 3072 : 1700;
-  const bytesPerCharacter = dialect === "mysql" ? 4 : 1;
-  const defaultLength = dialect === "mysql" ? 191 : 255;
-  return containingIndexes.reduce((length, index2) => {
-    const stringColumnCount = index2.columns.filter((column) => {
-      const type = fieldsByColumn.get(column)?.type;
-      return type === "string" || Array.isArray(type);
-    }).length;
-    if (stringColumnCount === 0) return length;
-    const nonStringColumnBytes = (index2.columns.length - stringColumnCount) * 16;
-    const safeLength = Math.floor(Math.max(1, byteBudget - nonStringColumnBytes) / bytesPerCharacter / stringColumnCount);
-    return Math.min(length, safeLength);
-  }, defaultLength);
-}
-function resolveDatabaseSchemaIndexes(sources) {
-  const mergedSourcesByTable = /* @__PURE__ */ new Map();
-  for (const source of sources) {
-    const existingSource = mergedSourcesByTable.get(source.tableName);
-    if (existingSource) {
-      if (existingSource.indexes.length > 0 || (source.indexes?.length ?? 0) > 0) throw new BetterAuthError(`Database schema resolves more than one indexed logical table to "${source.tableName}". Define table-level indexes through one logical schema key instead of aliasing multiple keys to the same database table.`);
-      Object.assign(existingSource.fields, source.fields);
-      continue;
-    }
-    const mergedSource = {
-      fields: {},
-      indexes: [],
-      tableName: source.tableName
-    };
-    Object.assign(mergedSource.fields, source.fields);
-    mergedSource.indexes.push(...source.indexes ?? []);
-    mergedSourcesByTable.set(source.tableName, mergedSource);
-  }
-  const indexesByTable = /* @__PURE__ */ new Map();
-  const indexOwnerByName = /* @__PURE__ */ new Map();
-  const tableNamesByIdentifier = new Map([...mergedSourcesByTable.keys()].map((tableName) => [getPortableDatabaseIdentifierKey(tableName), tableName]));
-  const fieldIndexOwnerByName = /* @__PURE__ */ new Map();
-  for (const source of mergedSourcesByTable.values()) for (const [fieldName, field] of Object.entries(source.fields)) {
-    if (!field.index && !field.unique) continue;
-    const indexName = getDatabaseFieldIndexName(source.tableName, field.fieldName || fieldName, field.unique ?? false);
-    const identifierKey = getPortableDatabaseIdentifierKey(indexName);
-    if (tableNamesByIdentifier.has(identifierKey)) throw new BetterAuthError(`Database index name "${indexName}" conflicts with a table name. Index and table names must be unique across the schema.`);
-    const existingOwner = fieldIndexOwnerByName.get(identifierKey);
-    if (existingOwner) throw new BetterAuthError(`Database field-level index name "${indexName}" is used by both table "${existingOwner}" and table "${source.tableName}".`);
-    fieldIndexOwnerByName.set(identifierKey, source.tableName);
-  }
-  for (const source of mergedSourcesByTable.values()) {
-    const resolvedIndexes = resolveDatabaseTableIndexes(source);
-    indexesByTable.set(source.tableName, [...resolvedIndexes]);
-    for (const index2 of resolvedIndexes) {
-      const identifierKey = getPortableDatabaseIdentifierKey(index2.name);
-      if (tableNamesByIdentifier.has(identifierKey)) throw new BetterAuthError(`Database index name "${index2.name}" conflicts with a table name. Index and table names must be unique across the schema.`);
-      const fieldIndexOwner = fieldIndexOwnerByName.get(identifierKey);
-      if (fieldIndexOwner) throw new BetterAuthError(`Database index name "${index2.name}" is already reserved by field-level index metadata on table "${fieldIndexOwner}". Remove the duplicate table-level index or give it a distinct name.`);
-      const indexOwner = indexOwnerByName.get(identifierKey);
-      if (indexOwner && indexOwner !== source.tableName) throw new BetterAuthError(`Database index name "${index2.name}" is used by both table "${indexOwner}" and table "${source.tableName}". Index names must be unique across the schema.`);
-      indexOwnerByName.set(identifierKey, source.tableName);
-    }
-  }
-  return indexesByTable;
-}
-var MAX_DATABASE_INDEX_NAME_BYTES, MAX_DATABASE_INDEX_FIELDS;
-var init_database_index = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/database-index.mjs"() {
-    init_error2();
-    MAX_DATABASE_INDEX_NAME_BYTES = 63;
-    MAX_DATABASE_INDEX_FIELDS = 16;
-  }
-});
-
-// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/get-tables.mjs
-function mergeTableIndexes(...indexCollections) {
-  const indexes = [];
-  const seenIndexDefinitions = /* @__PURE__ */ new Set();
-  for (const index2 of indexCollections.flatMap((collection) => collection ?? [])) {
-    const definition = JSON.stringify([
-      index2.name ?? null,
-      index2.fields,
-      index2.unique ?? false
-    ]);
-    if (seenIndexDefinitions.has(definition)) continue;
-    seenIndexDefinitions.add(definition);
-    indexes.push(index2);
-  }
-  return indexes;
-}
-function getAuthTablesWithResolvedIndexes(options) {
-  const tables = buildAuthTables(options);
-  return {
-    indexesByTable: resolveDatabaseSchemaIndexes(Object.values(tables).filter((table2) => !("disableMigrations" in table2) || !table2.disableMigrations).map((table2) => ({
-      fields: table2.fields,
-      indexes: "indexes" in table2 ? table2.indexes : void 0,
-      tableName: table2.modelName
-    }))),
-    tables
-  };
-}
-var buildAuthTables, getAuthTables;
-var init_get_tables = __esm({
-  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/get-tables.mjs"() {
-    init_database_index();
-    buildAuthTables = (options) => {
-      const pluginSchema = (options.plugins ?? []).reduce((acc, plugin) => {
-        const schema3 = plugin.schema;
-        if (!schema3) return acc;
-        for (const [key, value] of Object.entries(schema3)) acc[key] = {
-          fields: {
-            ...acc[key]?.fields,
-            ...value.fields
-          },
-          indexes: mergeTableIndexes(acc[key]?.indexes, value.indexes),
-          modelName: value.modelName || key,
-          disableMigrations: value.disableMigration ?? acc[key]?.disableMigrations
-        };
-        return acc;
-      }, {});
-      const shouldAddRateLimitTable = options.rateLimit?.storage === "database";
-      const rateLimitTable = { rateLimit: {
-        modelName: options.rateLimit?.modelName || "rateLimit",
-        fields: {
-          key: {
-            type: "string",
-            unique: true,
-            required: true,
-            fieldName: options.rateLimit?.fields?.key || "key"
-          },
-          count: {
-            type: "number",
-            required: true,
-            fieldName: options.rateLimit?.fields?.count || "count"
-          },
-          lastRequest: {
-            type: "number",
-            bigint: true,
-            required: true,
-            fieldName: options.rateLimit?.fields?.lastRequest || "lastRequest",
-            defaultValue: () => Date.now()
-          }
-        }
-      } };
-      const { user: user2, session: session2, account: account2, verification: verification2, ...pluginTables } = pluginSchema;
-      const verificationTable = { verification: {
-        modelName: options.verification?.modelName || "verification",
-        indexes: verification2?.indexes,
-        fields: {
-          identifier: {
-            type: "string",
-            required: true,
-            fieldName: options.verification?.fields?.identifier || "identifier",
-            index: true
-          },
-          value: {
-            type: "string",
-            required: true,
-            fieldName: options.verification?.fields?.value || "value"
-          },
-          expiresAt: {
-            type: "date",
-            required: true,
-            fieldName: options.verification?.fields?.expiresAt || "expiresAt"
-          },
-          createdAt: {
-            type: "date",
-            required: true,
-            defaultValue: () => /* @__PURE__ */ new Date(),
-            fieldName: options.verification?.fields?.createdAt || "createdAt"
-          },
-          updatedAt: {
-            type: "date",
-            required: true,
-            defaultValue: () => /* @__PURE__ */ new Date(),
-            onUpdate: () => /* @__PURE__ */ new Date(),
-            fieldName: options.verification?.fields?.updatedAt || "updatedAt"
-          },
-          ...verification2?.fields,
-          ...options.verification?.additionalFields
-        },
-        order: 4
-      } };
-      const sessionTable = { session: {
-        modelName: options.session?.modelName || "session",
-        indexes: session2?.indexes,
-        fields: {
-          expiresAt: {
-            type: "date",
-            required: true,
-            fieldName: options.session?.fields?.expiresAt || "expiresAt"
-          },
-          token: {
-            type: "string",
-            required: true,
-            fieldName: options.session?.fields?.token || "token",
-            unique: true
-          },
-          createdAt: {
-            type: "date",
-            required: true,
-            fieldName: options.session?.fields?.createdAt || "createdAt",
-            defaultValue: () => /* @__PURE__ */ new Date()
-          },
-          updatedAt: {
-            type: "date",
-            required: true,
-            fieldName: options.session?.fields?.updatedAt || "updatedAt",
-            onUpdate: () => /* @__PURE__ */ new Date()
-          },
-          ipAddress: {
-            type: "string",
-            required: false,
-            fieldName: options.session?.fields?.ipAddress || "ipAddress"
-          },
-          userAgent: {
-            type: "string",
-            required: false,
-            fieldName: options.session?.fields?.userAgent || "userAgent"
-          },
-          userId: {
-            type: "string",
-            fieldName: options.session?.fields?.userId || "userId",
-            references: {
-              model: "user",
-              field: "id",
-              onDelete: "cascade"
-            },
-            required: true,
-            index: true
-          },
-          ...session2?.fields,
-          ...options.session?.additionalFields
-        },
-        order: 2
-      } };
-      return {
-        user: {
-          modelName: options.user?.modelName || "user",
-          indexes: user2?.indexes,
-          fields: {
-            name: {
-              type: "string",
-              required: true,
-              fieldName: options.user?.fields?.name || "name",
-              sortable: true
-            },
-            email: {
-              type: "string",
-              unique: true,
-              required: true,
-              fieldName: options.user?.fields?.email || "email",
-              sortable: true
-            },
-            emailVerified: {
-              type: "boolean",
-              defaultValue: false,
-              required: true,
-              fieldName: options.user?.fields?.emailVerified || "emailVerified",
-              input: false
-            },
-            image: {
-              type: "string",
-              required: false,
-              fieldName: options.user?.fields?.image || "image"
-            },
-            createdAt: {
-              type: "date",
-              defaultValue: () => /* @__PURE__ */ new Date(),
-              required: true,
-              fieldName: options.user?.fields?.createdAt || "createdAt"
-            },
-            updatedAt: {
-              type: "date",
-              defaultValue: () => /* @__PURE__ */ new Date(),
-              onUpdate: () => /* @__PURE__ */ new Date(),
-              required: true,
-              fieldName: options.user?.fields?.updatedAt || "updatedAt"
-            },
-            ...user2?.fields,
-            ...options.user?.additionalFields
-          },
-          order: 1
-        },
-        ...!options.secondaryStorage || options.session?.storeSessionInDatabase ? sessionTable : {},
-        account: {
-          modelName: options.account?.modelName || "account",
-          indexes: account2?.indexes,
-          fields: {
-            accountId: {
-              type: "string",
-              required: true,
-              fieldName: options.account?.fields?.accountId || "accountId"
-            },
-            providerId: {
-              type: "string",
-              required: true,
-              fieldName: options.account?.fields?.providerId || "providerId"
-            },
-            userId: {
-              type: "string",
-              references: {
-                model: "user",
-                field: "id",
-                onDelete: "cascade"
-              },
-              required: true,
-              fieldName: options.account?.fields?.userId || "userId",
-              index: true
-            },
-            accessToken: {
-              type: "string",
-              required: false,
-              returned: false,
-              fieldName: options.account?.fields?.accessToken || "accessToken"
-            },
-            refreshToken: {
-              type: "string",
-              required: false,
-              returned: false,
-              fieldName: options.account?.fields?.refreshToken || "refreshToken"
-            },
-            idToken: {
-              type: "string",
-              required: false,
-              returned: false,
-              fieldName: options.account?.fields?.idToken || "idToken"
-            },
-            accessTokenExpiresAt: {
-              type: "date",
-              required: false,
-              returned: false,
-              fieldName: options.account?.fields?.accessTokenExpiresAt || "accessTokenExpiresAt"
-            },
-            refreshTokenExpiresAt: {
-              type: "date",
-              required: false,
-              returned: false,
-              fieldName: options.account?.fields?.refreshTokenExpiresAt || "refreshTokenExpiresAt"
-            },
-            scope: {
-              type: "string",
-              required: false,
-              fieldName: options.account?.fields?.scope || "scope"
-            },
-            password: {
-              type: "string",
-              required: false,
-              returned: false,
-              fieldName: options.account?.fields?.password || "password"
-            },
-            createdAt: {
-              type: "date",
-              required: true,
-              fieldName: options.account?.fields?.createdAt || "createdAt",
-              defaultValue: () => /* @__PURE__ */ new Date()
-            },
-            updatedAt: {
-              type: "date",
-              required: true,
-              fieldName: options.account?.fields?.updatedAt || "updatedAt",
-              onUpdate: () => /* @__PURE__ */ new Date()
-            },
-            ...account2?.fields,
-            ...options.account?.additionalFields
-          },
-          order: 3
-        },
-        ...!options.secondaryStorage || options.verification?.storeInDatabase ? verificationTable : {},
-        ...pluginTables,
-        ...shouldAddRateLimitTable ? rateLimitTable : {}
-      };
-    };
-    getAuthTables = (options) => getAuthTablesWithResolvedIndexes(options).tables;
-  }
-});
-
 // node_modules/.pnpm/zod@4.6.5/node_modules/zod/v4/core/util.js
 var util_exports = {};
 __export(util_exports, {
@@ -6426,7 +5361,7 @@ __export(util_exports, {
   hexToUint8Array: () => hexToUint8Array,
   hide: () => hide,
   installLazyProp: () => installLazyProp,
-  isObject: () => isObject2,
+  isObject: () => isObject,
   isPlainObject: () => isPlainObject,
   issue: () => issue,
   joinValues: () => joinValues,
@@ -6633,11 +5568,11 @@ function esc(str) {
 function slugify(input2) {
   return input2.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
 }
-function isObject2(data) {
+function isObject(data) {
   return typeof data === "object" && data !== null && !Array.isArray(data);
 }
 function isPlainObject(o3) {
-  if (isObject2(o3) === false)
+  if (isObject(o3) === false)
     return false;
   const ctor = o3.constructor;
   if (ctor === void 0)
@@ -6645,7 +5580,7 @@ function isPlainObject(o3) {
   if (typeof ctor !== "function")
     return true;
   const prot = ctor.prototype;
-  if (isObject2(prot) === false)
+  if (isObject(prot) === false)
     return false;
   if (Object.prototype.hasOwnProperty.call(prot, "isPrototypeOf") === false) {
     return false;
@@ -7326,7 +6261,7 @@ function $constructor(name, initializer3, proto, params) {
   Object.defineProperty(_, "name", { value: name });
   return _;
 }
-function config2(newConfig) {
+function config(newConfig) {
   if (newConfig)
     Object.assign(globalConfig, newConfig);
   return globalConfig;
@@ -7566,7 +6501,7 @@ function failure(Err, issues, ctx) {
     success: false,
     get error() {
       if (!error64) {
-        error64 = new Err(issues.map((iss) => finalizeIssue(iss, ctx, config2())));
+        error64 = new Err(issues.map((iss) => finalizeIssue(iss, ctx, config())));
         issues = void 0;
         ctx = void 0;
       }
@@ -7594,7 +6529,7 @@ function validateFallback(schema3, value, _ctx) {
   }
   return result.issues.length === 0;
 }
-var _parse, parse2, _parseAsync, parseAsync, _safeParse, safeParse, _safeParseAsync, safeParseAsync, COMPILE_INVALID, COMPILE_FALLBACK, validate, validateAsync, _encode, encode3, _decode, decode2, _encodeAsync, encodeAsync, _decodeAsync, decodeAsync, _safeEncode, safeEncode, _safeDecode, safeDecode, _safeEncodeAsync, safeEncodeAsync, _safeDecodeAsync, safeDecodeAsync;
+var _parse, parse2, _parseAsync, parseAsync, _safeParse, safeParse, _safeParseAsync, safeParseAsync, COMPILE_INVALID, COMPILE_FALLBACK, validate, validateAsync, _encode, encode, _decode, decode, _encodeAsync, encodeAsync, _decodeAsync, decodeAsync, _safeEncode, safeEncode, _safeDecode, safeDecode, _safeEncodeAsync, safeEncodeAsync, _safeDecodeAsync, safeDecodeAsync;
 var init_parse = __esm({
   "node_modules/.pnpm/zod@4.6.5/node_modules/zod/v4/core/parse.js"() {
     init_core();
@@ -7608,7 +6543,7 @@ var init_parse = __esm({
           throw new $ZodAsyncError();
         }
         if (result.issues.length) {
-          const e5 = new (_params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config2())));
+          const e5 = new (_params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())));
           captureStackTrace(e5, _params?.callee ?? fn);
           throw e5;
         }
@@ -7624,7 +6559,7 @@ var init_parse = __esm({
         if (result instanceof Promise)
           result = await result;
         if (result.issues.length) {
-          const e5 = new (params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config2())));
+          const e5 = new (params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())));
           captureStackTrace(e5, params?.callee ?? fn);
           throw e5;
         }
@@ -7677,7 +6612,7 @@ var init_parse = __esm({
       };
       return fn;
     };
-    encode3 = /* @__PURE__ */ _encode($ZodRealError);
+    encode = /* @__PURE__ */ _encode($ZodRealError);
     _decode = (_Err) => {
       const parse9 = _parse(_Err);
       const fn = (schema3, value, _ctx, _params) => {
@@ -7685,7 +6620,7 @@ var init_parse = __esm({
       };
       return fn;
     };
-    decode2 = /* @__PURE__ */ _decode($ZodRealError);
+    decode = /* @__PURE__ */ _decode($ZodRealError);
     _encodeAsync = (_Err) => {
       const parseAsync3 = _parseAsync(_Err);
       const fn = async (schema3, value, _ctx, _params) => {
@@ -7728,7 +6663,7 @@ var init_parse = __esm({
 var regexes_exports = {};
 __export(regexes_exports, {
   anyString: () => anyString,
-  base64: () => base642,
+  base64: () => base64,
   base64url: () => base64url,
   bigint: () => bigint2,
   boolean: () => boolean2,
@@ -7823,7 +6758,7 @@ function fixedBase64(bodyLength, padding) {
 function fixedBase64url(length) {
   return new RegExp(`^[A-Za-z0-9_-]{${length}}$`);
 }
-var cuid, cuid2, ulid, xid, ksuid, nanoid, duration, extendedDuration, guid, uuid2, uuid4, uuid6, uuid7, email, html5Email, rfc5322Email, unicodeEmail, idnEmail, browserEmail, _emoji, ipv4, ipv6, mac, cidrv4, cidrv6, base642, base64url, hostname, domain, httpProtocol, e164, creditCard, currencyCode, iban, dateSource, date2, anyString, string, bigint2, integer2, number, boolean2, _null, _undefined, lowercase, uppercase, hex, md5_hex, md5_base64, md5_base64url, sha1_hex, sha1_base64, sha1_base64url, sha256_hex, sha256_base64, sha256_base64url, sha384_hex, sha384_base64, sha384_base64url, sha512_hex, sha512_base64, sha512_base64url;
+var cuid, cuid2, ulid, xid, ksuid, nanoid, duration, extendedDuration, guid, uuid2, uuid4, uuid6, uuid7, email, html5Email, rfc5322Email, unicodeEmail, idnEmail, browserEmail, _emoji, ipv4, ipv6, mac, cidrv4, cidrv6, base64, base64url, hostname, domain, httpProtocol, e164, creditCard, currencyCode, iban, dateSource, date2, anyString, string, bigint2, integer2, number, boolean2, _null, _undefined, lowercase, uppercase, hex, md5_hex, md5_base64, md5_base64url, sha1_hex, sha1_base64, sha1_base64url, sha256_hex, sha256_base64, sha256_base64url, sha384_hex, sha384_base64, sha384_base64url, sha512_hex, sha512_base64, sha512_base64url;
 var init_regexes = __esm({
   "node_modules/.pnpm/zod@4.6.5/node_modules/zod/v4/core/regexes.js"() {
     init_util();
@@ -7859,7 +6794,7 @@ var init_regexes = __esm({
     };
     cidrv4 = /^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\/([0-9]|[1-2][0-9]|3[0-2])$/;
     cidrv6 = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$/;
-    base642 = /^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$/;
+    base64 = /^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$/;
     base64url = /^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$/;
     hostname = /^(?=.{1,253}\.?$)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[-0-9a-zA-Z]{0,61}[0-9a-zA-Z])?)*\.?$/;
     domain = /^(?=.{1,253}$)([a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$/;
@@ -8723,7 +7658,7 @@ function handleUnionResults(results, final, inst, ctx) {
     code: "invalid_union",
     input: final.value,
     inst,
-    errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx, config2())))
+    errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
   });
   return final;
 }
@@ -8742,7 +7677,7 @@ function handleExclusiveUnionResults(results, final, inst, ctx) {
       code: "invalid_union",
       input: final.value,
       inst,
-      errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx, config2())))
+      errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
     });
   } else {
     final.issues.push({
@@ -8935,7 +7870,7 @@ function handleMapResult(keyResult, valueResult, final, key, input2, inst, ctx) 
         origin: "map",
         input: input2,
         inst,
-        issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config2()))
+        issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config()))
       });
     }
   }
@@ -8949,7 +7884,7 @@ function handleMapResult(keyResult, valueResult, final, key, input2, inst, ctx) 
         input: input2,
         inst,
         key,
-        issues: valueResult.issues.map((iss) => finalizeIssue(iss, ctx, config2()))
+        issues: valueResult.issues.map((iss) => finalizeIssue(iss, ctx, config()))
       });
     }
   }
@@ -8993,7 +7928,7 @@ function handleCatchResult(payload, result, def, ctx) {
     ...result,
     value: payload.value,
     error: {
-      issues: result.issues.map((iss) => finalizeIssue(iss, ctx, config2()))
+      issues: result.issues.map((iss) => finalizeIssue(iss, ctx, config()))
     },
     input: payload.value
   });
@@ -9221,7 +8156,7 @@ var init_schemas = __esm({
         own(this, "~standard", value);
       }
     });
-    toStandardResult = (r5, ctx) => r5.issues.length ? { issues: r5.issues.map((iss) => finalizeIssue(iss, ctx, config2())) } : { value: r5.value };
+    toStandardResult = (r5, ctx) => r5.issues.length ? { issues: r5.issues.map((iss) => finalizeIssue(iss, ctx, config())) } : { value: r5.value };
     $ZodString = /* @__PURE__ */ $constructor("$ZodString", (inst, def) => {
       $ZodType.init(inst, def);
       inst._zod.pattern = def.pattern ?? anyString;
@@ -9779,7 +8714,7 @@ var init_schemas = __esm({
         }
         return propValues;
       });
-      const isObject4 = isObject2;
+      const isObject4 = isObject;
       const catchall = def.catchall;
       let value;
       const memo2 = globalConfig.memoizer;
@@ -9923,7 +8858,7 @@ var init_schemas = __esm({
         return doc.compile();
       };
       let fastpass;
-      const isObject4 = isObject2;
+      const isObject4 = isObject;
       const jit = !globalConfig.jitless;
       const allowsEval2 = allowsEval;
       const fastEnabled = jit && allowsEval2.value;
@@ -10061,7 +8996,7 @@ var init_schemas = __esm({
       const disc = cached(() => discriminatorMap(def));
       inst._zod.parse = (payload, ctx) => {
         const input2 = payload.value;
-        if (!isObject2(input2)) {
+        if (!isObject(input2)) {
           payload.issues.push({
             code: "invalid_type",
             expected: "object",
@@ -10222,7 +9157,7 @@ var init_schemas = __esm({
                 payload.issues.push({
                   code: "invalid_key",
                   origin: "record",
-                  issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config2())),
+                  issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config())),
                   input: key,
                   path: [key],
                   inst
@@ -10302,7 +9237,7 @@ var init_schemas = __esm({
                 payload.issues.push({
                   code: "invalid_key",
                   origin: "record",
-                  issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config2())),
+                  issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config())),
                   input: key,
                   path: [key],
                   inst
@@ -22659,7 +21594,7 @@ var init_json_schema_processors = __esm({
       // do not set
     };
     exactPatterns = /* @__PURE__ */ new Map([
-      [base64Charset, base642],
+      [base64Charset, base64],
       [base64urlCharset, base64url]
     ]);
     exactPattern = (p3) => exactPatterns.get(p3) ?? p3;
@@ -23541,13 +22476,13 @@ __export(core_exports2, {
   clone: () => clone,
   compile: () => compile,
   compileFn: () => compileFn,
-  config: () => config2,
+  config: () => config,
   createStandardJSONSchemaMethod: () => createStandardJSONSchemaMethod,
   createToJSONSchemaMethod: () => createToJSONSchemaMethod,
-  decode: () => decode2,
+  decode: () => decode,
   decodeAsync: () => decodeAsync,
   describe: () => describe,
-  encode: () => encode3,
+  encode: () => encode,
   encodeAsync: () => encodeAsync,
   extractDefs: () => extractDefs,
   finalize: () => finalize,
@@ -23719,7 +22654,7 @@ var init_errors2 = __esm({
 });
 
 // node_modules/.pnpm/zod@4.6.5/node_modules/zod/v4/classic/parse.js
-var parse3, parseAsync2, safeParse2, safeParseAsync2, encode4, decode3, encodeAsync2, decodeAsync2, safeEncode2, safeDecode2, safeEncodeAsync2, safeDecodeAsync2;
+var parse3, parseAsync2, safeParse2, safeParseAsync2, encode2, decode2, encodeAsync2, decodeAsync2, safeEncode2, safeDecode2, safeEncodeAsync2, safeDecodeAsync2;
 var init_parse2 = __esm({
   "node_modules/.pnpm/zod@4.6.5/node_modules/zod/v4/classic/parse.js"() {
     init_core2();
@@ -23729,8 +22664,8 @@ var init_parse2 = __esm({
     parseAsync2 = /* @__PURE__ */ _parseAsync(ZodRealError);
     safeParse2 = /* @__PURE__ */ _safeParse(ZodRealError);
     safeParseAsync2 = /* @__PURE__ */ _safeParseAsync(ZodRealError);
-    encode4 = /* @__PURE__ */ _encode(ZodRealError);
-    decode3 = /* @__PURE__ */ _decode(ZodRealError);
+    encode2 = /* @__PURE__ */ _encode(ZodRealError);
+    decode2 = /* @__PURE__ */ _decode(ZodRealError);
     encodeAsync2 = /* @__PURE__ */ _encodeAsync(ZodRealError);
     decodeAsync2 = /* @__PURE__ */ _decodeAsync(ZodRealError);
     safeEncode2 = /* @__PURE__ */ _safeEncode(ZodRealError);
@@ -23824,12 +22759,12 @@ __export(schemas_exports2, {
   _function: () => _function,
   any: () => any,
   array: () => array,
-  base64: () => base643,
+  base64: () => base642,
   base64url: () => base64url2,
   bigint: () => bigint3,
   boolean: () => boolean3,
   catch: () => _catch2,
-  check: () => check2,
+  check: () => check,
   cidrv4: () => cidrv42,
   cidrv6: () => cidrv62,
   codec: () => codec,
@@ -23901,9 +22836,9 @@ __export(schemas_exports2, {
   stringbool: () => stringbool,
   success: () => success,
   superRefine: () => superRefine,
-  symbol: () => symbol2,
+  symbol: () => symbol,
   templateLiteral: () => templateLiteral,
-  transform: () => transform3,
+  transform: () => transform,
   tuple: () => tuple,
   uint32: () => uint32,
   uint64: () => uint64,
@@ -23922,11 +22857,11 @@ __export(schemas_exports2, {
 });
 function _ensureDefaultLocale() {
   if (!globalConfig.localeError)
-    config2(en_default());
+    config(en_default());
 }
 function _ensureDefaultMemoizer() {
   if (!globalConfig.memoizer)
-    config2({ memoizer: memoizer() });
+    config({ memoizer: memoizer() });
 }
 function string2(params) {
   return _string(ZodString, params);
@@ -23995,7 +22930,7 @@ function cidrv42(params) {
 function cidrv62(params) {
   return _cidrv6(ZodCIDRv6, params);
 }
-function base643(params) {
+function base642(params) {
   return _base64(ZodBase64, params);
 }
 function base64url2(params) {
@@ -24063,7 +22998,7 @@ function int64(params) {
 function uint64(params) {
   return _uint64(ZodBigIntFormat, params);
 }
-function symbol2(params) {
+function symbol(params) {
   return _symbol(ZodSymbol, params);
 }
 function _undefined3(params) {
@@ -24233,7 +23168,7 @@ function literal(value, params) {
 function file(params) {
   return _file(ZodFile, params);
 }
-function transform3(fn) {
+function transform(fn) {
   return new ZodTransform({
     type: "transform",
     transform: fn
@@ -24360,7 +23295,7 @@ function _function(params) {
     output: params?.output ?? unknown()
   });
 }
-function check2(fn) {
+function check(fn) {
   const ch = new $ZodCheck({
     check: "custom"
     // ...util.normalizeParams(params),
@@ -24408,7 +23343,7 @@ function json2(params) {
 function preprocess(fn, schema3) {
   return new ZodPreprocess({
     type: "pipe",
-    in: transform3(fn),
+    in: transform(fn),
     out: schema3
   });
 }
@@ -24486,7 +23421,7 @@ var init_schemas2 = __esm({
         return intersection(this, arg);
       },
       transform(tx) {
-        return pipe(this, transform3(tx));
+        return pipe(this, transform(tx));
       },
       default(d5) {
         return _default2(this, d5);
@@ -24563,10 +23498,10 @@ var init_schemas2 = __esm({
         return validateAsync(this, data, params);
       },
       encode: function _encode2(data, params) {
-        return encode4(this, data, params, { callee: _encode2 });
+        return encode2(this, data, params, { callee: _encode2 });
       },
       decode: function _decode2(data, params) {
-        return decode3(this, data, params, { callee: _decode2 });
+        return decode2(this, data, params, { callee: _decode2 });
       },
       encodeAsync: async function _encodeAsync2(data, params) {
         return await encodeAsync2(this, data, params, { callee: _encodeAsync2 });
@@ -25399,12 +24334,12 @@ var init_schemas2 = __esm({
 
 // node_modules/.pnpm/zod@4.6.5/node_modules/zod/v4/classic/compat.js
 function setErrorMap(map5) {
-  config2({
+  config({
     customError: map5
   });
 }
 function getErrorMap() {
-  return config2().customError;
+  return config().customError;
 }
 var ZodIssueCode, ZodFirstPartyTypeKind;
 var init_compat = __esm({
@@ -26547,19 +25482,19 @@ __export(external_exports, {
   _function: () => _function,
   any: () => any,
   array: () => array,
-  base64: () => base643,
+  base64: () => base642,
   base64url: () => base64url2,
   bigint: () => bigint3,
   boolean: () => boolean3,
   catch: () => _catch2,
-  check: () => check2,
+  check: () => check,
   cidrv4: () => cidrv42,
   cidrv6: () => cidrv62,
   clone: () => clone,
   codec: () => codec,
   coerce: () => coerce_exports,
   compile: () => compile,
-  config: () => config2,
+  config: () => config,
   core: () => core_exports2,
   creditCard: () => creditCard2,
   cuid: () => cuid3,
@@ -26567,7 +25502,7 @@ __export(external_exports, {
   currencyCode: () => currencyCode2,
   custom: () => custom,
   date: () => date3,
-  decode: () => decode3,
+  decode: () => decode2,
   decodeAsync: () => decodeAsync2,
   deepPartial: () => deepPartial,
   describe: () => describe2,
@@ -26575,7 +25510,7 @@ __export(external_exports, {
   e164: () => e1642,
   email: () => email2,
   emoji: () => emoji2,
-  encode: () => encode4,
+  encode: () => encode2,
   encodeAsync: () => encodeAsync2,
   endsWith: () => _endsWith,
   enum: () => _enum2,
@@ -26683,13 +25618,13 @@ __export(external_exports, {
   stringbool: () => stringbool,
   success: () => success,
   superRefine: () => superRefine,
-  symbol: () => symbol2,
+  symbol: () => symbol,
   templateLiteral: () => templateLiteral,
   toJSONSchema: () => toJSONSchema,
   toLowerCase: () => _toLowerCase,
   toUpperCase: () => _toUpperCase,
   toZod: () => toZod,
-  transform: () => transform3,
+  transform: () => transform,
   treeifyError: () => treeifyError,
   trim: () => _trim,
   tuple: () => tuple,
@@ -26829,19 +25764,19 @@ __export(zod_exports, {
   _function: () => _function,
   any: () => any,
   array: () => array,
-  base64: () => base643,
+  base64: () => base642,
   base64url: () => base64url2,
   bigint: () => bigint3,
   boolean: () => boolean3,
   catch: () => _catch2,
-  check: () => check2,
+  check: () => check,
   cidrv4: () => cidrv42,
   cidrv6: () => cidrv62,
   clone: () => clone,
   codec: () => codec,
   coerce: () => coerce_exports,
   compile: () => compile,
-  config: () => config2,
+  config: () => config,
   core: () => core_exports2,
   creditCard: () => creditCard2,
   cuid: () => cuid3,
@@ -26849,7 +25784,7 @@ __export(zod_exports, {
   currencyCode: () => currencyCode2,
   custom: () => custom,
   date: () => date3,
-  decode: () => decode3,
+  decode: () => decode2,
   decodeAsync: () => decodeAsync2,
   deepPartial: () => deepPartial,
   default: () => external_exports,
@@ -26858,7 +25793,7 @@ __export(zod_exports, {
   e164: () => e1642,
   email: () => email2,
   emoji: () => emoji2,
-  encode: () => encode4,
+  encode: () => encode2,
   encodeAsync: () => encodeAsync2,
   endsWith: () => _endsWith,
   enum: () => _enum2,
@@ -26966,13 +25901,13 @@ __export(zod_exports, {
   stringbool: () => stringbool,
   success: () => success,
   superRefine: () => superRefine,
-  symbol: () => symbol2,
+  symbol: () => symbol,
   templateLiteral: () => templateLiteral,
   toJSONSchema: () => toJSONSchema,
   toLowerCase: () => _toLowerCase,
   toUpperCase: () => _toUpperCase,
   toZod: () => toZod,
-  transform: () => transform3,
+  transform: () => transform,
   treeifyError: () => treeifyError,
   trim: () => _trim,
   tuple: () => tuple,
@@ -27001,6 +25936,4302 @@ var init_zod = __esm({
   "node_modules/.pnpm/zod@4.6.5/node_modules/zod/index.js"() {
     init_external();
     init_external();
+  }
+});
+
+// node_modules/.pnpm/rrule@2.8.1/node_modules/rrule/dist/es5/rrule.js
+var require_rrule = __commonJS({
+  "node_modules/.pnpm/rrule@2.8.1/node_modules/rrule/dist/es5/rrule.js"(exports2, module2) {
+    (function webpackUniversalModuleDefinition(root5, factory) {
+      if (typeof exports2 === "object" && typeof module2 === "object")
+        module2.exports = factory();
+      else if (typeof define === "function" && define.amd)
+        define([], factory);
+      else if (typeof exports2 === "object")
+        exports2["rrule"] = factory();
+      else
+        root5["rrule"] = factory();
+    })(typeof self !== "undefined" ? self : exports2, () => {
+      return (
+        /******/
+        (() => {
+          "use strict";
+          var __webpack_require__ = {};
+          (() => {
+            __webpack_require__.d = (exports3, definition) => {
+              for (var key in definition) {
+                if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports3, key)) {
+                  Object.defineProperty(exports3, key, { enumerable: true, get: definition[key] });
+                }
+              }
+            };
+          })();
+          (() => {
+            __webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
+          })();
+          (() => {
+            __webpack_require__.r = (exports3) => {
+              if (typeof Symbol !== "undefined" && Symbol.toStringTag) {
+                Object.defineProperty(exports3, Symbol.toStringTag, { value: "Module" });
+              }
+              Object.defineProperty(exports3, "__esModule", { value: true });
+            };
+          })();
+          var __webpack_exports__ = {};
+          __webpack_require__.r(__webpack_exports__);
+          __webpack_require__.d(__webpack_exports__, {
+            "ALL_WEEKDAYS": () => (
+              /* reexport */
+              ALL_WEEKDAYS
+            ),
+            "Frequency": () => (
+              /* reexport */
+              Frequency
+            ),
+            "RRule": () => (
+              /* reexport */
+              RRule2
+            ),
+            "RRuleSet": () => (
+              /* reexport */
+              RRuleSet
+            ),
+            "Weekday": () => (
+              /* reexport */
+              Weekday
+            ),
+            "datetime": () => (
+              /* reexport */
+              datetime3
+            ),
+            "rrulestr": () => (
+              /* reexport */
+              rrulestr
+            )
+          });
+          ;
+          var ALL_WEEKDAYS = [
+            "MO",
+            "TU",
+            "WE",
+            "TH",
+            "FR",
+            "SA",
+            "SU"
+          ];
+          var Weekday = (
+            /** @class */
+            (function() {
+              function Weekday2(weekday, n3) {
+                if (n3 === 0)
+                  throw new Error("Can't create weekday with n == 0");
+                this.weekday = weekday;
+                this.n = n3;
+              }
+              Weekday2.fromStr = function(str) {
+                return new Weekday2(ALL_WEEKDAYS.indexOf(str));
+              };
+              Weekday2.prototype.nth = function(n3) {
+                return this.n === n3 ? this : new Weekday2(this.weekday, n3);
+              };
+              Weekday2.prototype.equals = function(other) {
+                return this.weekday === other.weekday && this.n === other.n;
+              };
+              Weekday2.prototype.toString = function() {
+                var s2 = ALL_WEEKDAYS[this.weekday];
+                if (this.n)
+                  s2 = (this.n > 0 ? "+" : "") + String(this.n) + s2;
+                return s2;
+              };
+              Weekday2.prototype.getJsWeekday = function() {
+                return this.weekday === 6 ? 0 : this.weekday + 1;
+              };
+              return Weekday2;
+            })()
+          );
+          ;
+          var isPresent = function(value) {
+            return value !== null && value !== void 0;
+          };
+          var isNumber2 = function(value) {
+            return typeof value === "number";
+          };
+          var isWeekdayStr = function(value) {
+            return typeof value === "string" && ALL_WEEKDAYS.includes(value);
+          };
+          var isArray = Array.isArray;
+          var range2 = function(start, end) {
+            if (end === void 0) {
+              end = start;
+            }
+            if (arguments.length === 1) {
+              end = start;
+              start = 0;
+            }
+            var rang = [];
+            for (var i5 = start; i5 < end; i5++)
+              rang.push(i5);
+            return rang;
+          };
+          var clone2 = function(array2) {
+            return [].concat(array2);
+          };
+          var repeat = function(value, times) {
+            var i5 = 0;
+            var array2 = [];
+            if (isArray(value)) {
+              for (; i5 < times; i5++)
+                array2[i5] = [].concat(value);
+            } else {
+              for (; i5 < times; i5++)
+                array2[i5] = value;
+            }
+            return array2;
+          };
+          var toArray = function(item) {
+            if (isArray(item)) {
+              return item;
+            }
+            return [item];
+          };
+          function padStart(item, targetLength, padString) {
+            if (padString === void 0) {
+              padString = " ";
+            }
+            var str = String(item);
+            targetLength = targetLength >> 0;
+            if (str.length > targetLength) {
+              return String(str);
+            }
+            targetLength = targetLength - str.length;
+            if (targetLength > padString.length) {
+              padString += repeat(padString, targetLength / padString.length);
+            }
+            return padString.slice(0, targetLength) + String(str);
+          }
+          var split2 = function(str, sep2, num) {
+            var splits = str.split(sep2);
+            return num ? splits.slice(0, num).concat([splits.slice(num).join(sep2)]) : splits;
+          };
+          var pymod = function(a5, b5) {
+            var r5 = a5 % b5;
+            return r5 * b5 < 0 ? r5 + b5 : r5;
+          };
+          var divmod = function(a5, b5) {
+            return { div: Math.floor(a5 / b5), mod: pymod(a5, b5) };
+          };
+          var empty = function(obj) {
+            return !isPresent(obj) || obj.length === 0;
+          };
+          var notEmpty = function(obj) {
+            return !empty(obj);
+          };
+          var includes2 = function(arr, val) {
+            return notEmpty(arr) && arr.indexOf(val) !== -1;
+          };
+          ;
+          var datetime3 = function(y, m3, d5, h5, i5, s2) {
+            if (h5 === void 0) {
+              h5 = 0;
+            }
+            if (i5 === void 0) {
+              i5 = 0;
+            }
+            if (s2 === void 0) {
+              s2 = 0;
+            }
+            return new Date(Date.UTC(y, m3 - 1, d5, h5, i5, s2));
+          };
+          var MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+          var ONE_DAY = 1e3 * 60 * 60 * 24;
+          var MAXYEAR = 9999;
+          var ORDINAL_BASE = datetime3(1970, 1, 1);
+          var PY_WEEKDAYS = [6, 0, 1, 2, 3, 4, 5];
+          var getYearDay = function(date7) {
+            var dateNoTime = new Date(date7.getUTCFullYear(), date7.getUTCMonth(), date7.getUTCDate());
+            return Math.ceil((dateNoTime.valueOf() - new Date(date7.getUTCFullYear(), 0, 1).valueOf()) / ONE_DAY) + 1;
+          };
+          var isLeapYear2 = function(year2) {
+            return year2 % 4 === 0 && year2 % 100 !== 0 || year2 % 400 === 0;
+          };
+          var isDate2 = function(value) {
+            return value instanceof Date;
+          };
+          var isValidDate = function(value) {
+            return isDate2(value) && !isNaN(value.getTime());
+          };
+          var tzOffset = function(date7) {
+            return date7.getTimezoneOffset() * 60 * 1e3;
+          };
+          var daysBetween = function(date1, date22) {
+            var date1ms = date1.getTime();
+            var date2ms = date22.getTime();
+            var differencems = date1ms - date2ms;
+            return Math.round(differencems / ONE_DAY);
+          };
+          var toOrdinal = function(date7) {
+            return daysBetween(date7, ORDINAL_BASE);
+          };
+          var fromOrdinal = function(ordinal) {
+            return new Date(ORDINAL_BASE.getTime() + ordinal * ONE_DAY);
+          };
+          var getMonthDays = function(date7) {
+            var month = date7.getUTCMonth();
+            return month === 1 && isLeapYear2(date7.getUTCFullYear()) ? 29 : MONTH_DAYS[month];
+          };
+          var getWeekday = function(date7) {
+            return PY_WEEKDAYS[date7.getUTCDay()];
+          };
+          var monthRange = function(year2, month) {
+            var date7 = datetime3(year2, month + 1, 1);
+            return [getWeekday(date7), getMonthDays(date7)];
+          };
+          var combine2 = function(date7, time6) {
+            time6 = time6 || date7;
+            return new Date(Date.UTC(date7.getUTCFullYear(), date7.getUTCMonth(), date7.getUTCDate(), time6.getHours(), time6.getMinutes(), time6.getSeconds(), time6.getMilliseconds()));
+          };
+          var dateutil_clone = function(date7) {
+            var dolly = new Date(date7.getTime());
+            return dolly;
+          };
+          var cloneDates = function(dates) {
+            var clones = [];
+            for (var i5 = 0; i5 < dates.length; i5++) {
+              clones.push(dateutil_clone(dates[i5]));
+            }
+            return clones;
+          };
+          var sort = function(dates) {
+            dates.sort(function(a5, b5) {
+              return a5.getTime() - b5.getTime();
+            });
+          };
+          var timeToUntilString = function(time6, utc) {
+            if (utc === void 0) {
+              utc = true;
+            }
+            var date7 = new Date(time6);
+            return [
+              padStart(date7.getUTCFullYear().toString(), 4, "0"),
+              padStart(date7.getUTCMonth() + 1, 2, "0"),
+              padStart(date7.getUTCDate(), 2, "0"),
+              "T",
+              padStart(date7.getUTCHours(), 2, "0"),
+              padStart(date7.getUTCMinutes(), 2, "0"),
+              padStart(date7.getUTCSeconds(), 2, "0"),
+              utc ? "Z" : ""
+            ].join("");
+          };
+          var untilStringToDate = function(until) {
+            var re = /^(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2})(\d{2})Z?)?$/;
+            var bits = re.exec(until);
+            if (!bits)
+              throw new Error("Invalid UNTIL value: ".concat(until));
+            return new Date(Date.UTC(parseInt(bits[1], 10), parseInt(bits[2], 10) - 1, parseInt(bits[3], 10), parseInt(bits[5], 10) || 0, parseInt(bits[6], 10) || 0, parseInt(bits[7], 10) || 0));
+          };
+          var dateTZtoISO8601 = function(date7, timeZone) {
+            var dateStr = date7.toLocaleString("sv-SE", { timeZone });
+            return dateStr.replace(" ", "T") + "Z";
+          };
+          var dateInTimeZone = function(date7, timeZone) {
+            var localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            var dateInLocalTZ = new Date(dateTZtoISO8601(date7, localTimeZone));
+            var dateInTargetTZ = new Date(dateTZtoISO8601(date7, timeZone !== null && timeZone !== void 0 ? timeZone : "UTC"));
+            var tzOffset2 = dateInTargetTZ.getTime() - dateInLocalTZ.getTime();
+            return new Date(date7.getTime() - tzOffset2);
+          };
+          ;
+          var IterResult = (
+            /** @class */
+            (function() {
+              function IterResult2(method, args) {
+                this.minDate = null;
+                this.maxDate = null;
+                this._result = [];
+                this.total = 0;
+                this.method = method;
+                this.args = args;
+                if (method === "between") {
+                  this.maxDate = args.inc ? args.before : new Date(args.before.getTime() - 1);
+                  this.minDate = args.inc ? args.after : new Date(args.after.getTime() + 1);
+                } else if (method === "before") {
+                  this.maxDate = args.inc ? args.dt : new Date(args.dt.getTime() - 1);
+                } else if (method === "after") {
+                  this.minDate = args.inc ? args.dt : new Date(args.dt.getTime() + 1);
+                }
+              }
+              IterResult2.prototype.accept = function(date7) {
+                ++this.total;
+                var tooEarly = this.minDate && date7 < this.minDate;
+                var tooLate = this.maxDate && date7 > this.maxDate;
+                if (this.method === "between") {
+                  if (tooEarly)
+                    return true;
+                  if (tooLate)
+                    return false;
+                } else if (this.method === "before") {
+                  if (tooLate)
+                    return false;
+                } else if (this.method === "after") {
+                  if (tooEarly)
+                    return true;
+                  this.add(date7);
+                  return false;
+                }
+                return this.add(date7);
+              };
+              IterResult2.prototype.add = function(date7) {
+                this._result.push(date7);
+                return true;
+              };
+              IterResult2.prototype.getValue = function() {
+                var res = this._result;
+                switch (this.method) {
+                  case "all":
+                  case "between":
+                    return res;
+                  case "before":
+                  case "after":
+                  default:
+                    return res.length ? res[res.length - 1] : null;
+                }
+              };
+              IterResult2.prototype.clone = function() {
+                return new IterResult2(this.method, this.args);
+              };
+              return IterResult2;
+            })()
+          );
+          const iterresult = IterResult;
+          ;
+          var extendStatics3 = function(d5, b5) {
+            extendStatics3 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d6, b6) {
+              d6.__proto__ = b6;
+            } || function(d6, b6) {
+              for (var p3 in b6) if (Object.prototype.hasOwnProperty.call(b6, p3)) d6[p3] = b6[p3];
+            };
+            return extendStatics3(d5, b5);
+          };
+          function __extends3(d5, b5) {
+            if (typeof b5 !== "function" && b5 !== null)
+              throw new TypeError("Class extends value " + String(b5) + " is not a constructor or null");
+            extendStatics3(d5, b5);
+            function __() {
+              this.constructor = d5;
+            }
+            d5.prototype = b5 === null ? Object.create(b5) : (__.prototype = b5.prototype, new __());
+          }
+          var __assign3 = function() {
+            __assign3 = Object.assign || function __assign4(t) {
+              for (var s2, i5 = 1, n3 = arguments.length; i5 < n3; i5++) {
+                s2 = arguments[i5];
+                for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3)) t[p3] = s2[p3];
+              }
+              return t;
+            };
+            return __assign3.apply(this, arguments);
+          };
+          function __rest3(s2, e5) {
+            var t = {};
+            for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3) && e5.indexOf(p3) < 0)
+              t[p3] = s2[p3];
+            if (s2 != null && typeof Object.getOwnPropertySymbols === "function")
+              for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s2); i5 < p3.length; i5++) {
+                if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s2, p3[i5]))
+                  t[p3[i5]] = s2[p3[i5]];
+              }
+            return t;
+          }
+          function __decorate3(decorators, target, key, desc2) {
+            var c5 = arguments.length, r5 = c5 < 3 ? target : desc2 === null ? desc2 = Object.getOwnPropertyDescriptor(target, key) : desc2, d5;
+            if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r5 = Reflect.decorate(decorators, target, key, desc2);
+            else for (var i5 = decorators.length - 1; i5 >= 0; i5--) if (d5 = decorators[i5]) r5 = (c5 < 3 ? d5(r5) : c5 > 3 ? d5(target, key, r5) : d5(target, key)) || r5;
+            return c5 > 3 && r5 && Object.defineProperty(target, key, r5), r5;
+          }
+          function __param3(paramIndex, decorator) {
+            return function(target, key) {
+              decorator(target, key, paramIndex);
+            };
+          }
+          function __metadata3(metadataKey, metadataValue) {
+            if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
+          }
+          function __awaiter3(thisArg, _arguments, P, generator2) {
+            function adopt(value) {
+              return value instanceof P ? value : new P(function(resolve) {
+                resolve(value);
+              });
+            }
+            return new (P || (P = Promise))(function(resolve, reject) {
+              function fulfilled(value) {
+                try {
+                  step(generator2.next(value));
+                } catch (e5) {
+                  reject(e5);
+                }
+              }
+              function rejected(value) {
+                try {
+                  step(generator2["throw"](value));
+                } catch (e5) {
+                  reject(e5);
+                }
+              }
+              function step(result) {
+                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+              }
+              step((generator2 = generator2.apply(thisArg, _arguments || [])).next());
+            });
+          }
+          function __generator3(thisArg, body) {
+            var _ = { label: 0, sent: function() {
+              if (t[0] & 1) throw t[1];
+              return t[1];
+            }, trys: [], ops: [] }, f5, y, t, g5;
+            return g5 = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g5[Symbol.iterator] = function() {
+              return this;
+            }), g5;
+            function verb(n3) {
+              return function(v) {
+                return step([n3, v]);
+              };
+            }
+            function step(op2) {
+              if (f5) throw new TypeError("Generator is already executing.");
+              while (_) try {
+                if (f5 = 1, y && (t = op2[0] & 2 ? y["return"] : op2[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op2[1])).done) return t;
+                if (y = 0, t) op2 = [op2[0] & 2, t.value];
+                switch (op2[0]) {
+                  case 0:
+                  case 1:
+                    t = op2;
+                    break;
+                  case 4:
+                    _.label++;
+                    return { value: op2[1], done: false };
+                  case 5:
+                    _.label++;
+                    y = op2[1];
+                    op2 = [0];
+                    continue;
+                  case 7:
+                    op2 = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                  default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op2[0] === 6 || op2[0] === 2)) {
+                      _ = 0;
+                      continue;
+                    }
+                    if (op2[0] === 3 && (!t || op2[1] > t[0] && op2[1] < t[3])) {
+                      _.label = op2[1];
+                      break;
+                    }
+                    if (op2[0] === 6 && _.label < t[1]) {
+                      _.label = t[1];
+                      t = op2;
+                      break;
+                    }
+                    if (t && _.label < t[2]) {
+                      _.label = t[2];
+                      _.ops.push(op2);
+                      break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                }
+                op2 = body.call(thisArg, _);
+              } catch (e5) {
+                op2 = [6, e5];
+                y = 0;
+              } finally {
+                f5 = t = 0;
+              }
+              if (op2[0] & 5) throw op2[1];
+              return { value: op2[0] ? op2[1] : void 0, done: true };
+            }
+          }
+          var __createBinding3 = Object.create ? (function(o3, m3, k5, k22) {
+            if (k22 === void 0) k22 = k5;
+            var desc2 = Object.getOwnPropertyDescriptor(m3, k5);
+            if (!desc2 || ("get" in desc2 ? !m3.__esModule : desc2.writable || desc2.configurable)) {
+              desc2 = { enumerable: true, get: function() {
+                return m3[k5];
+              } };
+            }
+            Object.defineProperty(o3, k22, desc2);
+          }) : (function(o3, m3, k5, k22) {
+            if (k22 === void 0) k22 = k5;
+            o3[k22] = m3[k5];
+          });
+          function __exportStar3(m3, o3) {
+            for (var p3 in m3) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(o3, p3)) __createBinding3(o3, m3, p3);
+          }
+          function __values3(o3) {
+            var s2 = typeof Symbol === "function" && Symbol.iterator, m3 = s2 && o3[s2], i5 = 0;
+            if (m3) return m3.call(o3);
+            if (o3 && typeof o3.length === "number") return {
+              next: function() {
+                if (o3 && i5 >= o3.length) o3 = void 0;
+                return { value: o3 && o3[i5++], done: !o3 };
+              }
+            };
+            throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
+          }
+          function __read3(o3, n3) {
+            var m3 = typeof Symbol === "function" && o3[Symbol.iterator];
+            if (!m3) return o3;
+            var i5 = m3.call(o3), r5, ar = [], e5;
+            try {
+              while ((n3 === void 0 || n3-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
+            } catch (error64) {
+              e5 = { error: error64 };
+            } finally {
+              try {
+                if (r5 && !r5.done && (m3 = i5["return"])) m3.call(i5);
+              } finally {
+                if (e5) throw e5.error;
+              }
+            }
+            return ar;
+          }
+          function __spread3() {
+            for (var ar = [], i5 = 0; i5 < arguments.length; i5++)
+              ar = ar.concat(__read3(arguments[i5]));
+            return ar;
+          }
+          function __spreadArrays3() {
+            for (var s2 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s2 += arguments[i5].length;
+            for (var r5 = Array(s2), k5 = 0, i5 = 0; i5 < il; i5++)
+              for (var a5 = arguments[i5], j5 = 0, jl = a5.length; j5 < jl; j5++, k5++)
+                r5[k5] = a5[j5];
+            return r5;
+          }
+          function __spreadArray2(to, from, pack) {
+            if (pack || arguments.length === 2) for (var i5 = 0, l3 = from.length, ar; i5 < l3; i5++) {
+              if (ar || !(i5 in from)) {
+                if (!ar) ar = Array.prototype.slice.call(from, 0, i5);
+                ar[i5] = from[i5];
+              }
+            }
+            return to.concat(ar || Array.prototype.slice.call(from));
+          }
+          function __await3(v) {
+            return this instanceof __await3 ? (this.v = v, this) : new __await3(v);
+          }
+          function __asyncGenerator3(thisArg, _arguments, generator2) {
+            if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+            var g5 = generator2.apply(thisArg, _arguments || []), i5, q3 = [];
+            return i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
+              return this;
+            }, i5;
+            function verb(n3) {
+              if (g5[n3]) i5[n3] = function(v) {
+                return new Promise(function(a5, b5) {
+                  q3.push([n3, v, a5, b5]) > 1 || resume(n3, v);
+                });
+              };
+            }
+            function resume(n3, v) {
+              try {
+                step(g5[n3](v));
+              } catch (e5) {
+                settle2(q3[0][3], e5);
+              }
+            }
+            function step(r5) {
+              r5.value instanceof __await3 ? Promise.resolve(r5.value.v).then(fulfill, reject) : settle2(q3[0][2], r5);
+            }
+            function fulfill(value) {
+              resume("next", value);
+            }
+            function reject(value) {
+              resume("throw", value);
+            }
+            function settle2(f5, v) {
+              if (f5(v), q3.shift(), q3.length) resume(q3[0][0], q3[0][1]);
+            }
+          }
+          function __asyncDelegator3(o3) {
+            var i5, p3;
+            return i5 = {}, verb("next"), verb("throw", function(e5) {
+              throw e5;
+            }), verb("return"), i5[Symbol.iterator] = function() {
+              return this;
+            }, i5;
+            function verb(n3, f5) {
+              i5[n3] = o3[n3] ? function(v) {
+                return (p3 = !p3) ? { value: __await3(o3[n3](v)), done: n3 === "return" } : f5 ? f5(v) : v;
+              } : f5;
+            }
+          }
+          function __asyncValues3(o3) {
+            if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+            var m3 = o3[Symbol.asyncIterator], i5;
+            return m3 ? m3.call(o3) : (o3 = typeof __values3 === "function" ? __values3(o3) : o3[Symbol.iterator](), i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
+              return this;
+            }, i5);
+            function verb(n3) {
+              i5[n3] = o3[n3] && function(v) {
+                return new Promise(function(resolve, reject) {
+                  v = o3[n3](v), settle2(resolve, reject, v.done, v.value);
+                });
+              };
+            }
+            function settle2(resolve, reject, d5, v) {
+              Promise.resolve(v).then(function(v2) {
+                resolve({ value: v2, done: d5 });
+              }, reject);
+            }
+          }
+          function __makeTemplateObject3(cooked, raw2) {
+            if (Object.defineProperty) {
+              Object.defineProperty(cooked, "raw", { value: raw2 });
+            } else {
+              cooked.raw = raw2;
+            }
+            return cooked;
+          }
+          ;
+          var __setModuleDefault2 = Object.create ? (function(o3, v) {
+            Object.defineProperty(o3, "default", { enumerable: true, value: v });
+          }) : function(o3, v) {
+            o3["default"] = v;
+          };
+          function __importStar3(mod) {
+            if (mod && mod.__esModule) return mod;
+            var result = {};
+            if (mod != null) {
+              for (var k5 in mod) if (k5 !== "default" && Object.prototype.hasOwnProperty.call(mod, k5)) __createBinding3(result, mod, k5);
+            }
+            __setModuleDefault2(result, mod);
+            return result;
+          }
+          function __importDefault3(mod) {
+            return mod && mod.__esModule ? mod : { default: mod };
+          }
+          function __classPrivateFieldGet3(receiver, state2, kind, f5) {
+            if (kind === "a" && !f5) throw new TypeError("Private accessor was defined without a getter");
+            if (typeof state2 === "function" ? receiver !== state2 || !f5 : !state2.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+            return kind === "m" ? f5 : kind === "a" ? f5.call(receiver) : f5 ? f5.value : state2.get(receiver);
+          }
+          function __classPrivateFieldSet3(receiver, state2, value, kind, f5) {
+            if (kind === "m") throw new TypeError("Private method is not writable");
+            if (kind === "a" && !f5) throw new TypeError("Private accessor was defined without a setter");
+            if (typeof state2 === "function" ? receiver !== state2 || !f5 : !state2.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+            return kind === "a" ? f5.call(receiver, value) : f5 ? f5.value = value : state2.set(receiver, value), value;
+          }
+          function __classPrivateFieldIn2(state2, receiver) {
+            if (receiver === null || typeof receiver !== "object" && typeof receiver !== "function") throw new TypeError("Cannot use 'in' operator on non-object");
+            return typeof state2 === "function" ? receiver === state2 : state2.has(receiver);
+          }
+          ;
+          var CallbackIterResult = (
+            /** @class */
+            (function(_super) {
+              __extends3(CallbackIterResult2, _super);
+              function CallbackIterResult2(method, args, iterator) {
+                var _this = _super.call(this, method, args) || this;
+                _this.iterator = iterator;
+                return _this;
+              }
+              CallbackIterResult2.prototype.add = function(date7) {
+                if (this.iterator(date7, this._result.length)) {
+                  this._result.push(date7);
+                  return true;
+                }
+                return false;
+              };
+              return CallbackIterResult2;
+            })(iterresult)
+          );
+          const callbackiterresult = CallbackIterResult;
+          ;
+          var ENGLISH = {
+            dayNames: [
+              "Sunday",
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ],
+            monthNames: [
+              "January",
+              "February",
+              "March",
+              "April",
+              "May",
+              "June",
+              "July",
+              "August",
+              "September",
+              "October",
+              "November",
+              "December"
+            ],
+            tokens: {
+              SKIP: /^[ \r\n\t]+|^\.$/,
+              number: /^[1-9][0-9]*/,
+              numberAsText: /^(one|two|three)/i,
+              every: /^every/i,
+              "day(s)": /^days?/i,
+              "weekday(s)": /^weekdays?/i,
+              "week(s)": /^weeks?/i,
+              "hour(s)": /^hours?/i,
+              "minute(s)": /^minutes?/i,
+              "month(s)": /^months?/i,
+              "year(s)": /^years?/i,
+              on: /^(on|in)/i,
+              at: /^(at)/i,
+              the: /^the/i,
+              first: /^first/i,
+              second: /^second/i,
+              third: /^third/i,
+              nth: /^([1-9][0-9]*)(\.|th|nd|rd|st)/i,
+              last: /^last/i,
+              for: /^for/i,
+              "time(s)": /^times?/i,
+              until: /^(un)?til/i,
+              monday: /^mo(n(day)?)?/i,
+              tuesday: /^tu(e(s(day)?)?)?/i,
+              wednesday: /^we(d(n(esday)?)?)?/i,
+              thursday: /^th(u(r(sday)?)?)?/i,
+              friday: /^fr(i(day)?)?/i,
+              saturday: /^sa(t(urday)?)?/i,
+              sunday: /^su(n(day)?)?/i,
+              january: /^jan(uary)?/i,
+              february: /^feb(ruary)?/i,
+              march: /^mar(ch)?/i,
+              april: /^apr(il)?/i,
+              may: /^may/i,
+              june: /^june?/i,
+              july: /^july?/i,
+              august: /^aug(ust)?/i,
+              september: /^sep(t(ember)?)?/i,
+              october: /^oct(ober)?/i,
+              november: /^nov(ember)?/i,
+              december: /^dec(ember)?/i,
+              comma: /^(,\s*|(and|or)\s*)+/i
+            }
+          };
+          const i18n = ENGLISH;
+          ;
+          var contains = function(arr, val) {
+            return arr.indexOf(val) !== -1;
+          };
+          var defaultGetText = function(id) {
+            return id.toString();
+          };
+          var defaultDateFormatter = function(year2, month, day) {
+            return "".concat(month, " ").concat(day, ", ").concat(year2);
+          };
+          var ToText = (
+            /** @class */
+            (function() {
+              function ToText2(rrule, gettext, language, dateFormatter) {
+                if (gettext === void 0) {
+                  gettext = defaultGetText;
+                }
+                if (language === void 0) {
+                  language = i18n;
+                }
+                if (dateFormatter === void 0) {
+                  dateFormatter = defaultDateFormatter;
+                }
+                this.text = [];
+                this.language = language || i18n;
+                this.gettext = gettext;
+                this.dateFormatter = dateFormatter;
+                this.rrule = rrule;
+                this.options = rrule.options;
+                this.origOptions = rrule.origOptions;
+                if (this.origOptions.bymonthday) {
+                  var bymonthday = [].concat(this.options.bymonthday);
+                  var bynmonthday = [].concat(this.options.bynmonthday);
+                  bymonthday.sort(function(a5, b5) {
+                    return a5 - b5;
+                  });
+                  bynmonthday.sort(function(a5, b5) {
+                    return b5 - a5;
+                  });
+                  this.bymonthday = bymonthday.concat(bynmonthday);
+                  if (!this.bymonthday.length)
+                    this.bymonthday = null;
+                }
+                if (isPresent(this.origOptions.byweekday)) {
+                  var byweekday = !isArray(this.origOptions.byweekday) ? [this.origOptions.byweekday] : this.origOptions.byweekday;
+                  var days = String(byweekday);
+                  this.byweekday = {
+                    allWeeks: byweekday.filter(function(weekday) {
+                      return !weekday.n;
+                    }),
+                    someWeeks: byweekday.filter(function(weekday) {
+                      return Boolean(weekday.n);
+                    }),
+                    isWeekdays: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") === -1 && days.indexOf("SU") === -1,
+                    isEveryDay: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") !== -1 && days.indexOf("SU") !== -1
+                  };
+                  var sortWeekDays = function(a5, b5) {
+                    return a5.weekday - b5.weekday;
+                  };
+                  this.byweekday.allWeeks.sort(sortWeekDays);
+                  this.byweekday.someWeeks.sort(sortWeekDays);
+                  if (!this.byweekday.allWeeks.length)
+                    this.byweekday.allWeeks = null;
+                  if (!this.byweekday.someWeeks.length)
+                    this.byweekday.someWeeks = null;
+                } else {
+                  this.byweekday = null;
+                }
+              }
+              ToText2.isFullyConvertible = function(rrule) {
+                var canConvert = true;
+                if (!(rrule.options.freq in ToText2.IMPLEMENTED))
+                  return false;
+                if (rrule.origOptions.until && rrule.origOptions.count)
+                  return false;
+                for (var key in rrule.origOptions) {
+                  if (contains(["dtstart", "tzid", "wkst", "freq"], key))
+                    return true;
+                  if (!contains(ToText2.IMPLEMENTED[rrule.options.freq], key))
+                    return false;
+                }
+                return canConvert;
+              };
+              ToText2.prototype.isFullyConvertible = function() {
+                return ToText2.isFullyConvertible(this.rrule);
+              };
+              ToText2.prototype.toString = function() {
+                var gettext = this.gettext;
+                if (!(this.options.freq in ToText2.IMPLEMENTED)) {
+                  return gettext("RRule error: Unable to fully convert this rrule to text");
+                }
+                this.text = [gettext("every")];
+                this[RRule2.FREQUENCIES[this.options.freq]]();
+                if (this.options.until) {
+                  this.add(gettext("until"));
+                  var until = this.options.until;
+                  this.add(this.dateFormatter(until.getUTCFullYear(), this.language.monthNames[until.getUTCMonth()], until.getUTCDate()));
+                } else if (this.options.count) {
+                  this.add(gettext("for")).add(this.options.count.toString()).add(this.plural(this.options.count) ? gettext("times") : gettext("time"));
+                }
+                if (!this.isFullyConvertible())
+                  this.add(gettext("(~ approximate)"));
+                return this.text.join("");
+              };
+              ToText2.prototype.HOURLY = function() {
+                var gettext = this.gettext;
+                if (this.options.interval !== 1)
+                  this.add(this.options.interval.toString());
+                this.add(this.plural(this.options.interval) ? gettext("hours") : gettext("hour"));
+              };
+              ToText2.prototype.MINUTELY = function() {
+                var gettext = this.gettext;
+                if (this.options.interval !== 1)
+                  this.add(this.options.interval.toString());
+                this.add(this.plural(this.options.interval) ? gettext("minutes") : gettext("minute"));
+              };
+              ToText2.prototype.DAILY = function() {
+                var gettext = this.gettext;
+                if (this.options.interval !== 1)
+                  this.add(this.options.interval.toString());
+                if (this.byweekday && this.byweekday.isWeekdays) {
+                  this.add(this.plural(this.options.interval) ? gettext("weekdays") : gettext("weekday"));
+                } else {
+                  this.add(this.plural(this.options.interval) ? gettext("days") : gettext("day"));
+                }
+                if (this.origOptions.bymonth) {
+                  this.add(gettext("in"));
+                  this._bymonth();
+                }
+                if (this.bymonthday) {
+                  this._bymonthday();
+                } else if (this.byweekday) {
+                  this._byweekday();
+                } else if (this.origOptions.byhour) {
+                  this._byhour();
+                }
+              };
+              ToText2.prototype.WEEKLY = function() {
+                var gettext = this.gettext;
+                if (this.options.interval !== 1) {
+                  this.add(this.options.interval.toString()).add(this.plural(this.options.interval) ? gettext("weeks") : gettext("week"));
+                }
+                if (this.byweekday && this.byweekday.isWeekdays) {
+                  if (this.options.interval === 1) {
+                    this.add(this.plural(this.options.interval) ? gettext("weekdays") : gettext("weekday"));
+                  } else {
+                    this.add(gettext("on")).add(gettext("weekdays"));
+                  }
+                } else if (this.byweekday && this.byweekday.isEveryDay) {
+                  this.add(this.plural(this.options.interval) ? gettext("days") : gettext("day"));
+                } else {
+                  if (this.options.interval === 1)
+                    this.add(gettext("week"));
+                  if (this.origOptions.bymonth) {
+                    this.add(gettext("in"));
+                    this._bymonth();
+                  }
+                  if (this.bymonthday) {
+                    this._bymonthday();
+                  } else if (this.byweekday) {
+                    this._byweekday();
+                  }
+                  if (this.origOptions.byhour) {
+                    this._byhour();
+                  }
+                }
+              };
+              ToText2.prototype.MONTHLY = function() {
+                var gettext = this.gettext;
+                if (this.origOptions.bymonth) {
+                  if (this.options.interval !== 1) {
+                    this.add(this.options.interval.toString()).add(gettext("months"));
+                    if (this.plural(this.options.interval))
+                      this.add(gettext("in"));
+                  } else {
+                  }
+                  this._bymonth();
+                } else {
+                  if (this.options.interval !== 1) {
+                    this.add(this.options.interval.toString());
+                  }
+                  this.add(this.plural(this.options.interval) ? gettext("months") : gettext("month"));
+                }
+                if (this.bymonthday) {
+                  this._bymonthday();
+                } else if (this.byweekday && this.byweekday.isWeekdays) {
+                  this.add(gettext("on")).add(gettext("weekdays"));
+                } else if (this.byweekday) {
+                  this._byweekday();
+                }
+              };
+              ToText2.prototype.YEARLY = function() {
+                var gettext = this.gettext;
+                if (this.origOptions.bymonth) {
+                  if (this.options.interval !== 1) {
+                    this.add(this.options.interval.toString());
+                    this.add(gettext("years"));
+                  } else {
+                  }
+                  this._bymonth();
+                } else {
+                  if (this.options.interval !== 1) {
+                    this.add(this.options.interval.toString());
+                  }
+                  this.add(this.plural(this.options.interval) ? gettext("years") : gettext("year"));
+                }
+                if (this.bymonthday) {
+                  this._bymonthday();
+                } else if (this.byweekday) {
+                  this._byweekday();
+                }
+                if (this.options.byyearday) {
+                  this.add(gettext("on the")).add(this.list(this.options.byyearday, this.nth, gettext("and"))).add(gettext("day"));
+                }
+                if (this.options.byweekno) {
+                  this.add(gettext("in")).add(this.plural(this.options.byweekno.length) ? gettext("weeks") : gettext("week")).add(this.list(this.options.byweekno, void 0, gettext("and")));
+                }
+              };
+              ToText2.prototype._bymonthday = function() {
+                var gettext = this.gettext;
+                if (this.byweekday && this.byweekday.allWeeks) {
+                  this.add(gettext("on")).add(this.list(this.byweekday.allWeeks, this.weekdaytext, gettext("or"))).add(gettext("the")).add(this.list(this.bymonthday, this.nth, gettext("or")));
+                } else {
+                  this.add(gettext("on the")).add(this.list(this.bymonthday, this.nth, gettext("and")));
+                }
+              };
+              ToText2.prototype._byweekday = function() {
+                var gettext = this.gettext;
+                if (this.byweekday.allWeeks && !this.byweekday.isWeekdays) {
+                  this.add(gettext("on")).add(this.list(this.byweekday.allWeeks, this.weekdaytext));
+                }
+                if (this.byweekday.someWeeks) {
+                  if (this.byweekday.allWeeks)
+                    this.add(gettext("and"));
+                  this.add(gettext("on the")).add(this.list(this.byweekday.someWeeks, this.weekdaytext, gettext("and")));
+                }
+              };
+              ToText2.prototype._byhour = function() {
+                var gettext = this.gettext;
+                this.add(gettext("at")).add(this.list(this.origOptions.byhour, void 0, gettext("and")));
+              };
+              ToText2.prototype._bymonth = function() {
+                this.add(this.list(this.options.bymonth, this.monthtext, this.gettext("and")));
+              };
+              ToText2.prototype.nth = function(n3) {
+                n3 = parseInt(n3.toString(), 10);
+                var nth;
+                var gettext = this.gettext;
+                if (n3 === -1)
+                  return gettext("last");
+                var npos = Math.abs(n3);
+                switch (npos) {
+                  case 1:
+                  case 21:
+                  case 31:
+                    nth = npos + gettext("st");
+                    break;
+                  case 2:
+                  case 22:
+                    nth = npos + gettext("nd");
+                    break;
+                  case 3:
+                  case 23:
+                    nth = npos + gettext("rd");
+                    break;
+                  default:
+                    nth = npos + gettext("th");
+                }
+                return n3 < 0 ? nth + " " + gettext("last") : nth;
+              };
+              ToText2.prototype.monthtext = function(m3) {
+                return this.language.monthNames[m3 - 1];
+              };
+              ToText2.prototype.weekdaytext = function(wday) {
+                var weekday = isNumber2(wday) ? (wday + 1) % 7 : wday.getJsWeekday();
+                return (wday.n ? this.nth(wday.n) + " " : "") + this.language.dayNames[weekday];
+              };
+              ToText2.prototype.plural = function(n3) {
+                return n3 % 100 !== 1;
+              };
+              ToText2.prototype.add = function(s2) {
+                this.text.push(" ");
+                this.text.push(s2);
+                return this;
+              };
+              ToText2.prototype.list = function(arr, callback, finalDelim, delim) {
+                var _this = this;
+                if (delim === void 0) {
+                  delim = ",";
+                }
+                if (!isArray(arr)) {
+                  arr = [arr];
+                }
+                var delimJoin = function(array2, delimiter, finalDelimiter) {
+                  var list2 = "";
+                  for (var i5 = 0; i5 < array2.length; i5++) {
+                    if (i5 !== 0) {
+                      if (i5 === array2.length - 1) {
+                        list2 += " " + finalDelimiter + " ";
+                      } else {
+                        list2 += delimiter + " ";
+                      }
+                    }
+                    list2 += array2[i5];
+                  }
+                  return list2;
+                };
+                callback = callback || function(o3) {
+                  return o3.toString();
+                };
+                var realCallback = function(arg) {
+                  return callback && callback.call(_this, arg);
+                };
+                if (finalDelim) {
+                  return delimJoin(arr.map(realCallback), delim, finalDelim);
+                } else {
+                  return arr.map(realCallback).join(delim + " ");
+                }
+              };
+              return ToText2;
+            })()
+          );
+          const totext = ToText;
+          ;
+          var Parser = (
+            /** @class */
+            (function() {
+              function Parser2(rules) {
+                this.done = true;
+                this.rules = rules;
+              }
+              Parser2.prototype.start = function(text2) {
+                this.text = text2;
+                this.done = false;
+                return this.nextSymbol();
+              };
+              Parser2.prototype.isDone = function() {
+                return this.done && this.symbol === null;
+              };
+              Parser2.prototype.nextSymbol = function() {
+                var best;
+                var bestSymbol;
+                this.symbol = null;
+                this.value = null;
+                do {
+                  if (this.done)
+                    return false;
+                  var rule = void 0;
+                  best = null;
+                  for (var name_1 in this.rules) {
+                    rule = this.rules[name_1];
+                    var match2 = rule.exec(this.text);
+                    if (match2) {
+                      if (best === null || match2[0].length > best[0].length) {
+                        best = match2;
+                        bestSymbol = name_1;
+                      }
+                    }
+                  }
+                  if (best != null) {
+                    this.text = this.text.substr(best[0].length);
+                    if (this.text === "")
+                      this.done = true;
+                  }
+                  if (best == null) {
+                    this.done = true;
+                    this.symbol = null;
+                    this.value = null;
+                    return;
+                  }
+                } while (bestSymbol === "SKIP");
+                this.symbol = bestSymbol;
+                this.value = best;
+                return true;
+              };
+              Parser2.prototype.accept = function(name) {
+                if (this.symbol === name) {
+                  if (this.value) {
+                    var v = this.value;
+                    this.nextSymbol();
+                    return v;
+                  }
+                  this.nextSymbol();
+                  return true;
+                }
+                return false;
+              };
+              Parser2.prototype.acceptNumber = function() {
+                return this.accept("number");
+              };
+              Parser2.prototype.expect = function(name) {
+                if (this.accept(name))
+                  return true;
+                throw new Error("expected " + name + " but found " + this.symbol);
+              };
+              return Parser2;
+            })()
+          );
+          function parseText(text2, language) {
+            if (language === void 0) {
+              language = i18n;
+            }
+            var options = {};
+            var ttr = new Parser(language.tokens);
+            if (!ttr.start(text2))
+              return null;
+            S2();
+            return options;
+            function S2() {
+              ttr.expect("every");
+              var n3 = ttr.acceptNumber();
+              if (n3)
+                options.interval = parseInt(n3[0], 10);
+              if (ttr.isDone())
+                throw new Error("Unexpected end");
+              switch (ttr.symbol) {
+                case "day(s)":
+                  options.freq = RRule2.DAILY;
+                  if (ttr.nextSymbol()) {
+                    AT();
+                    F();
+                  }
+                  break;
+                // FIXME Note: every 2 weekdays != every two weeks on weekdays.
+                // DAILY on weekdays is not a valid rule
+                case "weekday(s)":
+                  options.freq = RRule2.WEEKLY;
+                  options.byweekday = [RRule2.MO, RRule2.TU, RRule2.WE, RRule2.TH, RRule2.FR];
+                  ttr.nextSymbol();
+                  AT();
+                  F();
+                  break;
+                case "week(s)":
+                  options.freq = RRule2.WEEKLY;
+                  if (ttr.nextSymbol()) {
+                    ON();
+                    AT();
+                    F();
+                  }
+                  break;
+                case "hour(s)":
+                  options.freq = RRule2.HOURLY;
+                  if (ttr.nextSymbol()) {
+                    ON();
+                    F();
+                  }
+                  break;
+                case "minute(s)":
+                  options.freq = RRule2.MINUTELY;
+                  if (ttr.nextSymbol()) {
+                    ON();
+                    F();
+                  }
+                  break;
+                case "month(s)":
+                  options.freq = RRule2.MONTHLY;
+                  if (ttr.nextSymbol()) {
+                    ON();
+                    F();
+                  }
+                  break;
+                case "year(s)":
+                  options.freq = RRule2.YEARLY;
+                  if (ttr.nextSymbol()) {
+                    ON();
+                    F();
+                  }
+                  break;
+                case "monday":
+                case "tuesday":
+                case "wednesday":
+                case "thursday":
+                case "friday":
+                case "saturday":
+                case "sunday":
+                  options.freq = RRule2.WEEKLY;
+                  var key = ttr.symbol.substr(0, 2).toUpperCase();
+                  options.byweekday = [RRule2[key]];
+                  if (!ttr.nextSymbol())
+                    return;
+                  while (ttr.accept("comma")) {
+                    if (ttr.isDone())
+                      throw new Error("Unexpected end");
+                    var wkd = decodeWKD();
+                    if (!wkd) {
+                      throw new Error("Unexpected symbol " + ttr.symbol + ", expected weekday");
+                    }
+                    options.byweekday.push(RRule2[wkd]);
+                    ttr.nextSymbol();
+                  }
+                  AT();
+                  MDAYs();
+                  F();
+                  break;
+                case "january":
+                case "february":
+                case "march":
+                case "april":
+                case "may":
+                case "june":
+                case "july":
+                case "august":
+                case "september":
+                case "october":
+                case "november":
+                case "december":
+                  options.freq = RRule2.YEARLY;
+                  options.bymonth = [decodeM()];
+                  if (!ttr.nextSymbol())
+                    return;
+                  while (ttr.accept("comma")) {
+                    if (ttr.isDone())
+                      throw new Error("Unexpected end");
+                    var m3 = decodeM();
+                    if (!m3) {
+                      throw new Error("Unexpected symbol " + ttr.symbol + ", expected month");
+                    }
+                    options.bymonth.push(m3);
+                    ttr.nextSymbol();
+                  }
+                  ON();
+                  F();
+                  break;
+                default:
+                  throw new Error("Unknown symbol");
+              }
+            }
+            function ON() {
+              var on = ttr.accept("on");
+              var the = ttr.accept("the");
+              if (!(on || the))
+                return;
+              do {
+                var nth = decodeNTH();
+                var wkd = decodeWKD();
+                var m3 = decodeM();
+                if (nth) {
+                  if (wkd) {
+                    ttr.nextSymbol();
+                    if (!options.byweekday)
+                      options.byweekday = [];
+                    options.byweekday.push(RRule2[wkd].nth(nth));
+                  } else {
+                    if (!options.bymonthday)
+                      options.bymonthday = [];
+                    options.bymonthday.push(nth);
+                    ttr.accept("day(s)");
+                  }
+                } else if (wkd) {
+                  ttr.nextSymbol();
+                  if (!options.byweekday)
+                    options.byweekday = [];
+                  options.byweekday.push(RRule2[wkd]);
+                } else if (ttr.symbol === "weekday(s)") {
+                  ttr.nextSymbol();
+                  if (!options.byweekday) {
+                    options.byweekday = [RRule2.MO, RRule2.TU, RRule2.WE, RRule2.TH, RRule2.FR];
+                  }
+                } else if (ttr.symbol === "week(s)") {
+                  ttr.nextSymbol();
+                  var n3 = ttr.acceptNumber();
+                  if (!n3) {
+                    throw new Error("Unexpected symbol " + ttr.symbol + ", expected week number");
+                  }
+                  options.byweekno = [parseInt(n3[0], 10)];
+                  while (ttr.accept("comma")) {
+                    n3 = ttr.acceptNumber();
+                    if (!n3) {
+                      throw new Error("Unexpected symbol " + ttr.symbol + "; expected monthday");
+                    }
+                    options.byweekno.push(parseInt(n3[0], 10));
+                  }
+                } else if (m3) {
+                  ttr.nextSymbol();
+                  if (!options.bymonth)
+                    options.bymonth = [];
+                  options.bymonth.push(m3);
+                } else {
+                  return;
+                }
+              } while (ttr.accept("comma") || ttr.accept("the") || ttr.accept("on"));
+            }
+            function AT() {
+              var at = ttr.accept("at");
+              if (!at)
+                return;
+              do {
+                var n3 = ttr.acceptNumber();
+                if (!n3) {
+                  throw new Error("Unexpected symbol " + ttr.symbol + ", expected hour");
+                }
+                options.byhour = [parseInt(n3[0], 10)];
+                while (ttr.accept("comma")) {
+                  n3 = ttr.acceptNumber();
+                  if (!n3) {
+                    throw new Error("Unexpected symbol " + ttr.symbol + "; expected hour");
+                  }
+                  options.byhour.push(parseInt(n3[0], 10));
+                }
+              } while (ttr.accept("comma") || ttr.accept("at"));
+            }
+            function decodeM() {
+              switch (ttr.symbol) {
+                case "january":
+                  return 1;
+                case "february":
+                  return 2;
+                case "march":
+                  return 3;
+                case "april":
+                  return 4;
+                case "may":
+                  return 5;
+                case "june":
+                  return 6;
+                case "july":
+                  return 7;
+                case "august":
+                  return 8;
+                case "september":
+                  return 9;
+                case "october":
+                  return 10;
+                case "november":
+                  return 11;
+                case "december":
+                  return 12;
+                default:
+                  return false;
+              }
+            }
+            function decodeWKD() {
+              switch (ttr.symbol) {
+                case "monday":
+                case "tuesday":
+                case "wednesday":
+                case "thursday":
+                case "friday":
+                case "saturday":
+                case "sunday":
+                  return ttr.symbol.substr(0, 2).toUpperCase();
+                default:
+                  return false;
+              }
+            }
+            function decodeNTH() {
+              switch (ttr.symbol) {
+                case "last":
+                  ttr.nextSymbol();
+                  return -1;
+                case "first":
+                  ttr.nextSymbol();
+                  return 1;
+                case "second":
+                  ttr.nextSymbol();
+                  return ttr.accept("last") ? -2 : 2;
+                case "third":
+                  ttr.nextSymbol();
+                  return ttr.accept("last") ? -3 : 3;
+                case "nth":
+                  var v = parseInt(ttr.value[1], 10);
+                  if (v < -366 || v > 366)
+                    throw new Error("Nth out of range: " + v);
+                  ttr.nextSymbol();
+                  return ttr.accept("last") ? -v : v;
+                default:
+                  return false;
+              }
+            }
+            function MDAYs() {
+              ttr.accept("on");
+              ttr.accept("the");
+              var nth = decodeNTH();
+              if (!nth)
+                return;
+              options.bymonthday = [nth];
+              ttr.nextSymbol();
+              while (ttr.accept("comma")) {
+                nth = decodeNTH();
+                if (!nth) {
+                  throw new Error("Unexpected symbol " + ttr.symbol + "; expected monthday");
+                }
+                options.bymonthday.push(nth);
+                ttr.nextSymbol();
+              }
+            }
+            function F() {
+              if (ttr.symbol === "until") {
+                var date7 = Date.parse(ttr.text);
+                if (!date7)
+                  throw new Error("Cannot parse until date:" + ttr.text);
+                options.until = new Date(date7);
+              } else if (ttr.accept("for")) {
+                options.count = parseInt(ttr.value[0], 10);
+                ttr.expect("number");
+              }
+            }
+          }
+          ;
+          var Frequency;
+          (function(Frequency2) {
+            Frequency2[Frequency2["YEARLY"] = 0] = "YEARLY";
+            Frequency2[Frequency2["MONTHLY"] = 1] = "MONTHLY";
+            Frequency2[Frequency2["WEEKLY"] = 2] = "WEEKLY";
+            Frequency2[Frequency2["DAILY"] = 3] = "DAILY";
+            Frequency2[Frequency2["HOURLY"] = 4] = "HOURLY";
+            Frequency2[Frequency2["MINUTELY"] = 5] = "MINUTELY";
+            Frequency2[Frequency2["SECONDLY"] = 6] = "SECONDLY";
+          })(Frequency || (Frequency = {}));
+          function freqIsDailyOrGreater(freq) {
+            return freq < Frequency.HOURLY;
+          }
+          ;
+          var fromText = function(text2, language) {
+            if (language === void 0) {
+              language = i18n;
+            }
+            return new RRule2(parseText(text2, language) || void 0);
+          };
+          var common = [
+            "count",
+            "until",
+            "interval",
+            "byweekday",
+            "bymonthday",
+            "bymonth"
+          ];
+          totext.IMPLEMENTED = [];
+          totext.IMPLEMENTED[Frequency.HOURLY] = common;
+          totext.IMPLEMENTED[Frequency.MINUTELY] = common;
+          totext.IMPLEMENTED[Frequency.DAILY] = ["byhour"].concat(common);
+          totext.IMPLEMENTED[Frequency.WEEKLY] = common;
+          totext.IMPLEMENTED[Frequency.MONTHLY] = common;
+          totext.IMPLEMENTED[Frequency.YEARLY] = ["byweekno", "byyearday"].concat(common);
+          var toText = function(rrule, gettext, language, dateFormatter) {
+            return new totext(rrule, gettext, language, dateFormatter).toString();
+          };
+          var isFullyConvertible = totext.isFullyConvertible;
+          ;
+          var Time3 = (
+            /** @class */
+            (function() {
+              function Time4(hour, minute, second, millisecond) {
+                this.hour = hour;
+                this.minute = minute;
+                this.second = second;
+                this.millisecond = millisecond || 0;
+              }
+              Time4.prototype.getHours = function() {
+                return this.hour;
+              };
+              Time4.prototype.getMinutes = function() {
+                return this.minute;
+              };
+              Time4.prototype.getSeconds = function() {
+                return this.second;
+              };
+              Time4.prototype.getMilliseconds = function() {
+                return this.millisecond;
+              };
+              Time4.prototype.getTime = function() {
+                return (this.hour * 60 * 60 + this.minute * 60 + this.second) * 1e3 + this.millisecond;
+              };
+              return Time4;
+            })()
+          );
+          var DateTime = (
+            /** @class */
+            (function(_super) {
+              __extends3(DateTime2, _super);
+              function DateTime2(year2, month, day, hour, minute, second, millisecond) {
+                var _this = _super.call(this, hour, minute, second, millisecond) || this;
+                _this.year = year2;
+                _this.month = month;
+                _this.day = day;
+                return _this;
+              }
+              DateTime2.fromDate = function(date7) {
+                return new this(date7.getUTCFullYear(), date7.getUTCMonth() + 1, date7.getUTCDate(), date7.getUTCHours(), date7.getUTCMinutes(), date7.getUTCSeconds(), date7.valueOf() % 1e3);
+              };
+              DateTime2.prototype.getWeekday = function() {
+                return getWeekday(new Date(this.getTime()));
+              };
+              DateTime2.prototype.getTime = function() {
+                return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hour, this.minute, this.second, this.millisecond)).getTime();
+              };
+              DateTime2.prototype.getDay = function() {
+                return this.day;
+              };
+              DateTime2.prototype.getMonth = function() {
+                return this.month;
+              };
+              DateTime2.prototype.getYear = function() {
+                return this.year;
+              };
+              DateTime2.prototype.addYears = function(years) {
+                this.year += years;
+              };
+              DateTime2.prototype.addMonths = function(months2) {
+                this.month += months2;
+                if (this.month > 12) {
+                  var yearDiv = Math.floor(this.month / 12);
+                  var monthMod = pymod(this.month, 12);
+                  this.month = monthMod;
+                  this.year += yearDiv;
+                  if (this.month === 0) {
+                    this.month = 12;
+                    --this.year;
+                  }
+                }
+              };
+              DateTime2.prototype.addWeekly = function(days, wkst) {
+                if (wkst > this.getWeekday()) {
+                  this.day += -(this.getWeekday() + 1 + (6 - wkst)) + days * 7;
+                } else {
+                  this.day += -(this.getWeekday() - wkst) + days * 7;
+                }
+                this.fixDay();
+              };
+              DateTime2.prototype.addDaily = function(days) {
+                this.day += days;
+                this.fixDay();
+              };
+              DateTime2.prototype.addHours = function(hours, filtered, byhour) {
+                if (filtered) {
+                  this.hour += Math.floor((23 - this.hour) / hours) * hours;
+                }
+                for (; ; ) {
+                  this.hour += hours;
+                  var _a8 = divmod(this.hour, 24), dayDiv = _a8.div, hourMod = _a8.mod;
+                  if (dayDiv) {
+                    this.hour = hourMod;
+                    this.addDaily(dayDiv);
+                  }
+                  if (empty(byhour) || includes2(byhour, this.hour))
+                    break;
+                }
+              };
+              DateTime2.prototype.addMinutes = function(minutes, filtered, byhour, byminute) {
+                if (filtered) {
+                  this.minute += Math.floor((1439 - (this.hour * 60 + this.minute)) / minutes) * minutes;
+                }
+                for (; ; ) {
+                  this.minute += minutes;
+                  var _a8 = divmod(this.minute, 60), hourDiv = _a8.div, minuteMod = _a8.mod;
+                  if (hourDiv) {
+                    this.minute = minuteMod;
+                    this.addHours(hourDiv, false, byhour);
+                  }
+                  if ((empty(byhour) || includes2(byhour, this.hour)) && (empty(byminute) || includes2(byminute, this.minute))) {
+                    break;
+                  }
+                }
+              };
+              DateTime2.prototype.addSeconds = function(seconds, filtered, byhour, byminute, bysecond) {
+                if (filtered) {
+                  this.second += Math.floor((86399 - (this.hour * 3600 + this.minute * 60 + this.second)) / seconds) * seconds;
+                }
+                for (; ; ) {
+                  this.second += seconds;
+                  var _a8 = divmod(this.second, 60), minuteDiv = _a8.div, secondMod = _a8.mod;
+                  if (minuteDiv) {
+                    this.second = secondMod;
+                    this.addMinutes(minuteDiv, false, byhour, byminute);
+                  }
+                  if ((empty(byhour) || includes2(byhour, this.hour)) && (empty(byminute) || includes2(byminute, this.minute)) && (empty(bysecond) || includes2(bysecond, this.second))) {
+                    break;
+                  }
+                }
+              };
+              DateTime2.prototype.fixDay = function() {
+                if (this.day <= 28) {
+                  return;
+                }
+                var daysinmonth = monthRange(this.year, this.month - 1)[1];
+                if (this.day <= daysinmonth) {
+                  return;
+                }
+                while (this.day > daysinmonth) {
+                  this.day -= daysinmonth;
+                  ++this.month;
+                  if (this.month === 13) {
+                    this.month = 1;
+                    ++this.year;
+                    if (this.year > MAXYEAR) {
+                      return;
+                    }
+                  }
+                  daysinmonth = monthRange(this.year, this.month - 1)[1];
+                }
+              };
+              DateTime2.prototype.add = function(options, filtered) {
+                var freq = options.freq, interval2 = options.interval, wkst = options.wkst, byhour = options.byhour, byminute = options.byminute, bysecond = options.bysecond;
+                switch (freq) {
+                  case Frequency.YEARLY:
+                    return this.addYears(interval2);
+                  case Frequency.MONTHLY:
+                    return this.addMonths(interval2);
+                  case Frequency.WEEKLY:
+                    return this.addWeekly(interval2, wkst);
+                  case Frequency.DAILY:
+                    return this.addDaily(interval2);
+                  case Frequency.HOURLY:
+                    return this.addHours(interval2, filtered, byhour);
+                  case Frequency.MINUTELY:
+                    return this.addMinutes(interval2, filtered, byhour, byminute);
+                  case Frequency.SECONDLY:
+                    return this.addSeconds(interval2, filtered, byhour, byminute, bysecond);
+                }
+              };
+              return DateTime2;
+            })(Time3)
+          );
+          ;
+          function initializeOptions(options) {
+            var invalid2 = [];
+            var keys = Object.keys(options);
+            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+              var key = keys_1[_i];
+              if (!includes2(defaultKeys, key))
+                invalid2.push(key);
+              if (isDate2(options[key]) && !isValidDate(options[key])) {
+                invalid2.push(key);
+              }
+            }
+            if (invalid2.length) {
+              throw new Error("Invalid options: " + invalid2.join(", "));
+            }
+            return __assign3({}, options);
+          }
+          function parseOptions(options) {
+            var opts = __assign3(__assign3({}, DEFAULT_OPTIONS2), initializeOptions(options));
+            if (isPresent(opts.byeaster))
+              opts.freq = RRule2.YEARLY;
+            if (!(isPresent(opts.freq) && RRule2.FREQUENCIES[opts.freq])) {
+              throw new Error("Invalid frequency: ".concat(opts.freq, " ").concat(options.freq));
+            }
+            if (!opts.dtstart)
+              opts.dtstart = new Date((/* @__PURE__ */ new Date()).setMilliseconds(0));
+            if (!isPresent(opts.wkst)) {
+              opts.wkst = RRule2.MO.weekday;
+            } else if (isNumber2(opts.wkst)) {
+            } else {
+              opts.wkst = opts.wkst.weekday;
+            }
+            if (isPresent(opts.bysetpos)) {
+              if (isNumber2(opts.bysetpos))
+                opts.bysetpos = [opts.bysetpos];
+              for (var i5 = 0; i5 < opts.bysetpos.length; i5++) {
+                var v = opts.bysetpos[i5];
+                if (v === 0 || !(v >= -366 && v <= 366)) {
+                  throw new Error("bysetpos must be between 1 and 366, or between -366 and -1");
+                }
+              }
+            }
+            if (!(Boolean(opts.byweekno) || notEmpty(opts.byweekno) || notEmpty(opts.byyearday) || Boolean(opts.bymonthday) || notEmpty(opts.bymonthday) || isPresent(opts.byweekday) || isPresent(opts.byeaster))) {
+              switch (opts.freq) {
+                case RRule2.YEARLY:
+                  if (!opts.bymonth)
+                    opts.bymonth = opts.dtstart.getUTCMonth() + 1;
+                  opts.bymonthday = opts.dtstart.getUTCDate();
+                  break;
+                case RRule2.MONTHLY:
+                  opts.bymonthday = opts.dtstart.getUTCDate();
+                  break;
+                case RRule2.WEEKLY:
+                  opts.byweekday = [getWeekday(opts.dtstart)];
+                  break;
+              }
+            }
+            if (isPresent(opts.bymonth) && !isArray(opts.bymonth)) {
+              opts.bymonth = [opts.bymonth];
+            }
+            if (isPresent(opts.byyearday) && !isArray(opts.byyearday) && isNumber2(opts.byyearday)) {
+              opts.byyearday = [opts.byyearday];
+            }
+            if (!isPresent(opts.bymonthday)) {
+              opts.bymonthday = [];
+              opts.bynmonthday = [];
+            } else if (isArray(opts.bymonthday)) {
+              var bymonthday = [];
+              var bynmonthday = [];
+              for (var i5 = 0; i5 < opts.bymonthday.length; i5++) {
+                var v = opts.bymonthday[i5];
+                if (v > 0) {
+                  bymonthday.push(v);
+                } else if (v < 0) {
+                  bynmonthday.push(v);
+                }
+              }
+              opts.bymonthday = bymonthday;
+              opts.bynmonthday = bynmonthday;
+            } else if (opts.bymonthday < 0) {
+              opts.bynmonthday = [opts.bymonthday];
+              opts.bymonthday = [];
+            } else {
+              opts.bynmonthday = [];
+              opts.bymonthday = [opts.bymonthday];
+            }
+            if (isPresent(opts.byweekno) && !isArray(opts.byweekno)) {
+              opts.byweekno = [opts.byweekno];
+            }
+            if (!isPresent(opts.byweekday)) {
+              opts.bynweekday = null;
+            } else if (isNumber2(opts.byweekday)) {
+              opts.byweekday = [opts.byweekday];
+              opts.bynweekday = null;
+            } else if (isWeekdayStr(opts.byweekday)) {
+              opts.byweekday = [Weekday.fromStr(opts.byweekday).weekday];
+              opts.bynweekday = null;
+            } else if (opts.byweekday instanceof Weekday) {
+              if (!opts.byweekday.n || opts.freq > RRule2.MONTHLY) {
+                opts.byweekday = [opts.byweekday.weekday];
+                opts.bynweekday = null;
+              } else {
+                opts.bynweekday = [[opts.byweekday.weekday, opts.byweekday.n]];
+                opts.byweekday = null;
+              }
+            } else {
+              var byweekday = [];
+              var bynweekday = [];
+              for (var i5 = 0; i5 < opts.byweekday.length; i5++) {
+                var wday = opts.byweekday[i5];
+                if (isNumber2(wday)) {
+                  byweekday.push(wday);
+                  continue;
+                } else if (isWeekdayStr(wday)) {
+                  byweekday.push(Weekday.fromStr(wday).weekday);
+                  continue;
+                }
+                if (!wday.n || opts.freq > RRule2.MONTHLY) {
+                  byweekday.push(wday.weekday);
+                } else {
+                  bynweekday.push([wday.weekday, wday.n]);
+                }
+              }
+              opts.byweekday = notEmpty(byweekday) ? byweekday : null;
+              opts.bynweekday = notEmpty(bynweekday) ? bynweekday : null;
+            }
+            if (!isPresent(opts.byhour)) {
+              opts.byhour = opts.freq < RRule2.HOURLY ? [opts.dtstart.getUTCHours()] : null;
+            } else if (isNumber2(opts.byhour)) {
+              opts.byhour = [opts.byhour];
+            }
+            if (!isPresent(opts.byminute)) {
+              opts.byminute = opts.freq < RRule2.MINUTELY ? [opts.dtstart.getUTCMinutes()] : null;
+            } else if (isNumber2(opts.byminute)) {
+              opts.byminute = [opts.byminute];
+            }
+            if (!isPresent(opts.bysecond)) {
+              opts.bysecond = opts.freq < RRule2.SECONDLY ? [opts.dtstart.getUTCSeconds()] : null;
+            } else if (isNumber2(opts.bysecond)) {
+              opts.bysecond = [opts.bysecond];
+            }
+            return { parsedOptions: opts };
+          }
+          function buildTimeset(opts) {
+            var millisecondModulo = opts.dtstart.getTime() % 1e3;
+            if (!freqIsDailyOrGreater(opts.freq)) {
+              return [];
+            }
+            var timeset = [];
+            opts.byhour.forEach(function(hour) {
+              opts.byminute.forEach(function(minute) {
+                opts.bysecond.forEach(function(second) {
+                  timeset.push(new Time3(hour, minute, second, millisecondModulo));
+                });
+              });
+            });
+            return timeset;
+          }
+          ;
+          function parseString(rfcString) {
+            var options = rfcString.split("\n").map(parseLine).filter(function(x) {
+              return x !== null;
+            });
+            return __assign3(__assign3({}, options[0]), options[1]);
+          }
+          function parseDtstart(line3) {
+            var options = {};
+            var dtstartWithZone = /DTSTART(?:;TZID=([^:=]+?))?(?::|=)([^;\s]+)/i.exec(line3);
+            if (!dtstartWithZone) {
+              return options;
+            }
+            var tzid = dtstartWithZone[1], dtstart = dtstartWithZone[2];
+            if (tzid) {
+              options.tzid = tzid;
+            }
+            options.dtstart = untilStringToDate(dtstart);
+            return options;
+          }
+          function parseLine(rfcString) {
+            rfcString = rfcString.replace(/^\s+|\s+$/, "");
+            if (!rfcString.length)
+              return null;
+            var header = /^([A-Z]+?)[:;]/.exec(rfcString.toUpperCase());
+            if (!header) {
+              return parseRrule(rfcString);
+            }
+            var key = header[1];
+            switch (key.toUpperCase()) {
+              case "RRULE":
+              case "EXRULE":
+                return parseRrule(rfcString);
+              case "DTSTART":
+                return parseDtstart(rfcString);
+              default:
+                throw new Error("Unsupported RFC prop ".concat(key, " in ").concat(rfcString));
+            }
+          }
+          function parseRrule(line3) {
+            var strippedLine = line3.replace(/^RRULE:/i, "");
+            var options = parseDtstart(strippedLine);
+            var attrs = line3.replace(/^(?:RRULE|EXRULE):/i, "").split(";");
+            attrs.forEach(function(attr) {
+              var _a8 = attr.split("="), key = _a8[0], value = _a8[1];
+              switch (key.toUpperCase()) {
+                case "FREQ":
+                  options.freq = Frequency[value.toUpperCase()];
+                  break;
+                case "WKST":
+                  options.wkst = Days[value.toUpperCase()];
+                  break;
+                case "COUNT":
+                case "INTERVAL":
+                case "BYSETPOS":
+                case "BYMONTH":
+                case "BYMONTHDAY":
+                case "BYYEARDAY":
+                case "BYWEEKNO":
+                case "BYHOUR":
+                case "BYMINUTE":
+                case "BYSECOND":
+                  var num = parseNumber2(value);
+                  var optionKey = key.toLowerCase();
+                  options[optionKey] = num;
+                  break;
+                case "BYWEEKDAY":
+                case "BYDAY":
+                  options.byweekday = parseWeekday(value);
+                  break;
+                case "DTSTART":
+                case "TZID":
+                  var dtstart = parseDtstart(line3);
+                  options.tzid = dtstart.tzid;
+                  options.dtstart = dtstart.dtstart;
+                  break;
+                case "UNTIL":
+                  options.until = untilStringToDate(value);
+                  break;
+                case "BYEASTER":
+                  options.byeaster = Number(value);
+                  break;
+                default:
+                  throw new Error("Unknown RRULE property '" + key + "'");
+              }
+            });
+            return options;
+          }
+          function parseNumber2(value) {
+            if (value.indexOf(",") !== -1) {
+              var values = value.split(",");
+              return values.map(parseIndividualNumber);
+            }
+            return parseIndividualNumber(value);
+          }
+          function parseIndividualNumber(value) {
+            if (/^[+-]?\d+$/.test(value)) {
+              return Number(value);
+            }
+            return value;
+          }
+          function parseWeekday(value) {
+            var days = value.split(",");
+            return days.map(function(day) {
+              if (day.length === 2) {
+                return Days[day];
+              }
+              var parts = day.match(/^([+-]?\d{1,2})([A-Z]{2})$/);
+              if (!parts || parts.length < 3) {
+                throw new SyntaxError("Invalid weekday string: ".concat(day));
+              }
+              var n3 = Number(parts[1]);
+              var wdaypart = parts[2];
+              var wday = Days[wdaypart].weekday;
+              return new Weekday(wday, n3);
+            });
+          }
+          ;
+          var DateWithZone = (
+            /** @class */
+            (function() {
+              function DateWithZone2(date7, tzid) {
+                if (isNaN(date7.getTime())) {
+                  throw new RangeError("Invalid date passed to DateWithZone");
+                }
+                this.date = date7;
+                this.tzid = tzid;
+              }
+              Object.defineProperty(DateWithZone2.prototype, "isUTC", {
+                get: function() {
+                  return !this.tzid || this.tzid.toUpperCase() === "UTC";
+                },
+                enumerable: false,
+                configurable: true
+              });
+              DateWithZone2.prototype.toString = function() {
+                var datestr = timeToUntilString(this.date.getTime(), this.isUTC);
+                if (!this.isUTC) {
+                  return ";TZID=".concat(this.tzid, ":").concat(datestr);
+                }
+                return ":".concat(datestr);
+              };
+              DateWithZone2.prototype.getTime = function() {
+                return this.date.getTime();
+              };
+              DateWithZone2.prototype.rezonedDate = function() {
+                if (this.isUTC) {
+                  return this.date;
+                }
+                return dateInTimeZone(this.date, this.tzid);
+              };
+              return DateWithZone2;
+            })()
+          );
+          ;
+          function optionsToString(options) {
+            var rrule = [];
+            var dtstart = "";
+            var keys = Object.keys(options);
+            var defaultKeys2 = Object.keys(DEFAULT_OPTIONS2);
+            for (var i5 = 0; i5 < keys.length; i5++) {
+              if (keys[i5] === "tzid")
+                continue;
+              if (!includes2(defaultKeys2, keys[i5]))
+                continue;
+              var key = keys[i5].toUpperCase();
+              var value = options[keys[i5]];
+              var outValue = "";
+              if (!isPresent(value) || isArray(value) && !value.length)
+                continue;
+              switch (key) {
+                case "FREQ":
+                  outValue = RRule2.FREQUENCIES[options.freq];
+                  break;
+                case "WKST":
+                  if (isNumber2(value)) {
+                    outValue = new Weekday(value).toString();
+                  } else {
+                    outValue = value.toString();
+                  }
+                  break;
+                case "BYWEEKDAY":
+                  key = "BYDAY";
+                  outValue = toArray(value).map(function(wday) {
+                    if (wday instanceof Weekday) {
+                      return wday;
+                    }
+                    if (isArray(wday)) {
+                      return new Weekday(wday[0], wday[1]);
+                    }
+                    return new Weekday(wday);
+                  }).toString();
+                  break;
+                case "DTSTART":
+                  dtstart = buildDtstart(value, options.tzid);
+                  break;
+                case "UNTIL":
+                  outValue = timeToUntilString(value, !options.tzid);
+                  break;
+                default:
+                  if (isArray(value)) {
+                    var strValues = [];
+                    for (var j5 = 0; j5 < value.length; j5++) {
+                      strValues[j5] = String(value[j5]);
+                    }
+                    outValue = strValues.toString();
+                  } else {
+                    outValue = String(value);
+                  }
+              }
+              if (outValue) {
+                rrule.push([key, outValue]);
+              }
+            }
+            var rules = rrule.map(function(_a8) {
+              var key2 = _a8[0], value2 = _a8[1];
+              return "".concat(key2, "=").concat(value2.toString());
+            }).join(";");
+            var ruleString = "";
+            if (rules !== "") {
+              ruleString = "RRULE:".concat(rules);
+            }
+            return [dtstart, ruleString].filter(function(x) {
+              return !!x;
+            }).join("\n");
+          }
+          function buildDtstart(dtstart, tzid) {
+            if (!dtstart) {
+              return "";
+            }
+            return "DTSTART" + new DateWithZone(new Date(dtstart), tzid).toString();
+          }
+          ;
+          function argsMatch(left, right) {
+            if (Array.isArray(left)) {
+              if (!Array.isArray(right))
+                return false;
+              if (left.length !== right.length)
+                return false;
+              return left.every(function(date7, i5) {
+                return date7.getTime() === right[i5].getTime();
+              });
+            }
+            if (left instanceof Date) {
+              return right instanceof Date && left.getTime() === right.getTime();
+            }
+            return left === right;
+          }
+          var Cache2 = (
+            /** @class */
+            (function() {
+              function Cache3() {
+                this.all = false;
+                this.before = [];
+                this.after = [];
+                this.between = [];
+              }
+              Cache3.prototype._cacheAdd = function(what, value, args) {
+                if (value) {
+                  value = value instanceof Date ? dateutil_clone(value) : cloneDates(value);
+                }
+                if (what === "all") {
+                  this.all = value;
+                } else {
+                  args._value = value;
+                  this[what].push(args);
+                }
+              };
+              Cache3.prototype._cacheGet = function(what, args) {
+                var cached2 = false;
+                var argsKeys = args ? Object.keys(args) : [];
+                var findCacheDiff = function(item2) {
+                  for (var i6 = 0; i6 < argsKeys.length; i6++) {
+                    var key = argsKeys[i6];
+                    if (!argsMatch(args[key], item2[key])) {
+                      return true;
+                    }
+                  }
+                  return false;
+                };
+                var cachedObject = this[what];
+                if (what === "all") {
+                  cached2 = this.all;
+                } else if (isArray(cachedObject)) {
+                  for (var i5 = 0; i5 < cachedObject.length; i5++) {
+                    var item = cachedObject[i5];
+                    if (argsKeys.length && findCacheDiff(item))
+                      continue;
+                    cached2 = item._value;
+                    break;
+                  }
+                }
+                if (!cached2 && this.all) {
+                  var iterResult = new iterresult(what, args);
+                  for (var i5 = 0; i5 < this.all.length; i5++) {
+                    if (!iterResult.accept(this.all[i5]))
+                      break;
+                  }
+                  cached2 = iterResult.getValue();
+                  this._cacheAdd(what, cached2, args);
+                }
+                return isArray(cached2) ? cloneDates(cached2) : cached2 instanceof Date ? dateutil_clone(cached2) : cached2;
+              };
+              return Cache3;
+            })()
+          );
+          ;
+          var M365MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], repeat(1, 31), true), repeat(2, 28), true), repeat(3, 31), true), repeat(4, 30), true), repeat(5, 31), true), repeat(6, 30), true), repeat(7, 31), true), repeat(8, 31), true), repeat(9, 30), true), repeat(10, 31), true), repeat(11, 30), true), repeat(12, 31), true), repeat(1, 7), true);
+          var M366MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], repeat(1, 31), true), repeat(2, 29), true), repeat(3, 31), true), repeat(4, 30), true), repeat(5, 31), true), repeat(6, 30), true), repeat(7, 31), true), repeat(8, 31), true), repeat(9, 30), true), repeat(10, 31), true), repeat(11, 30), true), repeat(12, 31), true), repeat(1, 7), true);
+          var M28 = range2(1, 29);
+          var M29 = range2(1, 30);
+          var M30 = range2(1, 31);
+          var M31 = range2(1, 32);
+          var MDAY366MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], M31, true), M29, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31.slice(0, 7), true);
+          var MDAY365MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], M31, true), M28, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31.slice(0, 7), true);
+          var NM28 = range2(-28, 0);
+          var NM29 = range2(-29, 0);
+          var NM30 = range2(-30, 0);
+          var NM31 = range2(-31, 0);
+          var NMDAY366MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], NM31, true), NM29, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31.slice(0, 7), true);
+          var NMDAY365MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], NM31, true), NM28, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31.slice(0, 7), true);
+          var M366RANGE = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
+          var M365RANGE = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
+          var WDAYMASK = (function() {
+            var wdaymask = [];
+            for (var i5 = 0; i5 < 55; i5++)
+              wdaymask = wdaymask.concat(range2(7));
+            return wdaymask;
+          })();
+          ;
+          function rebuildYear(year2, options) {
+            var firstyday = datetime3(year2, 1, 1);
+            var yearlen = isLeapYear2(year2) ? 366 : 365;
+            var nextyearlen = isLeapYear2(year2 + 1) ? 366 : 365;
+            var yearordinal = toOrdinal(firstyday);
+            var yearweekday = getWeekday(firstyday);
+            var result = __assign3(__assign3({ yearlen, nextyearlen, yearordinal, yearweekday }, baseYearMasks(year2)), { wnomask: null });
+            if (empty(options.byweekno)) {
+              return result;
+            }
+            result.wnomask = repeat(0, yearlen + 7);
+            var firstwkst;
+            var wyearlen;
+            var no1wkst = firstwkst = pymod(7 - yearweekday + options.wkst, 7);
+            if (no1wkst >= 4) {
+              no1wkst = 0;
+              wyearlen = result.yearlen + pymod(yearweekday - options.wkst, 7);
+            } else {
+              wyearlen = yearlen - no1wkst;
+            }
+            var div = Math.floor(wyearlen / 7);
+            var mod = pymod(wyearlen, 7);
+            var numweeks = Math.floor(div + mod / 4);
+            for (var j5 = 0; j5 < options.byweekno.length; j5++) {
+              var n3 = options.byweekno[j5];
+              if (n3 < 0) {
+                n3 += numweeks + 1;
+              }
+              if (!(n3 > 0 && n3 <= numweeks)) {
+                continue;
+              }
+              var i5 = void 0;
+              if (n3 > 1) {
+                i5 = no1wkst + (n3 - 1) * 7;
+                if (no1wkst !== firstwkst) {
+                  i5 -= 7 - firstwkst;
+                }
+              } else {
+                i5 = no1wkst;
+              }
+              for (var k5 = 0; k5 < 7; k5++) {
+                result.wnomask[i5] = 1;
+                i5++;
+                if (result.wdaymask[i5] === options.wkst)
+                  break;
+              }
+            }
+            if (includes2(options.byweekno, 1)) {
+              var i5 = no1wkst + numweeks * 7;
+              if (no1wkst !== firstwkst)
+                i5 -= 7 - firstwkst;
+              if (i5 < yearlen) {
+                for (var j5 = 0; j5 < 7; j5++) {
+                  result.wnomask[i5] = 1;
+                  i5 += 1;
+                  if (result.wdaymask[i5] === options.wkst)
+                    break;
+                }
+              }
+            }
+            if (no1wkst) {
+              var lnumweeks = void 0;
+              if (!includes2(options.byweekno, -1)) {
+                var lyearweekday = getWeekday(datetime3(year2 - 1, 1, 1));
+                var lno1wkst = pymod(7 - lyearweekday.valueOf() + options.wkst, 7);
+                var lyearlen = isLeapYear2(year2 - 1) ? 366 : 365;
+                var weekst = void 0;
+                if (lno1wkst >= 4) {
+                  lno1wkst = 0;
+                  weekst = lyearlen + pymod(lyearweekday - options.wkst, 7);
+                } else {
+                  weekst = yearlen - no1wkst;
+                }
+                lnumweeks = Math.floor(52 + pymod(weekst, 7) / 4);
+              } else {
+                lnumweeks = -1;
+              }
+              if (includes2(options.byweekno, lnumweeks)) {
+                for (var i5 = 0; i5 < no1wkst; i5++)
+                  result.wnomask[i5] = 1;
+              }
+            }
+            return result;
+          }
+          function baseYearMasks(year2) {
+            var yearlen = isLeapYear2(year2) ? 366 : 365;
+            var firstyday = datetime3(year2, 1, 1);
+            var wday = getWeekday(firstyday);
+            if (yearlen === 365) {
+              return {
+                mmask: M365MASK,
+                mdaymask: MDAY365MASK,
+                nmdaymask: NMDAY365MASK,
+                wdaymask: WDAYMASK.slice(wday),
+                mrange: M365RANGE
+              };
+            }
+            return {
+              mmask: M366MASK,
+              mdaymask: MDAY366MASK,
+              nmdaymask: NMDAY366MASK,
+              wdaymask: WDAYMASK.slice(wday),
+              mrange: M366RANGE
+            };
+          }
+          ;
+          function rebuildMonth(year2, month, yearlen, mrange, wdaymask, options) {
+            var result = {
+              lastyear: year2,
+              lastmonth: month,
+              nwdaymask: []
+            };
+            var ranges = [];
+            if (options.freq === RRule2.YEARLY) {
+              if (empty(options.bymonth)) {
+                ranges = [[0, yearlen]];
+              } else {
+                for (var j5 = 0; j5 < options.bymonth.length; j5++) {
+                  month = options.bymonth[j5];
+                  ranges.push(mrange.slice(month - 1, month + 1));
+                }
+              }
+            } else if (options.freq === RRule2.MONTHLY) {
+              ranges = [mrange.slice(month - 1, month + 1)];
+            }
+            if (empty(ranges)) {
+              return result;
+            }
+            result.nwdaymask = repeat(0, yearlen);
+            for (var j5 = 0; j5 < ranges.length; j5++) {
+              var rang = ranges[j5];
+              var first = rang[0];
+              var last = rang[1] - 1;
+              for (var k5 = 0; k5 < options.bynweekday.length; k5++) {
+                var i5 = void 0;
+                var _a8 = options.bynweekday[k5], wday = _a8[0], n3 = _a8[1];
+                if (n3 < 0) {
+                  i5 = last + (n3 + 1) * 7;
+                  i5 -= pymod(wdaymask[i5] - wday, 7);
+                } else {
+                  i5 = first + (n3 - 1) * 7;
+                  i5 += pymod(7 - wdaymask[i5] + wday, 7);
+                }
+                if (first <= i5 && i5 <= last)
+                  result.nwdaymask[i5] = 1;
+              }
+            }
+            return result;
+          }
+          ;
+          function easter(y, offset) {
+            if (offset === void 0) {
+              offset = 0;
+            }
+            var a5 = y % 19;
+            var b5 = Math.floor(y / 100);
+            var c5 = y % 100;
+            var d5 = Math.floor(b5 / 4);
+            var e5 = b5 % 4;
+            var f5 = Math.floor((b5 + 8) / 25);
+            var g5 = Math.floor((b5 - f5 + 1) / 3);
+            var h5 = Math.floor(19 * a5 + b5 - d5 - g5 + 15) % 30;
+            var i5 = Math.floor(c5 / 4);
+            var k5 = c5 % 4;
+            var l3 = Math.floor(32 + 2 * e5 + 2 * i5 - h5 - k5) % 7;
+            var m3 = Math.floor((a5 + 11 * h5 + 22 * l3) / 451);
+            var month = Math.floor((h5 + l3 - 7 * m3 + 114) / 31);
+            var day = (h5 + l3 - 7 * m3 + 114) % 31 + 1;
+            var date7 = Date.UTC(y, month - 1, day + offset);
+            var yearStart = Date.UTC(y, 0, 1);
+            return [Math.ceil((date7 - yearStart) / (1e3 * 60 * 60 * 24))];
+          }
+          ;
+          var Iterinfo = (
+            /** @class */
+            (function() {
+              function Iterinfo2(options) {
+                this.options = options;
+              }
+              Iterinfo2.prototype.rebuild = function(year2, month) {
+                var options = this.options;
+                if (year2 !== this.lastyear) {
+                  this.yearinfo = rebuildYear(year2, options);
+                }
+                if (notEmpty(options.bynweekday) && (month !== this.lastmonth || year2 !== this.lastyear)) {
+                  var _a8 = this.yearinfo, yearlen = _a8.yearlen, mrange = _a8.mrange, wdaymask = _a8.wdaymask;
+                  this.monthinfo = rebuildMonth(year2, month, yearlen, mrange, wdaymask, options);
+                }
+                if (isPresent(options.byeaster)) {
+                  this.eastermask = easter(year2, options.byeaster);
+                }
+              };
+              Object.defineProperty(Iterinfo2.prototype, "lastyear", {
+                get: function() {
+                  return this.monthinfo ? this.monthinfo.lastyear : null;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "lastmonth", {
+                get: function() {
+                  return this.monthinfo ? this.monthinfo.lastmonth : null;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "yearlen", {
+                get: function() {
+                  return this.yearinfo.yearlen;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "yearordinal", {
+                get: function() {
+                  return this.yearinfo.yearordinal;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "mrange", {
+                get: function() {
+                  return this.yearinfo.mrange;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "wdaymask", {
+                get: function() {
+                  return this.yearinfo.wdaymask;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "mmask", {
+                get: function() {
+                  return this.yearinfo.mmask;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "wnomask", {
+                get: function() {
+                  return this.yearinfo.wnomask;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "nwdaymask", {
+                get: function() {
+                  return this.monthinfo ? this.monthinfo.nwdaymask : [];
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "nextyearlen", {
+                get: function() {
+                  return this.yearinfo.nextyearlen;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "mdaymask", {
+                get: function() {
+                  return this.yearinfo.mdaymask;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Object.defineProperty(Iterinfo2.prototype, "nmdaymask", {
+                get: function() {
+                  return this.yearinfo.nmdaymask;
+                },
+                enumerable: false,
+                configurable: true
+              });
+              Iterinfo2.prototype.ydayset = function() {
+                return [range2(this.yearlen), 0, this.yearlen];
+              };
+              Iterinfo2.prototype.mdayset = function(_, month) {
+                var start = this.mrange[month - 1];
+                var end = this.mrange[month];
+                var set2 = repeat(null, this.yearlen);
+                for (var i5 = start; i5 < end; i5++)
+                  set2[i5] = i5;
+                return [set2, start, end];
+              };
+              Iterinfo2.prototype.wdayset = function(year2, month, day) {
+                var set2 = repeat(null, this.yearlen + 7);
+                var i5 = toOrdinal(datetime3(year2, month, day)) - this.yearordinal;
+                var start = i5;
+                for (var j5 = 0; j5 < 7; j5++) {
+                  set2[i5] = i5;
+                  ++i5;
+                  if (this.wdaymask[i5] === this.options.wkst)
+                    break;
+                }
+                return [set2, start, i5];
+              };
+              Iterinfo2.prototype.ddayset = function(year2, month, day) {
+                var set2 = repeat(null, this.yearlen);
+                var i5 = toOrdinal(datetime3(year2, month, day)) - this.yearordinal;
+                set2[i5] = i5;
+                return [set2, i5, i5 + 1];
+              };
+              Iterinfo2.prototype.htimeset = function(hour, _, second, millisecond) {
+                var _this = this;
+                var set2 = [];
+                this.options.byminute.forEach(function(minute) {
+                  set2 = set2.concat(_this.mtimeset(hour, minute, second, millisecond));
+                });
+                sort(set2);
+                return set2;
+              };
+              Iterinfo2.prototype.mtimeset = function(hour, minute, _, millisecond) {
+                var set2 = this.options.bysecond.map(function(second) {
+                  return new Time3(hour, minute, second, millisecond);
+                });
+                sort(set2);
+                return set2;
+              };
+              Iterinfo2.prototype.stimeset = function(hour, minute, second, millisecond) {
+                return [new Time3(hour, minute, second, millisecond)];
+              };
+              Iterinfo2.prototype.getdayset = function(freq) {
+                switch (freq) {
+                  case Frequency.YEARLY:
+                    return this.ydayset.bind(this);
+                  case Frequency.MONTHLY:
+                    return this.mdayset.bind(this);
+                  case Frequency.WEEKLY:
+                    return this.wdayset.bind(this);
+                  case Frequency.DAILY:
+                    return this.ddayset.bind(this);
+                  default:
+                    return this.ddayset.bind(this);
+                }
+              };
+              Iterinfo2.prototype.gettimeset = function(freq) {
+                switch (freq) {
+                  case Frequency.HOURLY:
+                    return this.htimeset.bind(this);
+                  case Frequency.MINUTELY:
+                    return this.mtimeset.bind(this);
+                  case Frequency.SECONDLY:
+                    return this.stimeset.bind(this);
+                }
+              };
+              return Iterinfo2;
+            })()
+          );
+          const iterinfo = Iterinfo;
+          ;
+          function buildPoslist(bysetpos, timeset, start, end, ii, dayset) {
+            var poslist = [];
+            for (var j5 = 0; j5 < bysetpos.length; j5++) {
+              var daypos = void 0;
+              var timepos = void 0;
+              var pos = bysetpos[j5];
+              if (pos < 0) {
+                daypos = Math.floor(pos / timeset.length);
+                timepos = pymod(pos, timeset.length);
+              } else {
+                daypos = Math.floor((pos - 1) / timeset.length);
+                timepos = pymod(pos - 1, timeset.length);
+              }
+              var tmp = [];
+              for (var k5 = start; k5 < end; k5++) {
+                var val = dayset[k5];
+                if (!isPresent(val))
+                  continue;
+                tmp.push(val);
+              }
+              var i5 = void 0;
+              if (daypos < 0) {
+                i5 = tmp.slice(daypos)[0];
+              } else {
+                i5 = tmp[daypos];
+              }
+              var time6 = timeset[timepos];
+              var date7 = fromOrdinal(ii.yearordinal + i5);
+              var res = combine2(date7, time6);
+              if (!includes2(poslist, res))
+                poslist.push(res);
+            }
+            sort(poslist);
+            return poslist;
+          }
+          ;
+          function iter(iterResult, options) {
+            var dtstart = options.dtstart, freq = options.freq, interval2 = options.interval, until = options.until, bysetpos = options.bysetpos;
+            var count2 = options.count;
+            if (count2 === 0 || interval2 === 0) {
+              return emitResult(iterResult);
+            }
+            var counterDate = DateTime.fromDate(dtstart);
+            var ii = new iterinfo(options);
+            ii.rebuild(counterDate.year, counterDate.month);
+            var timeset = makeTimeset(ii, counterDate, options);
+            for (; ; ) {
+              var _a8 = ii.getdayset(freq)(counterDate.year, counterDate.month, counterDate.day), dayset = _a8[0], start = _a8[1], end = _a8[2];
+              var filtered = removeFilteredDays(dayset, start, end, ii, options);
+              if (notEmpty(bysetpos)) {
+                var poslist = buildPoslist(bysetpos, timeset, start, end, ii, dayset);
+                for (var j5 = 0; j5 < poslist.length; j5++) {
+                  var res = poslist[j5];
+                  if (until && res > until) {
+                    return emitResult(iterResult);
+                  }
+                  if (res >= dtstart) {
+                    var rezonedDate = rezoneIfNeeded(res, options);
+                    if (!iterResult.accept(rezonedDate)) {
+                      return emitResult(iterResult);
+                    }
+                    if (count2) {
+                      --count2;
+                      if (!count2) {
+                        return emitResult(iterResult);
+                      }
+                    }
+                  }
+                }
+              } else {
+                for (var j5 = start; j5 < end; j5++) {
+                  var currentDay = dayset[j5];
+                  if (!isPresent(currentDay)) {
+                    continue;
+                  }
+                  var date7 = fromOrdinal(ii.yearordinal + currentDay);
+                  for (var k5 = 0; k5 < timeset.length; k5++) {
+                    var time6 = timeset[k5];
+                    var res = combine2(date7, time6);
+                    if (until && res > until) {
+                      return emitResult(iterResult);
+                    }
+                    if (res >= dtstart) {
+                      var rezonedDate = rezoneIfNeeded(res, options);
+                      if (!iterResult.accept(rezonedDate)) {
+                        return emitResult(iterResult);
+                      }
+                      if (count2) {
+                        --count2;
+                        if (!count2) {
+                          return emitResult(iterResult);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              if (options.interval === 0) {
+                return emitResult(iterResult);
+              }
+              counterDate.add(options, filtered);
+              if (counterDate.year > MAXYEAR) {
+                return emitResult(iterResult);
+              }
+              if (!freqIsDailyOrGreater(freq)) {
+                timeset = ii.gettimeset(freq)(counterDate.hour, counterDate.minute, counterDate.second, 0);
+              }
+              ii.rebuild(counterDate.year, counterDate.month);
+            }
+          }
+          function isFiltered(ii, currentDay, options) {
+            var bymonth = options.bymonth, byweekno = options.byweekno, byweekday = options.byweekday, byeaster = options.byeaster, bymonthday = options.bymonthday, bynmonthday = options.bynmonthday, byyearday = options.byyearday;
+            return notEmpty(bymonth) && !includes2(bymonth, ii.mmask[currentDay]) || notEmpty(byweekno) && !ii.wnomask[currentDay] || notEmpty(byweekday) && !includes2(byweekday, ii.wdaymask[currentDay]) || notEmpty(ii.nwdaymask) && !ii.nwdaymask[currentDay] || byeaster !== null && !includes2(ii.eastermask, currentDay) || (notEmpty(bymonthday) || notEmpty(bynmonthday)) && !includes2(bymonthday, ii.mdaymask[currentDay]) && !includes2(bynmonthday, ii.nmdaymask[currentDay]) || notEmpty(byyearday) && (currentDay < ii.yearlen && !includes2(byyearday, currentDay + 1) && !includes2(byyearday, -ii.yearlen + currentDay) || currentDay >= ii.yearlen && !includes2(byyearday, currentDay + 1 - ii.yearlen) && !includes2(byyearday, -ii.nextyearlen + currentDay - ii.yearlen));
+          }
+          function rezoneIfNeeded(date7, options) {
+            return new DateWithZone(date7, options.tzid).rezonedDate();
+          }
+          function emitResult(iterResult) {
+            return iterResult.getValue();
+          }
+          function removeFilteredDays(dayset, start, end, ii, options) {
+            var filtered = false;
+            for (var dayCounter = start; dayCounter < end; dayCounter++) {
+              var currentDay = dayset[dayCounter];
+              filtered = isFiltered(ii, currentDay, options);
+              if (filtered)
+                dayset[currentDay] = null;
+            }
+            return filtered;
+          }
+          function makeTimeset(ii, counterDate, options) {
+            var freq = options.freq, byhour = options.byhour, byminute = options.byminute, bysecond = options.bysecond;
+            if (freqIsDailyOrGreater(freq)) {
+              return buildTimeset(options);
+            }
+            if (freq >= RRule2.HOURLY && notEmpty(byhour) && !includes2(byhour, counterDate.hour) || freq >= RRule2.MINUTELY && notEmpty(byminute) && !includes2(byminute, counterDate.minute) || freq >= RRule2.SECONDLY && notEmpty(bysecond) && !includes2(bysecond, counterDate.second)) {
+              return [];
+            }
+            return ii.gettimeset(freq)(counterDate.hour, counterDate.minute, counterDate.second, counterDate.millisecond);
+          }
+          ;
+          var Days = {
+            MO: new Weekday(0),
+            TU: new Weekday(1),
+            WE: new Weekday(2),
+            TH: new Weekday(3),
+            FR: new Weekday(4),
+            SA: new Weekday(5),
+            SU: new Weekday(6)
+          };
+          var DEFAULT_OPTIONS2 = {
+            freq: Frequency.YEARLY,
+            dtstart: null,
+            interval: 1,
+            wkst: Days.MO,
+            count: null,
+            until: null,
+            tzid: null,
+            bysetpos: null,
+            bymonth: null,
+            bymonthday: null,
+            bynmonthday: null,
+            byyearday: null,
+            byweekno: null,
+            byweekday: null,
+            bynweekday: null,
+            byhour: null,
+            byminute: null,
+            bysecond: null,
+            byeaster: null
+          };
+          var defaultKeys = Object.keys(DEFAULT_OPTIONS2);
+          var RRule2 = (
+            /** @class */
+            (function() {
+              function RRule3(options, noCache) {
+                if (options === void 0) {
+                  options = {};
+                }
+                if (noCache === void 0) {
+                  noCache = false;
+                }
+                this._cache = noCache ? null : new Cache2();
+                this.origOptions = initializeOptions(options);
+                var parsedOptions = parseOptions(options).parsedOptions;
+                this.options = parsedOptions;
+              }
+              RRule3.parseText = function(text2, language) {
+                return parseText(text2, language);
+              };
+              RRule3.fromText = function(text2, language) {
+                return fromText(text2, language);
+              };
+              RRule3.fromString = function(str) {
+                return new RRule3(RRule3.parseString(str) || void 0);
+              };
+              RRule3.prototype._iter = function(iterResult) {
+                return iter(iterResult, this.options);
+              };
+              RRule3.prototype._cacheGet = function(what, args) {
+                if (!this._cache)
+                  return false;
+                return this._cache._cacheGet(what, args);
+              };
+              RRule3.prototype._cacheAdd = function(what, value, args) {
+                if (!this._cache)
+                  return;
+                return this._cache._cacheAdd(what, value, args);
+              };
+              RRule3.prototype.all = function(iterator) {
+                if (iterator) {
+                  return this._iter(new callbackiterresult("all", {}, iterator));
+                }
+                var result = this._cacheGet("all");
+                if (result === false) {
+                  result = this._iter(new iterresult("all", {}));
+                  this._cacheAdd("all", result);
+                }
+                return result;
+              };
+              RRule3.prototype.between = function(after, before, inc, iterator) {
+                if (inc === void 0) {
+                  inc = false;
+                }
+                if (!isValidDate(after) || !isValidDate(before)) {
+                  throw new Error("Invalid date passed in to RRule.between");
+                }
+                var args = {
+                  before,
+                  after,
+                  inc
+                };
+                if (iterator) {
+                  return this._iter(new callbackiterresult("between", args, iterator));
+                }
+                var result = this._cacheGet("between", args);
+                if (result === false) {
+                  result = this._iter(new iterresult("between", args));
+                  this._cacheAdd("between", result, args);
+                }
+                return result;
+              };
+              RRule3.prototype.before = function(dt, inc) {
+                if (inc === void 0) {
+                  inc = false;
+                }
+                if (!isValidDate(dt)) {
+                  throw new Error("Invalid date passed in to RRule.before");
+                }
+                var args = { dt, inc };
+                var result = this._cacheGet("before", args);
+                if (result === false) {
+                  result = this._iter(new iterresult("before", args));
+                  this._cacheAdd("before", result, args);
+                }
+                return result;
+              };
+              RRule3.prototype.after = function(dt, inc) {
+                if (inc === void 0) {
+                  inc = false;
+                }
+                if (!isValidDate(dt)) {
+                  throw new Error("Invalid date passed in to RRule.after");
+                }
+                var args = { dt, inc };
+                var result = this._cacheGet("after", args);
+                if (result === false) {
+                  result = this._iter(new iterresult("after", args));
+                  this._cacheAdd("after", result, args);
+                }
+                return result;
+              };
+              RRule3.prototype.count = function() {
+                return this.all().length;
+              };
+              RRule3.prototype.toString = function() {
+                return optionsToString(this.origOptions);
+              };
+              RRule3.prototype.toText = function(gettext, language, dateFormatter) {
+                return toText(this, gettext, language, dateFormatter);
+              };
+              RRule3.prototype.isFullyConvertibleToText = function() {
+                return isFullyConvertible(this);
+              };
+              RRule3.prototype.clone = function() {
+                return new RRule3(this.origOptions);
+              };
+              RRule3.FREQUENCIES = [
+                "YEARLY",
+                "MONTHLY",
+                "WEEKLY",
+                "DAILY",
+                "HOURLY",
+                "MINUTELY",
+                "SECONDLY"
+              ];
+              RRule3.YEARLY = Frequency.YEARLY;
+              RRule3.MONTHLY = Frequency.MONTHLY;
+              RRule3.WEEKLY = Frequency.WEEKLY;
+              RRule3.DAILY = Frequency.DAILY;
+              RRule3.HOURLY = Frequency.HOURLY;
+              RRule3.MINUTELY = Frequency.MINUTELY;
+              RRule3.SECONDLY = Frequency.SECONDLY;
+              RRule3.MO = Days.MO;
+              RRule3.TU = Days.TU;
+              RRule3.WE = Days.WE;
+              RRule3.TH = Days.TH;
+              RRule3.FR = Days.FR;
+              RRule3.SA = Days.SA;
+              RRule3.SU = Days.SU;
+              RRule3.parseString = parseString;
+              RRule3.optionsToString = optionsToString;
+              return RRule3;
+            })()
+          );
+          ;
+          function iterSet(iterResult, _rrule, _exrule, _rdate, _exdate, tzid) {
+            var _exdateHash = {};
+            var _accept = iterResult.accept;
+            function evalExdate(after, before) {
+              _exrule.forEach(function(rrule) {
+                rrule.between(after, before, true).forEach(function(date7) {
+                  _exdateHash[Number(date7)] = true;
+                });
+              });
+            }
+            _exdate.forEach(function(date7) {
+              var zonedDate2 = new DateWithZone(date7, tzid).rezonedDate();
+              _exdateHash[Number(zonedDate2)] = true;
+            });
+            iterResult.accept = function(date7) {
+              var dt = Number(date7);
+              if (isNaN(dt))
+                return _accept.call(this, date7);
+              if (!_exdateHash[dt]) {
+                evalExdate(new Date(dt - 1), new Date(dt + 1));
+                if (!_exdateHash[dt]) {
+                  _exdateHash[dt] = true;
+                  return _accept.call(this, date7);
+                }
+              }
+              return true;
+            };
+            if (iterResult.method === "between") {
+              evalExdate(iterResult.args.after, iterResult.args.before);
+              iterResult.accept = function(date7) {
+                var dt = Number(date7);
+                if (!_exdateHash[dt]) {
+                  _exdateHash[dt] = true;
+                  return _accept.call(this, date7);
+                }
+                return true;
+              };
+            }
+            for (var i5 = 0; i5 < _rdate.length; i5++) {
+              var zonedDate = new DateWithZone(_rdate[i5], tzid).rezonedDate();
+              if (!iterResult.accept(new Date(zonedDate.getTime())))
+                break;
+            }
+            _rrule.forEach(function(rrule) {
+              iter(iterResult, rrule.options);
+            });
+            var res = iterResult._result;
+            sort(res);
+            switch (iterResult.method) {
+              case "all":
+              case "between":
+                return res;
+              case "before":
+                return res.length && res[res.length - 1] || null;
+              case "after":
+              default:
+                return res.length && res[0] || null;
+            }
+          }
+          ;
+          var rrulestr_DEFAULT_OPTIONS = {
+            dtstart: null,
+            cache: false,
+            unfold: false,
+            forceset: false,
+            compatible: false,
+            tzid: null
+          };
+          function parseInput(s2, options) {
+            var rrulevals = [];
+            var rdatevals = [];
+            var exrulevals = [];
+            var exdatevals = [];
+            var parsedDtstart = parseDtstart(s2);
+            var dtstart = parsedDtstart.dtstart;
+            var tzid = parsedDtstart.tzid;
+            var lines = splitIntoLines(s2, options.unfold);
+            lines.forEach(function(line3) {
+              var _a8;
+              if (!line3)
+                return;
+              var _b = breakDownLine(line3), name = _b.name, parms = _b.parms, value = _b.value;
+              switch (name.toUpperCase()) {
+                case "RRULE":
+                  if (parms.length) {
+                    throw new Error("unsupported RRULE parm: ".concat(parms.join(",")));
+                  }
+                  rrulevals.push(parseString(line3));
+                  break;
+                case "RDATE":
+                  var _c5 = (_a8 = /RDATE(?:;TZID=([^:=]+))?/i.exec(line3)) !== null && _a8 !== void 0 ? _a8 : [], rdateTzid = _c5[1];
+                  if (rdateTzid && !tzid) {
+                    tzid = rdateTzid;
+                  }
+                  rdatevals = rdatevals.concat(parseRDate(value, parms));
+                  break;
+                case "EXRULE":
+                  if (parms.length) {
+                    throw new Error("unsupported EXRULE parm: ".concat(parms.join(",")));
+                  }
+                  exrulevals.push(parseString(value));
+                  break;
+                case "EXDATE":
+                  exdatevals = exdatevals.concat(parseRDate(value, parms));
+                  break;
+                case "DTSTART":
+                  break;
+                default:
+                  throw new Error("unsupported property: " + name);
+              }
+            });
+            return {
+              dtstart,
+              tzid,
+              rrulevals,
+              rdatevals,
+              exrulevals,
+              exdatevals
+            };
+          }
+          function buildRule(s2, options) {
+            var _a8 = parseInput(s2, options), rrulevals = _a8.rrulevals, rdatevals = _a8.rdatevals, exrulevals = _a8.exrulevals, exdatevals = _a8.exdatevals, dtstart = _a8.dtstart, tzid = _a8.tzid;
+            var noCache = options.cache === false;
+            if (options.compatible) {
+              options.forceset = true;
+              options.unfold = true;
+            }
+            if (options.forceset || rrulevals.length > 1 || rdatevals.length || exrulevals.length || exdatevals.length) {
+              var rset_1 = new RRuleSet(noCache);
+              rset_1.dtstart(dtstart);
+              rset_1.tzid(tzid || void 0);
+              rrulevals.forEach(function(val2) {
+                rset_1.rrule(new RRule2(groomRruleOptions(val2, dtstart, tzid), noCache));
+              });
+              rdatevals.forEach(function(date7) {
+                rset_1.rdate(date7);
+              });
+              exrulevals.forEach(function(val2) {
+                rset_1.exrule(new RRule2(groomRruleOptions(val2, dtstart, tzid), noCache));
+              });
+              exdatevals.forEach(function(date7) {
+                rset_1.exdate(date7);
+              });
+              if (options.compatible && options.dtstart)
+                rset_1.rdate(dtstart);
+              return rset_1;
+            }
+            var val = rrulevals[0] || {};
+            return new RRule2(groomRruleOptions(val, val.dtstart || options.dtstart || dtstart, val.tzid || options.tzid || tzid), noCache);
+          }
+          function rrulestr(s2, options) {
+            if (options === void 0) {
+              options = {};
+            }
+            return buildRule(s2, rrulestr_initializeOptions(options));
+          }
+          function groomRruleOptions(val, dtstart, tzid) {
+            return __assign3(__assign3({}, val), { dtstart, tzid });
+          }
+          function rrulestr_initializeOptions(options) {
+            var invalid2 = [];
+            var keys = Object.keys(options);
+            var defaultKeys2 = Object.keys(rrulestr_DEFAULT_OPTIONS);
+            keys.forEach(function(key) {
+              if (!includes2(defaultKeys2, key))
+                invalid2.push(key);
+            });
+            if (invalid2.length) {
+              throw new Error("Invalid options: " + invalid2.join(", "));
+            }
+            return __assign3(__assign3({}, rrulestr_DEFAULT_OPTIONS), options);
+          }
+          function extractName(line3) {
+            if (line3.indexOf(":") === -1) {
+              return {
+                name: "RRULE",
+                value: line3
+              };
+            }
+            var _a8 = split2(line3, ":", 1), name = _a8[0], value = _a8[1];
+            return {
+              name,
+              value
+            };
+          }
+          function breakDownLine(line3) {
+            var _a8 = extractName(line3), name = _a8.name, value = _a8.value;
+            var parms = name.split(";");
+            if (!parms)
+              throw new Error("empty property name");
+            return {
+              name: parms[0].toUpperCase(),
+              parms: parms.slice(1),
+              value
+            };
+          }
+          function splitIntoLines(s2, unfold) {
+            if (unfold === void 0) {
+              unfold = false;
+            }
+            s2 = s2 && s2.trim();
+            if (!s2)
+              throw new Error("Invalid empty string");
+            if (!unfold) {
+              return s2.split(/\s/);
+            }
+            var lines = s2.split("\n");
+            var i5 = 0;
+            while (i5 < lines.length) {
+              var line3 = lines[i5] = lines[i5].replace(/\s+$/g, "");
+              if (!line3) {
+                lines.splice(i5, 1);
+              } else if (i5 > 0 && line3[0] === " ") {
+                lines[i5 - 1] += line3.slice(1);
+                lines.splice(i5, 1);
+              } else {
+                i5 += 1;
+              }
+            }
+            return lines;
+          }
+          function validateDateParm(parms) {
+            parms.forEach(function(parm) {
+              if (!/(VALUE=DATE(-TIME)?)|(TZID=)/.test(parm)) {
+                throw new Error("unsupported RDATE/EXDATE parm: " + parm);
+              }
+            });
+          }
+          function parseRDate(rdateval, parms) {
+            validateDateParm(parms);
+            return rdateval.split(",").map(function(datestr) {
+              return untilStringToDate(datestr);
+            });
+          }
+          ;
+          function createGetterSetter(fieldName) {
+            var _this = this;
+            return function(field) {
+              if (field !== void 0) {
+                _this["_".concat(fieldName)] = field;
+              }
+              if (_this["_".concat(fieldName)] !== void 0) {
+                return _this["_".concat(fieldName)];
+              }
+              for (var i5 = 0; i5 < _this._rrule.length; i5++) {
+                var field_1 = _this._rrule[i5].origOptions[fieldName];
+                if (field_1) {
+                  return field_1;
+                }
+              }
+            };
+          }
+          var RRuleSet = (
+            /** @class */
+            (function(_super) {
+              __extends3(RRuleSet2, _super);
+              function RRuleSet2(noCache) {
+                if (noCache === void 0) {
+                  noCache = false;
+                }
+                var _this = _super.call(this, {}, noCache) || this;
+                _this.dtstart = createGetterSetter.apply(_this, ["dtstart"]);
+                _this.tzid = createGetterSetter.apply(_this, ["tzid"]);
+                _this._rrule = [];
+                _this._rdate = [];
+                _this._exrule = [];
+                _this._exdate = [];
+                return _this;
+              }
+              RRuleSet2.prototype._iter = function(iterResult) {
+                return iterSet(iterResult, this._rrule, this._exrule, this._rdate, this._exdate, this.tzid());
+              };
+              RRuleSet2.prototype.rrule = function(rrule) {
+                _addRule(rrule, this._rrule);
+              };
+              RRuleSet2.prototype.exrule = function(rrule) {
+                _addRule(rrule, this._exrule);
+              };
+              RRuleSet2.prototype.rdate = function(date7) {
+                _addDate(date7, this._rdate);
+              };
+              RRuleSet2.prototype.exdate = function(date7) {
+                _addDate(date7, this._exdate);
+              };
+              RRuleSet2.prototype.rrules = function() {
+                return this._rrule.map(function(e5) {
+                  return rrulestr(e5.toString());
+                });
+              };
+              RRuleSet2.prototype.exrules = function() {
+                return this._exrule.map(function(e5) {
+                  return rrulestr(e5.toString());
+                });
+              };
+              RRuleSet2.prototype.rdates = function() {
+                return this._rdate.map(function(e5) {
+                  return new Date(e5.getTime());
+                });
+              };
+              RRuleSet2.prototype.exdates = function() {
+                return this._exdate.map(function(e5) {
+                  return new Date(e5.getTime());
+                });
+              };
+              RRuleSet2.prototype.valueOf = function() {
+                var result = [];
+                if (!this._rrule.length && this._dtstart) {
+                  result = result.concat(optionsToString({ dtstart: this._dtstart }));
+                }
+                this._rrule.forEach(function(rrule) {
+                  result = result.concat(rrule.toString().split("\n"));
+                });
+                this._exrule.forEach(function(exrule) {
+                  result = result.concat(exrule.toString().split("\n").map(function(line3) {
+                    return line3.replace(/^RRULE:/, "EXRULE:");
+                  }).filter(function(line3) {
+                    return !/^DTSTART/.test(line3);
+                  }));
+                });
+                if (this._rdate.length) {
+                  result.push(rdatesToString("RDATE", this._rdate, this.tzid()));
+                }
+                if (this._exdate.length) {
+                  result.push(rdatesToString("EXDATE", this._exdate, this.tzid()));
+                }
+                return result;
+              };
+              RRuleSet2.prototype.toString = function() {
+                return this.valueOf().join("\n");
+              };
+              RRuleSet2.prototype.clone = function() {
+                var rrs = new RRuleSet2(!!this._cache);
+                this._rrule.forEach(function(rule) {
+                  return rrs.rrule(rule.clone());
+                });
+                this._exrule.forEach(function(rule) {
+                  return rrs.exrule(rule.clone());
+                });
+                this._rdate.forEach(function(date7) {
+                  return rrs.rdate(new Date(date7.getTime()));
+                });
+                this._exdate.forEach(function(date7) {
+                  return rrs.exdate(new Date(date7.getTime()));
+                });
+                return rrs;
+              };
+              return RRuleSet2;
+            })(RRule2)
+          );
+          function _addRule(rrule, collection) {
+            if (!(rrule instanceof RRule2)) {
+              throw new TypeError(String(rrule) + " is not RRule instance");
+            }
+            if (!includes2(collection.map(String), String(rrule))) {
+              collection.push(rrule);
+            }
+          }
+          function _addDate(date7, collection) {
+            if (!(date7 instanceof Date)) {
+              throw new TypeError(String(date7) + " is not Date instance");
+            }
+            if (!includes2(collection.map(Number), Number(date7))) {
+              collection.push(date7);
+              sort(collection);
+            }
+          }
+          function rdatesToString(param, rdates, tzid) {
+            var isUTC = !tzid || tzid.toUpperCase() === "UTC";
+            var header = isUTC ? "".concat(param, ":") : "".concat(param, ";TZID=").concat(tzid, ":");
+            var dateString = rdates.map(function(rdate) {
+              return timeToUntilString(rdate.valueOf(), isUTC);
+            }).join(",");
+            return "".concat(header).concat(dateString);
+          }
+          ;
+          return __webpack_exports__;
+        })()
+      );
+    });
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/env-impl.mjs
+function toBoolean(val) {
+  return val ? val !== "false" : false;
+}
+function getEnvVar(key, fallback2) {
+  if (typeof process !== "undefined" && process.env) return process.env[key] ?? fallback2;
+  if (typeof Deno !== "undefined") return Deno.env.get(key) ?? fallback2;
+  if (typeof Bun !== "undefined") return Bun.env[key] ?? fallback2;
+  return fallback2;
+}
+function getBooleanEnvVar(key, fallback2 = true) {
+  const value = getEnvVar(key);
+  if (!value) return fallback2;
+  return value !== "0" && value.toLowerCase() !== "false" && value !== "";
+}
+var _envShim, _getEnv, env, nodeENV, isProduction, isDevelopment, isTest, ENV;
+var init_env_impl = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/env-impl.mjs"() {
+    _envShim = /* @__PURE__ */ Object.create(null);
+    _getEnv = (useShim) => globalThis.process?.env || globalThis.Deno?.env.toObject() || globalThis.__env__ || (useShim ? _envShim : globalThis);
+    env = new Proxy(_envShim, {
+      get(_, prop) {
+        return _getEnv()[prop] ?? _envShim[prop];
+      },
+      has(_, prop) {
+        return prop in _getEnv() || prop in _envShim;
+      },
+      set(_, prop, value) {
+        const env3 = _getEnv(true);
+        env3[prop] = value;
+        return true;
+      },
+      deleteProperty(_, prop) {
+        if (!prop) return false;
+        const env3 = _getEnv(true);
+        delete env3[prop];
+        return true;
+      },
+      ownKeys() {
+        const env3 = _getEnv(true);
+        return Object.keys(env3);
+      }
+    });
+    nodeENV = env.NODE_ENV ?? "";
+    isProduction = nodeENV === "production";
+    isDevelopment = () => nodeENV === "dev" || nodeENV === "development";
+    isTest = () => nodeENV === "test" || toBoolean(env.TEST);
+    ENV = Object.freeze({
+      get BETTER_AUTH_SECRET() {
+        return getEnvVar("BETTER_AUTH_SECRET");
+      },
+      get AUTH_SECRET() {
+        return getEnvVar("AUTH_SECRET");
+      },
+      get BETTER_AUTH_TELEMETRY() {
+        return getEnvVar("BETTER_AUTH_TELEMETRY");
+      },
+      get BETTER_AUTH_TELEMETRY_ID() {
+        return getEnvVar("BETTER_AUTH_TELEMETRY_ID");
+      },
+      get NODE_ENV() {
+        return getEnvVar("NODE_ENV", "development");
+      },
+      get PACKAGE_VERSION() {
+        return getEnvVar("PACKAGE_VERSION", "0.0.0");
+      },
+      get BETTER_AUTH_TELEMETRY_ENDPOINT() {
+        return getEnvVar("BETTER_AUTH_TELEMETRY_ENDPOINT", "");
+      }
+    });
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/color-depth.mjs
+function getColorDepth() {
+  if (getEnvVar("FORCE_COLOR") !== void 0) switch (getEnvVar("FORCE_COLOR")) {
+    case "":
+    case "1":
+    case "true":
+      return COLORS_16;
+    case "2":
+      return COLORS_256;
+    case "3":
+      return COLORS_16m;
+    default:
+      return COLORS_2;
+  }
+  if (getEnvVar("NODE_DISABLE_COLORS") !== void 0 && getEnvVar("NODE_DISABLE_COLORS") !== "" || getEnvVar("NO_COLOR") !== void 0 && getEnvVar("NO_COLOR") !== "" || getEnvVar("TERM") === "dumb") return COLORS_2;
+  if (getEnvVar("TMUX")) return COLORS_16m;
+  if ("TF_BUILD" in env && "AGENT_NAME" in env) return COLORS_16;
+  if ("CI" in env) {
+    for (const { 0: envName, 1: colors } of CI_ENVS_MAP) if (envName in env) return colors;
+    if (getEnvVar("CI_NAME") === "codeship") return COLORS_256;
+    return COLORS_2;
+  }
+  if ("TEAMCITY_VERSION" in env) return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.exec(getEnvVar("TEAMCITY_VERSION")) !== null ? COLORS_16 : COLORS_2;
+  switch (getEnvVar("TERM_PROGRAM")) {
+    case "iTerm.app":
+      if (!getEnvVar("TERM_PROGRAM_VERSION") || /^[0-2]\./.exec(getEnvVar("TERM_PROGRAM_VERSION")) !== null) return COLORS_256;
+      return COLORS_16m;
+    case "HyperTerm":
+    case "MacTerm":
+      return COLORS_16m;
+    case "Apple_Terminal":
+      return COLORS_256;
+  }
+  if (getEnvVar("COLORTERM") === "truecolor" || getEnvVar("COLORTERM") === "24bit") return COLORS_16m;
+  if (getEnvVar("TERM")) {
+    if (/truecolor/.exec(getEnvVar("TERM")) !== null) return COLORS_16m;
+    if (/^xterm-256/.exec(getEnvVar("TERM")) !== null) return COLORS_256;
+    const termEnv = getEnvVar("TERM").toLowerCase();
+    if (TERM_ENVS[termEnv]) return TERM_ENVS[termEnv];
+    if (TERM_ENVS_REG_EXP.some((term) => term.exec(termEnv) !== null)) return COLORS_16;
+  }
+  if (getEnvVar("COLORTERM")) return COLORS_16;
+  return COLORS_2;
+}
+var COLORS_2, COLORS_16, COLORS_256, COLORS_16m, TERM_ENVS, CI_ENVS_MAP, TERM_ENVS_REG_EXP;
+var init_color_depth = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/color-depth.mjs"() {
+    init_env_impl();
+    COLORS_2 = 1;
+    COLORS_16 = 4;
+    COLORS_256 = 8;
+    COLORS_16m = 24;
+    TERM_ENVS = {
+      eterm: COLORS_16,
+      cons25: COLORS_16,
+      console: COLORS_16,
+      cygwin: COLORS_16,
+      dtterm: COLORS_16,
+      gnome: COLORS_16,
+      hurd: COLORS_16,
+      jfbterm: COLORS_16,
+      konsole: COLORS_16,
+      kterm: COLORS_16,
+      mlterm: COLORS_16,
+      mosh: COLORS_16m,
+      putty: COLORS_16,
+      st: COLORS_16,
+      "rxvt-unicode-24bit": COLORS_16m,
+      terminator: COLORS_16m,
+      "xterm-kitty": COLORS_16m
+    };
+    CI_ENVS_MAP = new Map(Object.entries({
+      APPVEYOR: COLORS_256,
+      BUILDKITE: COLORS_256,
+      CIRCLECI: COLORS_16m,
+      DRONE: COLORS_256,
+      GITEA_ACTIONS: COLORS_16m,
+      GITHUB_ACTIONS: COLORS_16m,
+      GITLAB_CI: COLORS_256,
+      TRAVIS: COLORS_256
+    }));
+    TERM_ENVS_REG_EXP = [
+      /ansi/,
+      /color/,
+      /linux/,
+      /direct/,
+      /^con[0-9]*x[0-9]/,
+      /^rxvt/,
+      /^screen/,
+      /^xterm/,
+      /^vt100/,
+      /^vt220/
+    ];
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/context/global.mjs
+function __getBetterAuthGlobal() {
+  if (!globalThis[symbol2]) {
+    globalThis[symbol2] = {
+      version: __betterAuthVersion,
+      epoch: 1,
+      context: __context
+    };
+    bind = globalThis[symbol2];
+  }
+  bind = globalThis[symbol2];
+  if (bind.version !== __betterAuthVersion) {
+    bind.version = __betterAuthVersion;
+    bind.epoch++;
+  }
+  return globalThis[symbol2];
+}
+function __getCurrentEndpointContext() {
+  return __getBetterAuthGlobal().context.endpointContextAsyncStorage?.getStore();
+}
+function getBetterAuthVersion() {
+  return __getBetterAuthGlobal().version;
+}
+var symbol2, bind, __context, __betterAuthVersion;
+var init_global = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/context/global.mjs"() {
+    symbol2 = /* @__PURE__ */ Symbol.for("better-auth:global");
+    bind = null;
+    __context = {};
+    __betterAuthVersion = "1.7.4";
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/logger.mjs
+function shouldPublishLog(currentLogLevel, logLevel) {
+  return levels.indexOf(logLevel) >= levels.indexOf(currentLogLevel);
+}
+var TTY_COLORS, levels, levelColors, formatMessage, createLogger, defaultLogger, getCurrentLogger, logger2;
+var init_logger = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/logger.mjs"() {
+    init_global();
+    init_color_depth();
+    TTY_COLORS = {
+      reset: "\x1B[0m",
+      bright: "\x1B[1m",
+      dim: "\x1B[2m",
+      undim: "\x1B[22m",
+      underscore: "\x1B[4m",
+      blink: "\x1B[5m",
+      reverse: "\x1B[7m",
+      hidden: "\x1B[8m",
+      fg: {
+        black: "\x1B[30m",
+        red: "\x1B[31m",
+        green: "\x1B[32m",
+        yellow: "\x1B[33m",
+        blue: "\x1B[34m",
+        magenta: "\x1B[35m",
+        cyan: "\x1B[36m",
+        white: "\x1B[37m"
+      },
+      bg: {
+        black: "\x1B[40m",
+        red: "\x1B[41m",
+        green: "\x1B[42m",
+        yellow: "\x1B[43m",
+        blue: "\x1B[44m",
+        magenta: "\x1B[45m",
+        cyan: "\x1B[46m",
+        white: "\x1B[47m"
+      }
+    };
+    levels = [
+      "debug",
+      "info",
+      "success",
+      "warn",
+      "error"
+    ];
+    levelColors = {
+      info: TTY_COLORS.fg.blue,
+      success: TTY_COLORS.fg.green,
+      warn: TTY_COLORS.fg.yellow,
+      error: TTY_COLORS.fg.red,
+      debug: TTY_COLORS.fg.magenta
+    };
+    formatMessage = (level, message2, colorsEnabled) => {
+      const timestamp2 = (/* @__PURE__ */ new Date()).toISOString();
+      if (colorsEnabled) return `${TTY_COLORS.dim}${timestamp2}${TTY_COLORS.reset} ${levelColors[level]}${level.toUpperCase()}${TTY_COLORS.reset} ${TTY_COLORS.bright}[Better Auth]:${TTY_COLORS.reset} ${message2}`;
+      return `${timestamp2} ${level.toUpperCase()} [Better Auth]: ${message2}`;
+    };
+    createLogger = (options) => {
+      const enabled = options?.disabled !== true;
+      const logLevel = options?.level ?? "warn";
+      const colorsEnabled = options?.disableColors !== void 0 ? !options.disableColors : getColorDepth() !== 1;
+      const LogFunc = (level, message2, args = []) => {
+        if (!enabled || !shouldPublishLog(logLevel, level)) return;
+        const formattedMessage = formatMessage(level, message2, colorsEnabled);
+        if (!options || typeof options.log !== "function") {
+          if (level === "error") console.error(formattedMessage, ...args);
+          else if (level === "warn") console.warn(formattedMessage, ...args);
+          else console.log(formattedMessage, ...args);
+          return;
+        }
+        options.log(level === "success" ? "info" : level, message2, ...args);
+      };
+      return {
+        ...Object.fromEntries(levels.map((level) => [level, (...[message2, ...args]) => LogFunc(level, message2, args)])),
+        get level() {
+          return logLevel;
+        }
+      };
+    };
+    defaultLogger = createLogger();
+    getCurrentLogger = () => {
+      const currentLogger = __getCurrentEndpointContext()?.context.logger;
+      return currentLogger && currentLogger !== logger2 ? currentLogger : defaultLogger;
+    };
+    logger2 = {
+      debug: (...params) => getCurrentLogger().debug(...params),
+      info: (...params) => getCurrentLogger().info(...params),
+      success: (...params) => getCurrentLogger().success(...params),
+      warn: (...params) => getCurrentLogger().warn(...params),
+      error: (...params) => getCurrentLogger().error(...params),
+      get level() {
+        return getCurrentLogger().level;
+      }
+    };
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/index.mjs
+var init_env = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/env/index.mjs"() {
+    init_env_impl();
+    init_logger();
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/utils/error-codes.mjs
+function defineErrorCodes(codes) {
+  return Object.fromEntries(Object.entries(codes).map(([key, value]) => [key, {
+    code: key,
+    message: value,
+    toString: () => key
+  }]));
+}
+var init_error_codes = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/utils/error-codes.mjs"() {
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/codes.mjs
+var BASE_ERROR_CODES;
+var init_codes = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/codes.mjs"() {
+    init_error_codes();
+    BASE_ERROR_CODES = defineErrorCodes({
+      USER_NOT_FOUND: "User not found",
+      FAILED_TO_CREATE_USER: "Failed to create user",
+      FAILED_TO_CREATE_SESSION: "Failed to create session",
+      FAILED_TO_UPDATE_USER: "Failed to update user",
+      FAILED_TO_GET_SESSION: "Failed to get session",
+      INVALID_PASSWORD: "Invalid password",
+      INVALID_EMAIL: "Invalid email",
+      INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
+      INVALID_USER: "Invalid user",
+      SOCIAL_ACCOUNT_ALREADY_LINKED: "Social account already linked",
+      PROVIDER_NOT_FOUND: "Provider not found",
+      INVALID_TOKEN: "Invalid token",
+      TOKEN_EXPIRED: "Token expired",
+      ID_TOKEN_NOT_SUPPORTED: "id_token not supported",
+      FAILED_TO_GET_USER_INFO: "Failed to get user info",
+      USER_EMAIL_NOT_FOUND: "User email not found",
+      EMAIL_NOT_VERIFIED: "Email not verified",
+      PASSWORD_TOO_SHORT: "Password too short",
+      PASSWORD_TOO_LONG: "Password too long",
+      USER_ALREADY_EXISTS: "User already exists.",
+      USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: "User already exists. Use another email.",
+      EMAIL_CAN_NOT_BE_UPDATED: "Email can not be updated",
+      CHANGE_EMAIL_DISABLED: "Change email is disabled",
+      CREDENTIAL_ACCOUNT_NOT_FOUND: "Credential account not found",
+      SESSION_EXPIRED: "Session expired. Re-authenticate to perform this action.",
+      FAILED_TO_UNLINK_LAST_ACCOUNT: "You can't unlink your last account",
+      ACCOUNT_NOT_FOUND: "Account not found",
+      USER_ALREADY_HAS_PASSWORD: "User already has a password. Provide that to delete the account.",
+      CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: "Cross-site navigation login blocked. This request appears to be a CSRF attack.",
+      VERIFICATION_EMAIL_NOT_ENABLED: "Verification email isn't enabled",
+      EMAIL_ALREADY_VERIFIED: "Email is already verified",
+      EMAIL_MISMATCH: "Email mismatch",
+      SESSION_NOT_FRESH: "Session is not fresh",
+      LINKED_ACCOUNT_ALREADY_EXISTS: "Linked account already exists",
+      INVALID_ORIGIN: "Invalid origin",
+      INVALID_CALLBACK_URL: "Invalid callbackURL",
+      INVALID_REDIRECT_URL: "Invalid redirectURL",
+      INVALID_ERROR_CALLBACK_URL: "Invalid errorCallbackURL",
+      INVALID_NEW_USER_CALLBACK_URL: "Invalid newUserCallbackURL",
+      MISSING_OR_NULL_ORIGIN: "Missing or null Origin",
+      CALLBACK_URL_REQUIRED: "callbackURL is required",
+      FAILED_TO_CREATE_VERIFICATION: "Unable to create verification",
+      FIELD_NOT_ALLOWED: "Field not allowed to be set",
+      ASYNC_VALIDATION_NOT_SUPPORTED: "Async validation is not supported",
+      VALIDATION_ERROR: "Validation Error",
+      MISSING_FIELD: "Field is required",
+      METHOD_NOT_ALLOWED_DEFER_SESSION_REQUIRED: "POST method requires deferSessionRefresh to be enabled in session config",
+      BODY_MUST_BE_AN_OBJECT: "Body must be an object",
+      PASSWORD_ALREADY_SET: "User already has a password set"
+    });
+  }
+});
+
+// node_modules/.pnpm/better-call@1.4.0_zod@4.6.5/node_modules/better-call/dist/error.mjs
+function isErrorStackTraceLimitWritable() {
+  const desc2 = Object.getOwnPropertyDescriptor(Error, "stackTraceLimit");
+  if (desc2 === void 0) return Object.isExtensible(Error);
+  return Object.prototype.hasOwnProperty.call(desc2, "writable") ? desc2.writable : desc2.set !== void 0;
+}
+function hideInternalStackFrames(stack) {
+  const lines = stack.split("\n    at ");
+  if (lines.length <= 1) return stack;
+  lines.splice(1, 1);
+  return lines.join("\n    at ");
+}
+function makeErrorForHideStackFrame(Base, clazz) {
+  class HideStackFramesError extends Base {
+    #hiddenStack;
+    constructor(...args) {
+      if (isErrorStackTraceLimitWritable()) {
+        const limit = Error.stackTraceLimit;
+        Error.stackTraceLimit = 0;
+        super(...args);
+        Error.stackTraceLimit = limit;
+      } else super(...args);
+      const stack = (/* @__PURE__ */ new Error()).stack;
+      if (stack) this.#hiddenStack = hideInternalStackFrames(stack.replace(/^Error/, this.name));
+    }
+    get errorStack() {
+      return this.#hiddenStack;
+    }
+  }
+  Object.defineProperty(HideStackFramesError.prototype, "constructor", {
+    get() {
+      return clazz;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  return HideStackFramesError;
+}
+var statusCodes, InternalAPIError, ValidationError, BetterCallError, kAPIErrorHeaderSymbol, APIError;
+var init_error = __esm({
+  "node_modules/.pnpm/better-call@1.4.0_zod@4.6.5/node_modules/better-call/dist/error.mjs"() {
+    statusCodes = {
+      OK: 200,
+      CREATED: 201,
+      ACCEPTED: 202,
+      NO_CONTENT: 204,
+      MULTIPLE_CHOICES: 300,
+      MOVED_PERMANENTLY: 301,
+      FOUND: 302,
+      SEE_OTHER: 303,
+      NOT_MODIFIED: 304,
+      TEMPORARY_REDIRECT: 307,
+      BAD_REQUEST: 400,
+      UNAUTHORIZED: 401,
+      PAYMENT_REQUIRED: 402,
+      FORBIDDEN: 403,
+      NOT_FOUND: 404,
+      METHOD_NOT_ALLOWED: 405,
+      NOT_ACCEPTABLE: 406,
+      PROXY_AUTHENTICATION_REQUIRED: 407,
+      REQUEST_TIMEOUT: 408,
+      CONFLICT: 409,
+      GONE: 410,
+      LENGTH_REQUIRED: 411,
+      PRECONDITION_FAILED: 412,
+      PAYLOAD_TOO_LARGE: 413,
+      URI_TOO_LONG: 414,
+      UNSUPPORTED_MEDIA_TYPE: 415,
+      RANGE_NOT_SATISFIABLE: 416,
+      EXPECTATION_FAILED: 417,
+      "I'M_A_TEAPOT": 418,
+      MISDIRECTED_REQUEST: 421,
+      UNPROCESSABLE_ENTITY: 422,
+      LOCKED: 423,
+      FAILED_DEPENDENCY: 424,
+      TOO_EARLY: 425,
+      UPGRADE_REQUIRED: 426,
+      PRECONDITION_REQUIRED: 428,
+      TOO_MANY_REQUESTS: 429,
+      REQUEST_HEADER_FIELDS_TOO_LARGE: 431,
+      UNAVAILABLE_FOR_LEGAL_REASONS: 451,
+      INTERNAL_SERVER_ERROR: 500,
+      NOT_IMPLEMENTED: 501,
+      BAD_GATEWAY: 502,
+      SERVICE_UNAVAILABLE: 503,
+      GATEWAY_TIMEOUT: 504,
+      HTTP_VERSION_NOT_SUPPORTED: 505,
+      VARIANT_ALSO_NEGOTIATES: 506,
+      INSUFFICIENT_STORAGE: 507,
+      LOOP_DETECTED: 508,
+      NOT_EXTENDED: 510,
+      NETWORK_AUTHENTICATION_REQUIRED: 511
+    };
+    InternalAPIError = class extends Error {
+      status;
+      body;
+      headers;
+      statusCode;
+      constructor(status = "INTERNAL_SERVER_ERROR", body = void 0, headers = {}, statusCode = typeof status === "number" ? status : statusCodes[status]) {
+        super(body?.message, body?.cause ? { cause: body.cause } : void 0);
+        this.status = status;
+        this.body = body;
+        this.headers = headers;
+        this.statusCode = statusCode;
+        this.name = "APIError";
+        this.status = status;
+        this.headers = headers;
+        this.statusCode = statusCode;
+        this.body = body;
+      }
+    };
+    ValidationError = class extends InternalAPIError {
+      message;
+      issues;
+      constructor(message2, issues) {
+        super(400, {
+          message: message2,
+          code: "VALIDATION_ERROR"
+        });
+        this.message = message2;
+        this.issues = issues;
+        this.issues = issues;
+      }
+    };
+    BetterCallError = class extends Error {
+      constructor(message2) {
+        super(message2);
+        this.name = "BetterCallError";
+      }
+    };
+    kAPIErrorHeaderSymbol = /* @__PURE__ */ Symbol.for("better-call:api-error-headers");
+    APIError = makeErrorForHideStackFrame(InternalAPIError, Error);
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/index.mjs
+var BetterAuthError, APIError2;
+var init_error2 = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/error/index.mjs"() {
+    init_codes();
+    init_error();
+    BetterAuthError = class extends Error {
+      constructor(message2, options) {
+        super(message2, options);
+        this.name = "BetterAuthError";
+        this.message = message2;
+        this.stack = "";
+      }
+    };
+    APIError2 = class APIError3 extends APIError {
+      constructor(...args) {
+        super(...args);
+      }
+      static fromStatus(status, body) {
+        return new APIError3(status, body);
+      }
+      static from(status, error64) {
+        return new APIError3(status, {
+          message: error64.message,
+          code: error64.code
+        });
+      }
+    };
+  }
+});
+
+// node_modules/.pnpm/@better-auth+utils@0.4.2/node_modules/@better-auth/utils/dist/random.mjs
+function expandAlphabet(alphabet) {
+  switch (alphabet) {
+    case "a-z":
+      return "abcdefghijklmnopqrstuvwxyz";
+    case "A-Z":
+      return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    case "0-9":
+      return "0123456789";
+    case "-_":
+      return "-_";
+    default:
+      throw new Error(`Unsupported alphabet: ${alphabet}`);
+  }
+}
+function createRandomStringGenerator(...baseAlphabets) {
+  const baseCharSet = baseAlphabets.map(expandAlphabet).join("");
+  if (baseCharSet.length === 0) {
+    throw new Error(
+      "No valid characters provided for random string generation."
+    );
+  }
+  const baseCharSetLength = baseCharSet.length;
+  return (length, ...alphabets) => {
+    if (length <= 0) {
+      throw new Error("Length must be a positive integer.");
+    }
+    let charSet = baseCharSet;
+    let charSetLength = baseCharSetLength;
+    if (alphabets.length > 0) {
+      charSet = alphabets.map(expandAlphabet).join("");
+      charSetLength = charSet.length;
+    }
+    const maxValid = Math.floor(256 / charSetLength) * charSetLength;
+    const buf = new Uint8Array(length * 2);
+    const bufLength = buf.length;
+    let result = "";
+    let bufIndex = bufLength;
+    let rand;
+    while (result.length < length) {
+      if (bufIndex >= bufLength) {
+        crypto.getRandomValues(buf);
+        bufIndex = 0;
+      }
+      rand = buf[bufIndex++];
+      if (rand < maxValid) {
+        result += charSet[rand % charSetLength];
+      }
+    }
+    return result;
+  };
+}
+var init_random = __esm({
+  "node_modules/.pnpm/@better-auth+utils@0.4.2/node_modules/@better-auth/utils/dist/random.mjs"() {
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/database-index.mjs
+function getPortableDatabaseIdentifierKey(identifier) {
+  return identifier.toLowerCase();
+}
+function getUtf8ByteLength(value) {
+  return new TextEncoder().encode(value).length;
+}
+function truncateUtf8(value, maxBytes) {
+  let result = "";
+  let byteLength = 0;
+  for (const character of value) {
+    const characterByteLength = getUtf8ByteLength(character);
+    if (byteLength + characterByteLength > maxBytes) break;
+    result += character;
+    byteLength += characterByteLength;
+  }
+  return result;
+}
+function getStableIndexNameHash(value) {
+  let hash2 = 2166136261;
+  for (let index2 = 0; index2 < value.length; index2++) {
+    hash2 ^= value.charCodeAt(index2);
+    hash2 = Math.imul(hash2, 16777619);
+  }
+  return (hash2 >>> 0).toString(16).padStart(8, "0");
+}
+function getDatabaseIndexName(tableName, index2) {
+  if (index2.name !== void 0) {
+    if (index2.name.trim().length === 0) throw new BetterAuthError("Database index names must contain at least one visible character.");
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(index2.name)) throw new BetterAuthError("Database index names must start with a letter or underscore and contain only letters, numbers, and underscores.");
+    if (getUtf8ByteLength(index2.name) > MAX_DATABASE_INDEX_NAME_BYTES) throw new BetterAuthError(`Database index names must be at most ${MAX_DATABASE_INDEX_NAME_BYTES} UTF-8 bytes.`);
+    return index2.name;
+  }
+  const indexKind = index2.unique ? "uidx" : "idx";
+  const generatedName = `${tableName}_${index2.fields.join("_")}_${indexKind}`;
+  if (getUtf8ByteLength(generatedName) <= MAX_DATABASE_INDEX_NAME_BYTES) return generatedName;
+  const suffix = `_${getStableIndexNameHash(generatedName)}_${indexKind}`;
+  return `${truncateUtf8(generatedName.slice(0, -indexKind.length - 1), MAX_DATABASE_INDEX_NAME_BYTES - getUtf8ByteLength(suffix))}${suffix}`;
+}
+function getDatabaseFieldIndexName(tableName, columnName, unique) {
+  return getDatabaseIndexName(tableName, {
+    fields: [columnName],
+    unique
+  });
+}
+function resolveDatabaseTableIndexes({ fields, indexes, tableName }) {
+  const resolvedIndexes = (indexes ?? []).map((index2) => {
+    if (index2.fields.length === 0) throw new BetterAuthError(`Index on table "${tableName}" must include at least one field.`);
+    if (index2.fields.length > MAX_DATABASE_INDEX_FIELDS) throw new BetterAuthError(`Index on table "${tableName}" can include at most ${MAX_DATABASE_INDEX_FIELDS} fields so it works across supported databases.`);
+    if (new Set(index2.fields).size !== index2.fields.length) throw new BetterAuthError(`Index on table "${tableName}" contains the same field more than once.`);
+    if (index2.unique && index2.fields.some((fieldName) => fields[fieldName]?.required === false)) throw new BetterAuthError(`Unique index on table "${tableName}" can only include required fields so its behavior is consistent across databases.`);
+    const unsupportedField = index2.fields.find((fieldName) => {
+      const fieldType = fields[fieldName]?.type;
+      return fieldType === "json" || fieldType === "string[]" || fieldType === "number[]";
+    });
+    if (unsupportedField) throw new BetterAuthError(`Index on table "${tableName}" references field "${unsupportedField}", whose type is not portably indexable.`);
+    const resolveFieldName = (fieldName) => {
+      const field = fields[fieldName];
+      if (!field) throw new BetterAuthError(`Index on table "${tableName}" references unknown field "${fieldName}".`);
+      return field.fieldName || fieldName;
+    };
+    const [firstField, ...remainingFields] = index2.fields;
+    const columns = [resolveFieldName(firstField), ...remainingFields.map(resolveFieldName)];
+    if (new Set(columns.map(getPortableDatabaseIdentifierKey)).size !== columns.length) throw new BetterAuthError(`Index on table "${tableName}" resolves more than one field to the same database column.`);
+    return {
+      columns,
+      name: getDatabaseIndexName(tableName, {
+        ...index2,
+        fields: columns
+      }),
+      unique: index2.unique
+    };
+  });
+  const definitionsByName = /* @__PURE__ */ new Map();
+  const deduplicatedIndexes = [];
+  for (const index2 of resolvedIndexes) {
+    const definition = JSON.stringify([index2.columns, index2.unique ?? false]);
+    const identifierKey = getPortableDatabaseIdentifierKey(index2.name);
+    const existingDefinition = definitionsByName.get(identifierKey);
+    if (existingDefinition && existingDefinition !== definition) throw new BetterAuthError(`Database index name "${index2.name}" identifies more than one index on table "${tableName}".`);
+    if (existingDefinition) continue;
+    definitionsByName.set(identifierKey, definition);
+    deduplicatedIndexes.push(index2);
+  }
+  return deduplicatedIndexes;
+}
+function getDatabaseIndexStringLength({ columnName, dialect, fields, indexes }) {
+  const fieldsByColumn = new Map(Object.entries(fields).map(([fieldName, field]) => [field.fieldName || fieldName, field]));
+  const containingIndexes = indexes.filter((index2) => index2.columns.includes(columnName));
+  if (containingIndexes.length === 0) return void 0;
+  const byteBudget = dialect === "mysql" ? 3072 : 1700;
+  const bytesPerCharacter = dialect === "mysql" ? 4 : 1;
+  const defaultLength = dialect === "mysql" ? 191 : 255;
+  return containingIndexes.reduce((length, index2) => {
+    const stringColumnCount = index2.columns.filter((column) => {
+      const type = fieldsByColumn.get(column)?.type;
+      return type === "string" || Array.isArray(type);
+    }).length;
+    if (stringColumnCount === 0) return length;
+    const nonStringColumnBytes = (index2.columns.length - stringColumnCount) * 16;
+    const safeLength = Math.floor(Math.max(1, byteBudget - nonStringColumnBytes) / bytesPerCharacter / stringColumnCount);
+    return Math.min(length, safeLength);
+  }, defaultLength);
+}
+function resolveDatabaseSchemaIndexes(sources) {
+  const mergedSourcesByTable = /* @__PURE__ */ new Map();
+  for (const source of sources) {
+    const existingSource = mergedSourcesByTable.get(source.tableName);
+    if (existingSource) {
+      if (existingSource.indexes.length > 0 || (source.indexes?.length ?? 0) > 0) throw new BetterAuthError(`Database schema resolves more than one indexed logical table to "${source.tableName}". Define table-level indexes through one logical schema key instead of aliasing multiple keys to the same database table.`);
+      Object.assign(existingSource.fields, source.fields);
+      continue;
+    }
+    const mergedSource = {
+      fields: {},
+      indexes: [],
+      tableName: source.tableName
+    };
+    Object.assign(mergedSource.fields, source.fields);
+    mergedSource.indexes.push(...source.indexes ?? []);
+    mergedSourcesByTable.set(source.tableName, mergedSource);
+  }
+  const indexesByTable = /* @__PURE__ */ new Map();
+  const indexOwnerByName = /* @__PURE__ */ new Map();
+  const tableNamesByIdentifier = new Map([...mergedSourcesByTable.keys()].map((tableName) => [getPortableDatabaseIdentifierKey(tableName), tableName]));
+  const fieldIndexOwnerByName = /* @__PURE__ */ new Map();
+  for (const source of mergedSourcesByTable.values()) for (const [fieldName, field] of Object.entries(source.fields)) {
+    if (!field.index && !field.unique) continue;
+    const indexName = getDatabaseFieldIndexName(source.tableName, field.fieldName || fieldName, field.unique ?? false);
+    const identifierKey = getPortableDatabaseIdentifierKey(indexName);
+    if (tableNamesByIdentifier.has(identifierKey)) throw new BetterAuthError(`Database index name "${indexName}" conflicts with a table name. Index and table names must be unique across the schema.`);
+    const existingOwner = fieldIndexOwnerByName.get(identifierKey);
+    if (existingOwner) throw new BetterAuthError(`Database field-level index name "${indexName}" is used by both table "${existingOwner}" and table "${source.tableName}".`);
+    fieldIndexOwnerByName.set(identifierKey, source.tableName);
+  }
+  for (const source of mergedSourcesByTable.values()) {
+    const resolvedIndexes = resolveDatabaseTableIndexes(source);
+    indexesByTable.set(source.tableName, [...resolvedIndexes]);
+    for (const index2 of resolvedIndexes) {
+      const identifierKey = getPortableDatabaseIdentifierKey(index2.name);
+      if (tableNamesByIdentifier.has(identifierKey)) throw new BetterAuthError(`Database index name "${index2.name}" conflicts with a table name. Index and table names must be unique across the schema.`);
+      const fieldIndexOwner = fieldIndexOwnerByName.get(identifierKey);
+      if (fieldIndexOwner) throw new BetterAuthError(`Database index name "${index2.name}" is already reserved by field-level index metadata on table "${fieldIndexOwner}". Remove the duplicate table-level index or give it a distinct name.`);
+      const indexOwner = indexOwnerByName.get(identifierKey);
+      if (indexOwner && indexOwner !== source.tableName) throw new BetterAuthError(`Database index name "${index2.name}" is used by both table "${indexOwner}" and table "${source.tableName}". Index names must be unique across the schema.`);
+      indexOwnerByName.set(identifierKey, source.tableName);
+    }
+  }
+  return indexesByTable;
+}
+var MAX_DATABASE_INDEX_NAME_BYTES, MAX_DATABASE_INDEX_FIELDS;
+var init_database_index = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/database-index.mjs"() {
+    init_error2();
+    MAX_DATABASE_INDEX_NAME_BYTES = 63;
+    MAX_DATABASE_INDEX_FIELDS = 16;
+  }
+});
+
+// node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/get-tables.mjs
+function mergeTableIndexes(...indexCollections) {
+  const indexes = [];
+  const seenIndexDefinitions = /* @__PURE__ */ new Set();
+  for (const index2 of indexCollections.flatMap((collection) => collection ?? [])) {
+    const definition = JSON.stringify([
+      index2.name ?? null,
+      index2.fields,
+      index2.unique ?? false
+    ]);
+    if (seenIndexDefinitions.has(definition)) continue;
+    seenIndexDefinitions.add(definition);
+    indexes.push(index2);
+  }
+  return indexes;
+}
+function getAuthTablesWithResolvedIndexes(options) {
+  const tables = buildAuthTables(options);
+  return {
+    indexesByTable: resolveDatabaseSchemaIndexes(Object.values(tables).filter((table2) => !("disableMigrations" in table2) || !table2.disableMigrations).map((table2) => ({
+      fields: table2.fields,
+      indexes: "indexes" in table2 ? table2.indexes : void 0,
+      tableName: table2.modelName
+    }))),
+    tables
+  };
+}
+var buildAuthTables, getAuthTables;
+var init_get_tables = __esm({
+  "node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/db/get-tables.mjs"() {
+    init_database_index();
+    buildAuthTables = (options) => {
+      const pluginSchema = (options.plugins ?? []).reduce((acc, plugin) => {
+        const schema3 = plugin.schema;
+        if (!schema3) return acc;
+        for (const [key, value] of Object.entries(schema3)) acc[key] = {
+          fields: {
+            ...acc[key]?.fields,
+            ...value.fields
+          },
+          indexes: mergeTableIndexes(acc[key]?.indexes, value.indexes),
+          modelName: value.modelName || key,
+          disableMigrations: value.disableMigration ?? acc[key]?.disableMigrations
+        };
+        return acc;
+      }, {});
+      const shouldAddRateLimitTable = options.rateLimit?.storage === "database";
+      const rateLimitTable = { rateLimit: {
+        modelName: options.rateLimit?.modelName || "rateLimit",
+        fields: {
+          key: {
+            type: "string",
+            unique: true,
+            required: true,
+            fieldName: options.rateLimit?.fields?.key || "key"
+          },
+          count: {
+            type: "number",
+            required: true,
+            fieldName: options.rateLimit?.fields?.count || "count"
+          },
+          lastRequest: {
+            type: "number",
+            bigint: true,
+            required: true,
+            fieldName: options.rateLimit?.fields?.lastRequest || "lastRequest",
+            defaultValue: () => Date.now()
+          }
+        }
+      } };
+      const { user: user2, session: session2, account: account2, verification: verification2, ...pluginTables } = pluginSchema;
+      const verificationTable = { verification: {
+        modelName: options.verification?.modelName || "verification",
+        indexes: verification2?.indexes,
+        fields: {
+          identifier: {
+            type: "string",
+            required: true,
+            fieldName: options.verification?.fields?.identifier || "identifier",
+            index: true
+          },
+          value: {
+            type: "string",
+            required: true,
+            fieldName: options.verification?.fields?.value || "value"
+          },
+          expiresAt: {
+            type: "date",
+            required: true,
+            fieldName: options.verification?.fields?.expiresAt || "expiresAt"
+          },
+          createdAt: {
+            type: "date",
+            required: true,
+            defaultValue: () => /* @__PURE__ */ new Date(),
+            fieldName: options.verification?.fields?.createdAt || "createdAt"
+          },
+          updatedAt: {
+            type: "date",
+            required: true,
+            defaultValue: () => /* @__PURE__ */ new Date(),
+            onUpdate: () => /* @__PURE__ */ new Date(),
+            fieldName: options.verification?.fields?.updatedAt || "updatedAt"
+          },
+          ...verification2?.fields,
+          ...options.verification?.additionalFields
+        },
+        order: 4
+      } };
+      const sessionTable = { session: {
+        modelName: options.session?.modelName || "session",
+        indexes: session2?.indexes,
+        fields: {
+          expiresAt: {
+            type: "date",
+            required: true,
+            fieldName: options.session?.fields?.expiresAt || "expiresAt"
+          },
+          token: {
+            type: "string",
+            required: true,
+            fieldName: options.session?.fields?.token || "token",
+            unique: true
+          },
+          createdAt: {
+            type: "date",
+            required: true,
+            fieldName: options.session?.fields?.createdAt || "createdAt",
+            defaultValue: () => /* @__PURE__ */ new Date()
+          },
+          updatedAt: {
+            type: "date",
+            required: true,
+            fieldName: options.session?.fields?.updatedAt || "updatedAt",
+            onUpdate: () => /* @__PURE__ */ new Date()
+          },
+          ipAddress: {
+            type: "string",
+            required: false,
+            fieldName: options.session?.fields?.ipAddress || "ipAddress"
+          },
+          userAgent: {
+            type: "string",
+            required: false,
+            fieldName: options.session?.fields?.userAgent || "userAgent"
+          },
+          userId: {
+            type: "string",
+            fieldName: options.session?.fields?.userId || "userId",
+            references: {
+              model: "user",
+              field: "id",
+              onDelete: "cascade"
+            },
+            required: true,
+            index: true
+          },
+          ...session2?.fields,
+          ...options.session?.additionalFields
+        },
+        order: 2
+      } };
+      return {
+        user: {
+          modelName: options.user?.modelName || "user",
+          indexes: user2?.indexes,
+          fields: {
+            name: {
+              type: "string",
+              required: true,
+              fieldName: options.user?.fields?.name || "name",
+              sortable: true
+            },
+            email: {
+              type: "string",
+              unique: true,
+              required: true,
+              fieldName: options.user?.fields?.email || "email",
+              sortable: true
+            },
+            emailVerified: {
+              type: "boolean",
+              defaultValue: false,
+              required: true,
+              fieldName: options.user?.fields?.emailVerified || "emailVerified",
+              input: false
+            },
+            image: {
+              type: "string",
+              required: false,
+              fieldName: options.user?.fields?.image || "image"
+            },
+            createdAt: {
+              type: "date",
+              defaultValue: () => /* @__PURE__ */ new Date(),
+              required: true,
+              fieldName: options.user?.fields?.createdAt || "createdAt"
+            },
+            updatedAt: {
+              type: "date",
+              defaultValue: () => /* @__PURE__ */ new Date(),
+              onUpdate: () => /* @__PURE__ */ new Date(),
+              required: true,
+              fieldName: options.user?.fields?.updatedAt || "updatedAt"
+            },
+            ...user2?.fields,
+            ...options.user?.additionalFields
+          },
+          order: 1
+        },
+        ...!options.secondaryStorage || options.session?.storeSessionInDatabase ? sessionTable : {},
+        account: {
+          modelName: options.account?.modelName || "account",
+          indexes: account2?.indexes,
+          fields: {
+            accountId: {
+              type: "string",
+              required: true,
+              fieldName: options.account?.fields?.accountId || "accountId"
+            },
+            providerId: {
+              type: "string",
+              required: true,
+              fieldName: options.account?.fields?.providerId || "providerId"
+            },
+            userId: {
+              type: "string",
+              references: {
+                model: "user",
+                field: "id",
+                onDelete: "cascade"
+              },
+              required: true,
+              fieldName: options.account?.fields?.userId || "userId",
+              index: true
+            },
+            accessToken: {
+              type: "string",
+              required: false,
+              returned: false,
+              fieldName: options.account?.fields?.accessToken || "accessToken"
+            },
+            refreshToken: {
+              type: "string",
+              required: false,
+              returned: false,
+              fieldName: options.account?.fields?.refreshToken || "refreshToken"
+            },
+            idToken: {
+              type: "string",
+              required: false,
+              returned: false,
+              fieldName: options.account?.fields?.idToken || "idToken"
+            },
+            accessTokenExpiresAt: {
+              type: "date",
+              required: false,
+              returned: false,
+              fieldName: options.account?.fields?.accessTokenExpiresAt || "accessTokenExpiresAt"
+            },
+            refreshTokenExpiresAt: {
+              type: "date",
+              required: false,
+              returned: false,
+              fieldName: options.account?.fields?.refreshTokenExpiresAt || "refreshTokenExpiresAt"
+            },
+            scope: {
+              type: "string",
+              required: false,
+              fieldName: options.account?.fields?.scope || "scope"
+            },
+            password: {
+              type: "string",
+              required: false,
+              returned: false,
+              fieldName: options.account?.fields?.password || "password"
+            },
+            createdAt: {
+              type: "date",
+              required: true,
+              fieldName: options.account?.fields?.createdAt || "createdAt",
+              defaultValue: () => /* @__PURE__ */ new Date()
+            },
+            updatedAt: {
+              type: "date",
+              required: true,
+              fieldName: options.account?.fields?.updatedAt || "updatedAt",
+              onUpdate: () => /* @__PURE__ */ new Date()
+            },
+            ...account2?.fields,
+            ...options.account?.additionalFields
+          },
+          order: 3
+        },
+        ...!options.secondaryStorage || options.verification?.storeInDatabase ? verificationTable : {},
+        ...pluginTables,
+        ...shouldAddRateLimitTable ? rateLimitTable : {}
+      };
+    };
+    getAuthTables = (options) => getAuthTablesWithResolvedIndexes(options).tables;
   }
 });
 
@@ -79901,3237 +83132,6 @@ var require_nodemailer = __commonJS({
       }
       return false;
     };
-  }
-});
-
-// node_modules/.pnpm/rrule@2.8.1/node_modules/rrule/dist/es5/rrule.js
-var require_rrule = __commonJS({
-  "node_modules/.pnpm/rrule@2.8.1/node_modules/rrule/dist/es5/rrule.js"(exports2, module2) {
-    (function webpackUniversalModuleDefinition(root5, factory) {
-      if (typeof exports2 === "object" && typeof module2 === "object")
-        module2.exports = factory();
-      else if (typeof define === "function" && define.amd)
-        define([], factory);
-      else if (typeof exports2 === "object")
-        exports2["rrule"] = factory();
-      else
-        root5["rrule"] = factory();
-    })(typeof self !== "undefined" ? self : exports2, () => {
-      return (
-        /******/
-        (() => {
-          "use strict";
-          var __webpack_require__ = {};
-          (() => {
-            __webpack_require__.d = (exports3, definition) => {
-              for (var key in definition) {
-                if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports3, key)) {
-                  Object.defineProperty(exports3, key, { enumerable: true, get: definition[key] });
-                }
-              }
-            };
-          })();
-          (() => {
-            __webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
-          })();
-          (() => {
-            __webpack_require__.r = (exports3) => {
-              if (typeof Symbol !== "undefined" && Symbol.toStringTag) {
-                Object.defineProperty(exports3, Symbol.toStringTag, { value: "Module" });
-              }
-              Object.defineProperty(exports3, "__esModule", { value: true });
-            };
-          })();
-          var __webpack_exports__ = {};
-          __webpack_require__.r(__webpack_exports__);
-          __webpack_require__.d(__webpack_exports__, {
-            "ALL_WEEKDAYS": () => (
-              /* reexport */
-              ALL_WEEKDAYS
-            ),
-            "Frequency": () => (
-              /* reexport */
-              Frequency
-            ),
-            "RRule": () => (
-              /* reexport */
-              RRule2
-            ),
-            "RRuleSet": () => (
-              /* reexport */
-              RRuleSet
-            ),
-            "Weekday": () => (
-              /* reexport */
-              Weekday
-            ),
-            "datetime": () => (
-              /* reexport */
-              datetime3
-            ),
-            "rrulestr": () => (
-              /* reexport */
-              rrulestr
-            )
-          });
-          ;
-          var ALL_WEEKDAYS = [
-            "MO",
-            "TU",
-            "WE",
-            "TH",
-            "FR",
-            "SA",
-            "SU"
-          ];
-          var Weekday = (
-            /** @class */
-            (function() {
-              function Weekday2(weekday, n3) {
-                if (n3 === 0)
-                  throw new Error("Can't create weekday with n == 0");
-                this.weekday = weekday;
-                this.n = n3;
-              }
-              Weekday2.fromStr = function(str) {
-                return new Weekday2(ALL_WEEKDAYS.indexOf(str));
-              };
-              Weekday2.prototype.nth = function(n3) {
-                return this.n === n3 ? this : new Weekday2(this.weekday, n3);
-              };
-              Weekday2.prototype.equals = function(other) {
-                return this.weekday === other.weekday && this.n === other.n;
-              };
-              Weekday2.prototype.toString = function() {
-                var s2 = ALL_WEEKDAYS[this.weekday];
-                if (this.n)
-                  s2 = (this.n > 0 ? "+" : "") + String(this.n) + s2;
-                return s2;
-              };
-              Weekday2.prototype.getJsWeekday = function() {
-                return this.weekday === 6 ? 0 : this.weekday + 1;
-              };
-              return Weekday2;
-            })()
-          );
-          ;
-          var isPresent = function(value) {
-            return value !== null && value !== void 0;
-          };
-          var isNumber2 = function(value) {
-            return typeof value === "number";
-          };
-          var isWeekdayStr = function(value) {
-            return typeof value === "string" && ALL_WEEKDAYS.includes(value);
-          };
-          var isArray = Array.isArray;
-          var range2 = function(start, end) {
-            if (end === void 0) {
-              end = start;
-            }
-            if (arguments.length === 1) {
-              end = start;
-              start = 0;
-            }
-            var rang = [];
-            for (var i5 = start; i5 < end; i5++)
-              rang.push(i5);
-            return rang;
-          };
-          var clone2 = function(array2) {
-            return [].concat(array2);
-          };
-          var repeat = function(value, times) {
-            var i5 = 0;
-            var array2 = [];
-            if (isArray(value)) {
-              for (; i5 < times; i5++)
-                array2[i5] = [].concat(value);
-            } else {
-              for (; i5 < times; i5++)
-                array2[i5] = value;
-            }
-            return array2;
-          };
-          var toArray = function(item) {
-            if (isArray(item)) {
-              return item;
-            }
-            return [item];
-          };
-          function padStart(item, targetLength, padString) {
-            if (padString === void 0) {
-              padString = " ";
-            }
-            var str = String(item);
-            targetLength = targetLength >> 0;
-            if (str.length > targetLength) {
-              return String(str);
-            }
-            targetLength = targetLength - str.length;
-            if (targetLength > padString.length) {
-              padString += repeat(padString, targetLength / padString.length);
-            }
-            return padString.slice(0, targetLength) + String(str);
-          }
-          var split2 = function(str, sep2, num) {
-            var splits = str.split(sep2);
-            return num ? splits.slice(0, num).concat([splits.slice(num).join(sep2)]) : splits;
-          };
-          var pymod = function(a5, b5) {
-            var r5 = a5 % b5;
-            return r5 * b5 < 0 ? r5 + b5 : r5;
-          };
-          var divmod = function(a5, b5) {
-            return { div: Math.floor(a5 / b5), mod: pymod(a5, b5) };
-          };
-          var empty = function(obj) {
-            return !isPresent(obj) || obj.length === 0;
-          };
-          var notEmpty = function(obj) {
-            return !empty(obj);
-          };
-          var includes2 = function(arr, val) {
-            return notEmpty(arr) && arr.indexOf(val) !== -1;
-          };
-          ;
-          var datetime3 = function(y, m3, d5, h5, i5, s2) {
-            if (h5 === void 0) {
-              h5 = 0;
-            }
-            if (i5 === void 0) {
-              i5 = 0;
-            }
-            if (s2 === void 0) {
-              s2 = 0;
-            }
-            return new Date(Date.UTC(y, m3 - 1, d5, h5, i5, s2));
-          };
-          var MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-          var ONE_DAY = 1e3 * 60 * 60 * 24;
-          var MAXYEAR = 9999;
-          var ORDINAL_BASE = datetime3(1970, 1, 1);
-          var PY_WEEKDAYS = [6, 0, 1, 2, 3, 4, 5];
-          var getYearDay = function(date7) {
-            var dateNoTime = new Date(date7.getUTCFullYear(), date7.getUTCMonth(), date7.getUTCDate());
-            return Math.ceil((dateNoTime.valueOf() - new Date(date7.getUTCFullYear(), 0, 1).valueOf()) / ONE_DAY) + 1;
-          };
-          var isLeapYear2 = function(year2) {
-            return year2 % 4 === 0 && year2 % 100 !== 0 || year2 % 400 === 0;
-          };
-          var isDate2 = function(value) {
-            return value instanceof Date;
-          };
-          var isValidDate = function(value) {
-            return isDate2(value) && !isNaN(value.getTime());
-          };
-          var tzOffset = function(date7) {
-            return date7.getTimezoneOffset() * 60 * 1e3;
-          };
-          var daysBetween = function(date1, date22) {
-            var date1ms = date1.getTime();
-            var date2ms = date22.getTime();
-            var differencems = date1ms - date2ms;
-            return Math.round(differencems / ONE_DAY);
-          };
-          var toOrdinal = function(date7) {
-            return daysBetween(date7, ORDINAL_BASE);
-          };
-          var fromOrdinal = function(ordinal) {
-            return new Date(ORDINAL_BASE.getTime() + ordinal * ONE_DAY);
-          };
-          var getMonthDays = function(date7) {
-            var month = date7.getUTCMonth();
-            return month === 1 && isLeapYear2(date7.getUTCFullYear()) ? 29 : MONTH_DAYS[month];
-          };
-          var getWeekday = function(date7) {
-            return PY_WEEKDAYS[date7.getUTCDay()];
-          };
-          var monthRange = function(year2, month) {
-            var date7 = datetime3(year2, month + 1, 1);
-            return [getWeekday(date7), getMonthDays(date7)];
-          };
-          var combine2 = function(date7, time6) {
-            time6 = time6 || date7;
-            return new Date(Date.UTC(date7.getUTCFullYear(), date7.getUTCMonth(), date7.getUTCDate(), time6.getHours(), time6.getMinutes(), time6.getSeconds(), time6.getMilliseconds()));
-          };
-          var dateutil_clone = function(date7) {
-            var dolly = new Date(date7.getTime());
-            return dolly;
-          };
-          var cloneDates = function(dates) {
-            var clones = [];
-            for (var i5 = 0; i5 < dates.length; i5++) {
-              clones.push(dateutil_clone(dates[i5]));
-            }
-            return clones;
-          };
-          var sort = function(dates) {
-            dates.sort(function(a5, b5) {
-              return a5.getTime() - b5.getTime();
-            });
-          };
-          var timeToUntilString = function(time6, utc) {
-            if (utc === void 0) {
-              utc = true;
-            }
-            var date7 = new Date(time6);
-            return [
-              padStart(date7.getUTCFullYear().toString(), 4, "0"),
-              padStart(date7.getUTCMonth() + 1, 2, "0"),
-              padStart(date7.getUTCDate(), 2, "0"),
-              "T",
-              padStart(date7.getUTCHours(), 2, "0"),
-              padStart(date7.getUTCMinutes(), 2, "0"),
-              padStart(date7.getUTCSeconds(), 2, "0"),
-              utc ? "Z" : ""
-            ].join("");
-          };
-          var untilStringToDate = function(until) {
-            var re = /^(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2})(\d{2})Z?)?$/;
-            var bits = re.exec(until);
-            if (!bits)
-              throw new Error("Invalid UNTIL value: ".concat(until));
-            return new Date(Date.UTC(parseInt(bits[1], 10), parseInt(bits[2], 10) - 1, parseInt(bits[3], 10), parseInt(bits[5], 10) || 0, parseInt(bits[6], 10) || 0, parseInt(bits[7], 10) || 0));
-          };
-          var dateTZtoISO8601 = function(date7, timeZone) {
-            var dateStr = date7.toLocaleString("sv-SE", { timeZone });
-            return dateStr.replace(" ", "T") + "Z";
-          };
-          var dateInTimeZone = function(date7, timeZone) {
-            var localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            var dateInLocalTZ = new Date(dateTZtoISO8601(date7, localTimeZone));
-            var dateInTargetTZ = new Date(dateTZtoISO8601(date7, timeZone !== null && timeZone !== void 0 ? timeZone : "UTC"));
-            var tzOffset2 = dateInTargetTZ.getTime() - dateInLocalTZ.getTime();
-            return new Date(date7.getTime() - tzOffset2);
-          };
-          ;
-          var IterResult = (
-            /** @class */
-            (function() {
-              function IterResult2(method, args) {
-                this.minDate = null;
-                this.maxDate = null;
-                this._result = [];
-                this.total = 0;
-                this.method = method;
-                this.args = args;
-                if (method === "between") {
-                  this.maxDate = args.inc ? args.before : new Date(args.before.getTime() - 1);
-                  this.minDate = args.inc ? args.after : new Date(args.after.getTime() + 1);
-                } else if (method === "before") {
-                  this.maxDate = args.inc ? args.dt : new Date(args.dt.getTime() - 1);
-                } else if (method === "after") {
-                  this.minDate = args.inc ? args.dt : new Date(args.dt.getTime() + 1);
-                }
-              }
-              IterResult2.prototype.accept = function(date7) {
-                ++this.total;
-                var tooEarly = this.minDate && date7 < this.minDate;
-                var tooLate = this.maxDate && date7 > this.maxDate;
-                if (this.method === "between") {
-                  if (tooEarly)
-                    return true;
-                  if (tooLate)
-                    return false;
-                } else if (this.method === "before") {
-                  if (tooLate)
-                    return false;
-                } else if (this.method === "after") {
-                  if (tooEarly)
-                    return true;
-                  this.add(date7);
-                  return false;
-                }
-                return this.add(date7);
-              };
-              IterResult2.prototype.add = function(date7) {
-                this._result.push(date7);
-                return true;
-              };
-              IterResult2.prototype.getValue = function() {
-                var res = this._result;
-                switch (this.method) {
-                  case "all":
-                  case "between":
-                    return res;
-                  case "before":
-                  case "after":
-                  default:
-                    return res.length ? res[res.length - 1] : null;
-                }
-              };
-              IterResult2.prototype.clone = function() {
-                return new IterResult2(this.method, this.args);
-              };
-              return IterResult2;
-            })()
-          );
-          const iterresult = IterResult;
-          ;
-          var extendStatics3 = function(d5, b5) {
-            extendStatics3 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d6, b6) {
-              d6.__proto__ = b6;
-            } || function(d6, b6) {
-              for (var p3 in b6) if (Object.prototype.hasOwnProperty.call(b6, p3)) d6[p3] = b6[p3];
-            };
-            return extendStatics3(d5, b5);
-          };
-          function __extends3(d5, b5) {
-            if (typeof b5 !== "function" && b5 !== null)
-              throw new TypeError("Class extends value " + String(b5) + " is not a constructor or null");
-            extendStatics3(d5, b5);
-            function __() {
-              this.constructor = d5;
-            }
-            d5.prototype = b5 === null ? Object.create(b5) : (__.prototype = b5.prototype, new __());
-          }
-          var __assign3 = function() {
-            __assign3 = Object.assign || function __assign4(t) {
-              for (var s2, i5 = 1, n3 = arguments.length; i5 < n3; i5++) {
-                s2 = arguments[i5];
-                for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3)) t[p3] = s2[p3];
-              }
-              return t;
-            };
-            return __assign3.apply(this, arguments);
-          };
-          function __rest3(s2, e5) {
-            var t = {};
-            for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3) && e5.indexOf(p3) < 0)
-              t[p3] = s2[p3];
-            if (s2 != null && typeof Object.getOwnPropertySymbols === "function")
-              for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s2); i5 < p3.length; i5++) {
-                if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s2, p3[i5]))
-                  t[p3[i5]] = s2[p3[i5]];
-              }
-            return t;
-          }
-          function __decorate3(decorators, target, key, desc2) {
-            var c5 = arguments.length, r5 = c5 < 3 ? target : desc2 === null ? desc2 = Object.getOwnPropertyDescriptor(target, key) : desc2, d5;
-            if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r5 = Reflect.decorate(decorators, target, key, desc2);
-            else for (var i5 = decorators.length - 1; i5 >= 0; i5--) if (d5 = decorators[i5]) r5 = (c5 < 3 ? d5(r5) : c5 > 3 ? d5(target, key, r5) : d5(target, key)) || r5;
-            return c5 > 3 && r5 && Object.defineProperty(target, key, r5), r5;
-          }
-          function __param3(paramIndex, decorator) {
-            return function(target, key) {
-              decorator(target, key, paramIndex);
-            };
-          }
-          function __metadata3(metadataKey, metadataValue) {
-            if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-          }
-          function __awaiter3(thisArg, _arguments, P, generator2) {
-            function adopt(value) {
-              return value instanceof P ? value : new P(function(resolve) {
-                resolve(value);
-              });
-            }
-            return new (P || (P = Promise))(function(resolve, reject) {
-              function fulfilled(value) {
-                try {
-                  step(generator2.next(value));
-                } catch (e5) {
-                  reject(e5);
-                }
-              }
-              function rejected(value) {
-                try {
-                  step(generator2["throw"](value));
-                } catch (e5) {
-                  reject(e5);
-                }
-              }
-              function step(result) {
-                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-              }
-              step((generator2 = generator2.apply(thisArg, _arguments || [])).next());
-            });
-          }
-          function __generator3(thisArg, body) {
-            var _ = { label: 0, sent: function() {
-              if (t[0] & 1) throw t[1];
-              return t[1];
-            }, trys: [], ops: [] }, f5, y, t, g5;
-            return g5 = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g5[Symbol.iterator] = function() {
-              return this;
-            }), g5;
-            function verb(n3) {
-              return function(v) {
-                return step([n3, v]);
-              };
-            }
-            function step(op2) {
-              if (f5) throw new TypeError("Generator is already executing.");
-              while (_) try {
-                if (f5 = 1, y && (t = op2[0] & 2 ? y["return"] : op2[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op2[1])).done) return t;
-                if (y = 0, t) op2 = [op2[0] & 2, t.value];
-                switch (op2[0]) {
-                  case 0:
-                  case 1:
-                    t = op2;
-                    break;
-                  case 4:
-                    _.label++;
-                    return { value: op2[1], done: false };
-                  case 5:
-                    _.label++;
-                    y = op2[1];
-                    op2 = [0];
-                    continue;
-                  case 7:
-                    op2 = _.ops.pop();
-                    _.trys.pop();
-                    continue;
-                  default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op2[0] === 6 || op2[0] === 2)) {
-                      _ = 0;
-                      continue;
-                    }
-                    if (op2[0] === 3 && (!t || op2[1] > t[0] && op2[1] < t[3])) {
-                      _.label = op2[1];
-                      break;
-                    }
-                    if (op2[0] === 6 && _.label < t[1]) {
-                      _.label = t[1];
-                      t = op2;
-                      break;
-                    }
-                    if (t && _.label < t[2]) {
-                      _.label = t[2];
-                      _.ops.push(op2);
-                      break;
-                    }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop();
-                    continue;
-                }
-                op2 = body.call(thisArg, _);
-              } catch (e5) {
-                op2 = [6, e5];
-                y = 0;
-              } finally {
-                f5 = t = 0;
-              }
-              if (op2[0] & 5) throw op2[1];
-              return { value: op2[0] ? op2[1] : void 0, done: true };
-            }
-          }
-          var __createBinding3 = Object.create ? (function(o3, m3, k5, k22) {
-            if (k22 === void 0) k22 = k5;
-            var desc2 = Object.getOwnPropertyDescriptor(m3, k5);
-            if (!desc2 || ("get" in desc2 ? !m3.__esModule : desc2.writable || desc2.configurable)) {
-              desc2 = { enumerable: true, get: function() {
-                return m3[k5];
-              } };
-            }
-            Object.defineProperty(o3, k22, desc2);
-          }) : (function(o3, m3, k5, k22) {
-            if (k22 === void 0) k22 = k5;
-            o3[k22] = m3[k5];
-          });
-          function __exportStar3(m3, o3) {
-            for (var p3 in m3) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(o3, p3)) __createBinding3(o3, m3, p3);
-          }
-          function __values3(o3) {
-            var s2 = typeof Symbol === "function" && Symbol.iterator, m3 = s2 && o3[s2], i5 = 0;
-            if (m3) return m3.call(o3);
-            if (o3 && typeof o3.length === "number") return {
-              next: function() {
-                if (o3 && i5 >= o3.length) o3 = void 0;
-                return { value: o3 && o3[i5++], done: !o3 };
-              }
-            };
-            throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
-          }
-          function __read3(o3, n3) {
-            var m3 = typeof Symbol === "function" && o3[Symbol.iterator];
-            if (!m3) return o3;
-            var i5 = m3.call(o3), r5, ar = [], e5;
-            try {
-              while ((n3 === void 0 || n3-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
-            } catch (error64) {
-              e5 = { error: error64 };
-            } finally {
-              try {
-                if (r5 && !r5.done && (m3 = i5["return"])) m3.call(i5);
-              } finally {
-                if (e5) throw e5.error;
-              }
-            }
-            return ar;
-          }
-          function __spread3() {
-            for (var ar = [], i5 = 0; i5 < arguments.length; i5++)
-              ar = ar.concat(__read3(arguments[i5]));
-            return ar;
-          }
-          function __spreadArrays3() {
-            for (var s2 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s2 += arguments[i5].length;
-            for (var r5 = Array(s2), k5 = 0, i5 = 0; i5 < il; i5++)
-              for (var a5 = arguments[i5], j5 = 0, jl = a5.length; j5 < jl; j5++, k5++)
-                r5[k5] = a5[j5];
-            return r5;
-          }
-          function __spreadArray2(to, from, pack) {
-            if (pack || arguments.length === 2) for (var i5 = 0, l3 = from.length, ar; i5 < l3; i5++) {
-              if (ar || !(i5 in from)) {
-                if (!ar) ar = Array.prototype.slice.call(from, 0, i5);
-                ar[i5] = from[i5];
-              }
-            }
-            return to.concat(ar || Array.prototype.slice.call(from));
-          }
-          function __await3(v) {
-            return this instanceof __await3 ? (this.v = v, this) : new __await3(v);
-          }
-          function __asyncGenerator3(thisArg, _arguments, generator2) {
-            if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-            var g5 = generator2.apply(thisArg, _arguments || []), i5, q3 = [];
-            return i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
-              return this;
-            }, i5;
-            function verb(n3) {
-              if (g5[n3]) i5[n3] = function(v) {
-                return new Promise(function(a5, b5) {
-                  q3.push([n3, v, a5, b5]) > 1 || resume(n3, v);
-                });
-              };
-            }
-            function resume(n3, v) {
-              try {
-                step(g5[n3](v));
-              } catch (e5) {
-                settle2(q3[0][3], e5);
-              }
-            }
-            function step(r5) {
-              r5.value instanceof __await3 ? Promise.resolve(r5.value.v).then(fulfill, reject) : settle2(q3[0][2], r5);
-            }
-            function fulfill(value) {
-              resume("next", value);
-            }
-            function reject(value) {
-              resume("throw", value);
-            }
-            function settle2(f5, v) {
-              if (f5(v), q3.shift(), q3.length) resume(q3[0][0], q3[0][1]);
-            }
-          }
-          function __asyncDelegator3(o3) {
-            var i5, p3;
-            return i5 = {}, verb("next"), verb("throw", function(e5) {
-              throw e5;
-            }), verb("return"), i5[Symbol.iterator] = function() {
-              return this;
-            }, i5;
-            function verb(n3, f5) {
-              i5[n3] = o3[n3] ? function(v) {
-                return (p3 = !p3) ? { value: __await3(o3[n3](v)), done: n3 === "return" } : f5 ? f5(v) : v;
-              } : f5;
-            }
-          }
-          function __asyncValues3(o3) {
-            if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-            var m3 = o3[Symbol.asyncIterator], i5;
-            return m3 ? m3.call(o3) : (o3 = typeof __values3 === "function" ? __values3(o3) : o3[Symbol.iterator](), i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
-              return this;
-            }, i5);
-            function verb(n3) {
-              i5[n3] = o3[n3] && function(v) {
-                return new Promise(function(resolve, reject) {
-                  v = o3[n3](v), settle2(resolve, reject, v.done, v.value);
-                });
-              };
-            }
-            function settle2(resolve, reject, d5, v) {
-              Promise.resolve(v).then(function(v2) {
-                resolve({ value: v2, done: d5 });
-              }, reject);
-            }
-          }
-          function __makeTemplateObject3(cooked, raw2) {
-            if (Object.defineProperty) {
-              Object.defineProperty(cooked, "raw", { value: raw2 });
-            } else {
-              cooked.raw = raw2;
-            }
-            return cooked;
-          }
-          ;
-          var __setModuleDefault2 = Object.create ? (function(o3, v) {
-            Object.defineProperty(o3, "default", { enumerable: true, value: v });
-          }) : function(o3, v) {
-            o3["default"] = v;
-          };
-          function __importStar3(mod) {
-            if (mod && mod.__esModule) return mod;
-            var result = {};
-            if (mod != null) {
-              for (var k5 in mod) if (k5 !== "default" && Object.prototype.hasOwnProperty.call(mod, k5)) __createBinding3(result, mod, k5);
-            }
-            __setModuleDefault2(result, mod);
-            return result;
-          }
-          function __importDefault3(mod) {
-            return mod && mod.__esModule ? mod : { default: mod };
-          }
-          function __classPrivateFieldGet3(receiver, state2, kind, f5) {
-            if (kind === "a" && !f5) throw new TypeError("Private accessor was defined without a getter");
-            if (typeof state2 === "function" ? receiver !== state2 || !f5 : !state2.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-            return kind === "m" ? f5 : kind === "a" ? f5.call(receiver) : f5 ? f5.value : state2.get(receiver);
-          }
-          function __classPrivateFieldSet3(receiver, state2, value, kind, f5) {
-            if (kind === "m") throw new TypeError("Private method is not writable");
-            if (kind === "a" && !f5) throw new TypeError("Private accessor was defined without a setter");
-            if (typeof state2 === "function" ? receiver !== state2 || !f5 : !state2.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-            return kind === "a" ? f5.call(receiver, value) : f5 ? f5.value = value : state2.set(receiver, value), value;
-          }
-          function __classPrivateFieldIn2(state2, receiver) {
-            if (receiver === null || typeof receiver !== "object" && typeof receiver !== "function") throw new TypeError("Cannot use 'in' operator on non-object");
-            return typeof state2 === "function" ? receiver === state2 : state2.has(receiver);
-          }
-          ;
-          var CallbackIterResult = (
-            /** @class */
-            (function(_super) {
-              __extends3(CallbackIterResult2, _super);
-              function CallbackIterResult2(method, args, iterator) {
-                var _this = _super.call(this, method, args) || this;
-                _this.iterator = iterator;
-                return _this;
-              }
-              CallbackIterResult2.prototype.add = function(date7) {
-                if (this.iterator(date7, this._result.length)) {
-                  this._result.push(date7);
-                  return true;
-                }
-                return false;
-              };
-              return CallbackIterResult2;
-            })(iterresult)
-          );
-          const callbackiterresult = CallbackIterResult;
-          ;
-          var ENGLISH = {
-            dayNames: [
-              "Sunday",
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday"
-            ],
-            monthNames: [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December"
-            ],
-            tokens: {
-              SKIP: /^[ \r\n\t]+|^\.$/,
-              number: /^[1-9][0-9]*/,
-              numberAsText: /^(one|two|three)/i,
-              every: /^every/i,
-              "day(s)": /^days?/i,
-              "weekday(s)": /^weekdays?/i,
-              "week(s)": /^weeks?/i,
-              "hour(s)": /^hours?/i,
-              "minute(s)": /^minutes?/i,
-              "month(s)": /^months?/i,
-              "year(s)": /^years?/i,
-              on: /^(on|in)/i,
-              at: /^(at)/i,
-              the: /^the/i,
-              first: /^first/i,
-              second: /^second/i,
-              third: /^third/i,
-              nth: /^([1-9][0-9]*)(\.|th|nd|rd|st)/i,
-              last: /^last/i,
-              for: /^for/i,
-              "time(s)": /^times?/i,
-              until: /^(un)?til/i,
-              monday: /^mo(n(day)?)?/i,
-              tuesday: /^tu(e(s(day)?)?)?/i,
-              wednesday: /^we(d(n(esday)?)?)?/i,
-              thursday: /^th(u(r(sday)?)?)?/i,
-              friday: /^fr(i(day)?)?/i,
-              saturday: /^sa(t(urday)?)?/i,
-              sunday: /^su(n(day)?)?/i,
-              january: /^jan(uary)?/i,
-              february: /^feb(ruary)?/i,
-              march: /^mar(ch)?/i,
-              april: /^apr(il)?/i,
-              may: /^may/i,
-              june: /^june?/i,
-              july: /^july?/i,
-              august: /^aug(ust)?/i,
-              september: /^sep(t(ember)?)?/i,
-              october: /^oct(ober)?/i,
-              november: /^nov(ember)?/i,
-              december: /^dec(ember)?/i,
-              comma: /^(,\s*|(and|or)\s*)+/i
-            }
-          };
-          const i18n = ENGLISH;
-          ;
-          var contains = function(arr, val) {
-            return arr.indexOf(val) !== -1;
-          };
-          var defaultGetText = function(id) {
-            return id.toString();
-          };
-          var defaultDateFormatter = function(year2, month, day) {
-            return "".concat(month, " ").concat(day, ", ").concat(year2);
-          };
-          var ToText = (
-            /** @class */
-            (function() {
-              function ToText2(rrule, gettext, language, dateFormatter) {
-                if (gettext === void 0) {
-                  gettext = defaultGetText;
-                }
-                if (language === void 0) {
-                  language = i18n;
-                }
-                if (dateFormatter === void 0) {
-                  dateFormatter = defaultDateFormatter;
-                }
-                this.text = [];
-                this.language = language || i18n;
-                this.gettext = gettext;
-                this.dateFormatter = dateFormatter;
-                this.rrule = rrule;
-                this.options = rrule.options;
-                this.origOptions = rrule.origOptions;
-                if (this.origOptions.bymonthday) {
-                  var bymonthday = [].concat(this.options.bymonthday);
-                  var bynmonthday = [].concat(this.options.bynmonthday);
-                  bymonthday.sort(function(a5, b5) {
-                    return a5 - b5;
-                  });
-                  bynmonthday.sort(function(a5, b5) {
-                    return b5 - a5;
-                  });
-                  this.bymonthday = bymonthday.concat(bynmonthday);
-                  if (!this.bymonthday.length)
-                    this.bymonthday = null;
-                }
-                if (isPresent(this.origOptions.byweekday)) {
-                  var byweekday = !isArray(this.origOptions.byweekday) ? [this.origOptions.byweekday] : this.origOptions.byweekday;
-                  var days = String(byweekday);
-                  this.byweekday = {
-                    allWeeks: byweekday.filter(function(weekday) {
-                      return !weekday.n;
-                    }),
-                    someWeeks: byweekday.filter(function(weekday) {
-                      return Boolean(weekday.n);
-                    }),
-                    isWeekdays: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") === -1 && days.indexOf("SU") === -1,
-                    isEveryDay: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") !== -1 && days.indexOf("SU") !== -1
-                  };
-                  var sortWeekDays = function(a5, b5) {
-                    return a5.weekday - b5.weekday;
-                  };
-                  this.byweekday.allWeeks.sort(sortWeekDays);
-                  this.byweekday.someWeeks.sort(sortWeekDays);
-                  if (!this.byweekday.allWeeks.length)
-                    this.byweekday.allWeeks = null;
-                  if (!this.byweekday.someWeeks.length)
-                    this.byweekday.someWeeks = null;
-                } else {
-                  this.byweekday = null;
-                }
-              }
-              ToText2.isFullyConvertible = function(rrule) {
-                var canConvert = true;
-                if (!(rrule.options.freq in ToText2.IMPLEMENTED))
-                  return false;
-                if (rrule.origOptions.until && rrule.origOptions.count)
-                  return false;
-                for (var key in rrule.origOptions) {
-                  if (contains(["dtstart", "tzid", "wkst", "freq"], key))
-                    return true;
-                  if (!contains(ToText2.IMPLEMENTED[rrule.options.freq], key))
-                    return false;
-                }
-                return canConvert;
-              };
-              ToText2.prototype.isFullyConvertible = function() {
-                return ToText2.isFullyConvertible(this.rrule);
-              };
-              ToText2.prototype.toString = function() {
-                var gettext = this.gettext;
-                if (!(this.options.freq in ToText2.IMPLEMENTED)) {
-                  return gettext("RRule error: Unable to fully convert this rrule to text");
-                }
-                this.text = [gettext("every")];
-                this[RRule2.FREQUENCIES[this.options.freq]]();
-                if (this.options.until) {
-                  this.add(gettext("until"));
-                  var until = this.options.until;
-                  this.add(this.dateFormatter(until.getUTCFullYear(), this.language.monthNames[until.getUTCMonth()], until.getUTCDate()));
-                } else if (this.options.count) {
-                  this.add(gettext("for")).add(this.options.count.toString()).add(this.plural(this.options.count) ? gettext("times") : gettext("time"));
-                }
-                if (!this.isFullyConvertible())
-                  this.add(gettext("(~ approximate)"));
-                return this.text.join("");
-              };
-              ToText2.prototype.HOURLY = function() {
-                var gettext = this.gettext;
-                if (this.options.interval !== 1)
-                  this.add(this.options.interval.toString());
-                this.add(this.plural(this.options.interval) ? gettext("hours") : gettext("hour"));
-              };
-              ToText2.prototype.MINUTELY = function() {
-                var gettext = this.gettext;
-                if (this.options.interval !== 1)
-                  this.add(this.options.interval.toString());
-                this.add(this.plural(this.options.interval) ? gettext("minutes") : gettext("minute"));
-              };
-              ToText2.prototype.DAILY = function() {
-                var gettext = this.gettext;
-                if (this.options.interval !== 1)
-                  this.add(this.options.interval.toString());
-                if (this.byweekday && this.byweekday.isWeekdays) {
-                  this.add(this.plural(this.options.interval) ? gettext("weekdays") : gettext("weekday"));
-                } else {
-                  this.add(this.plural(this.options.interval) ? gettext("days") : gettext("day"));
-                }
-                if (this.origOptions.bymonth) {
-                  this.add(gettext("in"));
-                  this._bymonth();
-                }
-                if (this.bymonthday) {
-                  this._bymonthday();
-                } else if (this.byweekday) {
-                  this._byweekday();
-                } else if (this.origOptions.byhour) {
-                  this._byhour();
-                }
-              };
-              ToText2.prototype.WEEKLY = function() {
-                var gettext = this.gettext;
-                if (this.options.interval !== 1) {
-                  this.add(this.options.interval.toString()).add(this.plural(this.options.interval) ? gettext("weeks") : gettext("week"));
-                }
-                if (this.byweekday && this.byweekday.isWeekdays) {
-                  if (this.options.interval === 1) {
-                    this.add(this.plural(this.options.interval) ? gettext("weekdays") : gettext("weekday"));
-                  } else {
-                    this.add(gettext("on")).add(gettext("weekdays"));
-                  }
-                } else if (this.byweekday && this.byweekday.isEveryDay) {
-                  this.add(this.plural(this.options.interval) ? gettext("days") : gettext("day"));
-                } else {
-                  if (this.options.interval === 1)
-                    this.add(gettext("week"));
-                  if (this.origOptions.bymonth) {
-                    this.add(gettext("in"));
-                    this._bymonth();
-                  }
-                  if (this.bymonthday) {
-                    this._bymonthday();
-                  } else if (this.byweekday) {
-                    this._byweekday();
-                  }
-                  if (this.origOptions.byhour) {
-                    this._byhour();
-                  }
-                }
-              };
-              ToText2.prototype.MONTHLY = function() {
-                var gettext = this.gettext;
-                if (this.origOptions.bymonth) {
-                  if (this.options.interval !== 1) {
-                    this.add(this.options.interval.toString()).add(gettext("months"));
-                    if (this.plural(this.options.interval))
-                      this.add(gettext("in"));
-                  } else {
-                  }
-                  this._bymonth();
-                } else {
-                  if (this.options.interval !== 1) {
-                    this.add(this.options.interval.toString());
-                  }
-                  this.add(this.plural(this.options.interval) ? gettext("months") : gettext("month"));
-                }
-                if (this.bymonthday) {
-                  this._bymonthday();
-                } else if (this.byweekday && this.byweekday.isWeekdays) {
-                  this.add(gettext("on")).add(gettext("weekdays"));
-                } else if (this.byweekday) {
-                  this._byweekday();
-                }
-              };
-              ToText2.prototype.YEARLY = function() {
-                var gettext = this.gettext;
-                if (this.origOptions.bymonth) {
-                  if (this.options.interval !== 1) {
-                    this.add(this.options.interval.toString());
-                    this.add(gettext("years"));
-                  } else {
-                  }
-                  this._bymonth();
-                } else {
-                  if (this.options.interval !== 1) {
-                    this.add(this.options.interval.toString());
-                  }
-                  this.add(this.plural(this.options.interval) ? gettext("years") : gettext("year"));
-                }
-                if (this.bymonthday) {
-                  this._bymonthday();
-                } else if (this.byweekday) {
-                  this._byweekday();
-                }
-                if (this.options.byyearday) {
-                  this.add(gettext("on the")).add(this.list(this.options.byyearday, this.nth, gettext("and"))).add(gettext("day"));
-                }
-                if (this.options.byweekno) {
-                  this.add(gettext("in")).add(this.plural(this.options.byweekno.length) ? gettext("weeks") : gettext("week")).add(this.list(this.options.byweekno, void 0, gettext("and")));
-                }
-              };
-              ToText2.prototype._bymonthday = function() {
-                var gettext = this.gettext;
-                if (this.byweekday && this.byweekday.allWeeks) {
-                  this.add(gettext("on")).add(this.list(this.byweekday.allWeeks, this.weekdaytext, gettext("or"))).add(gettext("the")).add(this.list(this.bymonthday, this.nth, gettext("or")));
-                } else {
-                  this.add(gettext("on the")).add(this.list(this.bymonthday, this.nth, gettext("and")));
-                }
-              };
-              ToText2.prototype._byweekday = function() {
-                var gettext = this.gettext;
-                if (this.byweekday.allWeeks && !this.byweekday.isWeekdays) {
-                  this.add(gettext("on")).add(this.list(this.byweekday.allWeeks, this.weekdaytext));
-                }
-                if (this.byweekday.someWeeks) {
-                  if (this.byweekday.allWeeks)
-                    this.add(gettext("and"));
-                  this.add(gettext("on the")).add(this.list(this.byweekday.someWeeks, this.weekdaytext, gettext("and")));
-                }
-              };
-              ToText2.prototype._byhour = function() {
-                var gettext = this.gettext;
-                this.add(gettext("at")).add(this.list(this.origOptions.byhour, void 0, gettext("and")));
-              };
-              ToText2.prototype._bymonth = function() {
-                this.add(this.list(this.options.bymonth, this.monthtext, this.gettext("and")));
-              };
-              ToText2.prototype.nth = function(n3) {
-                n3 = parseInt(n3.toString(), 10);
-                var nth;
-                var gettext = this.gettext;
-                if (n3 === -1)
-                  return gettext("last");
-                var npos = Math.abs(n3);
-                switch (npos) {
-                  case 1:
-                  case 21:
-                  case 31:
-                    nth = npos + gettext("st");
-                    break;
-                  case 2:
-                  case 22:
-                    nth = npos + gettext("nd");
-                    break;
-                  case 3:
-                  case 23:
-                    nth = npos + gettext("rd");
-                    break;
-                  default:
-                    nth = npos + gettext("th");
-                }
-                return n3 < 0 ? nth + " " + gettext("last") : nth;
-              };
-              ToText2.prototype.monthtext = function(m3) {
-                return this.language.monthNames[m3 - 1];
-              };
-              ToText2.prototype.weekdaytext = function(wday) {
-                var weekday = isNumber2(wday) ? (wday + 1) % 7 : wday.getJsWeekday();
-                return (wday.n ? this.nth(wday.n) + " " : "") + this.language.dayNames[weekday];
-              };
-              ToText2.prototype.plural = function(n3) {
-                return n3 % 100 !== 1;
-              };
-              ToText2.prototype.add = function(s2) {
-                this.text.push(" ");
-                this.text.push(s2);
-                return this;
-              };
-              ToText2.prototype.list = function(arr, callback, finalDelim, delim) {
-                var _this = this;
-                if (delim === void 0) {
-                  delim = ",";
-                }
-                if (!isArray(arr)) {
-                  arr = [arr];
-                }
-                var delimJoin = function(array2, delimiter, finalDelimiter) {
-                  var list2 = "";
-                  for (var i5 = 0; i5 < array2.length; i5++) {
-                    if (i5 !== 0) {
-                      if (i5 === array2.length - 1) {
-                        list2 += " " + finalDelimiter + " ";
-                      } else {
-                        list2 += delimiter + " ";
-                      }
-                    }
-                    list2 += array2[i5];
-                  }
-                  return list2;
-                };
-                callback = callback || function(o3) {
-                  return o3.toString();
-                };
-                var realCallback = function(arg) {
-                  return callback && callback.call(_this, arg);
-                };
-                if (finalDelim) {
-                  return delimJoin(arr.map(realCallback), delim, finalDelim);
-                } else {
-                  return arr.map(realCallback).join(delim + " ");
-                }
-              };
-              return ToText2;
-            })()
-          );
-          const totext = ToText;
-          ;
-          var Parser = (
-            /** @class */
-            (function() {
-              function Parser2(rules) {
-                this.done = true;
-                this.rules = rules;
-              }
-              Parser2.prototype.start = function(text2) {
-                this.text = text2;
-                this.done = false;
-                return this.nextSymbol();
-              };
-              Parser2.prototype.isDone = function() {
-                return this.done && this.symbol === null;
-              };
-              Parser2.prototype.nextSymbol = function() {
-                var best;
-                var bestSymbol;
-                this.symbol = null;
-                this.value = null;
-                do {
-                  if (this.done)
-                    return false;
-                  var rule = void 0;
-                  best = null;
-                  for (var name_1 in this.rules) {
-                    rule = this.rules[name_1];
-                    var match2 = rule.exec(this.text);
-                    if (match2) {
-                      if (best === null || match2[0].length > best[0].length) {
-                        best = match2;
-                        bestSymbol = name_1;
-                      }
-                    }
-                  }
-                  if (best != null) {
-                    this.text = this.text.substr(best[0].length);
-                    if (this.text === "")
-                      this.done = true;
-                  }
-                  if (best == null) {
-                    this.done = true;
-                    this.symbol = null;
-                    this.value = null;
-                    return;
-                  }
-                } while (bestSymbol === "SKIP");
-                this.symbol = bestSymbol;
-                this.value = best;
-                return true;
-              };
-              Parser2.prototype.accept = function(name) {
-                if (this.symbol === name) {
-                  if (this.value) {
-                    var v = this.value;
-                    this.nextSymbol();
-                    return v;
-                  }
-                  this.nextSymbol();
-                  return true;
-                }
-                return false;
-              };
-              Parser2.prototype.acceptNumber = function() {
-                return this.accept("number");
-              };
-              Parser2.prototype.expect = function(name) {
-                if (this.accept(name))
-                  return true;
-                throw new Error("expected " + name + " but found " + this.symbol);
-              };
-              return Parser2;
-            })()
-          );
-          function parseText(text2, language) {
-            if (language === void 0) {
-              language = i18n;
-            }
-            var options = {};
-            var ttr = new Parser(language.tokens);
-            if (!ttr.start(text2))
-              return null;
-            S2();
-            return options;
-            function S2() {
-              ttr.expect("every");
-              var n3 = ttr.acceptNumber();
-              if (n3)
-                options.interval = parseInt(n3[0], 10);
-              if (ttr.isDone())
-                throw new Error("Unexpected end");
-              switch (ttr.symbol) {
-                case "day(s)":
-                  options.freq = RRule2.DAILY;
-                  if (ttr.nextSymbol()) {
-                    AT();
-                    F();
-                  }
-                  break;
-                // FIXME Note: every 2 weekdays != every two weeks on weekdays.
-                // DAILY on weekdays is not a valid rule
-                case "weekday(s)":
-                  options.freq = RRule2.WEEKLY;
-                  options.byweekday = [RRule2.MO, RRule2.TU, RRule2.WE, RRule2.TH, RRule2.FR];
-                  ttr.nextSymbol();
-                  AT();
-                  F();
-                  break;
-                case "week(s)":
-                  options.freq = RRule2.WEEKLY;
-                  if (ttr.nextSymbol()) {
-                    ON();
-                    AT();
-                    F();
-                  }
-                  break;
-                case "hour(s)":
-                  options.freq = RRule2.HOURLY;
-                  if (ttr.nextSymbol()) {
-                    ON();
-                    F();
-                  }
-                  break;
-                case "minute(s)":
-                  options.freq = RRule2.MINUTELY;
-                  if (ttr.nextSymbol()) {
-                    ON();
-                    F();
-                  }
-                  break;
-                case "month(s)":
-                  options.freq = RRule2.MONTHLY;
-                  if (ttr.nextSymbol()) {
-                    ON();
-                    F();
-                  }
-                  break;
-                case "year(s)":
-                  options.freq = RRule2.YEARLY;
-                  if (ttr.nextSymbol()) {
-                    ON();
-                    F();
-                  }
-                  break;
-                case "monday":
-                case "tuesday":
-                case "wednesday":
-                case "thursday":
-                case "friday":
-                case "saturday":
-                case "sunday":
-                  options.freq = RRule2.WEEKLY;
-                  var key = ttr.symbol.substr(0, 2).toUpperCase();
-                  options.byweekday = [RRule2[key]];
-                  if (!ttr.nextSymbol())
-                    return;
-                  while (ttr.accept("comma")) {
-                    if (ttr.isDone())
-                      throw new Error("Unexpected end");
-                    var wkd = decodeWKD();
-                    if (!wkd) {
-                      throw new Error("Unexpected symbol " + ttr.symbol + ", expected weekday");
-                    }
-                    options.byweekday.push(RRule2[wkd]);
-                    ttr.nextSymbol();
-                  }
-                  AT();
-                  MDAYs();
-                  F();
-                  break;
-                case "january":
-                case "february":
-                case "march":
-                case "april":
-                case "may":
-                case "june":
-                case "july":
-                case "august":
-                case "september":
-                case "october":
-                case "november":
-                case "december":
-                  options.freq = RRule2.YEARLY;
-                  options.bymonth = [decodeM()];
-                  if (!ttr.nextSymbol())
-                    return;
-                  while (ttr.accept("comma")) {
-                    if (ttr.isDone())
-                      throw new Error("Unexpected end");
-                    var m3 = decodeM();
-                    if (!m3) {
-                      throw new Error("Unexpected symbol " + ttr.symbol + ", expected month");
-                    }
-                    options.bymonth.push(m3);
-                    ttr.nextSymbol();
-                  }
-                  ON();
-                  F();
-                  break;
-                default:
-                  throw new Error("Unknown symbol");
-              }
-            }
-            function ON() {
-              var on = ttr.accept("on");
-              var the = ttr.accept("the");
-              if (!(on || the))
-                return;
-              do {
-                var nth = decodeNTH();
-                var wkd = decodeWKD();
-                var m3 = decodeM();
-                if (nth) {
-                  if (wkd) {
-                    ttr.nextSymbol();
-                    if (!options.byweekday)
-                      options.byweekday = [];
-                    options.byweekday.push(RRule2[wkd].nth(nth));
-                  } else {
-                    if (!options.bymonthday)
-                      options.bymonthday = [];
-                    options.bymonthday.push(nth);
-                    ttr.accept("day(s)");
-                  }
-                } else if (wkd) {
-                  ttr.nextSymbol();
-                  if (!options.byweekday)
-                    options.byweekday = [];
-                  options.byweekday.push(RRule2[wkd]);
-                } else if (ttr.symbol === "weekday(s)") {
-                  ttr.nextSymbol();
-                  if (!options.byweekday) {
-                    options.byweekday = [RRule2.MO, RRule2.TU, RRule2.WE, RRule2.TH, RRule2.FR];
-                  }
-                } else if (ttr.symbol === "week(s)") {
-                  ttr.nextSymbol();
-                  var n3 = ttr.acceptNumber();
-                  if (!n3) {
-                    throw new Error("Unexpected symbol " + ttr.symbol + ", expected week number");
-                  }
-                  options.byweekno = [parseInt(n3[0], 10)];
-                  while (ttr.accept("comma")) {
-                    n3 = ttr.acceptNumber();
-                    if (!n3) {
-                      throw new Error("Unexpected symbol " + ttr.symbol + "; expected monthday");
-                    }
-                    options.byweekno.push(parseInt(n3[0], 10));
-                  }
-                } else if (m3) {
-                  ttr.nextSymbol();
-                  if (!options.bymonth)
-                    options.bymonth = [];
-                  options.bymonth.push(m3);
-                } else {
-                  return;
-                }
-              } while (ttr.accept("comma") || ttr.accept("the") || ttr.accept("on"));
-            }
-            function AT() {
-              var at = ttr.accept("at");
-              if (!at)
-                return;
-              do {
-                var n3 = ttr.acceptNumber();
-                if (!n3) {
-                  throw new Error("Unexpected symbol " + ttr.symbol + ", expected hour");
-                }
-                options.byhour = [parseInt(n3[0], 10)];
-                while (ttr.accept("comma")) {
-                  n3 = ttr.acceptNumber();
-                  if (!n3) {
-                    throw new Error("Unexpected symbol " + ttr.symbol + "; expected hour");
-                  }
-                  options.byhour.push(parseInt(n3[0], 10));
-                }
-              } while (ttr.accept("comma") || ttr.accept("at"));
-            }
-            function decodeM() {
-              switch (ttr.symbol) {
-                case "january":
-                  return 1;
-                case "february":
-                  return 2;
-                case "march":
-                  return 3;
-                case "april":
-                  return 4;
-                case "may":
-                  return 5;
-                case "june":
-                  return 6;
-                case "july":
-                  return 7;
-                case "august":
-                  return 8;
-                case "september":
-                  return 9;
-                case "october":
-                  return 10;
-                case "november":
-                  return 11;
-                case "december":
-                  return 12;
-                default:
-                  return false;
-              }
-            }
-            function decodeWKD() {
-              switch (ttr.symbol) {
-                case "monday":
-                case "tuesday":
-                case "wednesday":
-                case "thursday":
-                case "friday":
-                case "saturday":
-                case "sunday":
-                  return ttr.symbol.substr(0, 2).toUpperCase();
-                default:
-                  return false;
-              }
-            }
-            function decodeNTH() {
-              switch (ttr.symbol) {
-                case "last":
-                  ttr.nextSymbol();
-                  return -1;
-                case "first":
-                  ttr.nextSymbol();
-                  return 1;
-                case "second":
-                  ttr.nextSymbol();
-                  return ttr.accept("last") ? -2 : 2;
-                case "third":
-                  ttr.nextSymbol();
-                  return ttr.accept("last") ? -3 : 3;
-                case "nth":
-                  var v = parseInt(ttr.value[1], 10);
-                  if (v < -366 || v > 366)
-                    throw new Error("Nth out of range: " + v);
-                  ttr.nextSymbol();
-                  return ttr.accept("last") ? -v : v;
-                default:
-                  return false;
-              }
-            }
-            function MDAYs() {
-              ttr.accept("on");
-              ttr.accept("the");
-              var nth = decodeNTH();
-              if (!nth)
-                return;
-              options.bymonthday = [nth];
-              ttr.nextSymbol();
-              while (ttr.accept("comma")) {
-                nth = decodeNTH();
-                if (!nth) {
-                  throw new Error("Unexpected symbol " + ttr.symbol + "; expected monthday");
-                }
-                options.bymonthday.push(nth);
-                ttr.nextSymbol();
-              }
-            }
-            function F() {
-              if (ttr.symbol === "until") {
-                var date7 = Date.parse(ttr.text);
-                if (!date7)
-                  throw new Error("Cannot parse until date:" + ttr.text);
-                options.until = new Date(date7);
-              } else if (ttr.accept("for")) {
-                options.count = parseInt(ttr.value[0], 10);
-                ttr.expect("number");
-              }
-            }
-          }
-          ;
-          var Frequency;
-          (function(Frequency2) {
-            Frequency2[Frequency2["YEARLY"] = 0] = "YEARLY";
-            Frequency2[Frequency2["MONTHLY"] = 1] = "MONTHLY";
-            Frequency2[Frequency2["WEEKLY"] = 2] = "WEEKLY";
-            Frequency2[Frequency2["DAILY"] = 3] = "DAILY";
-            Frequency2[Frequency2["HOURLY"] = 4] = "HOURLY";
-            Frequency2[Frequency2["MINUTELY"] = 5] = "MINUTELY";
-            Frequency2[Frequency2["SECONDLY"] = 6] = "SECONDLY";
-          })(Frequency || (Frequency = {}));
-          function freqIsDailyOrGreater(freq) {
-            return freq < Frequency.HOURLY;
-          }
-          ;
-          var fromText = function(text2, language) {
-            if (language === void 0) {
-              language = i18n;
-            }
-            return new RRule2(parseText(text2, language) || void 0);
-          };
-          var common = [
-            "count",
-            "until",
-            "interval",
-            "byweekday",
-            "bymonthday",
-            "bymonth"
-          ];
-          totext.IMPLEMENTED = [];
-          totext.IMPLEMENTED[Frequency.HOURLY] = common;
-          totext.IMPLEMENTED[Frequency.MINUTELY] = common;
-          totext.IMPLEMENTED[Frequency.DAILY] = ["byhour"].concat(common);
-          totext.IMPLEMENTED[Frequency.WEEKLY] = common;
-          totext.IMPLEMENTED[Frequency.MONTHLY] = common;
-          totext.IMPLEMENTED[Frequency.YEARLY] = ["byweekno", "byyearday"].concat(common);
-          var toText = function(rrule, gettext, language, dateFormatter) {
-            return new totext(rrule, gettext, language, dateFormatter).toString();
-          };
-          var isFullyConvertible = totext.isFullyConvertible;
-          ;
-          var Time3 = (
-            /** @class */
-            (function() {
-              function Time4(hour, minute, second, millisecond) {
-                this.hour = hour;
-                this.minute = minute;
-                this.second = second;
-                this.millisecond = millisecond || 0;
-              }
-              Time4.prototype.getHours = function() {
-                return this.hour;
-              };
-              Time4.prototype.getMinutes = function() {
-                return this.minute;
-              };
-              Time4.prototype.getSeconds = function() {
-                return this.second;
-              };
-              Time4.prototype.getMilliseconds = function() {
-                return this.millisecond;
-              };
-              Time4.prototype.getTime = function() {
-                return (this.hour * 60 * 60 + this.minute * 60 + this.second) * 1e3 + this.millisecond;
-              };
-              return Time4;
-            })()
-          );
-          var DateTime = (
-            /** @class */
-            (function(_super) {
-              __extends3(DateTime2, _super);
-              function DateTime2(year2, month, day, hour, minute, second, millisecond) {
-                var _this = _super.call(this, hour, minute, second, millisecond) || this;
-                _this.year = year2;
-                _this.month = month;
-                _this.day = day;
-                return _this;
-              }
-              DateTime2.fromDate = function(date7) {
-                return new this(date7.getUTCFullYear(), date7.getUTCMonth() + 1, date7.getUTCDate(), date7.getUTCHours(), date7.getUTCMinutes(), date7.getUTCSeconds(), date7.valueOf() % 1e3);
-              };
-              DateTime2.prototype.getWeekday = function() {
-                return getWeekday(new Date(this.getTime()));
-              };
-              DateTime2.prototype.getTime = function() {
-                return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hour, this.minute, this.second, this.millisecond)).getTime();
-              };
-              DateTime2.prototype.getDay = function() {
-                return this.day;
-              };
-              DateTime2.prototype.getMonth = function() {
-                return this.month;
-              };
-              DateTime2.prototype.getYear = function() {
-                return this.year;
-              };
-              DateTime2.prototype.addYears = function(years) {
-                this.year += years;
-              };
-              DateTime2.prototype.addMonths = function(months2) {
-                this.month += months2;
-                if (this.month > 12) {
-                  var yearDiv = Math.floor(this.month / 12);
-                  var monthMod = pymod(this.month, 12);
-                  this.month = monthMod;
-                  this.year += yearDiv;
-                  if (this.month === 0) {
-                    this.month = 12;
-                    --this.year;
-                  }
-                }
-              };
-              DateTime2.prototype.addWeekly = function(days, wkst) {
-                if (wkst > this.getWeekday()) {
-                  this.day += -(this.getWeekday() + 1 + (6 - wkst)) + days * 7;
-                } else {
-                  this.day += -(this.getWeekday() - wkst) + days * 7;
-                }
-                this.fixDay();
-              };
-              DateTime2.prototype.addDaily = function(days) {
-                this.day += days;
-                this.fixDay();
-              };
-              DateTime2.prototype.addHours = function(hours, filtered, byhour) {
-                if (filtered) {
-                  this.hour += Math.floor((23 - this.hour) / hours) * hours;
-                }
-                for (; ; ) {
-                  this.hour += hours;
-                  var _a8 = divmod(this.hour, 24), dayDiv = _a8.div, hourMod = _a8.mod;
-                  if (dayDiv) {
-                    this.hour = hourMod;
-                    this.addDaily(dayDiv);
-                  }
-                  if (empty(byhour) || includes2(byhour, this.hour))
-                    break;
-                }
-              };
-              DateTime2.prototype.addMinutes = function(minutes, filtered, byhour, byminute) {
-                if (filtered) {
-                  this.minute += Math.floor((1439 - (this.hour * 60 + this.minute)) / minutes) * minutes;
-                }
-                for (; ; ) {
-                  this.minute += minutes;
-                  var _a8 = divmod(this.minute, 60), hourDiv = _a8.div, minuteMod = _a8.mod;
-                  if (hourDiv) {
-                    this.minute = minuteMod;
-                    this.addHours(hourDiv, false, byhour);
-                  }
-                  if ((empty(byhour) || includes2(byhour, this.hour)) && (empty(byminute) || includes2(byminute, this.minute))) {
-                    break;
-                  }
-                }
-              };
-              DateTime2.prototype.addSeconds = function(seconds, filtered, byhour, byminute, bysecond) {
-                if (filtered) {
-                  this.second += Math.floor((86399 - (this.hour * 3600 + this.minute * 60 + this.second)) / seconds) * seconds;
-                }
-                for (; ; ) {
-                  this.second += seconds;
-                  var _a8 = divmod(this.second, 60), minuteDiv = _a8.div, secondMod = _a8.mod;
-                  if (minuteDiv) {
-                    this.second = secondMod;
-                    this.addMinutes(minuteDiv, false, byhour, byminute);
-                  }
-                  if ((empty(byhour) || includes2(byhour, this.hour)) && (empty(byminute) || includes2(byminute, this.minute)) && (empty(bysecond) || includes2(bysecond, this.second))) {
-                    break;
-                  }
-                }
-              };
-              DateTime2.prototype.fixDay = function() {
-                if (this.day <= 28) {
-                  return;
-                }
-                var daysinmonth = monthRange(this.year, this.month - 1)[1];
-                if (this.day <= daysinmonth) {
-                  return;
-                }
-                while (this.day > daysinmonth) {
-                  this.day -= daysinmonth;
-                  ++this.month;
-                  if (this.month === 13) {
-                    this.month = 1;
-                    ++this.year;
-                    if (this.year > MAXYEAR) {
-                      return;
-                    }
-                  }
-                  daysinmonth = monthRange(this.year, this.month - 1)[1];
-                }
-              };
-              DateTime2.prototype.add = function(options, filtered) {
-                var freq = options.freq, interval2 = options.interval, wkst = options.wkst, byhour = options.byhour, byminute = options.byminute, bysecond = options.bysecond;
-                switch (freq) {
-                  case Frequency.YEARLY:
-                    return this.addYears(interval2);
-                  case Frequency.MONTHLY:
-                    return this.addMonths(interval2);
-                  case Frequency.WEEKLY:
-                    return this.addWeekly(interval2, wkst);
-                  case Frequency.DAILY:
-                    return this.addDaily(interval2);
-                  case Frequency.HOURLY:
-                    return this.addHours(interval2, filtered, byhour);
-                  case Frequency.MINUTELY:
-                    return this.addMinutes(interval2, filtered, byhour, byminute);
-                  case Frequency.SECONDLY:
-                    return this.addSeconds(interval2, filtered, byhour, byminute, bysecond);
-                }
-              };
-              return DateTime2;
-            })(Time3)
-          );
-          ;
-          function initializeOptions(options) {
-            var invalid2 = [];
-            var keys = Object.keys(options);
-            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-              var key = keys_1[_i];
-              if (!includes2(defaultKeys, key))
-                invalid2.push(key);
-              if (isDate2(options[key]) && !isValidDate(options[key])) {
-                invalid2.push(key);
-              }
-            }
-            if (invalid2.length) {
-              throw new Error("Invalid options: " + invalid2.join(", "));
-            }
-            return __assign3({}, options);
-          }
-          function parseOptions(options) {
-            var opts = __assign3(__assign3({}, DEFAULT_OPTIONS2), initializeOptions(options));
-            if (isPresent(opts.byeaster))
-              opts.freq = RRule2.YEARLY;
-            if (!(isPresent(opts.freq) && RRule2.FREQUENCIES[opts.freq])) {
-              throw new Error("Invalid frequency: ".concat(opts.freq, " ").concat(options.freq));
-            }
-            if (!opts.dtstart)
-              opts.dtstart = new Date((/* @__PURE__ */ new Date()).setMilliseconds(0));
-            if (!isPresent(opts.wkst)) {
-              opts.wkst = RRule2.MO.weekday;
-            } else if (isNumber2(opts.wkst)) {
-            } else {
-              opts.wkst = opts.wkst.weekday;
-            }
-            if (isPresent(opts.bysetpos)) {
-              if (isNumber2(opts.bysetpos))
-                opts.bysetpos = [opts.bysetpos];
-              for (var i5 = 0; i5 < opts.bysetpos.length; i5++) {
-                var v = opts.bysetpos[i5];
-                if (v === 0 || !(v >= -366 && v <= 366)) {
-                  throw new Error("bysetpos must be between 1 and 366, or between -366 and -1");
-                }
-              }
-            }
-            if (!(Boolean(opts.byweekno) || notEmpty(opts.byweekno) || notEmpty(opts.byyearday) || Boolean(opts.bymonthday) || notEmpty(opts.bymonthday) || isPresent(opts.byweekday) || isPresent(opts.byeaster))) {
-              switch (opts.freq) {
-                case RRule2.YEARLY:
-                  if (!opts.bymonth)
-                    opts.bymonth = opts.dtstart.getUTCMonth() + 1;
-                  opts.bymonthday = opts.dtstart.getUTCDate();
-                  break;
-                case RRule2.MONTHLY:
-                  opts.bymonthday = opts.dtstart.getUTCDate();
-                  break;
-                case RRule2.WEEKLY:
-                  opts.byweekday = [getWeekday(opts.dtstart)];
-                  break;
-              }
-            }
-            if (isPresent(opts.bymonth) && !isArray(opts.bymonth)) {
-              opts.bymonth = [opts.bymonth];
-            }
-            if (isPresent(opts.byyearday) && !isArray(opts.byyearday) && isNumber2(opts.byyearday)) {
-              opts.byyearday = [opts.byyearday];
-            }
-            if (!isPresent(opts.bymonthday)) {
-              opts.bymonthday = [];
-              opts.bynmonthday = [];
-            } else if (isArray(opts.bymonthday)) {
-              var bymonthday = [];
-              var bynmonthday = [];
-              for (var i5 = 0; i5 < opts.bymonthday.length; i5++) {
-                var v = opts.bymonthday[i5];
-                if (v > 0) {
-                  bymonthday.push(v);
-                } else if (v < 0) {
-                  bynmonthday.push(v);
-                }
-              }
-              opts.bymonthday = bymonthday;
-              opts.bynmonthday = bynmonthday;
-            } else if (opts.bymonthday < 0) {
-              opts.bynmonthday = [opts.bymonthday];
-              opts.bymonthday = [];
-            } else {
-              opts.bynmonthday = [];
-              opts.bymonthday = [opts.bymonthday];
-            }
-            if (isPresent(opts.byweekno) && !isArray(opts.byweekno)) {
-              opts.byweekno = [opts.byweekno];
-            }
-            if (!isPresent(opts.byweekday)) {
-              opts.bynweekday = null;
-            } else if (isNumber2(opts.byweekday)) {
-              opts.byweekday = [opts.byweekday];
-              opts.bynweekday = null;
-            } else if (isWeekdayStr(opts.byweekday)) {
-              opts.byweekday = [Weekday.fromStr(opts.byweekday).weekday];
-              opts.bynweekday = null;
-            } else if (opts.byweekday instanceof Weekday) {
-              if (!opts.byweekday.n || opts.freq > RRule2.MONTHLY) {
-                opts.byweekday = [opts.byweekday.weekday];
-                opts.bynweekday = null;
-              } else {
-                opts.bynweekday = [[opts.byweekday.weekday, opts.byweekday.n]];
-                opts.byweekday = null;
-              }
-            } else {
-              var byweekday = [];
-              var bynweekday = [];
-              for (var i5 = 0; i5 < opts.byweekday.length; i5++) {
-                var wday = opts.byweekday[i5];
-                if (isNumber2(wday)) {
-                  byweekday.push(wday);
-                  continue;
-                } else if (isWeekdayStr(wday)) {
-                  byweekday.push(Weekday.fromStr(wday).weekday);
-                  continue;
-                }
-                if (!wday.n || opts.freq > RRule2.MONTHLY) {
-                  byweekday.push(wday.weekday);
-                } else {
-                  bynweekday.push([wday.weekday, wday.n]);
-                }
-              }
-              opts.byweekday = notEmpty(byweekday) ? byweekday : null;
-              opts.bynweekday = notEmpty(bynweekday) ? bynweekday : null;
-            }
-            if (!isPresent(opts.byhour)) {
-              opts.byhour = opts.freq < RRule2.HOURLY ? [opts.dtstart.getUTCHours()] : null;
-            } else if (isNumber2(opts.byhour)) {
-              opts.byhour = [opts.byhour];
-            }
-            if (!isPresent(opts.byminute)) {
-              opts.byminute = opts.freq < RRule2.MINUTELY ? [opts.dtstart.getUTCMinutes()] : null;
-            } else if (isNumber2(opts.byminute)) {
-              opts.byminute = [opts.byminute];
-            }
-            if (!isPresent(opts.bysecond)) {
-              opts.bysecond = opts.freq < RRule2.SECONDLY ? [opts.dtstart.getUTCSeconds()] : null;
-            } else if (isNumber2(opts.bysecond)) {
-              opts.bysecond = [opts.bysecond];
-            }
-            return { parsedOptions: opts };
-          }
-          function buildTimeset(opts) {
-            var millisecondModulo = opts.dtstart.getTime() % 1e3;
-            if (!freqIsDailyOrGreater(opts.freq)) {
-              return [];
-            }
-            var timeset = [];
-            opts.byhour.forEach(function(hour) {
-              opts.byminute.forEach(function(minute) {
-                opts.bysecond.forEach(function(second) {
-                  timeset.push(new Time3(hour, minute, second, millisecondModulo));
-                });
-              });
-            });
-            return timeset;
-          }
-          ;
-          function parseString(rfcString) {
-            var options = rfcString.split("\n").map(parseLine).filter(function(x) {
-              return x !== null;
-            });
-            return __assign3(__assign3({}, options[0]), options[1]);
-          }
-          function parseDtstart(line3) {
-            var options = {};
-            var dtstartWithZone = /DTSTART(?:;TZID=([^:=]+?))?(?::|=)([^;\s]+)/i.exec(line3);
-            if (!dtstartWithZone) {
-              return options;
-            }
-            var tzid = dtstartWithZone[1], dtstart = dtstartWithZone[2];
-            if (tzid) {
-              options.tzid = tzid;
-            }
-            options.dtstart = untilStringToDate(dtstart);
-            return options;
-          }
-          function parseLine(rfcString) {
-            rfcString = rfcString.replace(/^\s+|\s+$/, "");
-            if (!rfcString.length)
-              return null;
-            var header = /^([A-Z]+?)[:;]/.exec(rfcString.toUpperCase());
-            if (!header) {
-              return parseRrule(rfcString);
-            }
-            var key = header[1];
-            switch (key.toUpperCase()) {
-              case "RRULE":
-              case "EXRULE":
-                return parseRrule(rfcString);
-              case "DTSTART":
-                return parseDtstart(rfcString);
-              default:
-                throw new Error("Unsupported RFC prop ".concat(key, " in ").concat(rfcString));
-            }
-          }
-          function parseRrule(line3) {
-            var strippedLine = line3.replace(/^RRULE:/i, "");
-            var options = parseDtstart(strippedLine);
-            var attrs = line3.replace(/^(?:RRULE|EXRULE):/i, "").split(";");
-            attrs.forEach(function(attr) {
-              var _a8 = attr.split("="), key = _a8[0], value = _a8[1];
-              switch (key.toUpperCase()) {
-                case "FREQ":
-                  options.freq = Frequency[value.toUpperCase()];
-                  break;
-                case "WKST":
-                  options.wkst = Days[value.toUpperCase()];
-                  break;
-                case "COUNT":
-                case "INTERVAL":
-                case "BYSETPOS":
-                case "BYMONTH":
-                case "BYMONTHDAY":
-                case "BYYEARDAY":
-                case "BYWEEKNO":
-                case "BYHOUR":
-                case "BYMINUTE":
-                case "BYSECOND":
-                  var num = parseNumber2(value);
-                  var optionKey = key.toLowerCase();
-                  options[optionKey] = num;
-                  break;
-                case "BYWEEKDAY":
-                case "BYDAY":
-                  options.byweekday = parseWeekday(value);
-                  break;
-                case "DTSTART":
-                case "TZID":
-                  var dtstart = parseDtstart(line3);
-                  options.tzid = dtstart.tzid;
-                  options.dtstart = dtstart.dtstart;
-                  break;
-                case "UNTIL":
-                  options.until = untilStringToDate(value);
-                  break;
-                case "BYEASTER":
-                  options.byeaster = Number(value);
-                  break;
-                default:
-                  throw new Error("Unknown RRULE property '" + key + "'");
-              }
-            });
-            return options;
-          }
-          function parseNumber2(value) {
-            if (value.indexOf(",") !== -1) {
-              var values = value.split(",");
-              return values.map(parseIndividualNumber);
-            }
-            return parseIndividualNumber(value);
-          }
-          function parseIndividualNumber(value) {
-            if (/^[+-]?\d+$/.test(value)) {
-              return Number(value);
-            }
-            return value;
-          }
-          function parseWeekday(value) {
-            var days = value.split(",");
-            return days.map(function(day) {
-              if (day.length === 2) {
-                return Days[day];
-              }
-              var parts = day.match(/^([+-]?\d{1,2})([A-Z]{2})$/);
-              if (!parts || parts.length < 3) {
-                throw new SyntaxError("Invalid weekday string: ".concat(day));
-              }
-              var n3 = Number(parts[1]);
-              var wdaypart = parts[2];
-              var wday = Days[wdaypart].weekday;
-              return new Weekday(wday, n3);
-            });
-          }
-          ;
-          var DateWithZone = (
-            /** @class */
-            (function() {
-              function DateWithZone2(date7, tzid) {
-                if (isNaN(date7.getTime())) {
-                  throw new RangeError("Invalid date passed to DateWithZone");
-                }
-                this.date = date7;
-                this.tzid = tzid;
-              }
-              Object.defineProperty(DateWithZone2.prototype, "isUTC", {
-                get: function() {
-                  return !this.tzid || this.tzid.toUpperCase() === "UTC";
-                },
-                enumerable: false,
-                configurable: true
-              });
-              DateWithZone2.prototype.toString = function() {
-                var datestr = timeToUntilString(this.date.getTime(), this.isUTC);
-                if (!this.isUTC) {
-                  return ";TZID=".concat(this.tzid, ":").concat(datestr);
-                }
-                return ":".concat(datestr);
-              };
-              DateWithZone2.prototype.getTime = function() {
-                return this.date.getTime();
-              };
-              DateWithZone2.prototype.rezonedDate = function() {
-                if (this.isUTC) {
-                  return this.date;
-                }
-                return dateInTimeZone(this.date, this.tzid);
-              };
-              return DateWithZone2;
-            })()
-          );
-          ;
-          function optionsToString(options) {
-            var rrule = [];
-            var dtstart = "";
-            var keys = Object.keys(options);
-            var defaultKeys2 = Object.keys(DEFAULT_OPTIONS2);
-            for (var i5 = 0; i5 < keys.length; i5++) {
-              if (keys[i5] === "tzid")
-                continue;
-              if (!includes2(defaultKeys2, keys[i5]))
-                continue;
-              var key = keys[i5].toUpperCase();
-              var value = options[keys[i5]];
-              var outValue = "";
-              if (!isPresent(value) || isArray(value) && !value.length)
-                continue;
-              switch (key) {
-                case "FREQ":
-                  outValue = RRule2.FREQUENCIES[options.freq];
-                  break;
-                case "WKST":
-                  if (isNumber2(value)) {
-                    outValue = new Weekday(value).toString();
-                  } else {
-                    outValue = value.toString();
-                  }
-                  break;
-                case "BYWEEKDAY":
-                  key = "BYDAY";
-                  outValue = toArray(value).map(function(wday) {
-                    if (wday instanceof Weekday) {
-                      return wday;
-                    }
-                    if (isArray(wday)) {
-                      return new Weekday(wday[0], wday[1]);
-                    }
-                    return new Weekday(wday);
-                  }).toString();
-                  break;
-                case "DTSTART":
-                  dtstart = buildDtstart(value, options.tzid);
-                  break;
-                case "UNTIL":
-                  outValue = timeToUntilString(value, !options.tzid);
-                  break;
-                default:
-                  if (isArray(value)) {
-                    var strValues = [];
-                    for (var j5 = 0; j5 < value.length; j5++) {
-                      strValues[j5] = String(value[j5]);
-                    }
-                    outValue = strValues.toString();
-                  } else {
-                    outValue = String(value);
-                  }
-              }
-              if (outValue) {
-                rrule.push([key, outValue]);
-              }
-            }
-            var rules = rrule.map(function(_a8) {
-              var key2 = _a8[0], value2 = _a8[1];
-              return "".concat(key2, "=").concat(value2.toString());
-            }).join(";");
-            var ruleString = "";
-            if (rules !== "") {
-              ruleString = "RRULE:".concat(rules);
-            }
-            return [dtstart, ruleString].filter(function(x) {
-              return !!x;
-            }).join("\n");
-          }
-          function buildDtstart(dtstart, tzid) {
-            if (!dtstart) {
-              return "";
-            }
-            return "DTSTART" + new DateWithZone(new Date(dtstart), tzid).toString();
-          }
-          ;
-          function argsMatch(left, right) {
-            if (Array.isArray(left)) {
-              if (!Array.isArray(right))
-                return false;
-              if (left.length !== right.length)
-                return false;
-              return left.every(function(date7, i5) {
-                return date7.getTime() === right[i5].getTime();
-              });
-            }
-            if (left instanceof Date) {
-              return right instanceof Date && left.getTime() === right.getTime();
-            }
-            return left === right;
-          }
-          var Cache2 = (
-            /** @class */
-            (function() {
-              function Cache3() {
-                this.all = false;
-                this.before = [];
-                this.after = [];
-                this.between = [];
-              }
-              Cache3.prototype._cacheAdd = function(what, value, args) {
-                if (value) {
-                  value = value instanceof Date ? dateutil_clone(value) : cloneDates(value);
-                }
-                if (what === "all") {
-                  this.all = value;
-                } else {
-                  args._value = value;
-                  this[what].push(args);
-                }
-              };
-              Cache3.prototype._cacheGet = function(what, args) {
-                var cached2 = false;
-                var argsKeys = args ? Object.keys(args) : [];
-                var findCacheDiff = function(item2) {
-                  for (var i6 = 0; i6 < argsKeys.length; i6++) {
-                    var key = argsKeys[i6];
-                    if (!argsMatch(args[key], item2[key])) {
-                      return true;
-                    }
-                  }
-                  return false;
-                };
-                var cachedObject = this[what];
-                if (what === "all") {
-                  cached2 = this.all;
-                } else if (isArray(cachedObject)) {
-                  for (var i5 = 0; i5 < cachedObject.length; i5++) {
-                    var item = cachedObject[i5];
-                    if (argsKeys.length && findCacheDiff(item))
-                      continue;
-                    cached2 = item._value;
-                    break;
-                  }
-                }
-                if (!cached2 && this.all) {
-                  var iterResult = new iterresult(what, args);
-                  for (var i5 = 0; i5 < this.all.length; i5++) {
-                    if (!iterResult.accept(this.all[i5]))
-                      break;
-                  }
-                  cached2 = iterResult.getValue();
-                  this._cacheAdd(what, cached2, args);
-                }
-                return isArray(cached2) ? cloneDates(cached2) : cached2 instanceof Date ? dateutil_clone(cached2) : cached2;
-              };
-              return Cache3;
-            })()
-          );
-          ;
-          var M365MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], repeat(1, 31), true), repeat(2, 28), true), repeat(3, 31), true), repeat(4, 30), true), repeat(5, 31), true), repeat(6, 30), true), repeat(7, 31), true), repeat(8, 31), true), repeat(9, 30), true), repeat(10, 31), true), repeat(11, 30), true), repeat(12, 31), true), repeat(1, 7), true);
-          var M366MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], repeat(1, 31), true), repeat(2, 29), true), repeat(3, 31), true), repeat(4, 30), true), repeat(5, 31), true), repeat(6, 30), true), repeat(7, 31), true), repeat(8, 31), true), repeat(9, 30), true), repeat(10, 31), true), repeat(11, 30), true), repeat(12, 31), true), repeat(1, 7), true);
-          var M28 = range2(1, 29);
-          var M29 = range2(1, 30);
-          var M30 = range2(1, 31);
-          var M31 = range2(1, 32);
-          var MDAY366MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], M31, true), M29, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31.slice(0, 7), true);
-          var MDAY365MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], M31, true), M28, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31.slice(0, 7), true);
-          var NM28 = range2(-28, 0);
-          var NM29 = range2(-29, 0);
-          var NM30 = range2(-30, 0);
-          var NM31 = range2(-31, 0);
-          var NMDAY366MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], NM31, true), NM29, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31.slice(0, 7), true);
-          var NMDAY365MASK = __spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2(__spreadArray2([], NM31, true), NM28, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31.slice(0, 7), true);
-          var M366RANGE = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
-          var M365RANGE = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-          var WDAYMASK = (function() {
-            var wdaymask = [];
-            for (var i5 = 0; i5 < 55; i5++)
-              wdaymask = wdaymask.concat(range2(7));
-            return wdaymask;
-          })();
-          ;
-          function rebuildYear(year2, options) {
-            var firstyday = datetime3(year2, 1, 1);
-            var yearlen = isLeapYear2(year2) ? 366 : 365;
-            var nextyearlen = isLeapYear2(year2 + 1) ? 366 : 365;
-            var yearordinal = toOrdinal(firstyday);
-            var yearweekday = getWeekday(firstyday);
-            var result = __assign3(__assign3({ yearlen, nextyearlen, yearordinal, yearweekday }, baseYearMasks(year2)), { wnomask: null });
-            if (empty(options.byweekno)) {
-              return result;
-            }
-            result.wnomask = repeat(0, yearlen + 7);
-            var firstwkst;
-            var wyearlen;
-            var no1wkst = firstwkst = pymod(7 - yearweekday + options.wkst, 7);
-            if (no1wkst >= 4) {
-              no1wkst = 0;
-              wyearlen = result.yearlen + pymod(yearweekday - options.wkst, 7);
-            } else {
-              wyearlen = yearlen - no1wkst;
-            }
-            var div = Math.floor(wyearlen / 7);
-            var mod = pymod(wyearlen, 7);
-            var numweeks = Math.floor(div + mod / 4);
-            for (var j5 = 0; j5 < options.byweekno.length; j5++) {
-              var n3 = options.byweekno[j5];
-              if (n3 < 0) {
-                n3 += numweeks + 1;
-              }
-              if (!(n3 > 0 && n3 <= numweeks)) {
-                continue;
-              }
-              var i5 = void 0;
-              if (n3 > 1) {
-                i5 = no1wkst + (n3 - 1) * 7;
-                if (no1wkst !== firstwkst) {
-                  i5 -= 7 - firstwkst;
-                }
-              } else {
-                i5 = no1wkst;
-              }
-              for (var k5 = 0; k5 < 7; k5++) {
-                result.wnomask[i5] = 1;
-                i5++;
-                if (result.wdaymask[i5] === options.wkst)
-                  break;
-              }
-            }
-            if (includes2(options.byweekno, 1)) {
-              var i5 = no1wkst + numweeks * 7;
-              if (no1wkst !== firstwkst)
-                i5 -= 7 - firstwkst;
-              if (i5 < yearlen) {
-                for (var j5 = 0; j5 < 7; j5++) {
-                  result.wnomask[i5] = 1;
-                  i5 += 1;
-                  if (result.wdaymask[i5] === options.wkst)
-                    break;
-                }
-              }
-            }
-            if (no1wkst) {
-              var lnumweeks = void 0;
-              if (!includes2(options.byweekno, -1)) {
-                var lyearweekday = getWeekday(datetime3(year2 - 1, 1, 1));
-                var lno1wkst = pymod(7 - lyearweekday.valueOf() + options.wkst, 7);
-                var lyearlen = isLeapYear2(year2 - 1) ? 366 : 365;
-                var weekst = void 0;
-                if (lno1wkst >= 4) {
-                  lno1wkst = 0;
-                  weekst = lyearlen + pymod(lyearweekday - options.wkst, 7);
-                } else {
-                  weekst = yearlen - no1wkst;
-                }
-                lnumweeks = Math.floor(52 + pymod(weekst, 7) / 4);
-              } else {
-                lnumweeks = -1;
-              }
-              if (includes2(options.byweekno, lnumweeks)) {
-                for (var i5 = 0; i5 < no1wkst; i5++)
-                  result.wnomask[i5] = 1;
-              }
-            }
-            return result;
-          }
-          function baseYearMasks(year2) {
-            var yearlen = isLeapYear2(year2) ? 366 : 365;
-            var firstyday = datetime3(year2, 1, 1);
-            var wday = getWeekday(firstyday);
-            if (yearlen === 365) {
-              return {
-                mmask: M365MASK,
-                mdaymask: MDAY365MASK,
-                nmdaymask: NMDAY365MASK,
-                wdaymask: WDAYMASK.slice(wday),
-                mrange: M365RANGE
-              };
-            }
-            return {
-              mmask: M366MASK,
-              mdaymask: MDAY366MASK,
-              nmdaymask: NMDAY366MASK,
-              wdaymask: WDAYMASK.slice(wday),
-              mrange: M366RANGE
-            };
-          }
-          ;
-          function rebuildMonth(year2, month, yearlen, mrange, wdaymask, options) {
-            var result = {
-              lastyear: year2,
-              lastmonth: month,
-              nwdaymask: []
-            };
-            var ranges = [];
-            if (options.freq === RRule2.YEARLY) {
-              if (empty(options.bymonth)) {
-                ranges = [[0, yearlen]];
-              } else {
-                for (var j5 = 0; j5 < options.bymonth.length; j5++) {
-                  month = options.bymonth[j5];
-                  ranges.push(mrange.slice(month - 1, month + 1));
-                }
-              }
-            } else if (options.freq === RRule2.MONTHLY) {
-              ranges = [mrange.slice(month - 1, month + 1)];
-            }
-            if (empty(ranges)) {
-              return result;
-            }
-            result.nwdaymask = repeat(0, yearlen);
-            for (var j5 = 0; j5 < ranges.length; j5++) {
-              var rang = ranges[j5];
-              var first = rang[0];
-              var last = rang[1] - 1;
-              for (var k5 = 0; k5 < options.bynweekday.length; k5++) {
-                var i5 = void 0;
-                var _a8 = options.bynweekday[k5], wday = _a8[0], n3 = _a8[1];
-                if (n3 < 0) {
-                  i5 = last + (n3 + 1) * 7;
-                  i5 -= pymod(wdaymask[i5] - wday, 7);
-                } else {
-                  i5 = first + (n3 - 1) * 7;
-                  i5 += pymod(7 - wdaymask[i5] + wday, 7);
-                }
-                if (first <= i5 && i5 <= last)
-                  result.nwdaymask[i5] = 1;
-              }
-            }
-            return result;
-          }
-          ;
-          function easter(y, offset) {
-            if (offset === void 0) {
-              offset = 0;
-            }
-            var a5 = y % 19;
-            var b5 = Math.floor(y / 100);
-            var c5 = y % 100;
-            var d5 = Math.floor(b5 / 4);
-            var e5 = b5 % 4;
-            var f5 = Math.floor((b5 + 8) / 25);
-            var g5 = Math.floor((b5 - f5 + 1) / 3);
-            var h5 = Math.floor(19 * a5 + b5 - d5 - g5 + 15) % 30;
-            var i5 = Math.floor(c5 / 4);
-            var k5 = c5 % 4;
-            var l3 = Math.floor(32 + 2 * e5 + 2 * i5 - h5 - k5) % 7;
-            var m3 = Math.floor((a5 + 11 * h5 + 22 * l3) / 451);
-            var month = Math.floor((h5 + l3 - 7 * m3 + 114) / 31);
-            var day = (h5 + l3 - 7 * m3 + 114) % 31 + 1;
-            var date7 = Date.UTC(y, month - 1, day + offset);
-            var yearStart = Date.UTC(y, 0, 1);
-            return [Math.ceil((date7 - yearStart) / (1e3 * 60 * 60 * 24))];
-          }
-          ;
-          var Iterinfo = (
-            /** @class */
-            (function() {
-              function Iterinfo2(options) {
-                this.options = options;
-              }
-              Iterinfo2.prototype.rebuild = function(year2, month) {
-                var options = this.options;
-                if (year2 !== this.lastyear) {
-                  this.yearinfo = rebuildYear(year2, options);
-                }
-                if (notEmpty(options.bynweekday) && (month !== this.lastmonth || year2 !== this.lastyear)) {
-                  var _a8 = this.yearinfo, yearlen = _a8.yearlen, mrange = _a8.mrange, wdaymask = _a8.wdaymask;
-                  this.monthinfo = rebuildMonth(year2, month, yearlen, mrange, wdaymask, options);
-                }
-                if (isPresent(options.byeaster)) {
-                  this.eastermask = easter(year2, options.byeaster);
-                }
-              };
-              Object.defineProperty(Iterinfo2.prototype, "lastyear", {
-                get: function() {
-                  return this.monthinfo ? this.monthinfo.lastyear : null;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "lastmonth", {
-                get: function() {
-                  return this.monthinfo ? this.monthinfo.lastmonth : null;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "yearlen", {
-                get: function() {
-                  return this.yearinfo.yearlen;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "yearordinal", {
-                get: function() {
-                  return this.yearinfo.yearordinal;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "mrange", {
-                get: function() {
-                  return this.yearinfo.mrange;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "wdaymask", {
-                get: function() {
-                  return this.yearinfo.wdaymask;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "mmask", {
-                get: function() {
-                  return this.yearinfo.mmask;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "wnomask", {
-                get: function() {
-                  return this.yearinfo.wnomask;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "nwdaymask", {
-                get: function() {
-                  return this.monthinfo ? this.monthinfo.nwdaymask : [];
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "nextyearlen", {
-                get: function() {
-                  return this.yearinfo.nextyearlen;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "mdaymask", {
-                get: function() {
-                  return this.yearinfo.mdaymask;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Object.defineProperty(Iterinfo2.prototype, "nmdaymask", {
-                get: function() {
-                  return this.yearinfo.nmdaymask;
-                },
-                enumerable: false,
-                configurable: true
-              });
-              Iterinfo2.prototype.ydayset = function() {
-                return [range2(this.yearlen), 0, this.yearlen];
-              };
-              Iterinfo2.prototype.mdayset = function(_, month) {
-                var start = this.mrange[month - 1];
-                var end = this.mrange[month];
-                var set2 = repeat(null, this.yearlen);
-                for (var i5 = start; i5 < end; i5++)
-                  set2[i5] = i5;
-                return [set2, start, end];
-              };
-              Iterinfo2.prototype.wdayset = function(year2, month, day) {
-                var set2 = repeat(null, this.yearlen + 7);
-                var i5 = toOrdinal(datetime3(year2, month, day)) - this.yearordinal;
-                var start = i5;
-                for (var j5 = 0; j5 < 7; j5++) {
-                  set2[i5] = i5;
-                  ++i5;
-                  if (this.wdaymask[i5] === this.options.wkst)
-                    break;
-                }
-                return [set2, start, i5];
-              };
-              Iterinfo2.prototype.ddayset = function(year2, month, day) {
-                var set2 = repeat(null, this.yearlen);
-                var i5 = toOrdinal(datetime3(year2, month, day)) - this.yearordinal;
-                set2[i5] = i5;
-                return [set2, i5, i5 + 1];
-              };
-              Iterinfo2.prototype.htimeset = function(hour, _, second, millisecond) {
-                var _this = this;
-                var set2 = [];
-                this.options.byminute.forEach(function(minute) {
-                  set2 = set2.concat(_this.mtimeset(hour, minute, second, millisecond));
-                });
-                sort(set2);
-                return set2;
-              };
-              Iterinfo2.prototype.mtimeset = function(hour, minute, _, millisecond) {
-                var set2 = this.options.bysecond.map(function(second) {
-                  return new Time3(hour, minute, second, millisecond);
-                });
-                sort(set2);
-                return set2;
-              };
-              Iterinfo2.prototype.stimeset = function(hour, minute, second, millisecond) {
-                return [new Time3(hour, minute, second, millisecond)];
-              };
-              Iterinfo2.prototype.getdayset = function(freq) {
-                switch (freq) {
-                  case Frequency.YEARLY:
-                    return this.ydayset.bind(this);
-                  case Frequency.MONTHLY:
-                    return this.mdayset.bind(this);
-                  case Frequency.WEEKLY:
-                    return this.wdayset.bind(this);
-                  case Frequency.DAILY:
-                    return this.ddayset.bind(this);
-                  default:
-                    return this.ddayset.bind(this);
-                }
-              };
-              Iterinfo2.prototype.gettimeset = function(freq) {
-                switch (freq) {
-                  case Frequency.HOURLY:
-                    return this.htimeset.bind(this);
-                  case Frequency.MINUTELY:
-                    return this.mtimeset.bind(this);
-                  case Frequency.SECONDLY:
-                    return this.stimeset.bind(this);
-                }
-              };
-              return Iterinfo2;
-            })()
-          );
-          const iterinfo = Iterinfo;
-          ;
-          function buildPoslist(bysetpos, timeset, start, end, ii, dayset) {
-            var poslist = [];
-            for (var j5 = 0; j5 < bysetpos.length; j5++) {
-              var daypos = void 0;
-              var timepos = void 0;
-              var pos = bysetpos[j5];
-              if (pos < 0) {
-                daypos = Math.floor(pos / timeset.length);
-                timepos = pymod(pos, timeset.length);
-              } else {
-                daypos = Math.floor((pos - 1) / timeset.length);
-                timepos = pymod(pos - 1, timeset.length);
-              }
-              var tmp = [];
-              for (var k5 = start; k5 < end; k5++) {
-                var val = dayset[k5];
-                if (!isPresent(val))
-                  continue;
-                tmp.push(val);
-              }
-              var i5 = void 0;
-              if (daypos < 0) {
-                i5 = tmp.slice(daypos)[0];
-              } else {
-                i5 = tmp[daypos];
-              }
-              var time6 = timeset[timepos];
-              var date7 = fromOrdinal(ii.yearordinal + i5);
-              var res = combine2(date7, time6);
-              if (!includes2(poslist, res))
-                poslist.push(res);
-            }
-            sort(poslist);
-            return poslist;
-          }
-          ;
-          function iter(iterResult, options) {
-            var dtstart = options.dtstart, freq = options.freq, interval2 = options.interval, until = options.until, bysetpos = options.bysetpos;
-            var count2 = options.count;
-            if (count2 === 0 || interval2 === 0) {
-              return emitResult(iterResult);
-            }
-            var counterDate = DateTime.fromDate(dtstart);
-            var ii = new iterinfo(options);
-            ii.rebuild(counterDate.year, counterDate.month);
-            var timeset = makeTimeset(ii, counterDate, options);
-            for (; ; ) {
-              var _a8 = ii.getdayset(freq)(counterDate.year, counterDate.month, counterDate.day), dayset = _a8[0], start = _a8[1], end = _a8[2];
-              var filtered = removeFilteredDays(dayset, start, end, ii, options);
-              if (notEmpty(bysetpos)) {
-                var poslist = buildPoslist(bysetpos, timeset, start, end, ii, dayset);
-                for (var j5 = 0; j5 < poslist.length; j5++) {
-                  var res = poslist[j5];
-                  if (until && res > until) {
-                    return emitResult(iterResult);
-                  }
-                  if (res >= dtstart) {
-                    var rezonedDate = rezoneIfNeeded(res, options);
-                    if (!iterResult.accept(rezonedDate)) {
-                      return emitResult(iterResult);
-                    }
-                    if (count2) {
-                      --count2;
-                      if (!count2) {
-                        return emitResult(iterResult);
-                      }
-                    }
-                  }
-                }
-              } else {
-                for (var j5 = start; j5 < end; j5++) {
-                  var currentDay = dayset[j5];
-                  if (!isPresent(currentDay)) {
-                    continue;
-                  }
-                  var date7 = fromOrdinal(ii.yearordinal + currentDay);
-                  for (var k5 = 0; k5 < timeset.length; k5++) {
-                    var time6 = timeset[k5];
-                    var res = combine2(date7, time6);
-                    if (until && res > until) {
-                      return emitResult(iterResult);
-                    }
-                    if (res >= dtstart) {
-                      var rezonedDate = rezoneIfNeeded(res, options);
-                      if (!iterResult.accept(rezonedDate)) {
-                        return emitResult(iterResult);
-                      }
-                      if (count2) {
-                        --count2;
-                        if (!count2) {
-                          return emitResult(iterResult);
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-              if (options.interval === 0) {
-                return emitResult(iterResult);
-              }
-              counterDate.add(options, filtered);
-              if (counterDate.year > MAXYEAR) {
-                return emitResult(iterResult);
-              }
-              if (!freqIsDailyOrGreater(freq)) {
-                timeset = ii.gettimeset(freq)(counterDate.hour, counterDate.minute, counterDate.second, 0);
-              }
-              ii.rebuild(counterDate.year, counterDate.month);
-            }
-          }
-          function isFiltered(ii, currentDay, options) {
-            var bymonth = options.bymonth, byweekno = options.byweekno, byweekday = options.byweekday, byeaster = options.byeaster, bymonthday = options.bymonthday, bynmonthday = options.bynmonthday, byyearday = options.byyearday;
-            return notEmpty(bymonth) && !includes2(bymonth, ii.mmask[currentDay]) || notEmpty(byweekno) && !ii.wnomask[currentDay] || notEmpty(byweekday) && !includes2(byweekday, ii.wdaymask[currentDay]) || notEmpty(ii.nwdaymask) && !ii.nwdaymask[currentDay] || byeaster !== null && !includes2(ii.eastermask, currentDay) || (notEmpty(bymonthday) || notEmpty(bynmonthday)) && !includes2(bymonthday, ii.mdaymask[currentDay]) && !includes2(bynmonthday, ii.nmdaymask[currentDay]) || notEmpty(byyearday) && (currentDay < ii.yearlen && !includes2(byyearday, currentDay + 1) && !includes2(byyearday, -ii.yearlen + currentDay) || currentDay >= ii.yearlen && !includes2(byyearday, currentDay + 1 - ii.yearlen) && !includes2(byyearday, -ii.nextyearlen + currentDay - ii.yearlen));
-          }
-          function rezoneIfNeeded(date7, options) {
-            return new DateWithZone(date7, options.tzid).rezonedDate();
-          }
-          function emitResult(iterResult) {
-            return iterResult.getValue();
-          }
-          function removeFilteredDays(dayset, start, end, ii, options) {
-            var filtered = false;
-            for (var dayCounter = start; dayCounter < end; dayCounter++) {
-              var currentDay = dayset[dayCounter];
-              filtered = isFiltered(ii, currentDay, options);
-              if (filtered)
-                dayset[currentDay] = null;
-            }
-            return filtered;
-          }
-          function makeTimeset(ii, counterDate, options) {
-            var freq = options.freq, byhour = options.byhour, byminute = options.byminute, bysecond = options.bysecond;
-            if (freqIsDailyOrGreater(freq)) {
-              return buildTimeset(options);
-            }
-            if (freq >= RRule2.HOURLY && notEmpty(byhour) && !includes2(byhour, counterDate.hour) || freq >= RRule2.MINUTELY && notEmpty(byminute) && !includes2(byminute, counterDate.minute) || freq >= RRule2.SECONDLY && notEmpty(bysecond) && !includes2(bysecond, counterDate.second)) {
-              return [];
-            }
-            return ii.gettimeset(freq)(counterDate.hour, counterDate.minute, counterDate.second, counterDate.millisecond);
-          }
-          ;
-          var Days = {
-            MO: new Weekday(0),
-            TU: new Weekday(1),
-            WE: new Weekday(2),
-            TH: new Weekday(3),
-            FR: new Weekday(4),
-            SA: new Weekday(5),
-            SU: new Weekday(6)
-          };
-          var DEFAULT_OPTIONS2 = {
-            freq: Frequency.YEARLY,
-            dtstart: null,
-            interval: 1,
-            wkst: Days.MO,
-            count: null,
-            until: null,
-            tzid: null,
-            bysetpos: null,
-            bymonth: null,
-            bymonthday: null,
-            bynmonthday: null,
-            byyearday: null,
-            byweekno: null,
-            byweekday: null,
-            bynweekday: null,
-            byhour: null,
-            byminute: null,
-            bysecond: null,
-            byeaster: null
-          };
-          var defaultKeys = Object.keys(DEFAULT_OPTIONS2);
-          var RRule2 = (
-            /** @class */
-            (function() {
-              function RRule3(options, noCache) {
-                if (options === void 0) {
-                  options = {};
-                }
-                if (noCache === void 0) {
-                  noCache = false;
-                }
-                this._cache = noCache ? null : new Cache2();
-                this.origOptions = initializeOptions(options);
-                var parsedOptions = parseOptions(options).parsedOptions;
-                this.options = parsedOptions;
-              }
-              RRule3.parseText = function(text2, language) {
-                return parseText(text2, language);
-              };
-              RRule3.fromText = function(text2, language) {
-                return fromText(text2, language);
-              };
-              RRule3.fromString = function(str) {
-                return new RRule3(RRule3.parseString(str) || void 0);
-              };
-              RRule3.prototype._iter = function(iterResult) {
-                return iter(iterResult, this.options);
-              };
-              RRule3.prototype._cacheGet = function(what, args) {
-                if (!this._cache)
-                  return false;
-                return this._cache._cacheGet(what, args);
-              };
-              RRule3.prototype._cacheAdd = function(what, value, args) {
-                if (!this._cache)
-                  return;
-                return this._cache._cacheAdd(what, value, args);
-              };
-              RRule3.prototype.all = function(iterator) {
-                if (iterator) {
-                  return this._iter(new callbackiterresult("all", {}, iterator));
-                }
-                var result = this._cacheGet("all");
-                if (result === false) {
-                  result = this._iter(new iterresult("all", {}));
-                  this._cacheAdd("all", result);
-                }
-                return result;
-              };
-              RRule3.prototype.between = function(after, before, inc, iterator) {
-                if (inc === void 0) {
-                  inc = false;
-                }
-                if (!isValidDate(after) || !isValidDate(before)) {
-                  throw new Error("Invalid date passed in to RRule.between");
-                }
-                var args = {
-                  before,
-                  after,
-                  inc
-                };
-                if (iterator) {
-                  return this._iter(new callbackiterresult("between", args, iterator));
-                }
-                var result = this._cacheGet("between", args);
-                if (result === false) {
-                  result = this._iter(new iterresult("between", args));
-                  this._cacheAdd("between", result, args);
-                }
-                return result;
-              };
-              RRule3.prototype.before = function(dt, inc) {
-                if (inc === void 0) {
-                  inc = false;
-                }
-                if (!isValidDate(dt)) {
-                  throw new Error("Invalid date passed in to RRule.before");
-                }
-                var args = { dt, inc };
-                var result = this._cacheGet("before", args);
-                if (result === false) {
-                  result = this._iter(new iterresult("before", args));
-                  this._cacheAdd("before", result, args);
-                }
-                return result;
-              };
-              RRule3.prototype.after = function(dt, inc) {
-                if (inc === void 0) {
-                  inc = false;
-                }
-                if (!isValidDate(dt)) {
-                  throw new Error("Invalid date passed in to RRule.after");
-                }
-                var args = { dt, inc };
-                var result = this._cacheGet("after", args);
-                if (result === false) {
-                  result = this._iter(new iterresult("after", args));
-                  this._cacheAdd("after", result, args);
-                }
-                return result;
-              };
-              RRule3.prototype.count = function() {
-                return this.all().length;
-              };
-              RRule3.prototype.toString = function() {
-                return optionsToString(this.origOptions);
-              };
-              RRule3.prototype.toText = function(gettext, language, dateFormatter) {
-                return toText(this, gettext, language, dateFormatter);
-              };
-              RRule3.prototype.isFullyConvertibleToText = function() {
-                return isFullyConvertible(this);
-              };
-              RRule3.prototype.clone = function() {
-                return new RRule3(this.origOptions);
-              };
-              RRule3.FREQUENCIES = [
-                "YEARLY",
-                "MONTHLY",
-                "WEEKLY",
-                "DAILY",
-                "HOURLY",
-                "MINUTELY",
-                "SECONDLY"
-              ];
-              RRule3.YEARLY = Frequency.YEARLY;
-              RRule3.MONTHLY = Frequency.MONTHLY;
-              RRule3.WEEKLY = Frequency.WEEKLY;
-              RRule3.DAILY = Frequency.DAILY;
-              RRule3.HOURLY = Frequency.HOURLY;
-              RRule3.MINUTELY = Frequency.MINUTELY;
-              RRule3.SECONDLY = Frequency.SECONDLY;
-              RRule3.MO = Days.MO;
-              RRule3.TU = Days.TU;
-              RRule3.WE = Days.WE;
-              RRule3.TH = Days.TH;
-              RRule3.FR = Days.FR;
-              RRule3.SA = Days.SA;
-              RRule3.SU = Days.SU;
-              RRule3.parseString = parseString;
-              RRule3.optionsToString = optionsToString;
-              return RRule3;
-            })()
-          );
-          ;
-          function iterSet(iterResult, _rrule, _exrule, _rdate, _exdate, tzid) {
-            var _exdateHash = {};
-            var _accept = iterResult.accept;
-            function evalExdate(after, before) {
-              _exrule.forEach(function(rrule) {
-                rrule.between(after, before, true).forEach(function(date7) {
-                  _exdateHash[Number(date7)] = true;
-                });
-              });
-            }
-            _exdate.forEach(function(date7) {
-              var zonedDate2 = new DateWithZone(date7, tzid).rezonedDate();
-              _exdateHash[Number(zonedDate2)] = true;
-            });
-            iterResult.accept = function(date7) {
-              var dt = Number(date7);
-              if (isNaN(dt))
-                return _accept.call(this, date7);
-              if (!_exdateHash[dt]) {
-                evalExdate(new Date(dt - 1), new Date(dt + 1));
-                if (!_exdateHash[dt]) {
-                  _exdateHash[dt] = true;
-                  return _accept.call(this, date7);
-                }
-              }
-              return true;
-            };
-            if (iterResult.method === "between") {
-              evalExdate(iterResult.args.after, iterResult.args.before);
-              iterResult.accept = function(date7) {
-                var dt = Number(date7);
-                if (!_exdateHash[dt]) {
-                  _exdateHash[dt] = true;
-                  return _accept.call(this, date7);
-                }
-                return true;
-              };
-            }
-            for (var i5 = 0; i5 < _rdate.length; i5++) {
-              var zonedDate = new DateWithZone(_rdate[i5], tzid).rezonedDate();
-              if (!iterResult.accept(new Date(zonedDate.getTime())))
-                break;
-            }
-            _rrule.forEach(function(rrule) {
-              iter(iterResult, rrule.options);
-            });
-            var res = iterResult._result;
-            sort(res);
-            switch (iterResult.method) {
-              case "all":
-              case "between":
-                return res;
-              case "before":
-                return res.length && res[res.length - 1] || null;
-              case "after":
-              default:
-                return res.length && res[0] || null;
-            }
-          }
-          ;
-          var rrulestr_DEFAULT_OPTIONS = {
-            dtstart: null,
-            cache: false,
-            unfold: false,
-            forceset: false,
-            compatible: false,
-            tzid: null
-          };
-          function parseInput(s2, options) {
-            var rrulevals = [];
-            var rdatevals = [];
-            var exrulevals = [];
-            var exdatevals = [];
-            var parsedDtstart = parseDtstart(s2);
-            var dtstart = parsedDtstart.dtstart;
-            var tzid = parsedDtstart.tzid;
-            var lines = splitIntoLines(s2, options.unfold);
-            lines.forEach(function(line3) {
-              var _a8;
-              if (!line3)
-                return;
-              var _b = breakDownLine(line3), name = _b.name, parms = _b.parms, value = _b.value;
-              switch (name.toUpperCase()) {
-                case "RRULE":
-                  if (parms.length) {
-                    throw new Error("unsupported RRULE parm: ".concat(parms.join(",")));
-                  }
-                  rrulevals.push(parseString(line3));
-                  break;
-                case "RDATE":
-                  var _c5 = (_a8 = /RDATE(?:;TZID=([^:=]+))?/i.exec(line3)) !== null && _a8 !== void 0 ? _a8 : [], rdateTzid = _c5[1];
-                  if (rdateTzid && !tzid) {
-                    tzid = rdateTzid;
-                  }
-                  rdatevals = rdatevals.concat(parseRDate(value, parms));
-                  break;
-                case "EXRULE":
-                  if (parms.length) {
-                    throw new Error("unsupported EXRULE parm: ".concat(parms.join(",")));
-                  }
-                  exrulevals.push(parseString(value));
-                  break;
-                case "EXDATE":
-                  exdatevals = exdatevals.concat(parseRDate(value, parms));
-                  break;
-                case "DTSTART":
-                  break;
-                default:
-                  throw new Error("unsupported property: " + name);
-              }
-            });
-            return {
-              dtstart,
-              tzid,
-              rrulevals,
-              rdatevals,
-              exrulevals,
-              exdatevals
-            };
-          }
-          function buildRule(s2, options) {
-            var _a8 = parseInput(s2, options), rrulevals = _a8.rrulevals, rdatevals = _a8.rdatevals, exrulevals = _a8.exrulevals, exdatevals = _a8.exdatevals, dtstart = _a8.dtstart, tzid = _a8.tzid;
-            var noCache = options.cache === false;
-            if (options.compatible) {
-              options.forceset = true;
-              options.unfold = true;
-            }
-            if (options.forceset || rrulevals.length > 1 || rdatevals.length || exrulevals.length || exdatevals.length) {
-              var rset_1 = new RRuleSet(noCache);
-              rset_1.dtstart(dtstart);
-              rset_1.tzid(tzid || void 0);
-              rrulevals.forEach(function(val2) {
-                rset_1.rrule(new RRule2(groomRruleOptions(val2, dtstart, tzid), noCache));
-              });
-              rdatevals.forEach(function(date7) {
-                rset_1.rdate(date7);
-              });
-              exrulevals.forEach(function(val2) {
-                rset_1.exrule(new RRule2(groomRruleOptions(val2, dtstart, tzid), noCache));
-              });
-              exdatevals.forEach(function(date7) {
-                rset_1.exdate(date7);
-              });
-              if (options.compatible && options.dtstart)
-                rset_1.rdate(dtstart);
-              return rset_1;
-            }
-            var val = rrulevals[0] || {};
-            return new RRule2(groomRruleOptions(val, val.dtstart || options.dtstart || dtstart, val.tzid || options.tzid || tzid), noCache);
-          }
-          function rrulestr(s2, options) {
-            if (options === void 0) {
-              options = {};
-            }
-            return buildRule(s2, rrulestr_initializeOptions(options));
-          }
-          function groomRruleOptions(val, dtstart, tzid) {
-            return __assign3(__assign3({}, val), { dtstart, tzid });
-          }
-          function rrulestr_initializeOptions(options) {
-            var invalid2 = [];
-            var keys = Object.keys(options);
-            var defaultKeys2 = Object.keys(rrulestr_DEFAULT_OPTIONS);
-            keys.forEach(function(key) {
-              if (!includes2(defaultKeys2, key))
-                invalid2.push(key);
-            });
-            if (invalid2.length) {
-              throw new Error("Invalid options: " + invalid2.join(", "));
-            }
-            return __assign3(__assign3({}, rrulestr_DEFAULT_OPTIONS), options);
-          }
-          function extractName(line3) {
-            if (line3.indexOf(":") === -1) {
-              return {
-                name: "RRULE",
-                value: line3
-              };
-            }
-            var _a8 = split2(line3, ":", 1), name = _a8[0], value = _a8[1];
-            return {
-              name,
-              value
-            };
-          }
-          function breakDownLine(line3) {
-            var _a8 = extractName(line3), name = _a8.name, value = _a8.value;
-            var parms = name.split(";");
-            if (!parms)
-              throw new Error("empty property name");
-            return {
-              name: parms[0].toUpperCase(),
-              parms: parms.slice(1),
-              value
-            };
-          }
-          function splitIntoLines(s2, unfold) {
-            if (unfold === void 0) {
-              unfold = false;
-            }
-            s2 = s2 && s2.trim();
-            if (!s2)
-              throw new Error("Invalid empty string");
-            if (!unfold) {
-              return s2.split(/\s/);
-            }
-            var lines = s2.split("\n");
-            var i5 = 0;
-            while (i5 < lines.length) {
-              var line3 = lines[i5] = lines[i5].replace(/\s+$/g, "");
-              if (!line3) {
-                lines.splice(i5, 1);
-              } else if (i5 > 0 && line3[0] === " ") {
-                lines[i5 - 1] += line3.slice(1);
-                lines.splice(i5, 1);
-              } else {
-                i5 += 1;
-              }
-            }
-            return lines;
-          }
-          function validateDateParm(parms) {
-            parms.forEach(function(parm) {
-              if (!/(VALUE=DATE(-TIME)?)|(TZID=)/.test(parm)) {
-                throw new Error("unsupported RDATE/EXDATE parm: " + parm);
-              }
-            });
-          }
-          function parseRDate(rdateval, parms) {
-            validateDateParm(parms);
-            return rdateval.split(",").map(function(datestr) {
-              return untilStringToDate(datestr);
-            });
-          }
-          ;
-          function createGetterSetter(fieldName) {
-            var _this = this;
-            return function(field) {
-              if (field !== void 0) {
-                _this["_".concat(fieldName)] = field;
-              }
-              if (_this["_".concat(fieldName)] !== void 0) {
-                return _this["_".concat(fieldName)];
-              }
-              for (var i5 = 0; i5 < _this._rrule.length; i5++) {
-                var field_1 = _this._rrule[i5].origOptions[fieldName];
-                if (field_1) {
-                  return field_1;
-                }
-              }
-            };
-          }
-          var RRuleSet = (
-            /** @class */
-            (function(_super) {
-              __extends3(RRuleSet2, _super);
-              function RRuleSet2(noCache) {
-                if (noCache === void 0) {
-                  noCache = false;
-                }
-                var _this = _super.call(this, {}, noCache) || this;
-                _this.dtstart = createGetterSetter.apply(_this, ["dtstart"]);
-                _this.tzid = createGetterSetter.apply(_this, ["tzid"]);
-                _this._rrule = [];
-                _this._rdate = [];
-                _this._exrule = [];
-                _this._exdate = [];
-                return _this;
-              }
-              RRuleSet2.prototype._iter = function(iterResult) {
-                return iterSet(iterResult, this._rrule, this._exrule, this._rdate, this._exdate, this.tzid());
-              };
-              RRuleSet2.prototype.rrule = function(rrule) {
-                _addRule(rrule, this._rrule);
-              };
-              RRuleSet2.prototype.exrule = function(rrule) {
-                _addRule(rrule, this._exrule);
-              };
-              RRuleSet2.prototype.rdate = function(date7) {
-                _addDate(date7, this._rdate);
-              };
-              RRuleSet2.prototype.exdate = function(date7) {
-                _addDate(date7, this._exdate);
-              };
-              RRuleSet2.prototype.rrules = function() {
-                return this._rrule.map(function(e5) {
-                  return rrulestr(e5.toString());
-                });
-              };
-              RRuleSet2.prototype.exrules = function() {
-                return this._exrule.map(function(e5) {
-                  return rrulestr(e5.toString());
-                });
-              };
-              RRuleSet2.prototype.rdates = function() {
-                return this._rdate.map(function(e5) {
-                  return new Date(e5.getTime());
-                });
-              };
-              RRuleSet2.prototype.exdates = function() {
-                return this._exdate.map(function(e5) {
-                  return new Date(e5.getTime());
-                });
-              };
-              RRuleSet2.prototype.valueOf = function() {
-                var result = [];
-                if (!this._rrule.length && this._dtstart) {
-                  result = result.concat(optionsToString({ dtstart: this._dtstart }));
-                }
-                this._rrule.forEach(function(rrule) {
-                  result = result.concat(rrule.toString().split("\n"));
-                });
-                this._exrule.forEach(function(exrule) {
-                  result = result.concat(exrule.toString().split("\n").map(function(line3) {
-                    return line3.replace(/^RRULE:/, "EXRULE:");
-                  }).filter(function(line3) {
-                    return !/^DTSTART/.test(line3);
-                  }));
-                });
-                if (this._rdate.length) {
-                  result.push(rdatesToString("RDATE", this._rdate, this.tzid()));
-                }
-                if (this._exdate.length) {
-                  result.push(rdatesToString("EXDATE", this._exdate, this.tzid()));
-                }
-                return result;
-              };
-              RRuleSet2.prototype.toString = function() {
-                return this.valueOf().join("\n");
-              };
-              RRuleSet2.prototype.clone = function() {
-                var rrs = new RRuleSet2(!!this._cache);
-                this._rrule.forEach(function(rule) {
-                  return rrs.rrule(rule.clone());
-                });
-                this._exrule.forEach(function(rule) {
-                  return rrs.exrule(rule.clone());
-                });
-                this._rdate.forEach(function(date7) {
-                  return rrs.rdate(new Date(date7.getTime()));
-                });
-                this._exdate.forEach(function(date7) {
-                  return rrs.exdate(new Date(date7.getTime()));
-                });
-                return rrs;
-              };
-              return RRuleSet2;
-            })(RRule2)
-          );
-          function _addRule(rrule, collection) {
-            if (!(rrule instanceof RRule2)) {
-              throw new TypeError(String(rrule) + " is not RRule instance");
-            }
-            if (!includes2(collection.map(String), String(rrule))) {
-              collection.push(rrule);
-            }
-          }
-          function _addDate(date7, collection) {
-            if (!(date7 instanceof Date)) {
-              throw new TypeError(String(date7) + " is not Date instance");
-            }
-            if (!includes2(collection.map(Number), Number(date7))) {
-              collection.push(date7);
-              sort(collection);
-            }
-          }
-          function rdatesToString(param, rdates, tzid) {
-            var isUTC = !tzid || tzid.toUpperCase() === "UTC";
-            var header = isUTC ? "".concat(param, ":") : "".concat(param, ";TZID=").concat(tzid, ":");
-            var dateString = rdates.map(function(rdate) {
-              return timeToUntilString(rdate.valueOf(), isUTC);
-            }).join(",");
-            return "".concat(header).concat(dateString);
-          }
-          ;
-          return __webpack_exports__;
-        })()
-      );
-    });
   }
 });
 
@@ -137213,6 +137213,658 @@ function createDatabase(connectionString, maxConnections = 10) {
   return { db: db3, pool: pool3 };
 }
 
+// packages/domain/src/schemas.ts
+init_zod();
+var itemKindSchema = external_exports.enum(["event", "task", "both"]);
+var prioritySchema = external_exports.enum(["none", "low", "medium", "high", "urgent"]);
+var itemStatusSchema = external_exports.enum(["active", "partial", "completed", "cancelled", "deleted"]);
+var recurrenceFrequencySchema = external_exports.enum(["daily", "weekly", "monthly", "yearly"]);
+var reminderChannelSchema = external_exports.enum(["in_app", "browser_push", "email"]);
+var reminderTriggerSchema = external_exports.enum(["before_start", "at_start", "at_end"]);
+var reminderOffsetSchema = external_exports.union([
+  external_exports.literal(0),
+  external_exports.literal(5),
+  external_exports.literal(15),
+  external_exports.literal(30),
+  external_exports.literal(60),
+  external_exports.literal(1440)
+]);
+var recurrenceSchema = external_exports.object({
+  frequency: recurrenceFrequencySchema,
+  interval: external_exports.number().int().min(1).max(365).default(1),
+  byWeekday: external_exports.array(external_exports.number().int().min(0).max(6)).default([]),
+  byMonthDay: external_exports.array(external_exports.number().int().min(1).max(31)).default([]),
+  weekParity: external_exports.enum(["all", "odd", "even"]).default("all"),
+  count: external_exports.number().int().min(1).max(1e4).nullable().optional(),
+  until: external_exports.string().datetime({ offset: true }).nullable().optional()
+});
+var reminderInputSchema = external_exports.object({
+  id: external_exports.string().uuid().optional(),
+  trigger: reminderTriggerSchema.default("before_start"),
+  offsetMinutes: reminderOffsetSchema,
+  channels: external_exports.array(reminderChannelSchema).min(1).default(["in_app"]),
+  repeatEveryMinutes: external_exports.number().int().min(0).max(1440).nullable().optional(),
+  enabled: external_exports.boolean().default(true)
+});
+var courseSlotSchema = external_exports.object({
+  id: external_exports.string().uuid().optional(),
+  weekday: external_exports.number().int().min(0).max(6),
+  startTime: external_exports.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  endTime: external_exports.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  weekParity: external_exports.enum(["all", "odd", "even"]).default("all")
+}).superRefine((value, ctx) => {
+  if (value.endTime <= value.startTime) ctx.addIssue({ code: "custom", path: ["endTime"], message: "\u7ED3\u675F\u65F6\u95F4\u5FC5\u987B\u665A\u4E8E\u5F00\u59CB\u65F6\u95F4" });
+});
+var itemFieldsSchema = external_exports.object({
+  calendarId: external_exports.string().uuid().nullable().optional(),
+  kind: itemKindSchema.default("event"),
+  title: external_exports.string().trim().min(1).max(300),
+  description: external_exports.string().max(1e5).default(""),
+  location: external_exports.string().max(1e3).default(""),
+  startAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
+  endAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
+  dueAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
+  isAllDay: external_exports.boolean().default(false),
+  timezone: external_exports.string().min(1).max(100).default("Asia/Shanghai"),
+  priority: prioritySchema.default("none"),
+  status: itemStatusSchema.default("active"),
+  completedAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
+  autoRollover: external_exports.boolean().default(false),
+  showInTimetable: external_exports.boolean().default(false),
+  timetableColor: external_exports.string().regex(/^#[0-9a-fA-F]{6}$/).nullable().optional(),
+  courseStartDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  courseEndDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  courseSlots: external_exports.array(courseSlotSchema).max(20).default([]),
+  parentId: external_exports.string().uuid().nullable().optional(),
+  recurrence: recurrenceSchema.nullable().optional(),
+  tagIds: external_exports.array(external_exports.string().uuid()).default([]),
+  reminders: external_exports.array(reminderInputSchema).default([]),
+  version: external_exports.number().int().nonnegative().optional()
+});
+var itemInputSchema = itemFieldsSchema.superRefine((value, ctx) => {
+  if (value.kind === "event" && !value.startAt) {
+    ctx.addIssue({ code: "custom", path: ["startAt"], message: "\u4E8B\u4EF6\u5FC5\u987B\u6709\u5F00\u59CB\u65F6\u95F4" });
+  }
+  if (value.startAt && value.endAt && new Date(value.endAt) <= new Date(value.startAt)) {
+    ctx.addIssue({ code: "custom", path: ["endAt"], message: "\u7ED3\u675F\u65F6\u95F4\u5FC5\u987B\u665A\u4E8E\u5F00\u59CB\u65F6\u95F4" });
+  }
+  if (value.courseStartDate && value.courseEndDate && value.courseEndDate < value.courseStartDate) {
+    ctx.addIssue({ code: "custom", path: ["courseEndDate"], message: "\u8BFE\u7A0B\u7ED3\u675F\u65E5\u671F\u4E0D\u80FD\u65E9\u4E8E\u5F00\u59CB\u65E5\u671F" });
+  }
+  if (value.endAt && !value.startAt) {
+    ctx.addIssue({ code: "custom", path: ["endAt"], message: "\u8BBE\u7F6E\u7ED3\u675F\u65F6\u95F4\u524D\u5FC5\u987B\u8BBE\u7F6E\u5F00\u59CB\u65F6\u95F4" });
+  }
+});
+var itemSchema = itemInputSchema.and(external_exports.object({
+  id: external_exports.string().uuid(),
+  workspaceId: external_exports.string().uuid(),
+  createdAt: external_exports.string().datetime({ offset: true }),
+  updatedAt: external_exports.string().datetime({ offset: true }),
+  deletedAt: external_exports.string().datetime({ offset: true }).nullable().optional()
+}));
+var recurrenceExceptionSchema = external_exports.object({
+  id: external_exports.string().uuid(),
+  itemId: external_exports.string().uuid(),
+  occurrenceKey: external_exports.string(),
+  action: external_exports.enum(["override", "cancelled"]),
+  override: itemFieldsSchema.partial().nullable().optional()
+});
+var calendarSchema = external_exports.object({
+  id: external_exports.string().uuid(),
+  name: external_exports.string().min(1).max(120),
+  color: external_exports.string().regex(/^#[0-9a-fA-F]{6}$/),
+  kind: external_exports.enum(["local", "subscription"]),
+  timezone: external_exports.string().default("Asia/Shanghai"),
+  isVisible: external_exports.boolean().default(true)
+});
+var tagSchema = external_exports.object({
+  id: external_exports.string().uuid(),
+  name: external_exports.string().min(1).max(60),
+  color: external_exports.string().regex(/^#[0-9a-fA-F]{6}$/)
+});
+var syncMutationSchema = external_exports.object({
+  clientMutationId: external_exports.string().min(1).max(100),
+  entity: external_exports.enum(["item", "tag", "attachment", "reminder"]),
+  action: external_exports.enum(["create", "update", "delete", "restore"]),
+  entityId: external_exports.string().uuid(),
+  baseVersion: external_exports.number().int().nonnegative().optional(),
+  fields: external_exports.record(external_exports.string(), external_exports.unknown()).default({})
+});
+var syncPushSchema = external_exports.object({
+  cursor: external_exports.string().optional(),
+  mutations: external_exports.array(syncMutationSchema).max(500)
+});
+var searchFiltersSchema = external_exports.object({
+  q: external_exports.string().max(200).optional(),
+  from: external_exports.string().datetime({ offset: true }).optional(),
+  to: external_exports.string().datetime({ offset: true }).optional(),
+  kind: itemKindSchema.optional(),
+  status: itemStatusSchema.optional(),
+  priority: prioritySchema.optional(),
+  tagIds: external_exports.array(external_exports.string().uuid()).optional()
+});
+
+// packages/domain/src/recurrence.ts
+var rruleImport = __toESM(require_rrule(), 1);
+var rruleModule = rruleImport;
+var RRule = rruleModule.RRule ?? rruleModule.default?.RRule ?? rruleModule.rrule?.RRule;
+if (!RRule) throw new Error("rrule \u6A21\u5757\u672A\u63D0\u4F9B RRule");
+var JS_TO_RRULE_WEEKDAY = [RRule.SU, RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA];
+function startOfWeekMonday(date7) {
+  const value = new Date(date7.getFullYear(), date7.getMonth(), date7.getDate(), 0, 0, 0, 0);
+  const day = value.getDay();
+  value.setDate(value.getDate() - (day === 0 ? 6 : day - 1));
+  return value;
+}
+function academicWeekNumber(date7, semesterStartDate) {
+  const target = startOfWeekMonday(date7);
+  const anchor2 = startOfWeekMonday(semesterStartDate);
+  return Math.floor((Date.UTC(target.getFullYear(), target.getMonth(), target.getDate()) - Date.UTC(anchor2.getFullYear(), anchor2.getMonth(), anchor2.getDate())) / (7 * 864e5)) + 1;
+}
+function frequencyToRRule(frequency) {
+  const map5 = { daily: 3, weekly: 2, monthly: 1, yearly: 0 };
+  return map5[frequency];
+}
+function applyOverride(base, override) {
+  return {
+    ...base,
+    ...override,
+    id: base.id,
+    workspaceId: base.workspaceId,
+    createdAt: base.createdAt,
+    updatedAt: base.updatedAt,
+    recurrence: override.recurrence === void 0 ? base.recurrence : override.recurrence,
+    tagIds: override.tagIds ?? base.tagIds,
+    reminders: override.reminders ?? base.reminders
+  };
+}
+function occurrenceFromItem(item, start, end, recurring, key, overridden = false) {
+  return {
+    id: recurring ? key : item.id,
+    occurrenceKey: key,
+    itemId: item.id,
+    item,
+    start,
+    end,
+    allDay: item.isAllDay,
+    recurring,
+    overridden
+  };
+}
+function defaultDuration(item) {
+  if (item.startAt && item.endAt) return Math.max(1, new Date(item.endAt).getTime() - new Date(item.startAt).getTime());
+  if (item.isAllDay) return 24 * 60 * 60 * 1e3;
+  return 60 * 60 * 1e3;
+}
+function localDateKey(date7) {
+  return `${date7.getFullYear()}-${String(date7.getMonth() + 1).padStart(2, "0")}-${String(date7.getDate()).padStart(2, "0")}`;
+}
+function expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate) {
+  if (item.status === "deleted" || item.status === "cancelled" || !item.startAt) return [];
+  const baseStart = new Date(item.startAt);
+  const duration3 = defaultDuration(item);
+  const exceptionByKey = new Map((item.recurrenceExceptions ?? []).map((exception) => [exception.occurrenceKey, exception]));
+  if (item.courseSlots.length > 0) {
+    const expanded2 = [];
+    const cursor = new Date(rangeStart);
+    cursor.setHours(0, 0, 0, 0);
+    const endCursor = new Date(rangeEnd);
+    endCursor.setHours(23, 59, 59, 999);
+    while (cursor <= endCursor) {
+      const dateKey = localDateKey(cursor);
+      if (item.courseStartDate && dateKey < item.courseStartDate) {
+        cursor.setDate(cursor.getDate() + 1);
+        continue;
+      }
+      if (item.courseEndDate && dateKey > item.courseEndDate) {
+        cursor.setDate(cursor.getDate() + 1);
+        continue;
+      }
+      for (const slot of item.courseSlots) {
+        if (cursor.getDay() !== slot.weekday) continue;
+        const parity = slot.weekParity ?? "all";
+        if (parity !== "all" && semesterStartDate) {
+          const week = academicWeekNumber(cursor, semesterStartDate);
+          if (parity === "odd" && week % 2 === 0 || parity === "even" && week % 2 === 1) continue;
+        }
+        const start = new Date(cursor);
+        const [startHour, startMinute] = slot.startTime.split(":").map(Number);
+        start.setHours(startHour ?? 0, startMinute ?? 0, 0, 0);
+        const end = new Date(cursor);
+        const [endHour, endMinute] = slot.endTime.split(":").map(Number);
+        end.setHours(endHour ?? 0, endMinute ?? 0, 0, 0);
+        if (end <= start) end.setDate(end.getDate() + 1);
+        if (end < rangeStart || start > rangeEnd) continue;
+        const slotKey = slot.id ?? `${slot.weekday}-${slot.startTime}-${slot.endTime}`;
+        const key = `${item.id}:${slotKey}:${localDateKey(cursor)}`;
+        const exception = exceptionByKey.get(key);
+        if (exception?.action === "cancelled") continue;
+        const effectiveItem = exception?.override ? applyOverride(item, exception.override) : item;
+        const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : start;
+        const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : end;
+        expanded2.push(occurrenceFromItem(effectiveItem, effectiveStart, effectiveEnd, true, key, Boolean(exception?.override)));
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return expanded2.sort((left, right) => left.start.getTime() - right.start.getTime());
+  }
+  if (!item.recurrence) {
+    const baseEnd = item.endAt ? new Date(item.endAt) : new Date(baseStart.getTime() + duration3);
+    if (baseEnd < rangeStart || baseStart > rangeEnd) return [];
+    return [occurrenceFromItem(item, baseStart, baseEnd, false, item.id)];
+  }
+  const options = {
+    dtstart: baseStart,
+    freq: frequencyToRRule(item.recurrence.frequency),
+    interval: item.recurrence.interval,
+    byweekday: item.recurrence.byWeekday.length > 0 ? item.recurrence.byWeekday.map((day) => JS_TO_RRULE_WEEKDAY[day]).filter((day) => day !== void 0) : void 0,
+    bymonthday: item.recurrence.byMonthDay.length > 0 ? item.recurrence.byMonthDay : void 0,
+    count: item.recurrence.count ?? void 0,
+    until: item.recurrence.until ? new Date(item.recurrence.until) : void 0
+  };
+  const rule = new RRule(options);
+  const occurrences = rule.between(rangeStart, rangeEnd, true);
+  const expanded = [];
+  for (const originalStart of occurrences) {
+    const parity = item.recurrence.weekParity ?? "all";
+    if (item.recurrence.frequency === "weekly" && parity !== "all" && semesterStartDate) {
+      const week = academicWeekNumber(originalStart, semesterStartDate);
+      if (parity === "odd" && week % 2 === 0 || parity === "even" && week % 2 === 1) continue;
+    }
+    const key = `${item.id}:${originalStart.toISOString()}`;
+    const exception = exceptionByKey.get(key);
+    if (exception?.action === "cancelled") continue;
+    const effectiveItem = exception?.override ? applyOverride(item, exception.override) : item;
+    const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : originalStart;
+    const effectiveDuration = exception?.override?.startAt || exception?.override?.endAt ? defaultDuration(effectiveItem) : duration3;
+    const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : new Date(effectiveStart.getTime() + effectiveDuration);
+    if (effectiveEnd < rangeStart || effectiveStart > rangeEnd) continue;
+    expanded.push(occurrenceFromItem(effectiveItem, effectiveStart, effectiveEnd, true, key, Boolean(exception?.override)));
+  }
+  return expanded;
+}
+function expandItems(items2, rangeStart, rangeEnd, semesterStartDate) {
+  return items2.flatMap((item) => expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate)).sort((left, right) => left.start.getTime() - right.start.getTime());
+}
+
+// packages/domain/src/conflicts.ts
+function rangesOverlap(left, right) {
+  if (left.allDay !== right.allDay) return false;
+  return left.start.getTime() < right.end.getTime() && left.end.getTime() > right.start.getTime();
+}
+function findConflicts(target, candidates, excludedIds = []) {
+  const excluded = new Set(excludedIds);
+  return candidates.filter((candidate) => !candidate.id || !excluded.has(candidate.id)).filter((candidate) => candidate.status !== "cancelled" && candidate.status !== "deleted" && candidate.status !== "completed").filter((candidate) => rangesOverlap(target, candidate)).map((candidate) => ({
+    candidate,
+    overlapStart: new Date(Math.max(target.start.getTime(), candidate.start.getTime())),
+    overlapEnd: new Date(Math.min(target.end.getTime(), candidate.end.getTime()))
+  })).sort((left, right) => left.overlapStart.getTime() - right.overlapStart.getTime());
+}
+function occurrenceToTimeRange(occurrence) {
+  return {
+    id: occurrence.itemId,
+    start: occurrence.start,
+    end: occurrence.end,
+    allDay: occurrence.allDay,
+    status: occurrence.item.status
+  };
+}
+
+// packages/domain/src/ics.ts
+var WEEKDAY_NAMES = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+var pad = (value) => String(value).padStart(2, "0");
+var escapeIcs = (value) => value.replaceAll("\\", "\\\\").replaceAll("\n", "\\n").replaceAll(",", "\\,").replaceAll(";", "\\;");
+var unescapeIcs = (value) => value.replace(/\\n/gi, "\n").replace(/\\,/g, ",").replace(/\\;/g, ";").replace(/\\\\/g, "\\");
+function toIcsDate(value, allDay) {
+  const date7 = new Date(value);
+  if (allDay) return `${date7.getUTCFullYear()}${pad(date7.getUTCMonth() + 1)}${pad(date7.getUTCDate())}`;
+  return `${date7.getUTCFullYear()}${pad(date7.getUTCMonth() + 1)}${pad(date7.getUTCDate())}T${pad(date7.getUTCHours())}${pad(date7.getUTCMinutes())}${pad(date7.getUTCSeconds())}Z`;
+}
+function recurrenceToRRule(recurrence) {
+  const parts = [`FREQ=${recurrence.frequency.toUpperCase()}`, `INTERVAL=${recurrence.interval}`];
+  if (recurrence.byWeekday.length > 0) parts.push(`BYDAY=${recurrence.byWeekday.map((day) => WEEKDAY_NAMES[day]).filter(Boolean).join(",")}`);
+  if (recurrence.byMonthDay.length > 0) parts.push(`BYMONTHDAY=${recurrence.byMonthDay.join(",")}`);
+  if (recurrence.count) parts.push(`COUNT=${recurrence.count}`);
+  if (recurrence.until) parts.push(`UNTIL=${toIcsDate(recurrence.until, false)}`);
+  return parts.join(";");
+}
+function parseRRule(value) {
+  const parts = new Map(value.split(";").map((part) => {
+    const [key, item] = part.split("=", 2);
+    return [key?.toUpperCase() ?? "", item ?? ""];
+  }));
+  const frequency = parts.get("FREQ")?.toLowerCase();
+  if (!["daily", "weekly", "monthly", "yearly"].includes(frequency ?? "")) return void 0;
+  const weekdayMap = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+  return {
+    frequency,
+    interval: Number(parts.get("INTERVAL") ?? 1),
+    byWeekday: (parts.get("BYDAY") ?? "").split(",").filter(Boolean).map((day) => weekdayMap[day.replace(/^[-+]?\d+/, "")] ?? -1).filter((day) => day >= 0),
+    byMonthDay: (parts.get("BYMONTHDAY") ?? "").split(",").filter(Boolean).map(Number),
+    weekParity: "all",
+    count: parts.has("COUNT") ? Number(parts.get("COUNT")) : null,
+    until: parts.has("UNTIL") ? parseIcsDate(parts.get("UNTIL")) : null
+  };
+}
+function reminderToIcs(reminder) {
+  if (!reminder.enabled) return [];
+  const amount = reminder.offsetMinutes === 1440 ? "PT24H" : reminder.offsetMinutes === 0 ? "PT0M" : `PT${reminder.offsetMinutes}M`;
+  return ["BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:\u65E5\u7A0B\u63D0\u9192", `TRIGGER:-${amount}`, "END:VALARM"];
+}
+function itemToIcsLines(item, tags2) {
+  const lines = item.kind === "task" ? ["BEGIN:VTODO"] : ["BEGIN:VEVENT"];
+  lines.push(`UID:${item.id}@personal-calendar`, `DTSTAMP:${toIcsDate(item.updatedAt, false)}`, `SUMMARY:${escapeIcs(item.title)}`);
+  if (item.description) lines.push(`DESCRIPTION:${escapeIcs(item.description)}`);
+  if (item.location) lines.push(`LOCATION:${escapeIcs(item.location)}`);
+  if (item.startAt) lines.push(`DTSTART${item.isAllDay ? ";VALUE=DATE" : ""}:${toIcsDate(item.startAt, item.isAllDay)}`);
+  if (item.endAt) {
+    const end = item.isAllDay ? new Date(new Date(item.endAt).getTime() + 864e5).toISOString() : item.endAt;
+    lines.push(`DTEND${item.isAllDay ? ";VALUE=DATE" : ""}:${toIcsDate(end, item.isAllDay)}`);
+  }
+  if (item.dueAt) lines.push(`DUE:${toIcsDate(item.dueAt, false)}`);
+  if (item.recurrence) lines.push(`RRULE:${recurrenceToRRule(item.recurrence)}`);
+  if (item.status === "completed") lines.push("STATUS:COMPLETED");
+  if (item.completedAt) lines.push(`COMPLETED:${toIcsDate(item.completedAt, false)}`);
+  const priority = { urgent: 1, high: 3, medium: 5, low: 7, none: 0 }[item.priority];
+  if (priority) lines.push(`PRIORITY:${priority}`);
+  if (item.tagIds.length > 0) lines.push(`CATEGORIES:${item.tagIds.map((id) => escapeIcs(tags2.get(id) ?? id)).join(",")}`);
+  for (const reminder of item.reminders) lines.push(...reminderToIcs(reminder));
+  lines.push(item.kind === "task" ? "END:VTODO" : "END:VEVENT");
+  return lines;
+}
+function itemsToIcs(items2, tags2 = /* @__PURE__ */ new Map()) {
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "PRODID:-//Personal Calendar//ZH-CN//EN"];
+  for (const item of items2) lines.push(...itemToIcsLines(item, tags2));
+  lines.push("END:VCALENDAR");
+  return lines.map((line3) => {
+    const chunks = [];
+    for (let index2 = 0; index2 < line3.length; index2 += 73) chunks.push(line3.slice(index2, index2 + 73));
+    return chunks.join("\r\n ");
+  }).join("\r\n");
+}
+function unfoldIcs(input2) {
+  const lines = input2.replaceAll("\r\n", "\n").replaceAll("\r", "\n").split("\n");
+  const unfolded = [];
+  for (const line3 of lines) {
+    if ((line3.startsWith(" ") || line3.startsWith("	")) && unfolded.length > 0) unfolded[unfolded.length - 1] += line3.slice(1);
+    else unfolded.push(line3);
+  }
+  return unfolded;
+}
+function parseIcsDate(value) {
+  if (/^\d{8}$/.test(value)) return new Date(Date.UTC(Number(value.slice(0, 4)), Number(value.slice(4, 6)) - 1, Number(value.slice(6, 8)))).toISOString();
+  const match2 = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
+  if (!match2) return void 0;
+  const [, year2, month, day, hour, minute, second, zulu] = match2;
+  if (zulu) return new Date(Date.UTC(Number(year2), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second))).toISOString();
+  return new Date(Number(year2), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second)).toISOString();
+}
+function parseTrigger(value) {
+  const match2 = value.replace(/^-/, "").match(/^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?$/);
+  if (!match2) return void 0;
+  return Number(match2[1] ?? 0) * 1440 + Number(match2[2] ?? 0) * 60 + Number(match2[3] ?? 0);
+}
+function icsToItems(input2) {
+  const lines = unfoldIcs(input2);
+  const items2 = [];
+  let component = null;
+  let properties = /* @__PURE__ */ new Map();
+  let alarmTrigger;
+  const flush2 = () => {
+    if (!component) return;
+    const title = unescapeIcs(properties.get("SUMMARY") ?? "");
+    if (title) {
+      const triggerMinutes = alarmTrigger ? parseTrigger(alarmTrigger) : void 0;
+      const offset = triggerMinutes === void 0 ? void 0 : [0, 5, 15, 30, 60, 1440].includes(triggerMinutes) ? triggerMinutes : 15;
+      items2.push({
+        uid: properties.get("UID"),
+        kind: component === "VTODO" ? "task" : "event",
+        title,
+        description: unescapeIcs(properties.get("DESCRIPTION") ?? ""),
+        location: unescapeIcs(properties.get("LOCATION") ?? ""),
+        startAt: parseIcsDate(properties.get("DTSTART") ?? "") ?? null,
+        endAt: parseIcsDate(properties.get("DTEND") ?? "") ?? null,
+        dueAt: parseIcsDate(properties.get("DUE") ?? "") ?? null,
+        isAllDay: properties.get("DTSTART")?.startsWith(";") ?? false,
+        timezone: "Asia/Shanghai",
+        priority: "none",
+        status: properties.get("STATUS") === "COMPLETED" ? "completed" : "active",
+        completedAt: parseIcsDate(properties.get("COMPLETED") ?? "") ?? null,
+        autoRollover: false,
+        showInTimetable: false,
+        timetableColor: null,
+        courseSlots: [],
+        parentId: null,
+        recurrence: properties.get("RRULE") ? parseRRule(properties.get("RRULE")) ?? null : null,
+        tagIds: [],
+        reminders: offset === void 0 ? [] : [{ trigger: "before_start", offsetMinutes: offset, channels: ["in_app"], enabled: true }]
+      });
+    }
+    component = null;
+    properties = /* @__PURE__ */ new Map();
+    alarmTrigger = void 0;
+  };
+  for (const rawLine of lines) {
+    const line3 = rawLine.trim();
+    if (line3 === "BEGIN:VEVENT" || line3 === "BEGIN:VTODO") {
+      component = line3.slice(6);
+      properties = /* @__PURE__ */ new Map();
+      continue;
+    }
+    if (line3 === "END:VEVENT" || line3 === "END:VTODO") {
+      flush2();
+      continue;
+    }
+    if (line3 === "BEGIN:VALARM") {
+      alarmTrigger = void 0;
+      continue;
+    }
+    if (line3 === "END:VALARM") continue;
+    const separator = line3.indexOf(":");
+    if (separator < 0) continue;
+    const rawKey2 = line3.slice(0, separator);
+    const key = rawKey2.split(";", 1)[0]?.toUpperCase();
+    const value = line3.slice(separator + 1);
+    if (!key || !component) continue;
+    if (key === "TRIGGER") alarmTrigger = value;
+    else properties.set(key, value);
+  }
+  return items2;
+}
+
+// packages/domain/src/csv.ts
+function csvCell(value) {
+  const text2 = Array.isArray(value) || value && typeof value === "object" ? JSON.stringify(value) : value == null ? "" : String(value);
+  return `"${text2.replaceAll('"', '""')}"`;
+}
+function itemsToCsv(items2) {
+  const headers = ["uid", "kind", "title", "description", "location", "startAt", "endAt", "dueAt", "isAllDay", "timezone", "priority", "status", "completedAt", "autoRollover", "showInTimetable", "timetableColor", "courseStartDate", "courseEndDate", "courseSlots", "parentId", "recurrence", "tagIds", "reminders"];
+  const rows = items2.map((item) => [
+    `${item.id}@personal-calendar`,
+    item.kind,
+    item.title,
+    item.description,
+    item.location,
+    item.startAt ?? "",
+    item.endAt ?? "",
+    item.dueAt ?? "",
+    item.isAllDay,
+    item.timezone,
+    item.priority,
+    item.status,
+    item.completedAt ?? "",
+    item.showInTimetable,
+    item.timetableColor ?? "",
+    item.courseStartDate ?? "",
+    item.courseEndDate ?? "",
+    item.courseSlots,
+    item.parentId ?? "",
+    item.recurrence ?? "",
+    item.tagIds,
+    item.reminders
+  ].map(csvCell).join(","));
+  return [headers.join(","), ...rows].join("\r\n");
+}
+function parseCsvRows(input2) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let quoted = false;
+  for (let index2 = 0; index2 < input2.length; index2 += 1) {
+    const character = input2[index2];
+    const next = input2[index2 + 1];
+    if (quoted && character === '"' && next === '"') {
+      cell += '"';
+      index2 += 1;
+    } else if (character === '"') quoted = !quoted;
+    else if (!quoted && character === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (!quoted && (character === "\n" || character === "\r")) {
+      if (character === "\r" && next === "\n") index2 += 1;
+      row.push(cell);
+      if (row.some((value) => value.length > 0)) rows.push(row);
+      row = [];
+      cell = "";
+    } else cell += character;
+  }
+  if (cell || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+  return rows;
+}
+function safeJson(value, fallback2) {
+  if (!value) return fallback2;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback2;
+  }
+}
+function csvToItems(input2) {
+  const rows = parseCsvRows(input2);
+  const headers = rows.shift() ?? [];
+  const index2 = new Map(headers.map((header, position) => [header, position]));
+  const value = (row, key) => row[index2.get(key) ?? -1] ?? "";
+  return rows.filter((row) => value(row, "title")).map((row) => ({
+    uid: value(row, "uid"),
+    kind: value(row, "kind") === "task" ? "task" : value(row, "kind") === "both" ? "both" : "event",
+    title: value(row, "title"),
+    description: value(row, "description"),
+    location: value(row, "location"),
+    startAt: value(row, "startAt") || null,
+    endAt: value(row, "endAt") || null,
+    dueAt: value(row, "dueAt") || null,
+    isAllDay: value(row, "isAllDay") === "true",
+    timezone: value(row, "timezone") || "Asia/Shanghai",
+    priority: value(row, "priority") || "none",
+    status: value(row, "status") || "active",
+    completedAt: value(row, "completedAt") || null,
+    autoRollover: value(row, "autoRollover") === "true",
+    showInTimetable: value(row, "showInTimetable") === "true",
+    timetableColor: value(row, "timetableColor") || null,
+    courseStartDate: value(row, "courseStartDate") || null,
+    courseEndDate: value(row, "courseEndDate") || null,
+    courseSlots: safeJson(value(row, "courseSlots"), []),
+    parentId: value(row, "parentId") || null,
+    recurrence: safeJson(value(row, "recurrence"), null),
+    tagIds: safeJson(value(row, "tagIds"), []),
+    reminders: safeJson(value(row, "reminders"), [])
+  }));
+}
+
+// packages/domain/src/ai.ts
+init_zod();
+var aiDraftSchema = external_exports.object({
+  kind: itemKindSchema.default("task"),
+  title: external_exports.string().trim().min(1).max(300),
+  description: external_exports.string().max(1e5).default(""),
+  location: external_exports.string().max(1e3).default(""),
+  startAt: external_exports.string().datetime({ offset: true }).nullable().default(null),
+  endAt: external_exports.string().datetime({ offset: true }).nullable().default(null),
+  dueAt: external_exports.string().datetime({ offset: true }).nullable().default(null),
+  isAllDay: external_exports.boolean().default(false),
+  timezone: external_exports.string().min(1).max(100).default("Asia/Shanghai"),
+  priority: prioritySchema.default("none"),
+  recurrence: recurrenceSchema.nullable().default(null),
+  reminderMinutes: external_exports.array(reminderOffsetSchema).max(6).default([]),
+  suggestedTagNames: external_exports.array(external_exports.string().trim().min(1).max(60)).max(20).default([]),
+  confidence: external_exports.number().min(0).max(1).default(0.5),
+  evidence: external_exports.string().max(2e3).default(""),
+  warnings: external_exports.array(external_exports.string().max(300)).max(20).default([])
+});
+var aiProviderResponseSchema = external_exports.object({
+  items: external_exports.array(aiDraftSchema).max(20).default([]),
+  transcript: external_exports.string().max(5e4).default("")
+});
+var aiUsageSchema = external_exports.object({
+  date: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  used: external_exports.number().int().nonnegative(),
+  limit: external_exports.number().int().positive(),
+  remaining: external_exports.number().int().nonnegative()
+});
+var aiStatusSchema = external_exports.object({
+  enabled: external_exports.boolean(),
+  configured: external_exports.boolean(),
+  provider: external_exports.string(),
+  textModel: external_exports.string(),
+  visionModel: external_exports.string(),
+  usage: aiUsageSchema
+});
+var aiExtractResponseSchema = external_exports.object({
+  drafts: external_exports.array(aiDraftSchema),
+  transcript: external_exports.string().default(""),
+  usage: aiUsageSchema,
+  provider: external_exports.string(),
+  model: external_exports.string()
+});
+
+// packages/domain/src/schedule.ts
+init_zod();
+var timeSchema = external_exports.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "\u65F6\u95F4\u5FC5\u987B\u4F7F\u7528 HH:mm \u683C\u5F0F");
+var schedulePeriodSchema = external_exports.object({
+  id: external_exports.string().uuid().optional(),
+  name: external_exports.string().trim().min(1).max(20),
+  startTime: timeSchema,
+  endTime: timeSchema,
+  sortOrder: external_exports.number().int().min(0).max(99)
+}).superRefine((value, ctx) => {
+  if (value.endTime <= value.startTime) ctx.addIssue({ code: "custom", path: ["endTime"], message: "\u7ED3\u675F\u65F6\u95F4\u5FC5\u987B\u665A\u4E8E\u5F00\u59CB\u65F6\u95F4" });
+});
+var schedulePeriodListSchema = external_exports.object({ periods: external_exports.array(schedulePeriodSchema).min(1).max(30) }).superRefine((value, ctx) => {
+  const orders = /* @__PURE__ */ new Set();
+  for (const period of value.periods) {
+    if (orders.has(period.sortOrder)) ctx.addIssue({ code: "custom", path: ["periods"], message: "\u8282\u6B21\u6392\u5E8F\u4E0D\u80FD\u91CD\u590D" });
+    orders.add(period.sortOrder);
+  }
+});
+var DEFAULT_SCHEDULE_PERIODS = [
+  { name: "1", startTime: "08:00", endTime: "08:45", sortOrder: 0 },
+  { name: "2", startTime: "08:50", endTime: "09:35", sortOrder: 1 },
+  { name: "3", startTime: "09:50", endTime: "10:35", sortOrder: 2 },
+  { name: "4", startTime: "10:40", endTime: "11:25", sortOrder: 3 },
+  { name: "5", startTime: "11:30", endTime: "12:15", sortOrder: 4 },
+  { name: "6", startTime: "13:30", endTime: "14:15", sortOrder: 5 },
+  { name: "7", startTime: "14:20", endTime: "15:05", sortOrder: 6 },
+  { name: "8", startTime: "15:20", endTime: "16:05", sortOrder: 7 },
+  { name: "9", startTime: "16:10", endTime: "16:55", sortOrder: 8 },
+  { name: "10", startTime: "18:30", endTime: "19:15", sortOrder: 9 }
+];
+
+// packages/domain/src/email.ts
+async function sendBrevoEmail(input2) {
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: { "api-key": input2.apiKey, "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ sender: input2.sender, to: [{ email: input2.to }], subject: input2.subject, textContent: input2.text })
+  });
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`\u90AE\u4EF6\u670D\u52A1\u53D1\u9001\u5931\u8D25\uFF08${response.status}\uFF09${detail ? `: ${detail.slice(0, 300)}` : ""}`);
+  }
+}
+
 // node_modules/.pnpm/better-auth@1.7.4_drizzle-k_ea2b04a29534e000cad1f28b0dbf5cf2/node_modules/better-auth/dist/utils/wildcard.mjs
 function escapeRegExpChar(char2) {
   if (char2 === "-" || char2 === "^" || char2 === "$" || char2 === "+" || char2 === "." || char2 === "(" || char2 === ")" || char2 === "|" || char2 === "[" || char2 === "]" || char2 === "{" || char2 === "}" || char2 === "*" || char2 === "?" || char2 === "\\") return `\\${char2}`;
@@ -137223,8 +137875,8 @@ function escapeRegExpString(str) {
   for (let i5 = 0; i5 < str.length; i5++) result += escapeRegExpChar(str[i5]);
   return result;
 }
-function transform(pattern, separator = true) {
-  if (Array.isArray(pattern)) return `(?:${pattern.map((p3) => `^${transform(p3, separator)}$`).join("|")})`;
+function transform2(pattern, separator = true) {
+  if (Array.isArray(pattern)) return `(?:${pattern.map((p3) => `^${transform2(p3, separator)}$`).join("|")})`;
   let separatorSplitter = "";
   let separatorMatcher = "";
   let wildcard = ".";
@@ -137284,7 +137936,7 @@ function wildcardMatch(pattern, options) {
   if (arguments.length === 2 && !(typeof options === "undefined" || typeof options === "object" && options !== null && !Array.isArray(options))) throw new TypeError(`The second argument must be an options object or a string/boolean separator, but ${typeof options} given`);
   options = options || {};
   if (options.separator === "\\") throw new Error("\\ is not a valid separator because it is used for escaping. Try setting the separator to `true` instead");
-  const regexpPattern = transform(pattern, options.separator);
+  const regexpPattern = transform2(pattern, options.separator);
   const regexp = new RegExp(`^${regexpPattern}$`, options.flags);
   const fn = isMatch.bind(null, regexp);
   fn.options = options;
@@ -138010,7 +138662,7 @@ function uint32be(value) {
   return writeUInt32BE(buf, value), buf;
 }
 var NON_ASCII = /[^\x00-\x7f]/;
-function encode(string4) {
+function encode3(string4) {
   if (typeof string4 == "string" && string4.length >= 128) {
     if (NON_ASCII.test(string4))
       throw new TypeError("non-ASCII string encountered in encode()");
@@ -138149,18 +138801,18 @@ var JWSSignatureVerificationFailed = class extends JOSEError {
 // node_modules/.pnpm/jose@6.2.12/node_modules/jose/dist/webapi/util/base64url.js
 var base64url_exports = {};
 __export(base64url_exports, {
-  decode: () => decode,
-  encode: () => encode2
+  decode: () => decode3,
+  encode: () => encode4
 });
 var invalid = "The input to be decoded is not correctly encoded.";
-function decode(input2) {
+function decode3(input2) {
   try {
     return decodeBase64(typeof input2 == "string" ? input2 : decoder.decode(input2), true);
   } catch (cause) {
     throw new TypeError(invalid, { cause });
   }
 }
-function encode2(input2) {
+function encode4(input2) {
   return encodeBase642(typeof input2 == "string" ? encoder.encode(input2) : input2, true);
 }
 
@@ -138169,14 +138821,14 @@ function assertUint8Array(input2, label) {
   if (!(input2 instanceof Uint8Array))
     throw new TypeError(`${label} must be an instance of Uint8Array`);
 }
-function isObject(input2) {
+function isObject2(input2) {
   if (typeof input2 != "object" || input2 === null || Object.prototype.toString.call(input2) !== "[object Object]")
     return false;
   const prototype = Object.getPrototypeOf(input2);
   return prototype === null || Object.getPrototypeOf(prototype) === null;
 }
 function isJwkSet(input2) {
-  return isObject(input2) && Array.isArray(input2.keys) && Array.from(input2.keys).every(isObject);
+  return isObject2(input2) && Array.isArray(input2.keys) && Array.from(input2.keys).every(isObject2);
 }
 function isDisjoint(...headers) {
   const parameters = /* @__PURE__ */ new Set();
@@ -138195,14 +138847,14 @@ function assertNotSet(value, name) {
 }
 function decodeBase64url(value, label, ErrorClass) {
   try {
-    return decode(value);
+    return decode3(value);
   } catch {
     throw new ErrorClass(`Failed to base64url decode the ${label}`);
   }
 }
 function encodeBase64url(value, label, ErrorClass) {
   try {
-    return encode(value);
+    return encode3(value);
   } catch {
     throw new ErrorClass(`The ${label} is not a valid base64url string`);
   }
@@ -138210,11 +138862,11 @@ function encodeBase64url(value, label, ErrorClass) {
 function parseJoseHeader(b64, ErrorClass, message2) {
   let parsed;
   try {
-    parsed = JSON.parse(strictDecoder.decode(decode(b64)));
+    parsed = JSON.parse(strictDecoder.decode(decode3(b64)));
   } catch {
     throw new ErrorClass(message2);
   }
-  if (!isObject(parsed))
+  if (!isObject2(parsed))
     throw new ErrorClass(message2);
   return parsed;
 }
@@ -138264,7 +138916,7 @@ function serializeJoseHeader(Err, header) {
   } catch (cause) {
     throw new Err("JOSE Header is not valid JSON", { cause });
   }
-  if (!isObject(parsed))
+  if (!isObject2(parsed))
     throw new Err("JOSE Header is not a JSON object");
   return [parsed, serialized];
 }
@@ -138291,13 +138943,13 @@ async function prepareKey(entry, key, usage) {
   if (secret && key instanceof Uint8Array)
     return key;
   let normalized, keyObject;
-  if (isObject(key)) {
+  if (isObject2(key)) {
     if (normalized = normalizeJwk(key), typeof normalized.kty != "string")
       throw invalidKeyType(alg2, key, secret);
     if (!(secret ? normalized.kty === "oct" && typeof normalized.k == "string" : normalized.kty !== "oct" && (privateKey ? normalized.kty === "AKP" && typeof normalized.priv == "string" || typeof normalized.d == "string" : normalized.d === void 0 && normalized.priv === void 0)))
       throw new TypeError(secret ? 'JSON Web Key for symmetric algorithms must have JWK "kty" (Key Type) equal to "oct" and the JWK "k" (Key Value) present' : `JSON Web Key for this operation must be a ${privateKey ? "private" : "public"} JWK`);
     if (jwkMatchesOp(entry, normalized, usage), normalized.kty === "oct")
-      return decode(normalized.k);
+      return decode3(normalized.k);
     if (!Object.isFrozen(key)) {
       const { key_ops } = key;
       Array.isArray(key_ops) && Object.freeze(key_ops), Object.freeze(key);
@@ -138634,7 +139286,7 @@ async function deriveKey(p2s, alg2, p2c, key) {
     throw new JWEInvalid("PBES2 Salt Input must be 8 or more octets");
   if (!Number.isSafeInteger(p2c) || Math.sign(p2c) !== 1)
     throw new JWEInvalid("PBES2 Count Input must be a positive integer");
-  const salt = concat(encode(alg2), Uint8Array.of(0), p2s), keylen = parseInt(alg2.slice(13, 16), 10), subtleAlg = {
+  const salt = concat(encode3(alg2), Uint8Array.of(0), p2s), keylen = parseInt(alg2.slice(13, 16), 10), subtleAlg = {
     hash: `SHA-${alg2.slice(8, 11)}`,
     iterations: p2c,
     name: "PBKDF2",
@@ -138655,7 +139307,7 @@ async function concatKdf(Z, L, OtherInfo) {
 }
 async function ecdhesDeriveKey(publicKey, privateKey, algorithm2, keyLength, apu = new Uint8Array(), apv = new Uint8Array()) {
   checkEcdhCryptoKey(publicKey), checkEcdhCryptoKey(privateKey, "deriveBits");
-  const otherInfo = concat(lengthAndInput(encode(algorithm2)), lengthAndInput(apu), lengthAndInput(apv), uint32be(keyLength)), Z = new Uint8Array(await crypto.subtle.deriveBits({
+  const otherInfo = concat(lengthAndInput(encode3(algorithm2)), lengthAndInput(apu), lengthAndInput(apv), uint32be(keyLength)), Z = new Uint8Array(await crypto.subtle.deriveBits({
     name: publicKey.algorithm.name,
     public: publicKey
   }, privateKey, publicKey.algorithm.name === "X25519" ? 256 : Math.ceil(parseInt(publicKey.algorithm.namedCurve.slice(-3), 10) / 8) << 3));
@@ -138703,7 +139355,7 @@ async function decryptKeyManagement(entry, enc2, key, encryptedKey, joseHeader, 
   switch (direct ? assertNoEncryptedKey(encryptedKey) : assertEncryptedKey(encryptedKey), entry.subtle.name) {
     case "ECDH": {
       const { epk } = joseHeader;
-      if (!isObject(epk) || ["d", "k", "p", "q", "dp", "dq", "qi", "oth", "priv"].some((parameter) => Object.hasOwn(epk, parameter)))
+      if (!isObject2(epk) || ["d", "k", "p", "q", "dp", "dq", "qi", "oth", "priv"].some((parameter) => Object.hasOwn(epk, parameter)))
         throw new JWEInvalid('JOSE Header "epk" (Ephemeral Public Key) missing or invalid');
       assertEcdhKey(key);
       const ephemeralPublicKey = await jwkToKey(entry, epk), partyUInfo = partyInfo(joseHeader, "apu"), partyVInfo = partyInfo(joseHeader, "apv");
@@ -138771,7 +139423,7 @@ async function encryptKeyManagement(entry, enc2, inputKey, joseHeader, providedC
         exportableEpk = await subtle3.getPublicKey(ephemeralKey, []);
       }
       const { x, y, crv, kty } = await subtle3.exportKey("jwk", exportableEpk), direct = mode === "direct-key-agreement", sharedSecret = await ecdhesDeriveKey(key, ephemeralKey, direct ? enc2.alg : alg2, direct ? enc2.cekBits : parseInt(alg2.slice(-5, -2), 10), apu, apv), epk = { x, crv, kty };
-      if (kty === "EC" && (epk.y = y), parameters = { epk }, providedApu !== void 0 && (parameters.apu = encode2(providedApu)), providedApv !== void 0 && (parameters.apv = encode2(providedApv)), direct)
+      if (kty === "EC" && (epk.y = y), parameters = { epk }, providedApu !== void 0 && (parameters.apu = encode4(providedApu)), providedApv !== void 0 && (parameters.apv = encode4(providedApv)), direct)
         return [sharedSecret, void 0, parameters];
       key = sharedSecret;
       break;
@@ -138782,7 +139434,7 @@ async function encryptKeyManagement(entry, enc2, inputKey, joseHeader, providedC
     }
     case "PBKDF2": {
       const { p2c = 2048, p2s = crypto.getRandomValues(new Uint8Array(16)) } = providedParameters;
-      key = await deriveKey(p2s, alg2, p2c, key), parameters = { p2c, p2s: encode2(p2s) };
+      key = await deriveKey(p2s, alg2, p2c, key), parameters = { p2c, p2s: encode4(p2s) };
       break;
     }
     case "AES-GCM": {
@@ -138790,7 +139442,7 @@ async function encryptKeyManagement(entry, enc2, inputKey, joseHeader, providedC
       if (!(iv instanceof Uint8Array))
         throw new TypeError('"iv" must be an instance of Uint8Array');
       const wrapped = await encrypt(jweEncryption(alg2.slice(0, -2)), cek, key, iv, new Uint8Array());
-      encryptedKey = wrapped.ciphertext, parameters = { iv: encode2(wrapped.iv), tag: encode2(wrapped.tag) };
+      encryptedKey = wrapped.ciphertext, parameters = { iv: encode4(wrapped.iv), tag: encode4(wrapped.tag) };
     }
   }
   if (encryptedKey ??= await aeskwWrap(alg2.slice(-6), key, cek), !(encryptedKey instanceof Uint8Array) || !encryptedKey.byteLength)
@@ -138809,7 +139461,7 @@ function supported(name) {
   if (typeof globalThis[name] > "u")
     throw new JOSENotSupported(`JWE "zip" (Compression Algorithm) Header Parameter requires the ${name} API.`);
 }
-async function transform2(stream2, input2, maxLength = 1 / 0) {
+async function transform3(stream2, input2, maxLength = 1 / 0) {
   const writer = stream2.writable.getWriter();
   writer.write(input2).catch(() => {
   }), writer.close().catch(() => {
@@ -138827,10 +139479,10 @@ async function transform2(stream2, input2, maxLength = 1 / 0) {
   return concat(...chunks);
 }
 async function compress(input2) {
-  return supported("CompressionStream"), transform2(new CompressionStream("deflate-raw"), input2);
+  return supported("CompressionStream"), transform3(new CompressionStream("deflate-raw"), input2);
 }
 async function decompress(input2, maxLength) {
-  return supported("DecompressionStream"), transform2(new DecompressionStream("deflate-raw"), input2, maxLength);
+  return supported("DecompressionStream"), transform3(new DecompressionStream("deflate-raw"), input2, maxLength);
 }
 
 // node_modules/.pnpm/jose@6.2.12/node_modules/jose/dist/webapi/lib/jwe_decrypt.js
@@ -138964,7 +139616,7 @@ function checkEncryptHeaders(input2, options, sharedHeadersNormalized = false) {
     throw new JWEInvalid("either setProtectedHeader, setUnprotectedHeader, or sharedUnprotectedHeader must be called before #encrypt()");
   options !== void 0 && (input2[8] = options?.crit);
   let [, protectedHeader, unprotectedHeader, sharedUnprotectedHeader, aad, cek, iv, keyManagementParameters, crit] = input2;
-  if (aad !== void 0 && assertUint8Array(aad, "JWE Additional Authenticated Data"), cek !== void 0 && assertUint8Array(cek, "JWE Content Encryption Key"), iv !== void 0 && assertUint8Array(iv, "JWE Initialization Vector"), !sharedHeadersNormalized && protectedHeader !== void 0 && (protectedHeader = serializeJoseHeader(JWEInvalid, protectedHeader)[0], input2[1] = protectedHeader), unprotectedHeader !== void 0 && (unprotectedHeader = serializeJoseHeader(JWEInvalid, unprotectedHeader)[0], input2[2] = unprotectedHeader), !sharedHeadersNormalized && sharedUnprotectedHeader !== void 0 && (sharedUnprotectedHeader = serializeJoseHeader(JWEInvalid, sharedUnprotectedHeader)[0], input2[3] = sharedUnprotectedHeader), keyManagementParameters !== void 0 && !isObject(keyManagementParameters))
+  if (aad !== void 0 && assertUint8Array(aad, "JWE Additional Authenticated Data"), cek !== void 0 && assertUint8Array(cek, "JWE Content Encryption Key"), iv !== void 0 && assertUint8Array(iv, "JWE Initialization Vector"), !sharedHeadersNormalized && protectedHeader !== void 0 && (protectedHeader = serializeJoseHeader(JWEInvalid, protectedHeader)[0], input2[1] = protectedHeader), unprotectedHeader !== void 0 && (unprotectedHeader = serializeJoseHeader(JWEInvalid, unprotectedHeader)[0], input2[2] = unprotectedHeader), !sharedHeadersNormalized && sharedUnprotectedHeader !== void 0 && (sharedUnprotectedHeader = serializeJoseHeader(JWEInvalid, sharedUnprotectedHeader)[0], input2[3] = sharedUnprotectedHeader), keyManagementParameters !== void 0 && !isObject2(keyManagementParameters))
     throw new TypeError("JWE Key Management Parameters must be an object");
   checkDisjoint(protectedHeader, unprotectedHeader, sharedUnprotectedHeader);
   const joseHeader = {
@@ -138996,7 +139648,7 @@ async function encryptJWE(input2, checked, key) {
   const algEntry = selected ?? jweAlgorithm(joseHeader.alg);
   let encryptedKey, parameters, cek;
   algEntry.mode === "integrated-encryption" ? cek = await prepareKey(algEntry, key, "encrypt") : [cek, encryptedKey, parameters] = await encryptKeyManagement(algEntry, encEntry, key, joseHeader, providedCek, keyManagementParameters), parameters && (unprotectedParameters ? unprotectedHeader = unprotectedHeader ? { ...unprotectedHeader, ...parameters } : parameters : protectedHeader = protectedHeader ? { ...protectedHeader, ...parameters } : parameters, checkDisjoint(protectedHeader, unprotectedHeader, sharedUnprotectedHeader));
-  const protectedHeaderS = protectedHeader ? encode2(JSON.stringify(protectedHeader)) : "", aadMember = aad?.byteLength ? encode2(aad) : void 0, additionalData = encode(aadMember ? `${protectedHeaderS}.${aadMember}` : protectedHeaderS);
+  const protectedHeaderS = protectedHeader ? encode4(JSON.stringify(protectedHeader)) : "", aadMember = aad?.byteLength ? encode4(aad) : void 0, additionalData = encode3(aadMember ? `${protectedHeaderS}.${aadMember}` : protectedHeaderS);
   let plaintext = inputPlaintext;
   joseHeader.zip === "DEF" && (plaintext = await compress(plaintext).catch((cause) => {
     throw new JWEInvalid("Failed to compress plaintext", { cause });
@@ -139004,9 +139656,9 @@ async function encryptJWE(input2, checked, key) {
   let ciphertext, tag2, iv;
   algEntry.mode === "integrated-encryption" ? [encryptedKey, ciphertext] = await algEntry.encrypt(cek, plaintext, additionalData, protectedHeader, joseHeader, keyManagementParameters) : { ciphertext, tag: tag2, iv } = await encrypt(encEntry, plaintext, cek, inputIv, additionalData);
   const jwe = {
-    ciphertext: encode2(ciphertext)
+    ciphertext: encode4(ciphertext)
   };
-  return iv && (jwe.iv = encode2(iv)), tag2 && (jwe.tag = encode2(tag2)), encryptedKey?.byteLength && (jwe.encrypted_key = encode2(encryptedKey)), aadMember && (jwe.aad = aadMember), protectedHeader && (jwe.protected = protectedHeaderS), sharedUnprotectedHeader && (jwe.unprotected = sharedUnprotectedHeader), unprotectedHeader && (jwe.header = unprotectedHeader), jwe;
+  return iv && (jwe.iv = encode4(iv)), tag2 && (jwe.tag = encode4(tag2)), encryptedKey?.byteLength && (jwe.encrypted_key = encode4(encryptedKey)), aadMember && (jwe.aad = aadMember), protectedHeader && (jwe.protected = protectedHeaderS), sharedUnprotectedHeader && (jwe.unprotected = sharedUnprotectedHeader), unprotectedHeader && (jwe.header = unprotectedHeader), jwe;
 }
 async function createJWE(input2, key, options) {
   return encryptJWE(input2, checkEncryptHeaders(input2, options), key);
@@ -139094,7 +139746,7 @@ function parseProtectedHeader(encodedProtected) {
 }
 function encodeCompactUnencodedPayload(payload) {
   try {
-    return encode(payload);
+    return encode3(payload);
   } catch {
     throw new JWSInvalid("JWS Compact Serialization payload must use only ASCII characters");
   }
@@ -139116,7 +139768,7 @@ async function verifySignature(jws, shared, key, encodeUnencodedPayload, parsedP
   const signingPayload = b64 || typeof inputPayload != "string" ? inputPayload : encodeUnencodedPayload(inputPayload);
   let resolvedKey = false;
   typeof key == "function" && (key = await key(parsedProt, jws), resolvedKey = true);
-  const entry = jwsAlgorithm(alg2), data = concat(encodedProtected !== void 0 ? encode(encodedProtected) : new Uint8Array(), encode("."), typeof signingPayload == "string" ? shared[2] ??= encodeBase64url(signingPayload, "payload", JWSInvalid) : signingPayload), signature = decodeBase64url(jws.signature, "signature", JWSInvalid), k5 = await prepareKey(entry, key, "verify"), cryptoKey = await rawKey(k5, entry.subtle, "verify");
+  const entry = jwsAlgorithm(alg2), data = concat(encodedProtected !== void 0 ? encode3(encodedProtected) : new Uint8Array(), encode3("."), typeof signingPayload == "string" ? shared[2] ??= encodeBase64url(signingPayload, "payload", JWSInvalid) : signingPayload), signature = decodeBase64url(jws.signature, "signature", JWSInvalid), k5 = await prepareKey(entry, key, "verify"), cryptoKey = await rawKey(k5, entry.subtle, "verify");
   entry.minRsaBits && checkModulusLength(entry.alg, cryptoKey);
   let verified = false;
   try {
@@ -139197,7 +139849,7 @@ function validateClaimsSet(protectedHeader, encodedPayload, options = {}) {
     payload = JSON.parse(strictDecoder.decode(encodedPayload));
   } catch {
   }
-  if (!isObject(payload))
+  if (!isObject2(payload))
     throw new JWTInvalid("JWT Claims Set must be a top-level JSON object");
   const { typ } = options;
   if (typ !== void 0 && (typeof protectedHeader.typ != "string" || normalizeTyp(protectedHeader.typ) !== normalizeTyp(typ)))
@@ -139251,7 +139903,7 @@ function jwtClaim(producer, claim2) {
 }
 var JWTClaimsBuilder = class {
   constructor(payload = {}) {
-    if (!isObject(payload))
+    if (!isObject2(payload))
       throw new TypeError("JWT Claims Set MUST be an object");
     (producerPayloads ||= /* @__PURE__ */ new WeakMap()).set(this, structuredClone(payload));
   }
@@ -139302,7 +139954,7 @@ async function createSignature(input2, key, rejectUnencoded) {
   let [payload, protectedHeader, unprotectedHeader, crit] = input2, protectedHeaderString = "";
   if (protectedHeader !== void 0) {
     const normalized = serializeJoseHeader(JWSInvalid, protectedHeader);
-    protectedHeader = normalized[0], protectedHeaderString = encode2(normalized[1]);
+    protectedHeader = normalized[0], protectedHeaderString = encode4(normalized[1]);
   }
   if (unprotectedHeader !== void 0 && (unprotectedHeader = serializeJoseHeader(JWSInvalid, unprotectedHeader)[0]), !protectedHeader && !unprotectedHeader)
     throw new JWSInvalid("either setProtectedHeader or setUnprotectedHeader must be called before #sign()");
@@ -139319,13 +139971,13 @@ async function createSignature(input2, key, rejectUnencoded) {
   let payloadS = "", payloadB = payload, data;
   if (b64) {
     const encoded = input2[4];
-    encoded ? (payloadS = encoded[0] ??= encode2(payload), payloadB = encoded[1] ??= encode(payloadS)) : (payloadS = encode2(payload), data = encoder.encode(`${protectedHeaderString}.${payloadS}`));
+    encoded ? (payloadS = encoded[0] ??= encode4(payload), payloadB = encoded[1] ??= encode3(payloadS)) : (payloadS = encode4(payload), data = encoder.encode(`${protectedHeaderString}.${payloadS}`));
   }
-  data ??= concat(encode(protectedHeaderString), encode("."), payloadB);
+  data ??= concat(encode3(protectedHeaderString), encode3("."), payloadB);
   const k5 = await rawKey(await prepareKey(entry, key, "sign"), entry.subtle, "sign");
   entry.minRsaBits && checkModulusLength(entry.alg, k5);
   const jws = {
-    signature: encode2(new Uint8Array(await crypto.subtle.sign(entry.signing, k5, data))),
+    signature: encode4(new Uint8Array(await crypto.subtle.sign(entry.signing, k5, data))),
     payload: payloadS
   };
   return protectedHeader && (jws.protected = protectedHeaderString), unprotectedHeader && (jws.header = unprotectedHeader), [jws, b64];
@@ -139408,7 +140060,7 @@ async function exportJWK(key) {
   if (key instanceof Uint8Array)
     return {
       kty: "oct",
-      k: encode2(key)
+      k: encode4(key)
     };
   if (!isCryptoKey(key))
     throw new TypeError(invalidKeyInput(key, "CryptoKey", "KeyObject", "Uint8Array"));
@@ -139422,13 +140074,13 @@ async function exportJWK(key) {
 }
 
 // node_modules/.pnpm/jose@6.2.12/node_modules/jose/dist/webapi/jwk/thumbprint.js
-var check = (value, description) => {
+var check2 = (value, description) => {
   if (typeof value != "string" || !value)
     throw new JWKInvalid(`${description} missing or invalid`);
 };
 async function calculateJwkThumbprint(key, digestAlgorithm) {
   let jwk;
-  if (isObject(key)) {
+  if (isObject2(key)) {
     if (jwk = snapshotJwk(key), typeof jwk.kty != "string")
       throw new TypeError(invalidKeyInput(key, "CryptoKey", "KeyObject", "JSON Web Key"));
   } else if (isKeyLike(key))
@@ -139440,16 +140092,16 @@ async function calculateJwkThumbprint(key, digestAlgorithm) {
   let components;
   switch (jwk.kty) {
     case "AKP":
-      check(jwk.alg, '"alg" (Algorithm) Parameter'), check(jwk.pub, '"pub" (Public key) Parameter'), components = { alg: jwk.alg, kty: jwk.kty, pub: jwk.pub };
+      check2(jwk.alg, '"alg" (Algorithm) Parameter'), check2(jwk.pub, '"pub" (Public key) Parameter'), components = { alg: jwk.alg, kty: jwk.kty, pub: jwk.pub };
       break;
     case "EC":
-      check(jwk.crv, '"crv" (Curve) Parameter'), check(jwk.x, '"x" (X Coordinate) Parameter'), check(jwk.y, '"y" (Y Coordinate) Parameter'), components = { crv: jwk.crv, kty: jwk.kty, x: jwk.x, y: jwk.y };
+      check2(jwk.crv, '"crv" (Curve) Parameter'), check2(jwk.x, '"x" (X Coordinate) Parameter'), check2(jwk.y, '"y" (Y Coordinate) Parameter'), components = { crv: jwk.crv, kty: jwk.kty, x: jwk.x, y: jwk.y };
       break;
     case "OKP":
-      check(jwk.crv, '"crv" (Subtype of Key Pair) Parameter'), check(jwk.x, '"x" (Public Key) Parameter'), components = { crv: jwk.crv, kty: jwk.kty, x: jwk.x };
+      check2(jwk.crv, '"crv" (Subtype of Key Pair) Parameter'), check2(jwk.x, '"x" (Public Key) Parameter'), components = { crv: jwk.crv, kty: jwk.kty, x: jwk.x };
       break;
     case "RSA":
-      check(jwk.e, '"e" (Exponent) Parameter'), check(jwk.n, '"n" (Modulus) Parameter'), components = { e: jwk.e, kty: jwk.kty, n: jwk.n };
+      check2(jwk.e, '"e" (Exponent) Parameter'), check2(jwk.n, '"n" (Modulus) Parameter'), components = { e: jwk.e, kty: jwk.kty, n: jwk.n };
       break;
     case "oct":
       if (typeof jwk.k != "string")
@@ -139459,8 +140111,8 @@ async function calculateJwkThumbprint(key, digestAlgorithm) {
     default:
       throw new JOSENotSupported('"kty" (Key Type) Parameter missing or unsupported');
   }
-  const data = encode(JSON.stringify(components));
-  return encode2(await digest(digestAlgorithm, data));
+  const data = encode3(JSON.stringify(components));
+  return encode4(await digest(digestAlgorithm, data));
 }
 
 // node_modules/.pnpm/jose@6.2.12/node_modules/jose/dist/webapi/jwks/local.js
@@ -139614,7 +140266,7 @@ function createRemoteJWKSet(url2, options) {
 
 // node_modules/.pnpm/jose@6.2.12/node_modules/jose/dist/webapi/key/import.js
 async function importJWK(jwk, alg2, options) {
-  if (!isObject(jwk))
+  if (!isObject2(jwk))
     throw new TypeError("JWK must be an object");
   const normalized = normalizeJwk(jwk), extractable = validateExtractableOption(options?.extractable), { alg: jwkAlg } = normalized;
   if (alg2 ??= jwkAlg, normalized.kty !== "oct" && !alg2)
@@ -139623,7 +140275,7 @@ async function importJWK(jwk, alg2, options) {
     case "oct":
       if (typeof normalized.k != "string")
         throw new TypeError('missing "k" (Key Value) Parameter value');
-      return decode(normalized.k);
+      return decode3(normalized.k);
     case "AKP": {
       if (typeof jwkAlg != "string" || !jwkAlg)
         throw new TypeError('missing "alg" (Algorithm) Parameter value');
@@ -139670,7 +140322,7 @@ function decodeJwt(jwt2) {
     throw new JWTInvalid("JWTs must contain a payload");
   let decoded;
   try {
-    decoded = decode(payload);
+    decoded = decode3(payload);
   } catch {
     throw new JWTInvalid("Failed to base64url decode the payload");
   }
@@ -139680,7 +140332,7 @@ function decodeJwt(jwt2) {
   } catch {
     throw new JWTInvalid("Failed to parse the decoded payload as JSON");
   }
-  if (!isObject(result))
+  if (!isObject2(result))
     throw new JWTInvalid("Invalid JWT Claims Set");
   return result;
 }
@@ -139836,7 +140488,7 @@ function constantTimeEqual(a5, b5) {
 
 // node_modules/.pnpm/@better-auth+utils@0.4.2/node_modules/@better-auth/utils/dist/password.node.mjs
 var import_node_crypto = require("node:crypto");
-var config = {
+var config2 = {
   N: 16384,
   r: 16,
   p: 1,
@@ -139847,12 +140499,12 @@ function generateKey(password, salt) {
     (0, import_node_crypto.scrypt)(
       password.normalize("NFKC"),
       salt,
-      config.dkLen,
+      config2.dkLen,
       {
-        N: config.N,
-        r: config.r,
-        p: config.p,
-        maxmem: 128 * config.N * config.r * 2
+        N: config2.N,
+        r: config2.r,
+        p: config2.p,
+        maxmem: 128 * config2.N * config2.r * 2
       },
       (err, key) => {
         if (err)
@@ -139940,7 +140592,7 @@ function base64Decode(data, alphabet) {
   }
   return Uint8Array.from(result);
 }
-var base64 = {
+var base643 = {
   encode(data, options = {}) {
     const alphabet = getAlphabet(false);
     const buffer = typeof data === "string" ? new TextEncoder().encode(data) : new Uint8Array(data);
@@ -139986,7 +140638,7 @@ function createHash(algorithm2, encoding) {
             padding: encoding !== "base64urlnopad"
           });
         }
-        const hashBase64 = base64.encode(hashBuffer);
+        const hashBase64 = base643.encode(hashBuffer);
         return hashBase64;
       }
       return hashBuffer;
@@ -142878,7 +143530,7 @@ var createHMAC = (algorithm2 = "SHA-256", encoding = "none") => {
         signature = hex3.decode(signature);
       }
       if (encoding === "base64" || encoding === "base64url" || encoding === "base64urlnopad") {
-        signature = await base64.decode(signature);
+        signature = await base643.decode(signature);
       }
       return getWebcryptoSubtle().verify(
         "HMAC",
@@ -147099,7 +147751,7 @@ function formUrlEncode(value) {
 }
 function encodeBasicCredentials(clientId, clientSecret) {
   const payload = `${formUrlEncode(clientId)}:${formUrlEncode(clientSecret)}`;
-  return `Basic ${base64.encode(payload)}`;
+  return `Basic ${base643.encode(payload)}`;
 }
 
 // node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/oauth2/client-assertion.mjs
@@ -149495,7 +150147,7 @@ var microsoft = (options) => {
           if (!context.response.ok) return;
           try {
             const pictureBuffer = await context.response.clone().arrayBuffer();
-            user2.picture = `data:image/jpeg;base64, ${base64.encode(pictureBuffer)}`;
+            user2.picture = `data:image/jpeg;base64, ${base643.encode(pictureBuffer)}`;
           } catch (e5) {
             logger2.error(e5 && typeof e5 === "object" && "name" in e5 ? e5.name : "", e5);
           }
@@ -155085,7 +155737,7 @@ function detectEnvironment() {
 }
 async function hashToBase64(data) {
   const buffer = await createHash("SHA-256").digest(data);
-  return base64.encode(buffer);
+  return base643.encode(buffer);
 }
 var generateId2 = (size) => {
   return createRandomStringGenerator("a-z", "A-Z", "0-9")(size || 32);
@@ -158508,7 +159160,7 @@ __export(base64_exports, {
   encode: () => encode10,
   is: () => is4,
   normalize: () => normalize2,
-  pad: () => pad
+  pad: () => pad2
 });
 var BASE64_REGEX = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 function nodeBuffer() {
@@ -158517,7 +159169,7 @@ function nodeBuffer() {
 function normalize2(text2) {
   return text2.replace(/[\n\r\t ]/g, "");
 }
-function pad(text2) {
+function pad2(text2) {
   const remainder = text2.length % 4;
   return remainder ? text2 + "=".repeat(4 - remainder) : text2;
 }
@@ -158547,7 +159199,7 @@ function decode8(text2, _options) {
   }
   return decode4(atob(normalized));
 }
-var base645 = { encode: encode10, decode: decode8, is: is4, normalize: normalize2, pad };
+var base645 = { encode: encode10, decode: decode8, is: is4, normalize: normalize2, pad: pad2 };
 
 // node_modules/.pnpm/@peculiar+utils@2.0.3/node_modules/@peculiar/utils/build/esm/encoding/base64url.js
 var base64url_exports2 = {};
@@ -165692,7 +166344,7 @@ var verifyPasskeyRegistration = (options) => {
         if (!targetUserId) throw APIError2.from("BAD_REQUEST", PASSKEY_ERROR_CODES.RESOLVED_USER_INVALID);
         const user2 = ctx.body.createSession ? await ctx.context.internalAdapter.findUserById(targetUserId) : null;
         if (ctx.body.createSession && !user2) throw APIError2.from("INTERNAL_SERVER_ERROR", PASSKEY_ERROR_CODES.USER_NOT_FOUND);
-        const pubKey = base64.encode(credential.publicKey);
+        const pubKey = base643.encode(credential.publicKey);
         const passkey3 = await (await getCurrentAdapter(ctx.context.adapter)).create({
           model: "passkey",
           data: {
@@ -165785,7 +166437,7 @@ var verifyPasskeyAuthentication = (options) => createAuthEndpoint("/passkey/veri
       expectedRPID: getRpID(options, typeof ctx.context.options.baseURL === "string" ? ctx.context.options.baseURL : void 0),
       credential: {
         id: passkey3.credentialID,
-        publicKey: base64.decode(passkey3.publicKey),
+        publicKey: base643.decode(passkey3.publicKey),
         counter: passkey3.counter,
         transports: passkey3.transports?.split(",")
       },
@@ -166041,6 +166693,7 @@ var envSchema = external_exports.object({
   ATTACHMENT_MASTER_KEY: external_exports.string().default("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="),
   MAX_ATTACHMENT_MB: external_exports.coerce.number().int().positive().default(25),
   SMTP_URL: external_exports.string().optional(),
+  BREVO_API_KEY: external_exports.string().optional(),
   SMTP_FROM: external_exports.string().default("Calendar <calendar@example.com>"),
   VAPID_PUBLIC_KEY: external_exports.string().optional(),
   VAPID_PRIVATE_KEY: external_exports.string().optional(),
@@ -166100,9 +166753,16 @@ var auth = betterAuth({
             throw new Error("\u8BF7\u5148\u914D\u7F6E OWNER_EMAIL");
           }
         }
-        if (config3.NODE_ENV !== "production" || !config3.SMTP_URL) {
+        if (config3.NODE_ENV !== "production") {
           console.info(`[auth] email OTP for ${email3}: ${otp}`);
           return;
+        }
+        if (config3.BREVO_API_KEY) {
+          await sendBrevoEmail({ apiKey: config3.BREVO_API_KEY, sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: config3.OWNER_EMAIL ?? email3 }, to: email3, subject: "\u4E2A\u4EBA\u65E5\u7A0B\u767B\u5F55\u9A8C\u8BC1\u7801", text: `\u9A8C\u8BC1\u7801\uFF1A${otp}\uFF0C5 \u5206\u949F\u5185\u6709\u6548\u3002` });
+          return;
+        }
+        if (!config3.SMTP_URL) {
+          throw new Error("\u672A\u914D\u7F6E\u90AE\u4EF6\u670D\u52A1");
         }
         const nodemailer2 = await Promise.resolve().then(() => __toESM(require_nodemailer(), 1));
         const transporter = nodemailer2.createTransport(config3.SMTP_URL);
@@ -166131,645 +166791,6 @@ async function getAuthContext(dbInstance, headers) {
 
 // apps/api/src/demo.ts
 var import_node_crypto2 = require("node:crypto");
-
-// packages/domain/src/schemas.ts
-init_zod();
-var itemKindSchema = external_exports.enum(["event", "task", "both"]);
-var prioritySchema = external_exports.enum(["none", "low", "medium", "high", "urgent"]);
-var itemStatusSchema = external_exports.enum(["active", "partial", "completed", "cancelled", "deleted"]);
-var recurrenceFrequencySchema = external_exports.enum(["daily", "weekly", "monthly", "yearly"]);
-var reminderChannelSchema = external_exports.enum(["in_app", "browser_push", "email"]);
-var reminderTriggerSchema = external_exports.enum(["before_start", "at_start", "at_end"]);
-var reminderOffsetSchema = external_exports.union([
-  external_exports.literal(0),
-  external_exports.literal(5),
-  external_exports.literal(15),
-  external_exports.literal(30),
-  external_exports.literal(60),
-  external_exports.literal(1440)
-]);
-var recurrenceSchema = external_exports.object({
-  frequency: recurrenceFrequencySchema,
-  interval: external_exports.number().int().min(1).max(365).default(1),
-  byWeekday: external_exports.array(external_exports.number().int().min(0).max(6)).default([]),
-  byMonthDay: external_exports.array(external_exports.number().int().min(1).max(31)).default([]),
-  weekParity: external_exports.enum(["all", "odd", "even"]).default("all"),
-  count: external_exports.number().int().min(1).max(1e4).nullable().optional(),
-  until: external_exports.string().datetime({ offset: true }).nullable().optional()
-});
-var reminderInputSchema = external_exports.object({
-  id: external_exports.string().uuid().optional(),
-  trigger: reminderTriggerSchema.default("before_start"),
-  offsetMinutes: reminderOffsetSchema,
-  channels: external_exports.array(reminderChannelSchema).min(1).default(["in_app"]),
-  repeatEveryMinutes: external_exports.number().int().min(0).max(1440).nullable().optional(),
-  enabled: external_exports.boolean().default(true)
-});
-var courseSlotSchema = external_exports.object({
-  id: external_exports.string().uuid().optional(),
-  weekday: external_exports.number().int().min(0).max(6),
-  startTime: external_exports.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
-  endTime: external_exports.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
-  weekParity: external_exports.enum(["all", "odd", "even"]).default("all")
-}).superRefine((value, ctx) => {
-  if (value.endTime <= value.startTime) ctx.addIssue({ code: "custom", path: ["endTime"], message: "\u7ED3\u675F\u65F6\u95F4\u5FC5\u987B\u665A\u4E8E\u5F00\u59CB\u65F6\u95F4" });
-});
-var itemFieldsSchema = external_exports.object({
-  calendarId: external_exports.string().uuid().nullable().optional(),
-  kind: itemKindSchema.default("event"),
-  title: external_exports.string().trim().min(1).max(300),
-  description: external_exports.string().max(1e5).default(""),
-  location: external_exports.string().max(1e3).default(""),
-  startAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
-  endAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
-  dueAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
-  isAllDay: external_exports.boolean().default(false),
-  timezone: external_exports.string().min(1).max(100).default("Asia/Shanghai"),
-  priority: prioritySchema.default("none"),
-  status: itemStatusSchema.default("active"),
-  completedAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
-  autoRollover: external_exports.boolean().default(false),
-  showInTimetable: external_exports.boolean().default(false),
-  timetableColor: external_exports.string().regex(/^#[0-9a-fA-F]{6}$/).nullable().optional(),
-  courseStartDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
-  courseEndDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
-  courseSlots: external_exports.array(courseSlotSchema).max(20).default([]),
-  parentId: external_exports.string().uuid().nullable().optional(),
-  recurrence: recurrenceSchema.nullable().optional(),
-  tagIds: external_exports.array(external_exports.string().uuid()).default([]),
-  reminders: external_exports.array(reminderInputSchema).default([]),
-  version: external_exports.number().int().nonnegative().optional()
-});
-var itemInputSchema = itemFieldsSchema.superRefine((value, ctx) => {
-  if (value.kind === "event" && !value.startAt) {
-    ctx.addIssue({ code: "custom", path: ["startAt"], message: "\u4E8B\u4EF6\u5FC5\u987B\u6709\u5F00\u59CB\u65F6\u95F4" });
-  }
-  if (value.startAt && value.endAt && new Date(value.endAt) <= new Date(value.startAt)) {
-    ctx.addIssue({ code: "custom", path: ["endAt"], message: "\u7ED3\u675F\u65F6\u95F4\u5FC5\u987B\u665A\u4E8E\u5F00\u59CB\u65F6\u95F4" });
-  }
-  if (value.courseStartDate && value.courseEndDate && value.courseEndDate < value.courseStartDate) {
-    ctx.addIssue({ code: "custom", path: ["courseEndDate"], message: "\u8BFE\u7A0B\u7ED3\u675F\u65E5\u671F\u4E0D\u80FD\u65E9\u4E8E\u5F00\u59CB\u65E5\u671F" });
-  }
-  if (value.endAt && !value.startAt) {
-    ctx.addIssue({ code: "custom", path: ["endAt"], message: "\u8BBE\u7F6E\u7ED3\u675F\u65F6\u95F4\u524D\u5FC5\u987B\u8BBE\u7F6E\u5F00\u59CB\u65F6\u95F4" });
-  }
-});
-var itemSchema = itemInputSchema.and(external_exports.object({
-  id: external_exports.string().uuid(),
-  workspaceId: external_exports.string().uuid(),
-  createdAt: external_exports.string().datetime({ offset: true }),
-  updatedAt: external_exports.string().datetime({ offset: true }),
-  deletedAt: external_exports.string().datetime({ offset: true }).nullable().optional()
-}));
-var recurrenceExceptionSchema = external_exports.object({
-  id: external_exports.string().uuid(),
-  itemId: external_exports.string().uuid(),
-  occurrenceKey: external_exports.string(),
-  action: external_exports.enum(["override", "cancelled"]),
-  override: itemFieldsSchema.partial().nullable().optional()
-});
-var calendarSchema = external_exports.object({
-  id: external_exports.string().uuid(),
-  name: external_exports.string().min(1).max(120),
-  color: external_exports.string().regex(/^#[0-9a-fA-F]{6}$/),
-  kind: external_exports.enum(["local", "subscription"]),
-  timezone: external_exports.string().default("Asia/Shanghai"),
-  isVisible: external_exports.boolean().default(true)
-});
-var tagSchema = external_exports.object({
-  id: external_exports.string().uuid(),
-  name: external_exports.string().min(1).max(60),
-  color: external_exports.string().regex(/^#[0-9a-fA-F]{6}$/)
-});
-var syncMutationSchema = external_exports.object({
-  clientMutationId: external_exports.string().min(1).max(100),
-  entity: external_exports.enum(["item", "tag", "attachment", "reminder"]),
-  action: external_exports.enum(["create", "update", "delete", "restore"]),
-  entityId: external_exports.string().uuid(),
-  baseVersion: external_exports.number().int().nonnegative().optional(),
-  fields: external_exports.record(external_exports.string(), external_exports.unknown()).default({})
-});
-var syncPushSchema = external_exports.object({
-  cursor: external_exports.string().optional(),
-  mutations: external_exports.array(syncMutationSchema).max(500)
-});
-var searchFiltersSchema = external_exports.object({
-  q: external_exports.string().max(200).optional(),
-  from: external_exports.string().datetime({ offset: true }).optional(),
-  to: external_exports.string().datetime({ offset: true }).optional(),
-  kind: itemKindSchema.optional(),
-  status: itemStatusSchema.optional(),
-  priority: prioritySchema.optional(),
-  tagIds: external_exports.array(external_exports.string().uuid()).optional()
-});
-
-// packages/domain/src/recurrence.ts
-var rruleImport = __toESM(require_rrule(), 1);
-var rruleModule = rruleImport;
-var RRule = rruleModule.RRule ?? rruleModule.default?.RRule ?? rruleModule.rrule?.RRule;
-if (!RRule) throw new Error("rrule \u6A21\u5757\u672A\u63D0\u4F9B RRule");
-var JS_TO_RRULE_WEEKDAY = [RRule.SU, RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA];
-function startOfWeekMonday(date7) {
-  const value = new Date(date7.getFullYear(), date7.getMonth(), date7.getDate(), 0, 0, 0, 0);
-  const day = value.getDay();
-  value.setDate(value.getDate() - (day === 0 ? 6 : day - 1));
-  return value;
-}
-function academicWeekNumber(date7, semesterStartDate) {
-  const target = startOfWeekMonday(date7);
-  const anchor2 = startOfWeekMonday(semesterStartDate);
-  return Math.floor((Date.UTC(target.getFullYear(), target.getMonth(), target.getDate()) - Date.UTC(anchor2.getFullYear(), anchor2.getMonth(), anchor2.getDate())) / (7 * 864e5)) + 1;
-}
-function frequencyToRRule(frequency) {
-  const map5 = { daily: 3, weekly: 2, monthly: 1, yearly: 0 };
-  return map5[frequency];
-}
-function applyOverride(base, override) {
-  return {
-    ...base,
-    ...override,
-    id: base.id,
-    workspaceId: base.workspaceId,
-    createdAt: base.createdAt,
-    updatedAt: base.updatedAt,
-    recurrence: override.recurrence === void 0 ? base.recurrence : override.recurrence,
-    tagIds: override.tagIds ?? base.tagIds,
-    reminders: override.reminders ?? base.reminders
-  };
-}
-function occurrenceFromItem(item, start, end, recurring, key, overridden = false) {
-  return {
-    id: recurring ? key : item.id,
-    occurrenceKey: key,
-    itemId: item.id,
-    item,
-    start,
-    end,
-    allDay: item.isAllDay,
-    recurring,
-    overridden
-  };
-}
-function defaultDuration(item) {
-  if (item.startAt && item.endAt) return Math.max(1, new Date(item.endAt).getTime() - new Date(item.startAt).getTime());
-  if (item.isAllDay) return 24 * 60 * 60 * 1e3;
-  return 60 * 60 * 1e3;
-}
-function localDateKey(date7) {
-  return `${date7.getFullYear()}-${String(date7.getMonth() + 1).padStart(2, "0")}-${String(date7.getDate()).padStart(2, "0")}`;
-}
-function expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate) {
-  if (item.status === "deleted" || item.status === "cancelled" || !item.startAt) return [];
-  const baseStart = new Date(item.startAt);
-  const duration3 = defaultDuration(item);
-  const exceptionByKey = new Map((item.recurrenceExceptions ?? []).map((exception) => [exception.occurrenceKey, exception]));
-  if (item.courseSlots.length > 0) {
-    const expanded2 = [];
-    const cursor = new Date(rangeStart);
-    cursor.setHours(0, 0, 0, 0);
-    const endCursor = new Date(rangeEnd);
-    endCursor.setHours(23, 59, 59, 999);
-    while (cursor <= endCursor) {
-      const dateKey = localDateKey(cursor);
-      if (item.courseStartDate && dateKey < item.courseStartDate) {
-        cursor.setDate(cursor.getDate() + 1);
-        continue;
-      }
-      if (item.courseEndDate && dateKey > item.courseEndDate) {
-        cursor.setDate(cursor.getDate() + 1);
-        continue;
-      }
-      for (const slot of item.courseSlots) {
-        if (cursor.getDay() !== slot.weekday) continue;
-        const parity = slot.weekParity ?? "all";
-        if (parity !== "all" && semesterStartDate) {
-          const week = academicWeekNumber(cursor, semesterStartDate);
-          if (parity === "odd" && week % 2 === 0 || parity === "even" && week % 2 === 1) continue;
-        }
-        const start = new Date(cursor);
-        const [startHour, startMinute] = slot.startTime.split(":").map(Number);
-        start.setHours(startHour ?? 0, startMinute ?? 0, 0, 0);
-        const end = new Date(cursor);
-        const [endHour, endMinute] = slot.endTime.split(":").map(Number);
-        end.setHours(endHour ?? 0, endMinute ?? 0, 0, 0);
-        if (end <= start) end.setDate(end.getDate() + 1);
-        if (end < rangeStart || start > rangeEnd) continue;
-        const slotKey = slot.id ?? `${slot.weekday}-${slot.startTime}-${slot.endTime}`;
-        const key = `${item.id}:${slotKey}:${localDateKey(cursor)}`;
-        const exception = exceptionByKey.get(key);
-        if (exception?.action === "cancelled") continue;
-        const effectiveItem = exception?.override ? applyOverride(item, exception.override) : item;
-        const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : start;
-        const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : end;
-        expanded2.push(occurrenceFromItem(effectiveItem, effectiveStart, effectiveEnd, true, key, Boolean(exception?.override)));
-      }
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    return expanded2.sort((left, right) => left.start.getTime() - right.start.getTime());
-  }
-  if (!item.recurrence) {
-    const baseEnd = item.endAt ? new Date(item.endAt) : new Date(baseStart.getTime() + duration3);
-    if (baseEnd < rangeStart || baseStart > rangeEnd) return [];
-    return [occurrenceFromItem(item, baseStart, baseEnd, false, item.id)];
-  }
-  const options = {
-    dtstart: baseStart,
-    freq: frequencyToRRule(item.recurrence.frequency),
-    interval: item.recurrence.interval,
-    byweekday: item.recurrence.byWeekday.length > 0 ? item.recurrence.byWeekday.map((day) => JS_TO_RRULE_WEEKDAY[day]).filter((day) => day !== void 0) : void 0,
-    bymonthday: item.recurrence.byMonthDay.length > 0 ? item.recurrence.byMonthDay : void 0,
-    count: item.recurrence.count ?? void 0,
-    until: item.recurrence.until ? new Date(item.recurrence.until) : void 0
-  };
-  const rule = new RRule(options);
-  const occurrences = rule.between(rangeStart, rangeEnd, true);
-  const expanded = [];
-  for (const originalStart of occurrences) {
-    const parity = item.recurrence.weekParity ?? "all";
-    if (item.recurrence.frequency === "weekly" && parity !== "all" && semesterStartDate) {
-      const week = academicWeekNumber(originalStart, semesterStartDate);
-      if (parity === "odd" && week % 2 === 0 || parity === "even" && week % 2 === 1) continue;
-    }
-    const key = `${item.id}:${originalStart.toISOString()}`;
-    const exception = exceptionByKey.get(key);
-    if (exception?.action === "cancelled") continue;
-    const effectiveItem = exception?.override ? applyOverride(item, exception.override) : item;
-    const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : originalStart;
-    const effectiveDuration = exception?.override?.startAt || exception?.override?.endAt ? defaultDuration(effectiveItem) : duration3;
-    const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : new Date(effectiveStart.getTime() + effectiveDuration);
-    if (effectiveEnd < rangeStart || effectiveStart > rangeEnd) continue;
-    expanded.push(occurrenceFromItem(effectiveItem, effectiveStart, effectiveEnd, true, key, Boolean(exception?.override)));
-  }
-  return expanded;
-}
-function expandItems(items2, rangeStart, rangeEnd, semesterStartDate) {
-  return items2.flatMap((item) => expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate)).sort((left, right) => left.start.getTime() - right.start.getTime());
-}
-
-// packages/domain/src/conflicts.ts
-function rangesOverlap(left, right) {
-  if (left.allDay !== right.allDay) return false;
-  return left.start.getTime() < right.end.getTime() && left.end.getTime() > right.start.getTime();
-}
-function findConflicts(target, candidates, excludedIds = []) {
-  const excluded = new Set(excludedIds);
-  return candidates.filter((candidate) => !candidate.id || !excluded.has(candidate.id)).filter((candidate) => candidate.status !== "cancelled" && candidate.status !== "deleted" && candidate.status !== "completed").filter((candidate) => rangesOverlap(target, candidate)).map((candidate) => ({
-    candidate,
-    overlapStart: new Date(Math.max(target.start.getTime(), candidate.start.getTime())),
-    overlapEnd: new Date(Math.min(target.end.getTime(), candidate.end.getTime()))
-  })).sort((left, right) => left.overlapStart.getTime() - right.overlapStart.getTime());
-}
-function occurrenceToTimeRange(occurrence) {
-  return {
-    id: occurrence.itemId,
-    start: occurrence.start,
-    end: occurrence.end,
-    allDay: occurrence.allDay,
-    status: occurrence.item.status
-  };
-}
-
-// packages/domain/src/ics.ts
-var WEEKDAY_NAMES = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
-var pad2 = (value) => String(value).padStart(2, "0");
-var escapeIcs = (value) => value.replaceAll("\\", "\\\\").replaceAll("\n", "\\n").replaceAll(",", "\\,").replaceAll(";", "\\;");
-var unescapeIcs = (value) => value.replace(/\\n/gi, "\n").replace(/\\,/g, ",").replace(/\\;/g, ";").replace(/\\\\/g, "\\");
-function toIcsDate(value, allDay) {
-  const date7 = new Date(value);
-  if (allDay) return `${date7.getUTCFullYear()}${pad2(date7.getUTCMonth() + 1)}${pad2(date7.getUTCDate())}`;
-  return `${date7.getUTCFullYear()}${pad2(date7.getUTCMonth() + 1)}${pad2(date7.getUTCDate())}T${pad2(date7.getUTCHours())}${pad2(date7.getUTCMinutes())}${pad2(date7.getUTCSeconds())}Z`;
-}
-function recurrenceToRRule(recurrence) {
-  const parts = [`FREQ=${recurrence.frequency.toUpperCase()}`, `INTERVAL=${recurrence.interval}`];
-  if (recurrence.byWeekday.length > 0) parts.push(`BYDAY=${recurrence.byWeekday.map((day) => WEEKDAY_NAMES[day]).filter(Boolean).join(",")}`);
-  if (recurrence.byMonthDay.length > 0) parts.push(`BYMONTHDAY=${recurrence.byMonthDay.join(",")}`);
-  if (recurrence.count) parts.push(`COUNT=${recurrence.count}`);
-  if (recurrence.until) parts.push(`UNTIL=${toIcsDate(recurrence.until, false)}`);
-  return parts.join(";");
-}
-function parseRRule(value) {
-  const parts = new Map(value.split(";").map((part) => {
-    const [key, item] = part.split("=", 2);
-    return [key?.toUpperCase() ?? "", item ?? ""];
-  }));
-  const frequency = parts.get("FREQ")?.toLowerCase();
-  if (!["daily", "weekly", "monthly", "yearly"].includes(frequency ?? "")) return void 0;
-  const weekdayMap = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
-  return {
-    frequency,
-    interval: Number(parts.get("INTERVAL") ?? 1),
-    byWeekday: (parts.get("BYDAY") ?? "").split(",").filter(Boolean).map((day) => weekdayMap[day.replace(/^[-+]?\d+/, "")] ?? -1).filter((day) => day >= 0),
-    byMonthDay: (parts.get("BYMONTHDAY") ?? "").split(",").filter(Boolean).map(Number),
-    weekParity: "all",
-    count: parts.has("COUNT") ? Number(parts.get("COUNT")) : null,
-    until: parts.has("UNTIL") ? parseIcsDate(parts.get("UNTIL")) : null
-  };
-}
-function reminderToIcs(reminder) {
-  if (!reminder.enabled) return [];
-  const amount = reminder.offsetMinutes === 1440 ? "PT24H" : reminder.offsetMinutes === 0 ? "PT0M" : `PT${reminder.offsetMinutes}M`;
-  return ["BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:\u65E5\u7A0B\u63D0\u9192", `TRIGGER:-${amount}`, "END:VALARM"];
-}
-function itemToIcsLines(item, tags2) {
-  const lines = item.kind === "task" ? ["BEGIN:VTODO"] : ["BEGIN:VEVENT"];
-  lines.push(`UID:${item.id}@personal-calendar`, `DTSTAMP:${toIcsDate(item.updatedAt, false)}`, `SUMMARY:${escapeIcs(item.title)}`);
-  if (item.description) lines.push(`DESCRIPTION:${escapeIcs(item.description)}`);
-  if (item.location) lines.push(`LOCATION:${escapeIcs(item.location)}`);
-  if (item.startAt) lines.push(`DTSTART${item.isAllDay ? ";VALUE=DATE" : ""}:${toIcsDate(item.startAt, item.isAllDay)}`);
-  if (item.endAt) {
-    const end = item.isAllDay ? new Date(new Date(item.endAt).getTime() + 864e5).toISOString() : item.endAt;
-    lines.push(`DTEND${item.isAllDay ? ";VALUE=DATE" : ""}:${toIcsDate(end, item.isAllDay)}`);
-  }
-  if (item.dueAt) lines.push(`DUE:${toIcsDate(item.dueAt, false)}`);
-  if (item.recurrence) lines.push(`RRULE:${recurrenceToRRule(item.recurrence)}`);
-  if (item.status === "completed") lines.push("STATUS:COMPLETED");
-  if (item.completedAt) lines.push(`COMPLETED:${toIcsDate(item.completedAt, false)}`);
-  const priority = { urgent: 1, high: 3, medium: 5, low: 7, none: 0 }[item.priority];
-  if (priority) lines.push(`PRIORITY:${priority}`);
-  if (item.tagIds.length > 0) lines.push(`CATEGORIES:${item.tagIds.map((id) => escapeIcs(tags2.get(id) ?? id)).join(",")}`);
-  for (const reminder of item.reminders) lines.push(...reminderToIcs(reminder));
-  lines.push(item.kind === "task" ? "END:VTODO" : "END:VEVENT");
-  return lines;
-}
-function itemsToIcs(items2, tags2 = /* @__PURE__ */ new Map()) {
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "PRODID:-//Personal Calendar//ZH-CN//EN"];
-  for (const item of items2) lines.push(...itemToIcsLines(item, tags2));
-  lines.push("END:VCALENDAR");
-  return lines.map((line3) => {
-    const chunks = [];
-    for (let index2 = 0; index2 < line3.length; index2 += 73) chunks.push(line3.slice(index2, index2 + 73));
-    return chunks.join("\r\n ");
-  }).join("\r\n");
-}
-function unfoldIcs(input2) {
-  const lines = input2.replaceAll("\r\n", "\n").replaceAll("\r", "\n").split("\n");
-  const unfolded = [];
-  for (const line3 of lines) {
-    if ((line3.startsWith(" ") || line3.startsWith("	")) && unfolded.length > 0) unfolded[unfolded.length - 1] += line3.slice(1);
-    else unfolded.push(line3);
-  }
-  return unfolded;
-}
-function parseIcsDate(value) {
-  if (/^\d{8}$/.test(value)) return new Date(Date.UTC(Number(value.slice(0, 4)), Number(value.slice(4, 6)) - 1, Number(value.slice(6, 8)))).toISOString();
-  const match2 = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
-  if (!match2) return void 0;
-  const [, year2, month, day, hour, minute, second, zulu] = match2;
-  if (zulu) return new Date(Date.UTC(Number(year2), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second))).toISOString();
-  return new Date(Number(year2), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second)).toISOString();
-}
-function parseTrigger(value) {
-  const match2 = value.replace(/^-/, "").match(/^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?$/);
-  if (!match2) return void 0;
-  return Number(match2[1] ?? 0) * 1440 + Number(match2[2] ?? 0) * 60 + Number(match2[3] ?? 0);
-}
-function icsToItems(input2) {
-  const lines = unfoldIcs(input2);
-  const items2 = [];
-  let component = null;
-  let properties = /* @__PURE__ */ new Map();
-  let alarmTrigger;
-  const flush2 = () => {
-    if (!component) return;
-    const title = unescapeIcs(properties.get("SUMMARY") ?? "");
-    if (title) {
-      const triggerMinutes = alarmTrigger ? parseTrigger(alarmTrigger) : void 0;
-      const offset = triggerMinutes === void 0 ? void 0 : [0, 5, 15, 30, 60, 1440].includes(triggerMinutes) ? triggerMinutes : 15;
-      items2.push({
-        uid: properties.get("UID"),
-        kind: component === "VTODO" ? "task" : "event",
-        title,
-        description: unescapeIcs(properties.get("DESCRIPTION") ?? ""),
-        location: unescapeIcs(properties.get("LOCATION") ?? ""),
-        startAt: parseIcsDate(properties.get("DTSTART") ?? "") ?? null,
-        endAt: parseIcsDate(properties.get("DTEND") ?? "") ?? null,
-        dueAt: parseIcsDate(properties.get("DUE") ?? "") ?? null,
-        isAllDay: properties.get("DTSTART")?.startsWith(";") ?? false,
-        timezone: "Asia/Shanghai",
-        priority: "none",
-        status: properties.get("STATUS") === "COMPLETED" ? "completed" : "active",
-        completedAt: parseIcsDate(properties.get("COMPLETED") ?? "") ?? null,
-        autoRollover: false,
-        showInTimetable: false,
-        timetableColor: null,
-        courseSlots: [],
-        parentId: null,
-        recurrence: properties.get("RRULE") ? parseRRule(properties.get("RRULE")) ?? null : null,
-        tagIds: [],
-        reminders: offset === void 0 ? [] : [{ trigger: "before_start", offsetMinutes: offset, channels: ["in_app"], enabled: true }]
-      });
-    }
-    component = null;
-    properties = /* @__PURE__ */ new Map();
-    alarmTrigger = void 0;
-  };
-  for (const rawLine of lines) {
-    const line3 = rawLine.trim();
-    if (line3 === "BEGIN:VEVENT" || line3 === "BEGIN:VTODO") {
-      component = line3.slice(6);
-      properties = /* @__PURE__ */ new Map();
-      continue;
-    }
-    if (line3 === "END:VEVENT" || line3 === "END:VTODO") {
-      flush2();
-      continue;
-    }
-    if (line3 === "BEGIN:VALARM") {
-      alarmTrigger = void 0;
-      continue;
-    }
-    if (line3 === "END:VALARM") continue;
-    const separator = line3.indexOf(":");
-    if (separator < 0) continue;
-    const rawKey2 = line3.slice(0, separator);
-    const key = rawKey2.split(";", 1)[0]?.toUpperCase();
-    const value = line3.slice(separator + 1);
-    if (!key || !component) continue;
-    if (key === "TRIGGER") alarmTrigger = value;
-    else properties.set(key, value);
-  }
-  return items2;
-}
-
-// packages/domain/src/csv.ts
-function csvCell(value) {
-  const text2 = Array.isArray(value) || value && typeof value === "object" ? JSON.stringify(value) : value == null ? "" : String(value);
-  return `"${text2.replaceAll('"', '""')}"`;
-}
-function itemsToCsv(items2) {
-  const headers = ["uid", "kind", "title", "description", "location", "startAt", "endAt", "dueAt", "isAllDay", "timezone", "priority", "status", "completedAt", "autoRollover", "showInTimetable", "timetableColor", "courseStartDate", "courseEndDate", "courseSlots", "parentId", "recurrence", "tagIds", "reminders"];
-  const rows = items2.map((item) => [
-    `${item.id}@personal-calendar`,
-    item.kind,
-    item.title,
-    item.description,
-    item.location,
-    item.startAt ?? "",
-    item.endAt ?? "",
-    item.dueAt ?? "",
-    item.isAllDay,
-    item.timezone,
-    item.priority,
-    item.status,
-    item.completedAt ?? "",
-    item.showInTimetable,
-    item.timetableColor ?? "",
-    item.courseStartDate ?? "",
-    item.courseEndDate ?? "",
-    item.courseSlots,
-    item.parentId ?? "",
-    item.recurrence ?? "",
-    item.tagIds,
-    item.reminders
-  ].map(csvCell).join(","));
-  return [headers.join(","), ...rows].join("\r\n");
-}
-function parseCsvRows(input2) {
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let quoted = false;
-  for (let index2 = 0; index2 < input2.length; index2 += 1) {
-    const character = input2[index2];
-    const next = input2[index2 + 1];
-    if (quoted && character === '"' && next === '"') {
-      cell += '"';
-      index2 += 1;
-    } else if (character === '"') quoted = !quoted;
-    else if (!quoted && character === ",") {
-      row.push(cell);
-      cell = "";
-    } else if (!quoted && (character === "\n" || character === "\r")) {
-      if (character === "\r" && next === "\n") index2 += 1;
-      row.push(cell);
-      if (row.some((value) => value.length > 0)) rows.push(row);
-      row = [];
-      cell = "";
-    } else cell += character;
-  }
-  if (cell || row.length) {
-    row.push(cell);
-    rows.push(row);
-  }
-  return rows;
-}
-function safeJson(value, fallback2) {
-  if (!value) return fallback2;
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback2;
-  }
-}
-function csvToItems(input2) {
-  const rows = parseCsvRows(input2);
-  const headers = rows.shift() ?? [];
-  const index2 = new Map(headers.map((header, position) => [header, position]));
-  const value = (row, key) => row[index2.get(key) ?? -1] ?? "";
-  return rows.filter((row) => value(row, "title")).map((row) => ({
-    uid: value(row, "uid"),
-    kind: value(row, "kind") === "task" ? "task" : value(row, "kind") === "both" ? "both" : "event",
-    title: value(row, "title"),
-    description: value(row, "description"),
-    location: value(row, "location"),
-    startAt: value(row, "startAt") || null,
-    endAt: value(row, "endAt") || null,
-    dueAt: value(row, "dueAt") || null,
-    isAllDay: value(row, "isAllDay") === "true",
-    timezone: value(row, "timezone") || "Asia/Shanghai",
-    priority: value(row, "priority") || "none",
-    status: value(row, "status") || "active",
-    completedAt: value(row, "completedAt") || null,
-    autoRollover: value(row, "autoRollover") === "true",
-    showInTimetable: value(row, "showInTimetable") === "true",
-    timetableColor: value(row, "timetableColor") || null,
-    courseStartDate: value(row, "courseStartDate") || null,
-    courseEndDate: value(row, "courseEndDate") || null,
-    courseSlots: safeJson(value(row, "courseSlots"), []),
-    parentId: value(row, "parentId") || null,
-    recurrence: safeJson(value(row, "recurrence"), null),
-    tagIds: safeJson(value(row, "tagIds"), []),
-    reminders: safeJson(value(row, "reminders"), [])
-  }));
-}
-
-// packages/domain/src/ai.ts
-init_zod();
-var aiDraftSchema = external_exports.object({
-  kind: itemKindSchema.default("task"),
-  title: external_exports.string().trim().min(1).max(300),
-  description: external_exports.string().max(1e5).default(""),
-  location: external_exports.string().max(1e3).default(""),
-  startAt: external_exports.string().datetime({ offset: true }).nullable().default(null),
-  endAt: external_exports.string().datetime({ offset: true }).nullable().default(null),
-  dueAt: external_exports.string().datetime({ offset: true }).nullable().default(null),
-  isAllDay: external_exports.boolean().default(false),
-  timezone: external_exports.string().min(1).max(100).default("Asia/Shanghai"),
-  priority: prioritySchema.default("none"),
-  recurrence: recurrenceSchema.nullable().default(null),
-  reminderMinutes: external_exports.array(reminderOffsetSchema).max(6).default([]),
-  suggestedTagNames: external_exports.array(external_exports.string().trim().min(1).max(60)).max(20).default([]),
-  confidence: external_exports.number().min(0).max(1).default(0.5),
-  evidence: external_exports.string().max(2e3).default(""),
-  warnings: external_exports.array(external_exports.string().max(300)).max(20).default([])
-});
-var aiProviderResponseSchema = external_exports.object({
-  items: external_exports.array(aiDraftSchema).max(20).default([]),
-  transcript: external_exports.string().max(5e4).default("")
-});
-var aiUsageSchema = external_exports.object({
-  date: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  used: external_exports.number().int().nonnegative(),
-  limit: external_exports.number().int().positive(),
-  remaining: external_exports.number().int().nonnegative()
-});
-var aiStatusSchema = external_exports.object({
-  enabled: external_exports.boolean(),
-  configured: external_exports.boolean(),
-  provider: external_exports.string(),
-  textModel: external_exports.string(),
-  visionModel: external_exports.string(),
-  usage: aiUsageSchema
-});
-var aiExtractResponseSchema = external_exports.object({
-  drafts: external_exports.array(aiDraftSchema),
-  transcript: external_exports.string().default(""),
-  usage: aiUsageSchema,
-  provider: external_exports.string(),
-  model: external_exports.string()
-});
-
-// packages/domain/src/schedule.ts
-init_zod();
-var timeSchema = external_exports.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "\u65F6\u95F4\u5FC5\u987B\u4F7F\u7528 HH:mm \u683C\u5F0F");
-var schedulePeriodSchema = external_exports.object({
-  id: external_exports.string().uuid().optional(),
-  name: external_exports.string().trim().min(1).max(20),
-  startTime: timeSchema,
-  endTime: timeSchema,
-  sortOrder: external_exports.number().int().min(0).max(99)
-}).superRefine((value, ctx) => {
-  if (value.endTime <= value.startTime) ctx.addIssue({ code: "custom", path: ["endTime"], message: "\u7ED3\u675F\u65F6\u95F4\u5FC5\u987B\u665A\u4E8E\u5F00\u59CB\u65F6\u95F4" });
-});
-var schedulePeriodListSchema = external_exports.object({ periods: external_exports.array(schedulePeriodSchema).min(1).max(30) }).superRefine((value, ctx) => {
-  const orders = /* @__PURE__ */ new Set();
-  for (const period of value.periods) {
-    if (orders.has(period.sortOrder)) ctx.addIssue({ code: "custom", path: ["periods"], message: "\u8282\u6B21\u6392\u5E8F\u4E0D\u80FD\u91CD\u590D" });
-    orders.add(period.sortOrder);
-  }
-});
-var DEFAULT_SCHEDULE_PERIODS = [
-  { name: "1", startTime: "08:00", endTime: "08:45", sortOrder: 0 },
-  { name: "2", startTime: "08:50", endTime: "09:35", sortOrder: 1 },
-  { name: "3", startTime: "09:50", endTime: "10:35", sortOrder: 2 },
-  { name: "4", startTime: "10:40", endTime: "11:25", sortOrder: 3 },
-  { name: "5", startTime: "11:30", endTime: "12:15", sortOrder: 4 },
-  { name: "6", startTime: "13:30", endTime: "14:15", sortOrder: 5 },
-  { name: "7", startTime: "14:20", endTime: "15:05", sortOrder: 6 },
-  { name: "8", startTime: "15:20", endTime: "16:05", sortOrder: 7 },
-  { name: "9", startTime: "16:10", endTime: "16:55", sortOrder: 8 },
-  { name: "10", startTime: "18:30", endTime: "19:15", sortOrder: 9 }
-];
 
 // apps/api/src/services/items.ts
 function searchableText(input2) {
@@ -167317,6 +167338,7 @@ var config4 = external_exports.object({
   DB_POOL_MAX: external_exports.coerce.number().int().min(1).max(20).default(10),
   APP_URL: external_exports.string().url().default("http://localhost:5173"),
   SMTP_URL: external_exports.string().optional(),
+  BREVO_API_KEY: external_exports.string().optional(),
   SMTP_FROM: external_exports.string().default("Calendar <calendar@example.com>"),
   VAPID_PUBLIC_KEY: external_exports.string().optional(),
   VAPID_PRIVATE_KEY: external_exports.string().optional(),
@@ -167410,14 +167432,19 @@ async function sendChannels(workspaceId, itemId, deliveryId, channels, title, st
     }
   }
   if (channels.includes("email") && process.env.OWNER_EMAIL) {
-    const mailerInstance = getMailer();
-    if (mailerInstance) {
-      try {
-        await mailerInstance.sendMail({ from: config4.SMTP_FROM, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
+    try {
+      if (config4.BREVO_API_KEY) {
+        await sendBrevoEmail({ apiKey: config4.BREVO_API_KEY, sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: process.env.OWNER_EMAIL }, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
         delivered = true;
-      } catch (error64) {
-        errors.push(error64 instanceof Error ? error64.message : "mail failed");
+      } else {
+        const mailerInstance = getMailer();
+        if (mailerInstance) {
+          await mailerInstance.sendMail({ from: config4.SMTP_FROM, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
+          delivered = true;
+        }
       }
+    } catch (error64) {
+      errors.push(error64 instanceof Error ? error64.message : "mail failed");
     }
   }
   return errors.length > 0 && !delivered ? { delivered: false, error: errors.join("; ") } : { delivered, error: errors.length ? errors.join("; ") : void 0 };

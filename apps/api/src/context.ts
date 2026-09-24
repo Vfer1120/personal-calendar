@@ -1,6 +1,7 @@
 import { createDatabase, type Database } from "@calendar/db";
 import { eq, sql } from "drizzle-orm";
 import { user, workspaces } from "@calendar/db/schema";
+import { sendBrevoEmail } from "@calendar/domain";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { emailOTP } from "better-auth/plugins";
@@ -39,9 +40,16 @@ export const auth = betterAuth({
             throw new Error("请先配置 OWNER_EMAIL");
           }
         }
-        if (config.NODE_ENV !== "production" || !config.SMTP_URL) {
+        if (config.NODE_ENV !== "production") {
           console.info(`[auth] email OTP for ${email}: ${otp}`);
           return;
+        }
+        if (config.BREVO_API_KEY) {
+          await sendBrevoEmail({ apiKey: config.BREVO_API_KEY, sender: { name: "个人日程", email: config.OWNER_EMAIL ?? email }, to: email, subject: "个人日程登录验证码", text: `验证码：${otp}，5 分钟内有效。` });
+          return;
+        }
+        if (!config.SMTP_URL) {
+          throw new Error("未配置邮件服务");
         }
         const nodemailer = await import("nodemailer");
         const transporter = nodemailer.createTransport(config.SMTP_URL);

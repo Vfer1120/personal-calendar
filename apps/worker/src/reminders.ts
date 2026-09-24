@@ -2,7 +2,7 @@ import { and, eq, inArray, isNull, lte, or } from "drizzle-orm";
 import nodemailer from "nodemailer";
 import webpush from "web-push";
 import { appSettings, deliveries, itemTags, items, pushSubscriptions, recurrenceExceptions, reminderRules } from "@calendar/db/schema";
-import { expandItems, type ExpandedItem, type ExpandedOccurrence } from "@calendar/domain";
+import { expandItems, sendBrevoEmail, type ExpandedItem, type ExpandedOccurrence } from "@calendar/domain";
 import { db } from "./db";
 import { config } from "./config";
 
@@ -50,11 +50,15 @@ async function sendChannels(workspaceId: string, itemId: string, deliveryId: str
     }
   }
   if (channels.includes("email") && process.env.OWNER_EMAIL) {
-    const mailerInstance = getMailer();
-    if (mailerInstance) {
-      try { await mailerInstance.sendMail({ from: config.SMTP_FROM, to: process.env.OWNER_EMAIL, subject: message.title, text: message.body }); delivered = true; }
-      catch (error) { errors.push(error instanceof Error ? error.message : "mail failed"); }
-    }
+    try {
+      if (config.BREVO_API_KEY) {
+        await sendBrevoEmail({ apiKey: config.BREVO_API_KEY, sender: { name: "个人日程", email: process.env.OWNER_EMAIL }, to: process.env.OWNER_EMAIL, subject: message.title, text: message.body });
+        delivered = true;
+      } else {
+        const mailerInstance = getMailer();
+        if (mailerInstance) { await mailerInstance.sendMail({ from: config.SMTP_FROM, to: process.env.OWNER_EMAIL, subject: message.title, text: message.body }); delivered = true; }
+      }
+    } catch (error) { errors.push(error instanceof Error ? error.message : "mail failed"); }
   }
   return errors.length > 0 && !delivered ? { delivered: false, error: errors.join("; ") } : { delivered, error: errors.length ? errors.join("; ") : undefined };
 }
