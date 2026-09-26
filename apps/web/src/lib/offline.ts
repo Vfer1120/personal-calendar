@@ -91,10 +91,22 @@ export async function requestPersistentStorage(): Promise<boolean> {
   }
 }
 
+export async function requestBackgroundSync(): Promise<boolean> {
+  try {
+    if (!("serviceWorker" in navigator)) return false;
+    const registration = await navigator.serviceWorker.ready as ServiceWorkerRegistration & { sync?: { register: (tag: string) => Promise<void> } };
+    if (!registration.sync) return false;
+    await registration.sync.register("calendar-outbox");
+    return true;
+  } catch {
+    return false;
+  }
+}
 export async function queueMutation(mutation: Omit<SyncMutation, "clientMutationId">) {
   const db = await getDatabase();
   const clientMutationId = crypto.randomUUID();
   await db.outbox.add({ ...mutation, clientMutationId, createdAt: new Date().toISOString() } as OutboxEntry);
+  void requestBackgroundSync();
   return clientMutationId;
 }
 

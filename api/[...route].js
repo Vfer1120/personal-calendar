@@ -167299,24 +167299,56 @@ async function detectConflicts(workspaceId, candidate) {
   const start = new Date(candidate.startAt);
   const duration3 = candidate.endAt ? new Date(candidate.endAt).getTime() - start.getTime() : 36e5;
   const rangeStart = new Date(start.getTime() - 366 * 864e5);
-  const rangeEnd = new Date(start.getTime() + Math.max(duration3, 864e5) + 366 * 864e5);
+  const rangeEnd = new Date(
+    start.getTime() + Math.max(duration3, 864e5) + 366 * 864e5
+  );
   const semesterStartDate = await getSemesterStartDate(workspaceId);
-  const target = expandItems([candidate], rangeStart, rangeEnd, semesterStartDate);
-  const existing = expandItems(all.filter((item) => item.id !== candidate.id), rangeStart, rangeEnd, semesterStartDate);
+  const target = expandItems(
+    [candidate],
+    rangeStart,
+    rangeEnd,
+    semesterStartDate
+  );
+  const existing = expandItems(
+    all.filter((item) => item.id !== candidate.id),
+    rangeStart,
+    rangeEnd,
+    semesterStartDate
+  );
   const seen = /* @__PURE__ */ new Set();
-  return target.flatMap((occurrence) => findConflicts(occurrenceToTimeRange(occurrence), existing.map(occurrenceToTimeRange))).filter((conflict) => {
+  return target.flatMap(
+    (occurrence) => findConflicts(
+      occurrenceToTimeRange(occurrence),
+      existing.map(occurrenceToTimeRange)
+    )
+  ).filter((conflict) => {
     const key = `${conflict.candidate.id}:${conflict.overlapStart.toISOString()}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
-  }).slice(0, 20).map((conflict) => ({ id: conflict.candidate.id, title: all.find((item) => item.id === conflict.candidate.id)?.title ?? "\u91CD\u53E0\u65E5\u7A0B", startAt: conflict.overlapStart.toISOString(), endAt: conflict.overlapEnd.toISOString() }));
+  }).slice(0, 20).map((conflict) => ({
+    id: conflict.candidate.id,
+    title: all.find((item) => item.id === conflict.candidate.id)?.title ?? "\u91CD\u53E0\u65E5\u7A0B",
+    startAt: conflict.overlapStart.toISOString(),
+    endAt: conflict.overlapEnd.toISOString()
+  }));
 }
-var parseJsonError = (error64) => error64 instanceof ZodError ? { error: "VALIDATION_ERROR", details: error64.flatten() } : { error: "INVALID_REQUEST", message: error64 instanceof Error ? error64.message : "\u8BF7\u6C42\u89E3\u6790\u5931\u8D25" };
+var parseJsonError = (error64) => error64 instanceof ZodError ? { error: "VALIDATION_ERROR", details: error64.flatten() } : {
+  error: "INVALID_REQUEST",
+  message: error64 instanceof Error ? error64.message : "\u8BF7\u6C42\u89E3\u6790\u5931\u8D25"
+};
 itemsRoute.get("/", async (c5) => {
   const auth2 = c5.get("auth");
   const query = c5.req.query("q")?.toLowerCase();
-  let values = await loadItems(db, auth2.workspaceId, c5.req.query("includeDeleted") === "true");
-  if (query) values = values.filter((item) => `${item.title} ${item.description} ${item.location}`.toLowerCase().includes(query));
+  let values = await loadItems(
+    db,
+    auth2.workspaceId,
+    c5.req.query("includeDeleted") === "true"
+  );
+  if (query)
+    values = values.filter(
+      (item) => `${item.title} ${item.description} ${item.location}`.toLowerCase().includes(query)
+    );
   const kind = c5.req.query("kind");
   const status = c5.req.query("status");
   const priority = c5.req.query("priority");
@@ -167328,9 +167360,17 @@ itemsRoute.get("/", async (c5) => {
 itemsRoute.get("/occurrences", async (c5) => {
   const auth2 = c5.get("auth");
   const from = new Date(c5.req.query("from") ?? (/* @__PURE__ */ new Date()).toISOString());
-  const to = new Date(c5.req.query("to") ?? new Date(from.getTime() + 30 * 864e5).toISOString());
-  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to <= from) return c5.json({ error: "INVALID_RANGE" }, 400);
-  const occurrences = expandItems(await loadItems(db, auth2.workspaceId), from, to, await getSemesterStartDate(auth2.workspaceId)).map((occurrence) => ({
+  const to = new Date(
+    c5.req.query("to") ?? new Date(from.getTime() + 30 * 864e5).toISOString()
+  );
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to <= from)
+    return c5.json({ error: "INVALID_RANGE" }, 400);
+  const occurrences = expandItems(
+    await loadItems(db, auth2.workspaceId),
+    from,
+    to,
+    await getSemesterStartDate(auth2.workspaceId)
+  ).map((occurrence) => ({
     id: occurrence.id,
     occurrenceKey: occurrence.occurrenceKey,
     itemId: occurrence.itemId,
@@ -167349,6 +167389,241 @@ itemsRoute.get("/occurrences", async (c5) => {
   }));
   return c5.json({ occurrences });
 });
+var bulkActionSchema = external_exports.object({
+  ids: external_exports.array(external_exports.string().uuid()).min(1).max(200),
+  action: external_exports.enum(["status", "delete", "priority", "tags", "postpone"]),
+  status: external_exports.enum(["completed", "partial", "cancelled"]).optional(),
+  priority: prioritySchema.optional(),
+  addTagIds: external_exports.array(external_exports.string().uuid()).max(100).optional(),
+  removeTagIds: external_exports.array(external_exports.string().uuid()).max(100).optional(),
+  days: external_exports.number().int().min(1).max(365).optional(),
+  occurrenceKey: external_exports.string().nullable().optional()
+}).superRefine((value, ctx) => {
+  if (value.action === "status" && !value.status)
+    ctx.addIssue({ code: "custom", path: ["status"], message: "\u8BF7\u9009\u62E9\u72B6\u6001" });
+  if (value.action === "priority" && !value.priority)
+    ctx.addIssue({
+      code: "custom",
+      path: ["priority"],
+      message: "\u8BF7\u9009\u62E9\u4F18\u5148\u7EA7"
+    });
+  if (value.action === "tags" && (value.addTagIds?.length ?? 0) + (value.removeTagIds?.length ?? 0) === 0)
+    ctx.addIssue({
+      code: "custom",
+      path: ["addTagIds"],
+      message: "\u8BF7\u9009\u62E9\u8981\u6DFB\u52A0\u6216\u79FB\u9664\u7684\u6807\u7B7E"
+    });
+  if (value.action === "postpone" && !value.days)
+    ctx.addIssue({
+      code: "custom",
+      path: ["days"],
+      message: "\u8BF7\u9009\u62E9\u987A\u5EF6\u5929\u6570"
+    });
+});
+function currentOccurrenceKey(item, semesterStartDate) {
+  if (!item.recurrence) return null;
+  const now2 = /* @__PURE__ */ new Date();
+  const anchor2 = item.startAt ? new Date(item.startAt) : item.dueAt ? new Date(item.dueAt) : now2;
+  const rangeStart = new Date(
+    Math.min(now2.getTime(), anchor2.getTime()) - 864e5
+  );
+  const rangeEnd = new Date(
+    Math.max(now2.getTime(), anchor2.getTime()) + 31 * 864e5
+  );
+  const occurrences = expandItems(
+    [item],
+    rangeStart,
+    rangeEnd,
+    semesterStartDate
+  ).sort((left, right) => left.start.getTime() - right.start.getTime());
+  return occurrences.find(
+    (occurrence) => occurrence.start.getTime() >= now2.getTime() - 864e5
+  )?.occurrenceKey ?? occurrences[0]?.occurrenceKey ?? null;
+}
+function shiftedDate(value, days) {
+  return value ? new Date(new Date(value).getTime() + days * 864e5) : null;
+}
+itemsRoute.post("/bulk", async (c5) => {
+  try {
+    const auth2 = c5.get("auth");
+    const input2 = bulkActionSchema.parse(await c5.req.json());
+    const ids = [...new Set(input2.ids)];
+    const allItems = await loadItems(db, auth2.workspaceId, true);
+    const byId = new Map(allItems.map((item) => [item.id, item]));
+    const semesterStartDate = await getSemesterStartDate(auth2.workspaceId);
+    const updated = [];
+    const skipped = [];
+    const errors = [];
+    for (const id of ids) {
+      const item = byId.get(id);
+      if (!item) {
+        skipped.push({ id, reason: "NOT_FOUND" });
+        continue;
+      }
+      if (item.status === "deleted" || item.deletedAt) {
+        skipped.push({ id, reason: "DELETED" });
+        continue;
+      }
+      try {
+        if (input2.action === "status") {
+          let occurrenceKey = input2.occurrenceKey ?? null;
+          if (item.recurrence && !occurrenceKey)
+            occurrenceKey = currentOccurrenceKey(item, semesterStartDate);
+          if (item.recurrence && !occurrenceKey) {
+            skipped.push({ id, reason: "NO_CURRENT_OCCURRENCE" });
+            continue;
+          }
+          const resolved = await resolveItemOutcome(auth2.workspaceId, {
+            itemId: id,
+            occurrenceKey,
+            outcome: input2.status
+          });
+          if (!resolved) skipped.push({ id, reason: "NOT_FOUND" });
+          else updated.push(resolved);
+          continue;
+        }
+        if (input2.action === "delete") {
+          const [deleted] = await db.update(items).set({
+            deletedAt: /* @__PURE__ */ new Date(),
+            status: "deleted",
+            updatedAt: /* @__PURE__ */ new Date(),
+            version: sql`${items.version} + 1`
+          }).where(
+            and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))
+          ).returning();
+          if (!deleted) {
+            skipped.push({ id, reason: "NOT_FOUND" });
+            continue;
+          }
+          await writeChange(
+            db,
+            auth2.workspaceId,
+            "item",
+            id,
+            "delete",
+            deleted.version,
+            { id }
+          );
+          updated.push(
+            (await loadItems(db, auth2.workspaceId, true)).find(
+              (value) => value.id === id
+            )
+          );
+          continue;
+        }
+        if (input2.action === "priority") {
+          const [changed2] = await db.update(items).set({
+            priority: input2.priority,
+            updatedAt: /* @__PURE__ */ new Date(),
+            version: sql`${items.version} + 1`
+          }).where(
+            and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))
+          ).returning();
+          if (!changed2) {
+            skipped.push({ id, reason: "NOT_FOUND" });
+            continue;
+          }
+          await writeChange(
+            db,
+            auth2.workspaceId,
+            "item",
+            id,
+            "update",
+            changed2.version,
+            { priority: changed2.priority }
+          );
+          updated.push(
+            (await loadItems(db, auth2.workspaceId, true)).find(
+              (value) => value.id === id
+            )
+          );
+          continue;
+        }
+        if (input2.action === "tags") {
+          const available = new Set(
+            (await loadTags(db, auth2.workspaceId)).map((tag2) => tag2.id)
+          );
+          const additions = (input2.addTagIds ?? []).filter(
+            (tagId) => available.has(tagId)
+          );
+          const removals = new Set(
+            (input2.removeTagIds ?? []).filter((tagId) => available.has(tagId))
+          );
+          const nextTagIds = [
+            .../* @__PURE__ */ new Set([...item.tagIds, ...additions])
+          ].filter((tagId) => !removals.has(tagId));
+          const [changed2] = await db.update(items).set({ updatedAt: /* @__PURE__ */ new Date(), version: sql`${items.version} + 1` }).where(
+            and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))
+          ).returning();
+          if (!changed2) {
+            skipped.push({ id, reason: "NOT_FOUND" });
+            continue;
+          }
+          await replaceItemTags(db, id, nextTagIds);
+          await writeChange(
+            db,
+            auth2.workspaceId,
+            "item",
+            id,
+            "update",
+            changed2.version,
+            { tagIds: nextTagIds }
+          );
+          updated.push(
+            (await loadItems(db, auth2.workspaceId, true)).find(
+              (value) => value.id === id
+            )
+          );
+          continue;
+        }
+        if (item.recurrence) {
+          skipped.push({ id, reason: "RECURRING_ITEM_REQUIRES_OCCURRENCE" });
+          continue;
+        }
+        if (!item.startAt && !item.dueAt) {
+          skipped.push({ id, reason: "NO_SCHEDULE" });
+          continue;
+        }
+        const nextStartAt = shiftedDate(item.startAt ?? null, input2.days);
+        const nextEndAt = shiftedDate(item.endAt ?? null, input2.days);
+        const nextDueAt = shiftedDate(item.dueAt ?? null, input2.days);
+        const [changed] = await db.update(items).set({
+          startAt: nextStartAt,
+          endAt: nextEndAt,
+          dueAt: nextDueAt,
+          updatedAt: /* @__PURE__ */ new Date(),
+          version: sql`${items.version} + 1`
+        }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
+        if (!changed) {
+          skipped.push({ id, reason: "NOT_FOUND" });
+          continue;
+        }
+        await writeChange(
+          db,
+          auth2.workspaceId,
+          "item",
+          id,
+          "update",
+          changed.version,
+          { postponedDays: input2.days }
+        );
+        updated.push(
+          (await loadItems(db, auth2.workspaceId, true)).find(
+            (value) => value.id === id
+          )
+        );
+      } catch (error64) {
+        errors.push({
+          id,
+          message: error64 instanceof Error ? error64.message : "\u5904\u7406\u5931\u8D25"
+        });
+      }
+    }
+    return c5.json({ updated, skipped, errors });
+  } catch (error64) {
+    return c5.json(parseJsonError(error64), 400);
+  }
+});
 itemsRoute.get("/:id", async (c5) => {
   const auth2 = c5.get("auth");
   const all = await loadItems(db, auth2.workspaceId, true);
@@ -167362,15 +167637,33 @@ itemsRoute.post("/", async (c5) => {
     const parsedId = typeof raw2.id === "string" ? external_exports.string().uuid().safeParse(raw2.id) : null;
     const input2 = itemInputSchema.parse(raw2);
     const calendar = input2.calendarId ? { id: input2.calendarId } : await ensureDefaultCalendar(auth2.workspaceId);
-    const candidate = candidateItem({ ...input2, calendarId: calendar.id }, auth2.workspaceId, parsedId?.success ? parsedId.data : (0, import_node_crypto11.randomUUID)());
+    const candidate = candidateItem(
+      { ...input2, calendarId: calendar.id },
+      auth2.workspaceId,
+      parsedId?.success ? parsedId.data : (0, import_node_crypto11.randomUUID)()
+    );
     const conflicts = await detectConflicts(auth2.workspaceId, candidate);
-    if (conflicts.length > 0 && c5.req.query("force") !== "true") return c5.json({ error: "CONFLICT", conflicts }, 409);
-    const [created] = await db.insert(items).values({ id: parsedId?.success ? parsedId.data : void 0, ...itemValues({ ...input2, calendarId: calendar.id }, auth2.workspaceId) }).returning();
+    if (conflicts.length > 0 && c5.req.query("force") !== "true")
+      return c5.json({ error: "CONFLICT", conflicts }, 409);
+    const [created] = await db.insert(items).values({
+      id: parsedId?.success ? parsedId.data : void 0,
+      ...itemValues({ ...input2, calendarId: calendar.id }, auth2.workspaceId)
+    }).returning();
     if (!created) throw new Error("\u521B\u5EFA\u65E5\u7A0B\u5931\u8D25");
     await replaceItemTags(db, created.id, input2.tagIds);
     await replaceReminderRules(db, created.id, input2.reminders);
-    await writeChange(db, auth2.workspaceId, "item", created.id, "create", created.version, { id: created.id });
-    const item = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === created.id);
+    await writeChange(
+      db,
+      auth2.workspaceId,
+      "item",
+      created.id,
+      "create",
+      created.version,
+      { id: created.id }
+    );
+    const item = (await loadItems(db, auth2.workspaceId, true)).find(
+      (value) => value.id === created.id
+    );
     return c5.json({ item, conflicts }, 201);
   } catch (error64) {
     return c5.json(parseJsonError(error64), 400);
@@ -167380,23 +167673,49 @@ itemsRoute.patch("/:id", async (c5) => {
   try {
     const auth2 = c5.get("auth");
     const id = c5.req.param("id");
-    const existing = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id);
+    const existing = (await loadItems(db, auth2.workspaceId, true)).find(
+      (value) => value.id === id
+    );
     if (!existing) return c5.json({ error: "NOT_FOUND" }, 404);
     const raw2 = await c5.req.json();
     const baseVersion = typeof raw2.baseVersion === "number" ? raw2.baseVersion : void 0;
-    const changedFields = Object.keys(raw2).filter((key) => key !== "baseVersion");
-    const statusOnlyPatch = changedFields.every((key) => key === "status" || key === "completedAt");
-    if (baseVersion !== void 0 && baseVersion !== existing.version && !statusOnlyPatch) return c5.json({ error: "VERSION_CONFLICT", current: existing }, 409);
-    const input2 = itemInputSchema.parse({ ...existing, ...raw2, id: existing.id, workspaceId: existing.workspaceId });
+    const changedFields = Object.keys(raw2).filter(
+      (key) => key !== "baseVersion"
+    );
+    const statusOnlyPatch = changedFields.every(
+      (key) => key === "status" || key === "completedAt"
+    );
+    if (baseVersion !== void 0 && baseVersion !== existing.version && !statusOnlyPatch)
+      return c5.json({ error: "VERSION_CONFLICT", current: existing }, 409);
+    const input2 = itemInputSchema.parse({
+      ...existing,
+      ...raw2,
+      id: existing.id,
+      workspaceId: existing.workspaceId
+    });
     const candidate = candidateItem(input2, auth2.workspaceId, id);
     const conflicts = await detectConflicts(auth2.workspaceId, candidate);
-    if (conflicts.length > 0 && c5.req.query("force") !== "true") return c5.json({ error: "CONFLICT", conflicts }, 409);
-    const [updated] = await db.update(items).set({ ...itemValues(input2, auth2.workspaceId), version: sql`${items.version} + 1` }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
+    if (conflicts.length > 0 && c5.req.query("force") !== "true")
+      return c5.json({ error: "CONFLICT", conflicts }, 409);
+    const [updated] = await db.update(items).set({
+      ...itemValues(input2, auth2.workspaceId),
+      version: sql`${items.version} + 1`
+    }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
     if (!updated) return c5.json({ error: "NOT_FOUND" }, 404);
     await replaceItemTags(db, id, input2.tagIds);
     await replaceReminderRules(db, id, input2.reminders);
-    await writeChange(db, auth2.workspaceId, "item", id, "update", updated.version, { id });
-    const item = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id);
+    await writeChange(
+      db,
+      auth2.workspaceId,
+      "item",
+      id,
+      "update",
+      updated.version,
+      { id }
+    );
+    const item = (await loadItems(db, auth2.workspaceId, true)).find(
+      (value) => value.id === id
+    );
     return c5.json({ item, conflicts });
   } catch (error64) {
     return c5.json(parseJsonError(error64), 400);
@@ -167405,80 +167724,206 @@ itemsRoute.patch("/:id", async (c5) => {
 itemsRoute.post("/:id/course-slots", async (c5) => {
   const auth2 = c5.get("auth");
   const id = c5.req.param("id");
-  const existing = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id);
+  const existing = (await loadItems(db, auth2.workspaceId, true)).find(
+    (value) => value.id === id
+  );
   if (!existing) return c5.json({ error: "NOT_FOUND" }, 404);
-  const input2 = external_exports.object({ weekday: external_exports.number().int().min(0).max(6), startTime: external_exports.string(), endTime: external_exports.string(), weekParity: external_exports.enum(["all", "odd", "even"]) }).parse(await c5.req.json());
+  const input2 = external_exports.object({
+    weekday: external_exports.number().int().min(0).max(6),
+    startTime: external_exports.string(),
+    endTime: external_exports.string(),
+    weekParity: external_exports.enum(["all", "odd", "even"])
+  }).parse(await c5.req.json());
   const slot = { ...input2, id: (0, import_node_crypto11.randomUUID)() };
-  const [updated] = await db.update(items).set({ courseSlots: [...existing.courseSlots, slot], updatedAt: /* @__PURE__ */ new Date(), version: sql`${items.version} + 1` }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
+  const [updated] = await db.update(items).set({
+    courseSlots: [...existing.courseSlots, slot],
+    updatedAt: /* @__PURE__ */ new Date(),
+    version: sql`${items.version} + 1`
+  }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
   if (!updated) return c5.json({ error: "UPDATE_FAILED" }, 500);
-  await writeChange(db, auth2.workspaceId, "item", id, "update", updated.version, { courseSlot: slot.id });
-  return c5.json({ item: (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id), slot }, 201);
+  await writeChange(
+    db,
+    auth2.workspaceId,
+    "item",
+    id,
+    "update",
+    updated.version,
+    { courseSlot: slot.id }
+  );
+  return c5.json(
+    {
+      item: (await loadItems(db, auth2.workspaceId, true)).find(
+        (value) => value.id === id
+      ),
+      slot
+    },
+    201
+  );
 });
 itemsRoute.patch("/:id/course-slots/:slotId", async (c5) => {
   const auth2 = c5.get("auth");
   const id = c5.req.param("id");
   const slotId = c5.req.param("slotId");
-  const existing = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id);
+  const existing = (await loadItems(db, auth2.workspaceId, true)).find(
+    (value) => value.id === id
+  );
   if (!existing) return c5.json({ error: "NOT_FOUND" }, 404);
-  const slotIndex = existing.courseSlots.findIndex((slot) => slot.id === slotId);
+  const slotIndex = existing.courseSlots.findIndex(
+    (slot) => slot.id === slotId
+  );
   if (slotIndex < 0) return c5.json({ error: "SLOT_NOT_FOUND" }, 404);
-  const patch = external_exports.object({ weekday: external_exports.number().int().min(0).max(6), startTime: external_exports.string(), endTime: external_exports.string(), weekParity: external_exports.enum(["all", "odd", "even"]) }).partial().parse(await c5.req.json());
+  const patch = external_exports.object({
+    weekday: external_exports.number().int().min(0).max(6),
+    startTime: external_exports.string(),
+    endTime: external_exports.string(),
+    weekParity: external_exports.enum(["all", "odd", "even"])
+  }).partial().parse(await c5.req.json());
   const nextSlot = { ...existing.courseSlots[slotIndex], ...patch };
-  const courseSlots = existing.courseSlots.map((slot, index2) => index2 === slotIndex ? nextSlot : slot);
-  const [updated] = await db.update(items).set({ courseSlots, updatedAt: /* @__PURE__ */ new Date(), version: sql`${items.version} + 1` }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
+  const courseSlots = existing.courseSlots.map(
+    (slot, index2) => index2 === slotIndex ? nextSlot : slot
+  );
+  const [updated] = await db.update(items).set({
+    courseSlots,
+    updatedAt: /* @__PURE__ */ new Date(),
+    version: sql`${items.version} + 1`
+  }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
   if (!updated) return c5.json({ error: "UPDATE_FAILED" }, 500);
-  await writeChange(db, auth2.workspaceId, "item", id, "update", updated.version, { courseSlot: slotId });
-  return c5.json({ item: (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id), slot: nextSlot });
+  await writeChange(
+    db,
+    auth2.workspaceId,
+    "item",
+    id,
+    "update",
+    updated.version,
+    { courseSlot: slotId }
+  );
+  return c5.json({
+    item: (await loadItems(db, auth2.workspaceId, true)).find(
+      (value) => value.id === id
+    ),
+    slot: nextSlot
+  });
 });
 itemsRoute.delete("/:id/course-slots/:slotId", async (c5) => {
   const auth2 = c5.get("auth");
   const id = c5.req.param("id");
   const slotId = c5.req.param("slotId");
-  const existing = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id);
+  const existing = (await loadItems(db, auth2.workspaceId, true)).find(
+    (value) => value.id === id
+  );
   if (!existing) return c5.json({ error: "NOT_FOUND" }, 404);
   const courseSlots = existing.courseSlots.filter((slot) => slot.id !== slotId);
-  if (courseSlots.length === existing.courseSlots.length) return c5.json({ error: "SLOT_NOT_FOUND" }, 404);
+  if (courseSlots.length === existing.courseSlots.length)
+    return c5.json({ error: "SLOT_NOT_FOUND" }, 404);
   if (courseSlots.length === 0) {
-    const [deleted] = await db.update(items).set({ courseSlots: [], status: "deleted", deletedAt: /* @__PURE__ */ new Date(), updatedAt: /* @__PURE__ */ new Date(), version: sql`${items.version} + 1` }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
+    const [deleted] = await db.update(items).set({
+      courseSlots: [],
+      status: "deleted",
+      deletedAt: /* @__PURE__ */ new Date(),
+      updatedAt: /* @__PURE__ */ new Date(),
+      version: sql`${items.version} + 1`
+    }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
     return c5.json({ deleted: Boolean(deleted), item: null });
   }
-  const [updated] = await db.update(items).set({ courseSlots, updatedAt: /* @__PURE__ */ new Date(), version: sql`${items.version} + 1` }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
-  return c5.json({ deleted: false, item: updated ? (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id) : null });
+  const [updated] = await db.update(items).set({
+    courseSlots,
+    updatedAt: /* @__PURE__ */ new Date(),
+    version: sql`${items.version} + 1`
+  }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
+  return c5.json({
+    deleted: false,
+    item: updated ? (await loadItems(db, auth2.workspaceId, true)).find(
+      (value) => value.id === id
+    ) : null
+  });
 });
 itemsRoute.delete("/:id", async (c5) => {
   const auth2 = c5.get("auth");
   const id = c5.req.param("id");
   const [existing] = await db.select().from(items).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).limit(1);
   if (!existing) return c5.json({ error: "NOT_FOUND" }, 404);
-  if (existing.status === "deleted" || existing.deletedAt) return c5.json({ deletedAt: existing.deletedAt, alreadyDeleted: true });
-  const [deleted] = await db.update(items).set({ deletedAt: /* @__PURE__ */ new Date(), status: "deleted", updatedAt: /* @__PURE__ */ new Date(), version: sql`${items.version} + 1` }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
+  if (existing.status === "deleted" || existing.deletedAt)
+    return c5.json({ deletedAt: existing.deletedAt, alreadyDeleted: true });
+  const [deleted] = await db.update(items).set({
+    deletedAt: /* @__PURE__ */ new Date(),
+    status: "deleted",
+    updatedAt: /* @__PURE__ */ new Date(),
+    version: sql`${items.version} + 1`
+  }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId))).returning();
   if (!deleted) return c5.json({ error: "DELETE_FAILED" }, 500);
-  await writeChange(db, auth2.workspaceId, "item", id, "delete", deleted.version, { id });
+  await writeChange(
+    db,
+    auth2.workspaceId,
+    "item",
+    id,
+    "delete",
+    deleted.version,
+    { id }
+  );
   return c5.json({ deletedAt: deleted.deletedAt });
 });
 itemsRoute.post("/:id/restore", async (c5) => {
   const auth2 = c5.get("auth");
   const id = c5.req.param("id");
-  const [restored] = await db.update(items).set({ deletedAt: null, status: "active", updatedAt: /* @__PURE__ */ new Date(), version: sql`${items.version} + 1` }).where(and(eq(items.id, id), eq(items.workspaceId, auth2.workspaceId), eq(items.status, "deleted"))).returning();
+  const [restored] = await db.update(items).set({
+    deletedAt: null,
+    status: "active",
+    updatedAt: /* @__PURE__ */ new Date(),
+    version: sql`${items.version} + 1`
+  }).where(
+    and(
+      eq(items.id, id),
+      eq(items.workspaceId, auth2.workspaceId),
+      eq(items.status, "deleted")
+    )
+  ).returning();
   if (!restored) return c5.json({ error: "NOT_FOUND" }, 404);
-  await writeChange(db, auth2.workspaceId, "item", id, "restore", restored.version, { id });
+  await writeChange(
+    db,
+    auth2.workspaceId,
+    "item",
+    id,
+    "restore",
+    restored.version,
+    { id }
+  );
   return c5.json({ restored: true });
 });
 itemsRoute.post("/:id/copy", async (c5) => {
   const auth2 = c5.get("auth");
   const id = c5.req.param("id");
-  const source = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === id);
+  const source = (await loadItems(db, auth2.workspaceId, true)).find(
+    (value) => value.id === id
+  );
   if (!source) return c5.json({ error: "NOT_FOUND" }, 404);
   const body = await c5.req.json().catch(() => ({}));
   const duration3 = source.startAt && source.endAt ? new Date(source.endAt).getTime() - new Date(source.startAt).getTime() : 36e5;
   const startAt = body.startAt ?? (source.startAt ? new Date(new Date(source.startAt).getTime() + 864e5).toISOString() : null);
-  const input2 = { ...source, id: void 0, title: `${source.title}\uFF08\u526F\u672C\uFF09`, startAt, endAt: startAt ? new Date(new Date(startAt).getTime() + duration3).toISOString() : source.endAt, status: "active", completedAt: null };
+  const input2 = {
+    ...source,
+    id: void 0,
+    title: `${source.title}\uFF08\u526F\u672C\uFF09`,
+    startAt,
+    endAt: startAt ? new Date(new Date(startAt).getTime() + duration3).toISOString() : source.endAt,
+    status: "active",
+    completedAt: null
+  };
   const [created] = await db.insert(items).values(itemValues(input2, auth2.workspaceId)).returning();
   if (!created) return c5.json({ error: "COPY_FAILED" }, 500);
   await replaceItemTags(db, created.id, source.tagIds);
   await replaceReminderRules(db, created.id, source.reminders);
-  await writeChange(db, auth2.workspaceId, "item", created.id, "create", created.version, { copiedFrom: id });
-  const item = (await loadItems(db, auth2.workspaceId, true)).find((value) => value.id === created.id);
+  await writeChange(
+    db,
+    auth2.workspaceId,
+    "item",
+    created.id,
+    "create",
+    created.version,
+    { copiedFrom: id }
+  );
+  const item = (await loadItems(db, auth2.workspaceId, true)).find(
+    (value) => value.id === created.id
+  );
   return c5.json({ item }, 201);
 });
 itemsRoute.put("/:id/exceptions/:occurrenceKey", async (c5) => {
@@ -167489,16 +167934,32 @@ itemsRoute.put("/:id/exceptions/:occurrenceKey", async (c5) => {
   if (!item) return c5.json({ error: "NOT_FOUND" }, 404);
   const body = await c5.req.json();
   const action = body.action ?? "override";
-  const [exception] = await db.insert(recurrenceExceptions).values({ itemId, occurrenceKey, action, override: body.override ?? null }).onConflictDoUpdate({ target: [recurrenceExceptions.itemId, recurrenceExceptions.occurrenceKey], set: { action, override: body.override ?? null, updatedAt: /* @__PURE__ */ new Date() } }).returning();
+  const [exception] = await db.insert(recurrenceExceptions).values({ itemId, occurrenceKey, action, override: body.override ?? null }).onConflictDoUpdate({
+    target: [recurrenceExceptions.itemId, recurrenceExceptions.occurrenceKey],
+    set: { action, override: body.override ?? null, updatedAt: /* @__PURE__ */ new Date() }
+  }).returning();
   return c5.json({ exception });
 });
 itemsRoute.get("/:id/rollover-suggestions", async (c5) => {
-  const suggestions = await getRolloverSuggestions(c5.get("auth").workspaceId, c5.req.param("id"), c5.req.query("occurrenceKey"));
+  const suggestions = await getRolloverSuggestions(
+    c5.get("auth").workspaceId,
+    c5.req.param("id"),
+    c5.req.query("occurrenceKey")
+  );
   return c5.json({ suggestions });
 });
 itemsRoute.post("/:id/resolve", async (c5) => {
-  const input2 = external_exports.object({ occurrenceKey: external_exports.string().nullable().optional(), outcome: external_exports.enum(["completed", "partial", "postponed", "cancelled"]), startAt: external_exports.string().datetime({ offset: true }).nullable().optional(), endAt: external_exports.string().datetime({ offset: true }).nullable().optional(), dueAt: external_exports.string().datetime({ offset: true }).nullable().optional() }).parse(await c5.req.json());
-  const item = await resolveItemOutcome(c5.get("auth").workspaceId, { itemId: c5.req.param("id"), ...input2 });
+  const input2 = external_exports.object({
+    occurrenceKey: external_exports.string().nullable().optional(),
+    outcome: external_exports.enum(["completed", "partial", "postponed", "cancelled"]),
+    startAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
+    endAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
+    dueAt: external_exports.string().datetime({ offset: true }).nullable().optional()
+  }).parse(await c5.req.json());
+  const item = await resolveItemOutcome(c5.get("auth").workspaceId, {
+    itemId: c5.req.param("id"),
+    ...input2
+  });
   if (!item) return c5.json({ error: "NOT_FOUND" }, 404);
   return c5.json({ item });
 });

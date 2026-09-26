@@ -14,7 +14,7 @@ import { ApiError, api, apiJson } from "./lib/api";
 import { readableTextColor } from "./lib/colors";
 import { PRIORITY_META } from "./lib/priority";
 import { useCalendarDragAutoScroll, type DragPreview } from "./hooks/useCalendarDragAutoScroll";
-import { bootstrapOfflineData, cacheSettings, clearOfflineData, configureOfflineScope, getCachedItems, getCachedSettings, getCachedTags, getLastSession, pullChanges, queueMutation, requestPersistentStorage, saveLastSession, upsertCachedItem } from "./lib/offline";
+import { bootstrapOfflineData, cacheSettings, clearOfflineData, configureOfflineScope, flushOutbox, getCachedItems, getCachedSettings, getCachedTags, getLastSession, pullChanges, queueMutation, requestPersistentStorage, saveLastSession, upsertCachedItem } from "./lib/offline";
 import { findById, replaceById } from "./lib/itemCache";
 import { normalizeOccurrenceTimes } from "./lib/calendarDrag";
 import { AuthScreen } from "./components/AuthScreen";
@@ -102,7 +102,7 @@ function CalendarApp({ demoMode, demoExpiresAt, userId, offlineSession }: { demo
   useEffect(() => { void requestPersistentStorage(); }, [userId]);
   useEffect(() => { if (!offlineSession) return; setNotice("当前离线，正在使用本机数据"); }, [offlineSession]);
   useEffect(() => { if (!notice) return; const timer = window.setTimeout(() => setNotice(""), 4000); return () => window.clearTimeout(timer); }, [notice]);
-  useEffect(() => { const on = () => { setOnline(true); void pullChanges().then(() => queryClient.invalidateQueries()); }; const off = () => setOnline(false); window.addEventListener("online", on); window.addEventListener("offline", off); return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); }; }, [queryClient]);
+  useEffect(() => { const on = () => { setOnline(true); void flushOutbox().then(() => pullChanges()).then(() => queryClient.invalidateQueries()); }; const off = () => setOnline(false); window.addEventListener("online", on); window.addEventListener("offline", off); return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); }; }, [queryClient]);
   useEffect(() => { const handler = (event: KeyboardEvent) => { if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) return; if (event.key.toLowerCase() === "c") openNew(); if (event.key.toLowerCase() === "t") goToday(); if (event.key.toLowerCase() === "d") setMode("day"); if (event.key.toLowerCase() === "w") setMode("week"); if (event.key.toLowerCase() === "m") setMode("month"); if (event.key.toLowerCase() === "a") setMode("agenda"); if (event.key === "/") { event.preventDefault(); searchRef.current?.focus(); } }; window.addEventListener("keydown", handler); return () => window.removeEventListener("keydown", handler); });
   useEffect(() => { calendarRef.current?.getApi().changeView(modeToView(mode, window.innerWidth < 768)); }, [mode]);
   useEffect(() => { const node = appHeaderRef.current; if (!node) return; const update = () => setCalendarHeaderOffset(node.getBoundingClientRect().height); update(); const observer = new ResizeObserver(update); observer.observe(node); window.addEventListener("resize", update); return () => { observer.disconnect(); window.removeEventListener("resize", update); }; }, [mode, page]);
@@ -128,7 +128,7 @@ function CalendarApp({ demoMode, demoExpiresAt, userId, offlineSession }: { demo
   async function resetDemo() { await apiJson("/api/v1/demo/reset", "POST"); await clearOfflineData(); await queryClient.invalidateQueries(); setNotice("示例数据已重置"); }
   async function leaveDemo() { await apiJson("/api/v1/demo/leave", "POST"); await clearOfflineData(); window.location.reload(); }
   function writeItemCache(item: Item | ExpandedItem) {
-    queryClient.setQueryData<ExpandedItem[]>(["items"], (current) => replaceById(current, item as ExpandedItem));
+    queryClient.setQueryData<ExpandedItem[]>(["items", userId], (current) => replaceById(current, item as ExpandedItem));
     queryClient.setQueriesData<OccurrenceView[]>({ queryKey: ["occurrences"] }, (current) => current?.map((value) => value.itemId === item.id ? { ...value, status: item.status } : value));
   }
   function setTaskPending(id: string, pending: boolean) {
@@ -137,7 +137,7 @@ function CalendarApp({ demoMode, demoExpiresAt, userId, offlineSession }: { demo
     setPendingTaskIds(new Set(pendingTaskIdsRef.current));
   }
   function handleSaved(item: Item) { writeItemCache(item); void queryClient.invalidateQueries({ queryKey: ["occurrences"] }); }
-  function handleDeleted(id: string) { queryClient.setQueryData<ExpandedItem[]>(["items"], (current) => (current ?? []).filter((value) => value.id !== id)); queryClient.setQueriesData<OccurrenceView[]>({ queryKey: ["occurrences"] }, (current) => current?.filter((value) => value.itemId !== id)); void queryClient.invalidateQueries({ queryKey: ["items"] }); void queryClient.invalidateQueries({ queryKey: ["occurrences"] }); }
+  function handleDeleted(id: string) { queryClient.setQueryData<ExpandedItem[]>(["items", userId], (current) => (current ?? []).filter((value) => value.id !== id)); queryClient.setQueriesData<OccurrenceView[]>({ queryKey: ["occurrences"] }, (current) => current?.filter((value) => value.itemId !== id)); void queryClient.invalidateQueries({ queryKey: ["items", userId] }); void queryClient.invalidateQueries({ queryKey: ["occurrences"] }); }
   function goToday() { const today = new Date(); setPickerDate(today); setAnchor(today); if (mode !== "course") calendarRef.current?.getApi().today(); }
   function jumpToDate(value: string) { if (!value) return; const date = parseLocalDate(value); if (Number.isNaN(date.getTime())) return; setPickerDate(date); setAnchor(date); if (mode !== "course") calendarRef.current?.getApi().gotoDate(date); }
   function shift(direction: number) { if (mode === "course") { const date = new Date(anchor); date.setDate(date.getDate() + direction * 7); setAnchor(date); setPickerDate(date); return; } const calendar = calendarRef.current?.getApi(); if (!calendar) return; if (mode === "week" && window.innerWidth < 768) { const date = new Date(anchor); date.setDate(date.getDate() + direction * 7); calendar.gotoDate(date); return; } if (direction < 0) calendar.prev(); else calendar.next(); }
@@ -279,10 +279,10 @@ function CalendarApp({ demoMode, demoExpiresAt, userId, offlineSession }: { demo
     setTaskPending(item.id, true);
     try {
       await Promise.all([
-        queryClient.cancelQueries({ queryKey: ["items"] }),
+        queryClient.cancelQueries({ queryKey: ["items", userId] }),
         queryClient.cancelQueries({ queryKey: ["occurrences"] })
       ]);
-      const latest = findById(queryClient.getQueryData<ExpandedItem[]>(["items"]), item.id) ?? item;
+      const latest = findById(queryClient.getQueryData<ExpandedItem[]>(["items", userId]), item.id) ?? item;
       const completed = latest.status !== "completed";
       const optimistic = { ...latest, status: completed ? "completed" as const : "active" as const, completedAt: completed ? new Date().toISOString() : null } as ExpandedItem;
       writeItemCache(optimistic);
