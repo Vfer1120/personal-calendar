@@ -166804,7 +166804,12 @@ function getMailer() {
   mailer ??= import_nodemailer.default.createTransport(config4.SMTP_URL);
   return mailer;
 }
-if (config4.VAPID_PUBLIC_KEY && config4.VAPID_PRIVATE_KEY) import_web_push.default.setVapidDetails(config4.VAPID_SUBJECT, config4.VAPID_PUBLIC_KEY, config4.VAPID_PRIVATE_KEY);
+if (config4.VAPID_PUBLIC_KEY && config4.VAPID_PRIVATE_KEY)
+  import_web_push.default.setVapidDetails(
+    config4.VAPID_SUBJECT,
+    config4.VAPID_PUBLIC_KEY,
+    config4.VAPID_PRIVATE_KEY
+  );
 async function loadExpandedItems() {
   const rows = await db2.select().from(items).where(inArray(items.status, ["active", "partial"]));
   if (rows.length === 0) return [];
@@ -166815,11 +166820,17 @@ async function loadExpandedItems() {
     db2.select().from(recurrenceExceptions).where(inArray(recurrenceExceptions.itemId, ids))
   ]);
   const tagMap = /* @__PURE__ */ new Map();
-  for (const link of links) tagMap.set(link.itemId, [...tagMap.get(link.itemId) ?? [], link.tagId]);
+  for (const link of links)
+    tagMap.set(link.itemId, [...tagMap.get(link.itemId) ?? [], link.tagId]);
   const ruleMap = /* @__PURE__ */ new Map();
-  for (const rule of rules) ruleMap.set(rule.itemId, [...ruleMap.get(rule.itemId) ?? [], rule]);
+  for (const rule of rules)
+    ruleMap.set(rule.itemId, [...ruleMap.get(rule.itemId) ?? [], rule]);
   const exceptionMap = /* @__PURE__ */ new Map();
-  for (const exception of exceptions) exceptionMap.set(exception.itemId, [...exceptionMap.get(exception.itemId) ?? [], exception]);
+  for (const exception of exceptions)
+    exceptionMap.set(exception.itemId, [
+      ...exceptionMap.get(exception.itemId) ?? [],
+      exception
+    ]);
   return rows.map((row) => ({
     id: row.id,
     workspaceId: row.workspaceId,
@@ -166845,17 +166856,37 @@ async function loadExpandedItems() {
     courseSlots: row.courseSlots,
     timetableColor: row.timetableColor,
     tagIds: tagMap.get(row.id) ?? [],
-    reminders: (ruleMap.get(row.id) ?? []).map((rule) => ({ id: rule.id, trigger: rule.trigger, offsetMinutes: rule.offsetMinutes, channels: rule.channels, repeatEveryMinutes: rule.repeatEveryMinutes, enabled: rule.enabled })),
+    reminders: (ruleMap.get(row.id) ?? []).map((rule) => ({
+      id: rule.id,
+      trigger: rule.trigger,
+      offsetMinutes: rule.offsetMinutes,
+      channels: rule.channels,
+      repeatEveryMinutes: rule.repeatEveryMinutes,
+      enabled: rule.enabled
+    })),
     version: row.version,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     deletedAt: row.deletedAt?.toISOString() ?? null,
-    recurrenceExceptions: (exceptionMap.get(row.id) ?? []).map((exception) => ({ id: exception.id, itemId: exception.itemId, occurrenceKey: exception.occurrenceKey, action: exception.action, override: exception.override ?? null }))
+    recurrenceExceptions: (exceptionMap.get(row.id) ?? []).map((exception) => ({
+      id: exception.id,
+      itemId: exception.itemId,
+      occurrenceKey: exception.occurrenceKey,
+      action: exception.action,
+      override: exception.override ?? null
+    }))
   }));
 }
 function messageFor(title, start, location) {
-  const time6 = new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Shanghai" }).format(start);
-  return { title: `\u65E5\u7A0B\u63D0\u9192\uFF1A${title}`, body: `${time6}${location ? ` \xB7 ${location}` : ""}` };
+  const time6 = new Intl.DateTimeFormat("zh-CN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Shanghai"
+  }).format(start);
+  return {
+    title: `\u65E5\u7A0B\u63D0\u9192\uFF1A${title}`,
+    body: `${time6}${location ? ` \xB7 ${location}` : ""}`
+  };
 }
 async function sendChannels(workspaceId, itemId, deliveryId, channels, title, start, location) {
   const message2 = messageFor(title, start, location);
@@ -166866,30 +166897,67 @@ async function sendChannels(workspaceId, itemId, deliveryId, channels, title, st
     const subscriptions = await db2.select().from(pushSubscriptions).where(eq(pushSubscriptions.workspaceId, workspaceId));
     for (const subscription of subscriptions) {
       try {
-        await import_web_push.default.sendNotification({ endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } }, JSON.stringify({ title: message2.title, body: message2.body, url: `/?item=${itemId}`, tag: itemId, deliveryId }));
+        await import_web_push.default.sendNotification(
+          {
+            endpoint: subscription.endpoint,
+            keys: { p256dh: subscription.p256dh, auth: subscription.auth }
+          },
+          JSON.stringify({
+            title: message2.title,
+            body: message2.body,
+            url: `/?item=${itemId}`,
+            tag: itemId,
+            deliveryId
+          })
+        );
         delivered = true;
       } catch (error64) {
         errors.push(error64 instanceof Error ? error64.message : "push failed");
         const statusCode = error64.statusCode;
-        if (statusCode === 404 || statusCode === 410) await db2.delete(pushSubscriptions).where(eq(pushSubscriptions.id, subscription.id));
+        if (statusCode === 404 || statusCode === 410)
+          await db2.delete(pushSubscriptions).where(eq(pushSubscriptions.id, subscription.id));
       }
     }
   }
   if (channels.includes("email") && process.env.OWNER_EMAIL) {
     try {
       if (config4.MAILJET_API_KEY && config4.MAILJET_SECRET_KEY) {
-        await sendMailjetEmail({ apiKey: config4.MAILJET_API_KEY, secretKey: config4.MAILJET_SECRET_KEY, sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: process.env.OWNER_EMAIL }, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
+        await sendMailjetEmail({
+          apiKey: config4.MAILJET_API_KEY,
+          secretKey: config4.MAILJET_SECRET_KEY,
+          sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: process.env.OWNER_EMAIL },
+          to: process.env.OWNER_EMAIL,
+          subject: message2.title,
+          text: message2.body
+        });
         delivered = true;
       } else if (config4.SMTP2GO_API_KEY) {
-        await sendSmtp2goEmail({ apiKey: config4.SMTP2GO_API_KEY, sender: `\u4E2A\u4EBA\u65E5\u7A0B <${process.env.OWNER_EMAIL}>`, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
+        await sendSmtp2goEmail({
+          apiKey: config4.SMTP2GO_API_KEY,
+          sender: `\u4E2A\u4EBA\u65E5\u7A0B <${process.env.OWNER_EMAIL}>`,
+          to: process.env.OWNER_EMAIL,
+          subject: message2.title,
+          text: message2.body
+        });
         delivered = true;
       } else if (config4.BREVO_API_KEY) {
-        await sendBrevoEmail({ apiKey: config4.BREVO_API_KEY, sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: process.env.OWNER_EMAIL }, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
+        await sendBrevoEmail({
+          apiKey: config4.BREVO_API_KEY,
+          sender: { name: "\u4E2A\u4EBA\u65E5\u7A0B", email: process.env.OWNER_EMAIL },
+          to: process.env.OWNER_EMAIL,
+          subject: message2.title,
+          text: message2.body
+        });
         delivered = true;
       } else {
         const mailerInstance = getMailer();
         if (mailerInstance) {
-          await mailerInstance.sendMail({ from: config4.SMTP_FROM, to: process.env.OWNER_EMAIL, subject: message2.title, text: message2.body });
+          await mailerInstance.sendMail({
+            from: config4.SMTP_FROM,
+            to: process.env.OWNER_EMAIL,
+            subject: message2.title,
+            text: message2.body
+          });
           delivered = true;
         }
       }
@@ -166900,54 +166968,133 @@ async function sendChannels(workspaceId, itemId, deliveryId, channels, title, st
   return errors.length > 0 && !delivered ? { delivered: false, error: errors.join("; ") } : { delivered, error: errors.length ? errors.join("; ") : void 0 };
 }
 async function sendTestPush(workspaceId) {
-  if (!config4.VAPID_PUBLIC_KEY || !config4.VAPID_PRIVATE_KEY) return 0;
+  if (!config4.VAPID_PUBLIC_KEY || !config4.VAPID_PRIVATE_KEY)
+    return { sent: 0, failed: 0, total: 0 };
   const subscriptions = await db2.select().from(pushSubscriptions).where(eq(pushSubscriptions.workspaceId, workspaceId));
   let sent = 0;
+  let failed = 0;
   for (const subscription of subscriptions) {
     try {
-      await import_web_push.default.sendNotification({ endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } }, JSON.stringify({ title: "\u4E2A\u4EBA\u65E5\u7A0B\u6D4B\u8BD5\u901A\u77E5", body: "\u540E\u53F0\u63D0\u9192\u5DF2\u8FDE\u63A5\uFF0CPWA \u6700\u5C0F\u5316\u65F6\u4E5F\u80FD\u6536\u5230\u7CFB\u7EDF\u901A\u77E5\u3002", url: "/", tag: `test-${subscription.id}`, deliveryId: `test-${Date.now()}-${subscription.id}` }));
+      await import_web_push.default.sendNotification(
+        {
+          endpoint: subscription.endpoint,
+          keys: { p256dh: subscription.p256dh, auth: subscription.auth }
+        },
+        JSON.stringify({
+          title: "\u4E2A\u4EBA\u65E5\u7A0B\u6D4B\u8BD5\u901A\u77E5",
+          body: "\u540E\u53F0\u63D0\u9192\u5DF2\u8FDE\u63A5\uFF0CPWA \u6700\u5C0F\u5316\u65F6\u4E5F\u80FD\u6536\u5230\u7CFB\u7EDF\u901A\u77E5\u3002",
+          url: "/",
+          tag: `test-${subscription.id}`,
+          deliveryId: `test-${Date.now()}-${subscription.id}`
+        })
+      );
       sent += 1;
     } catch (error64) {
+      failed += 1;
       const statusCode = error64.statusCode;
-      if (statusCode === 404 || statusCode === 410) await db2.delete(pushSubscriptions).where(eq(pushSubscriptions.id, subscription.id));
+      if (statusCode === 404 || statusCode === 410)
+        await db2.delete(pushSubscriptions).where(eq(pushSubscriptions.id, subscription.id));
     }
   }
-  return sent;
+  return { sent, failed, total: subscriptions.length };
 }
 async function runReminderTick() {
   const now2 = /* @__PURE__ */ new Date();
   const values = await loadExpandedItems();
   const workspaceIds = [...new Set(values.map((item) => item.workspaceId))];
   const semesterRows = workspaceIds.length > 0 ? await db2.select().from(appSettings).where(inArray(appSettings.workspaceId, workspaceIds)) : [];
-  const semesterByWorkspace = new Map(semesterRows.map((row) => [row.workspaceId, row.semesterStartDate ? /* @__PURE__ */ new Date(`${row.semesterStartDate}T12:00:00`) : null]));
+  const semesterByWorkspace = new Map(
+    semesterRows.map((row) => [
+      row.workspaceId,
+      row.semesterStartDate ? /* @__PURE__ */ new Date(`${row.semesterStartDate}T12:00:00`) : null
+    ])
+  );
   let generated = 0;
   for (const item of values) {
     const rules = item.reminders.filter((rule) => rule.enabled);
     if (rules.length === 0) continue;
-    const occurrences = expandItems([item], new Date(now2.getTime() - 864e5), new Date(now2.getTime() + 1728e5), semesterByWorkspace.get(item.workspaceId) ?? null);
-    if (occurrences.length === 0 && item.dueAt) occurrences.push({ id: item.id, occurrenceKey: item.id, itemId: item.id, item, start: new Date(item.dueAt), end: new Date(item.dueAt), allDay: item.isAllDay, recurring: false, overridden: false });
-    for (const occurrence of occurrences) for (const rule of rules) {
-      const scheduledAt = rule.trigger === "before_start" ? new Date(occurrence.start.getTime() - rule.offsetMinutes * 6e4) : rule.trigger === "at_start" ? occurrence.start : occurrence.end;
-      if (scheduledAt < new Date(now2.getTime() - 864e5) || scheduledAt > new Date(now2.getTime() + 864e5)) continue;
-      const inserted = await db2.insert(deliveries).values({ workspaceId: item.workspaceId, itemId: item.id, ruleId: rule.id ?? null, occurrenceKey: occurrence.occurrenceKey, scheduledAt, channel: rule.channels.join(","), status: "pending" }).onConflictDoNothing().returning({ id: deliveries.id });
-      generated += inserted.length;
-    }
+    const occurrences = expandItems(
+      [item],
+      new Date(now2.getTime() - 864e5),
+      new Date(now2.getTime() + 1728e5),
+      semesterByWorkspace.get(item.workspaceId) ?? null
+    );
+    if (occurrences.length === 0 && item.dueAt)
+      occurrences.push({
+        id: item.id,
+        occurrenceKey: item.id,
+        itemId: item.id,
+        item,
+        start: new Date(item.dueAt),
+        end: new Date(item.dueAt),
+        allDay: item.isAllDay,
+        recurring: false,
+        overridden: false
+      });
+    for (const occurrence of occurrences)
+      for (const rule of rules) {
+        const scheduledAt = rule.trigger === "before_start" ? new Date(occurrence.start.getTime() - rule.offsetMinutes * 6e4) : rule.trigger === "at_start" ? occurrence.start : occurrence.end;
+        if (scheduledAt < new Date(now2.getTime() - 864e5) || scheduledAt > new Date(now2.getTime() + 864e5))
+          continue;
+        const inserted = await db2.insert(deliveries).values({
+          workspaceId: item.workspaceId,
+          itemId: item.id,
+          ruleId: rule.id ?? null,
+          occurrenceKey: occurrence.occurrenceKey,
+          scheduledAt,
+          channel: rule.channels.join(","),
+          status: "pending"
+        }).onConflictDoNothing().returning({ id: deliveries.id });
+        generated += inserted.length;
+      }
   }
-  const due = await db2.select().from(deliveries).where(and(or(eq(deliveries.status, "pending"), eq(deliveries.status, "failed")), or(isNull(deliveries.nextAttemptAt), lte(deliveries.nextAttemptAt, now2)), lte(deliveries.scheduledAt, now2))).limit(100);
+  const due = await db2.select().from(deliveries).where(
+    and(
+      or(eq(deliveries.status, "pending"), eq(deliveries.status, "failed")),
+      or(
+        isNull(deliveries.nextAttemptAt),
+        lte(deliveries.nextAttemptAt, now2)
+      ),
+      lte(deliveries.scheduledAt, now2)
+    )
+  ).limit(100);
   let delivered = 0;
   let missed = 0;
   for (const delivery of due) {
     const [item] = await db2.select().from(items).where(eq(items.id, delivery.itemId)).limit(1);
     if (!item) continue;
-    const result = await sendChannels(delivery.workspaceId, item.id, delivery.id, delivery.channel.split(","), item.title, item.startAt ?? now2, item.location);
+    const result = await sendChannels(
+      delivery.workspaceId,
+      item.id,
+      delivery.id,
+      delivery.channel.split(","),
+      item.title,
+      item.startAt ?? now2,
+      item.location
+    );
     const wentMissed = now2.getTime() - delivery.scheduledAt.getTime() > 6e5;
-    await db2.update(deliveries).set({ status: result.delivered ? wentMissed ? "missed" : "delivered" : "failed", deliveredAt: result.delivered ? now2 : null, attempt: delivery.attempt + 1, lastError: result.error ?? null, nextAttemptAt: result.delivered ? null : new Date(now2.getTime() + Math.min(60, 2 ** delivery.attempt) * 6e4), updatedAt: now2 }).where(eq(deliveries.id, delivery.id));
+    await db2.update(deliveries).set({
+      status: result.delivered ? wentMissed ? "missed" : "delivered" : "failed",
+      deliveredAt: result.delivered ? now2 : null,
+      attempt: delivery.attempt + 1,
+      lastError: result.error ?? null,
+      nextAttemptAt: result.delivered ? null : new Date(
+        now2.getTime() + Math.min(60, 2 ** delivery.attempt) * 6e4
+      ),
+      updatedAt: now2
+    }).where(eq(deliveries.id, delivery.id));
     if (result.delivered) {
       delivered += 1;
       if (wentMissed) missed += 1;
     }
   }
-  const repeated = await db2.select().from(deliveries).where(and(eq(deliveries.status, "delivered"), isNull(deliveries.acknowledgedAt), lte(deliveries.deliveredAt, new Date(now2.getTime() - 3e5)))).limit(100);
+  const repeated = await db2.select().from(deliveries).where(
+    and(
+      eq(deliveries.status, "delivered"),
+      isNull(deliveries.acknowledgedAt),
+      lte(deliveries.deliveredAt, new Date(now2.getTime() - 3e5))
+    )
+  ).limit(100);
   for (const delivery of repeated) {
     const [item] = await db2.select().from(items).where(eq(items.id, delivery.itemId)).limit(1);
     if (!item) continue;
@@ -166957,8 +167104,14 @@ async function runReminderTick() {
     const eventEnd = item.endAt ?? item.startAt;
     const eventTime = eventEnd ? new Date(eventEnd).getTime() : now2.getTime();
     const hardStop = item.startAt ? Math.min(new Date(item.startAt).getTime() + 864e5, eventTime) : now2.getTime();
-    if (!delivery.deliveredAt || delivery.deliveredAt.getTime() + repeat * 6e4 > now2.getTime() || now2.getTime() > hardStop) continue;
-    await db2.update(deliveries).set({ status: "pending", scheduledAt: now2, deliveredAt: null, updatedAt: now2 }).where(eq(deliveries.id, delivery.id));
+    if (!delivery.deliveredAt || delivery.deliveredAt.getTime() + repeat * 6e4 > now2.getTime() || now2.getTime() > hardStop)
+      continue;
+    await db2.update(deliveries).set({
+      status: "pending",
+      scheduledAt: now2,
+      deliveredAt: null,
+      updatedAt: now2
+    }).where(eq(deliveries.id, delivery.id));
   }
   return { generated, delivered, missed };
 }
@@ -168120,37 +168273,113 @@ remindersRoute.use("*", requireAuth, blockDemoFeature("reminders"));
 remindersRoute.get("/deliveries", async (c5) => {
   const auth2 = c5.get("auth");
   const missed = c5.req.query("missed") === "true";
-  const rows = await db.select({ delivery: deliveries, item: items, rule: reminderRules }).from(deliveries).innerJoin(items, eq(items.id, deliveries.itemId)).leftJoin(reminderRules, eq(reminderRules.id, deliveries.ruleId)).where(and(eq(deliveries.workspaceId, auth2.workspaceId), missed ? eq(deliveries.status, "missed") : or(and(eq(deliveries.status, "pending"), lte(deliveries.scheduledAt, /* @__PURE__ */ new Date())), eq(deliveries.status, "delivered")))).orderBy(desc(deliveries.scheduledAt)).limit(200);
-  return c5.json({ deliveries: rows.map((row) => ({ ...row.delivery, itemTitle: row.item.title, trigger: row.rule?.trigger ?? "before_start" })) });
+  const rows = await db.select({ delivery: deliveries, item: items, rule: reminderRules }).from(deliveries).innerJoin(items, eq(items.id, deliveries.itemId)).leftJoin(reminderRules, eq(reminderRules.id, deliveries.ruleId)).where(
+    and(
+      eq(deliveries.workspaceId, auth2.workspaceId),
+      missed ? eq(deliveries.status, "missed") : or(
+        and(
+          eq(deliveries.status, "pending"),
+          lte(deliveries.scheduledAt, /* @__PURE__ */ new Date())
+        ),
+        eq(deliveries.status, "delivered")
+      )
+    )
+  ).orderBy(desc(deliveries.scheduledAt)).limit(200);
+  return c5.json({
+    deliveries: rows.map((row) => ({
+      ...row.delivery,
+      itemTitle: row.item.title,
+      trigger: row.rule?.trigger ?? "before_start"
+    }))
+  });
 });
 remindersRoute.post("/deliveries/:id/ack", async (c5) => {
   const auth2 = c5.get("auth");
   const now2 = /* @__PURE__ */ new Date();
-  const [updated] = await db.update(deliveries).set({ status: "acknowledged", acknowledgedAt: now2, updatedAt: now2 }).where(and(eq(deliveries.id, c5.req.param("id")), eq(deliveries.workspaceId, auth2.workspaceId))).returning();
+  const [updated] = await db.update(deliveries).set({ status: "acknowledged", acknowledgedAt: now2, updatedAt: now2 }).where(
+    and(
+      eq(deliveries.id, c5.req.param("id")),
+      eq(deliveries.workspaceId, auth2.workspaceId)
+    )
+  ).returning();
   if (!updated) return c5.json({ error: "NOT_FOUND" }, 404);
-  publish(auth2.workspaceId, { type: "delivery.acknowledged", deliveryId: updated.id });
+  publish(auth2.workspaceId, {
+    type: "delivery.acknowledged",
+    deliveryId: updated.id
+  });
   return c5.json({ delivery: updated });
 });
 remindersRoute.post("/deliveries/:id/snooze", async (c5) => {
-  const input2 = external_exports.object({ minutes: external_exports.union([external_exports.literal(5), external_exports.literal(10), external_exports.literal(15), external_exports.literal(30)]) }).parse(await c5.req.json());
+  const input2 = external_exports.object({
+    minutes: external_exports.union([
+      external_exports.literal(5),
+      external_exports.literal(10),
+      external_exports.literal(15),
+      external_exports.literal(30)
+    ])
+  }).parse(await c5.req.json());
   const auth2 = c5.get("auth");
   const now2 = /* @__PURE__ */ new Date();
   const scheduledAt = new Date(now2.getTime() + input2.minutes * 6e4);
-  const [updated] = await db.update(deliveries).set({ status: "pending", scheduledAt, snoozedUntil: scheduledAt, updatedAt: now2, nextAttemptAt: null, deliveredAt: null, lastError: null, attempt: 0 }).where(and(eq(deliveries.id, c5.req.param("id")), eq(deliveries.workspaceId, auth2.workspaceId))).returning();
+  const [updated] = await db.update(deliveries).set({
+    status: "pending",
+    scheduledAt,
+    snoozedUntil: scheduledAt,
+    updatedAt: now2,
+    nextAttemptAt: null,
+    deliveredAt: null,
+    lastError: null,
+    attempt: 0
+  }).where(
+    and(
+      eq(deliveries.id, c5.req.param("id")),
+      eq(deliveries.workspaceId, auth2.workspaceId)
+    )
+  ).returning();
   if (!updated) return c5.json({ error: "NOT_FOUND" }, 404);
   return c5.json({ delivery: updated });
 });
 remindersRoute.post("/push-subscriptions", async (c5) => {
-  const input2 = external_exports.object({ endpoint: external_exports.string().url(), keys: external_exports.object({ p256dh: external_exports.string(), auth: external_exports.string() }) }).parse(await c5.req.json());
+  const input2 = external_exports.object({
+    endpoint: external_exports.string().url(),
+    keys: external_exports.object({ p256dh: external_exports.string(), auth: external_exports.string() })
+  }).parse(await c5.req.json());
   const auth2 = c5.get("auth");
-  const [subscription] = await db.insert(pushSubscriptions).values({ workspaceId: auth2.workspaceId, endpoint: input2.endpoint, p256dh: input2.keys.p256dh, auth: input2.keys.auth, userAgent: c5.req.header("user-agent") ?? null }).onConflictDoUpdate({ target: pushSubscriptions.endpoint, set: { p256dh: input2.keys.p256dh, auth: input2.keys.auth, lastSeenAt: /* @__PURE__ */ new Date() } }).returning();
+  const [subscription] = await db.insert(pushSubscriptions).values({
+    workspaceId: auth2.workspaceId,
+    endpoint: input2.endpoint,
+    p256dh: input2.keys.p256dh,
+    auth: input2.keys.auth,
+    userAgent: c5.req.header("user-agent") ?? null
+  }).onConflictDoUpdate({
+    target: pushSubscriptions.endpoint,
+    set: {
+      p256dh: input2.keys.p256dh,
+      auth: input2.keys.auth,
+      lastSeenAt: /* @__PURE__ */ new Date()
+    }
+  }).returning();
   return c5.json({ subscription }, 201);
 });
-remindersRoute.get("/vapid-public-key", (c5) => c5.json({ publicKey: config3.VAPID_PUBLIC_KEY ?? null }));
+remindersRoute.get("/push-subscriptions/status", async (c5) => {
+  const rows = await db.select({ lastSeenAt: pushSubscriptions.lastSeenAt }).from(pushSubscriptions).where(eq(pushSubscriptions.workspaceId, c5.get("auth").workspaceId)).orderBy(desc(pushSubscriptions.lastSeenAt));
+  return c5.json({
+    count: rows.length,
+    lastSeenAt: rows[0]?.lastSeenAt?.toISOString() ?? null
+  });
+});
+remindersRoute.get(
+  "/vapid-public-key",
+  (c5) => c5.json({ publicKey: config3.VAPID_PUBLIC_KEY ?? null })
+);
 remindersRoute.post("/test-push", async (c5) => {
-  if (!config3.VAPID_PUBLIC_KEY || !config3.VAPID_PRIVATE_KEY) return c5.json({ error: "VAPID_NOT_CONFIGURED", message: "\u670D\u52A1\u5668\u5C1A\u672A\u914D\u7F6E VAPID \u5BC6\u94A5" }, 503);
-  const sent = await sendTestPush(c5.get("auth").workspaceId);
-  return c5.json({ sent });
+  if (!config3.VAPID_PUBLIC_KEY || !config3.VAPID_PRIVATE_KEY)
+    return c5.json(
+      { error: "VAPID_NOT_CONFIGURED", message: "\u670D\u52A1\u5668\u5C1A\u672A\u914D\u7F6E VAPID \u5BC6\u94A5" },
+      503
+    );
+  const result = await sendTestPush(c5.get("auth").workspaceId);
+  return c5.json(result);
 });
 
 // apps/api/src/routes/schedule-periods.ts
