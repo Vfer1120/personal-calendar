@@ -173255,7 +173255,8 @@ async function extractScheduleDrafts(input2) {
     model,
     messages,
     temperature: 0,
-    max_tokens: 4096
+    max_tokens: 2048,
+    ...input2.images.length === 0 ? { thinking: { type: "disabled" } } : {}
   });
   const fetcher = input2.fetcher ?? fetch;
   let response = null;
