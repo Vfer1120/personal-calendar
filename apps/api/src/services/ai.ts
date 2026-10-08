@@ -47,7 +47,7 @@ export async function getAiStatus(): Promise<AiStatus> {
     enabled: config.AI_ENABLED,
     configured: aiConfigured(),
     provider: config.AI_PROVIDER,
-    textModel: config.AI_TEXT_MODEL,
+    textModel: effectiveTextModel(),
     visionModel: config.AI_VISION_MODEL,
   };
 }
@@ -414,7 +414,7 @@ export async function extractScheduleDrafts(input: {
     .from(tags)
     .where(eq(tags.workspaceId, input.workspaceId));
   const model =
-    input.images.length > 0 ? config.AI_VISION_MODEL : config.AI_TEXT_MODEL;
+    input.images.length > 0 ? config.AI_VISION_MODEL : effectiveTextModel();
   const messages = [
     {
       role: "system",

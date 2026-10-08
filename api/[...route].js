@@ -173004,12 +173004,15 @@ var AiError = class extends Error {
 function aiConfigured() {
   return config3.AI_ENABLED && Boolean(config3.AI_API_KEY);
 }
+function effectiveTextModel() {
+  return config3.AI_TEXT_MODEL === "glm-4-flash" ? "glm-4.5-flash" : config3.AI_TEXT_MODEL;
+}
 async function getAiStatus() {
   return {
     enabled: config3.AI_ENABLED,
     configured: aiConfigured(),
     provider: config3.AI_PROVIDER,
-    textModel: config3.AI_TEXT_MODEL,
+    textModel: effectiveTextModel(),
     visionModel: config3.AI_VISION_MODEL
   };
 }
@@ -173233,7 +173236,7 @@ async function extractScheduleDrafts(input2) {
     );
   const [settings] = await db.select().from(appSettings).where(eq(appSettings.workspaceId, input2.workspaceId)).limit(1);
   const tagRows = await db.select({ name: tags.name }).from(tags).where(eq(tags.workspaceId, input2.workspaceId));
-  const model = input2.images.length > 0 ? config3.AI_VISION_MODEL : config3.AI_TEXT_MODEL;
+  const model = input2.images.length > 0 ? config3.AI_VISION_MODEL : effectiveTextModel();
   const messages = [
     {
       role: "system",
