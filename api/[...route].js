@@ -173923,7 +173923,7 @@ async function updateTimetable(workspaceId, timetableId, input2) {
 async function deleteTimetable(workspaceId, timetableId) {
   const existing = await ownedTimetable(workspaceId, timetableId);
   if (!existing) return { deleted: false, courseCount: 0 };
-  const [countRow] = await db.select({ count: sql`count(*)::int` }).from(items).where(and(eq(items.workspaceId, workspaceId), eq(items.timetableId, timetableId)));
+  const [countRow] = await db.select({ count: sql`count(*)::int` }).from(items).where(and(eq(items.workspaceId, workspaceId), eq(items.timetableId, timetableId), ne(items.status, "deleted"), isNull(items.deletedAt)));
   const courseCount = countRow?.count ?? 0;
   if (courseCount > 0) return { deleted: false, courseCount };
   await db.delete(timetables).where(and(eq(timetables.id, timetableId), eq(timetables.workspaceId, workspaceId)));

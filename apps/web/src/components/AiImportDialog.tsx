@@ -27,7 +27,7 @@ export function AiImportDialog({ userId, open, onClose, onImported, tags, items,
   const [pagePeriods, setPagePeriods] = useState<Record<string, SchedulePeriod[]>>({});
   const fileInput = useRef<HTMLInputElement>(null);
   const previews = useMemo(() => files.map((file) => ({ file, url: URL.createObjectURL(file) })), [files]);
-  const timetablesQuery = useQuery({ queryKey: ["timetables", userId], queryFn: async () => { try { const value = await api<{ timetables: Timetable[] }>("/api/v1/timetables"); await cacheTimetables(value.timetables); return value.timetables; } catch { return getCachedTimetables(); } } });
+  const timetablesQuery = useQuery({ queryKey: ["timetables", userId], queryFn: async () => { try { const value = await api<{ timetables: Timetable[] }>("/api/v1/timetables"); void cacheTimetables(value.timetables).catch(() => undefined); return value.timetables; } catch { return getCachedTimetables(); } } });
   const timetables = timetablesQuery.data ?? [];
   const activeTimetable = timetables.find((page) => page.id === targetTimetableId) ?? timetables[0] ?? null;
 
@@ -43,7 +43,7 @@ export function AiImportDialog({ userId, open, onClose, onImported, tags, items,
 
   async function loadPeriods(timetableId: string): Promise<SchedulePeriod[]> {
     if (pagePeriods[timetableId]) return pagePeriods[timetableId]!;
-    try { const value = await api<{ periods: SchedulePeriod[] }>(`/api/v1/timetables/${timetableId}/periods`); await cacheSchedulePeriods(timetableId, value.periods); setPagePeriods((current) => ({ ...current, [timetableId]: value.periods })); return value.periods; }
+    try { const value = await api<{ periods: SchedulePeriod[] }>(`/api/v1/timetables/${timetableId}/periods`); void cacheSchedulePeriods(timetableId, value.periods).catch(() => undefined); setPagePeriods((current) => ({ ...current, [timetableId]: value.periods })); return value.periods; }
     catch { const cached = await getCachedSchedulePeriods(timetableId); setPagePeriods((current) => ({ ...current, [timetableId]: cached })); return cached; }
   }
   useEffect(() => { if (activeTimetable) void loadPeriods(activeTimetable.id); }, [activeTimetable?.id]);

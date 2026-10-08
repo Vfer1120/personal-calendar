@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, isNull, ne, sql } from "drizzle-orm";
 import { appSettings, items, schedulePeriods, timetables } from "@calendar/db/schema";
 import { DEFAULT_SCHEDULE_PERIODS, schedulePeriodListSchema, type SchedulePeriod, type Timetable } from "@calendar/domain";
 import { db } from "../context";
@@ -84,7 +84,7 @@ export async function updateTimetable(workspaceId: string, timetableId: string, 
 export async function deleteTimetable(workspaceId: string, timetableId: string): Promise<{ deleted: boolean; courseCount: number }> {
   const existing = await ownedTimetable(workspaceId, timetableId);
   if (!existing) return { deleted: false, courseCount: 0 };
-  const [countRow] = await db.select({ count: sql<number>`count(*)::int` }).from(items).where(and(eq(items.workspaceId, workspaceId), eq(items.timetableId, timetableId)));
+  const [countRow] = await db.select({ count: sql<number>`count(*)::int` }).from(items).where(and(eq(items.workspaceId, workspaceId), eq(items.timetableId, timetableId), ne(items.status, "deleted"), isNull(items.deletedAt)));
   const courseCount = countRow?.count ?? 0;
   if (courseCount > 0) return { deleted: false, courseCount };
   await db.delete(timetables).where(and(eq(timetables.id, timetableId), eq(timetables.workspaceId, workspaceId)));

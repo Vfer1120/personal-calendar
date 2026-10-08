@@ -59,7 +59,7 @@ export function CourseTimetable({ userId, items, tags, anchor, onChanged }: Cour
     queryFn: async () => {
       try {
         const response = await api<{ timetables: Timetable[] }>("/api/v1/timetables");
-        await cacheTimetables(response.timetables);
+        void cacheTimetables(response.timetables).catch(() => undefined);
         return response;
       } catch {
         return { timetables: await getCachedTimetables() };
@@ -84,7 +84,7 @@ export function CourseTimetable({ userId, items, tags, anchor, onChanged }: Cour
     queryFn: async () => {
       try {
         const response = await api<{ periods: SchedulePeriod[] }>(`/api/v1/timetables/${activeTimetableId}/periods`);
-        await cacheSchedulePeriods(activeTimetableId!, response.periods);
+        void cacheSchedulePeriods(activeTimetableId!, response.periods).catch(() => undefined);
         return response;
       } catch {
         return { periods: await getCachedSchedulePeriods(activeTimetableId!) };
@@ -113,7 +113,7 @@ export function CourseTimetable({ userId, items, tags, anchor, onChanged }: Cour
   function selected(day: number, period: number) { return Boolean(selection && day >= selection.startDay && day <= selection.endDay && period >= selection.startPeriod && period <= selection.endPeriod); }
   function movePeriod(index: number, direction: number) { const target = index + direction; if (target < 0 || target >= draftPeriods.length) return; setDraftPeriods((current) => { const next = [...current]; const [value] = next.splice(index, 1); next.splice(target, 0, value!); return next; }); }
   function startEditingPeriods() { setDraftPeriods(periods.map((period) => ({ name: period.name, startTime: period.startTime, endTime: period.endTime, sortOrder: period.sortOrder }))); setPeriodMessage(""); setEditingPeriods(true); }
-  async function savePeriods() { if (!activeTimetableId) return; try { const response = await apiJson<{ periods: SchedulePeriod[] }>(`/api/v1/timetables/${activeTimetableId}/periods`, "PUT", { periods: draftPeriods.map((period, index) => ({ ...period, sortOrder: index })) }); queryClient.setQueryData(["schedule-periods", activeTimetableId], response); await cacheSchedulePeriods(activeTimetableId, response.periods); setEditingPeriods(false); } catch (error) { setPeriodMessage(error instanceof Error ? error.message : "保存失败"); } }
+  async function savePeriods() { if (!activeTimetableId) return; try { const response = await apiJson<{ periods: SchedulePeriod[] }>(`/api/v1/timetables/${activeTimetableId}/periods`, "PUT", { periods: draftPeriods.map((period, index) => ({ ...period, sortOrder: index })) }); queryClient.setQueryData(["schedule-periods", activeTimetableId], response); void cacheSchedulePeriods(activeTimetableId, response.periods).catch(() => undefined); setEditingPeriods(false); } catch (error) { setPeriodMessage(error instanceof Error ? error.message : "保存失败"); } }
   async function refreshTimetables() { await queryClient.invalidateQueries({ queryKey: ["timetables", userId] }); }
   function openCreatePage() { setPageName(`课表${timetables.length + 1}`); setPageSemester(""); setPageMessage(""); setPageEditor({ mode: "create" }); }
   function openEditPage() { if (!activeTimetable) return; setPageName(activeTimetable.name); setPageSemester(activeTimetable.semesterStartDate ?? ""); setPageMessage(""); setPageEditor({ mode: "edit", id: activeTimetable.id }); }
