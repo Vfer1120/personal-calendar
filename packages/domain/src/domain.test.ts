@@ -51,7 +51,11 @@ describe("AI extraction schema", () => {
     expect(result.items[0]?.priority).toBe("none");
     expect(result.items[0]?.reminderMinutes).toEqual([]);
   });
-  it("rejects invalid date strings before import", () => {
+  it("accepts timetable drafts with weekly slots", () => {
+    const result = aiProviderResponseSchema.parse({ items: [{ title: "高等数学", importTarget: "timetable", timetableId: "10000000-0000-4000-8000-000000000001", courseSlots: [{ weekday: 1, startTime: "08:00", endTime: "08:45", weekParity: "all" }], periodMatch: "exact" }] });
+    expect(result.items[0]?.importTarget).toBe("timetable");
+    expect(result.items[0]?.courseSlots).toHaveLength(1);
+  });  it("rejects invalid date strings before import", () => {
     expect(aiProviderResponseSchema.safeParse({ items: [{ title: "会议", startAt: "tomorrow" }] }).success).toBe(false);
   });
 });
@@ -62,7 +66,16 @@ describe("course slots", () => {
     expect(result.map((value) => value.start.toISOString())).toEqual(["2026-09-14T00:00:00.000Z", "2026-09-16T01:50:00.000Z"]);
   });
 });
-  it("limits course slots to an inclusive course date range", () => {
+  it("uses the item timezone for course slot clock times", () => {
+    const item: ExpandedItem = { ...base, timezone: "Asia/Shanghai", startAt: "2026-10-05T00:00:00+08:00", endAt: "2026-10-05T01:00:00+08:00", courseSlots: [{ id: "40000000-0000-4000-8000-000000000010", weekday: 1, startTime: "10:25", endTime: "12:00", weekParity: "all" }] };
+    const result = expandItemOccurrences(item, new Date("2026-10-04T16:00:00Z"), new Date("2026-10-05T15:59:59Z"));
+    expect(result.map((value) => [value.start.toISOString(), value.end.toISOString()])).toEqual([["2026-10-05T02:25:00.000Z", "2026-10-05T04:00:00.000Z"]]);
+  });
+  it("does not depend on the server timezone for course slots", () => {
+    const item: ExpandedItem = { ...base, timezone: "America/New_York", startAt: "2026-10-05T00:00:00-04:00", endAt: "2026-10-05T01:00:00-04:00", courseSlots: [{ id: "40000000-0000-4000-8000-000000000011", weekday: 1, startTime: "10:25", endTime: "12:00", weekParity: "all" }] };
+    const result = expandItemOccurrences(item, new Date("2026-10-05T00:00:00Z"), new Date("2026-10-06T03:59:59Z"));
+    expect(result[0]?.start.toISOString()).toBe("2026-10-05T14:25:00.000Z");
+  });  it("limits course slots to an inclusive course date range", () => {
     const item: ExpandedItem = { ...base, startAt: "2026-09-16T09:50:00+08:00", endAt: "2026-09-16T10:35:00+08:00", courseStartDate: "2026-09-16", courseEndDate: "2026-09-23", courseSlots: [{ id: "40000000-0000-4000-8000-000000000003", weekday: 3, startTime: "09:50", endTime: "10:35", weekParity: "all" }] };
     const result = expandItemOccurrences(item, new Date("2026-09-14T00:00:00+08:00"), new Date("2026-09-27T23:59:59+08:00"));
     expect(result.map((value) => value.start.toISOString())).toEqual(["2026-09-16T01:50:00.000Z", "2026-09-23T01:50:00.000Z"]);

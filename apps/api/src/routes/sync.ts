@@ -14,7 +14,7 @@ function itemDbValues(input: ItemInput, workspaceId: string) {
     title: input.title, description: input.description, location: input.location,
     startAt: input.startAt ? new Date(input.startAt) : null, endAt: input.endAt ? new Date(input.endAt) : null,
     dueAt: input.dueAt ? new Date(input.dueAt) : null, isAllDay: input.isAllDay, timezone: input.timezone,
-    priority: input.priority, status: input.status, completedAt: input.completedAt ? new Date(input.completedAt) : null, autoRollover: input.autoRollover, showInTimetable: input.showInTimetable, courseStartDate: input.courseStartDate ?? null, courseEndDate: input.courseEndDate ?? null,
+    priority: input.priority, status: input.status, completedAt: input.completedAt ? new Date(input.completedAt) : null, autoRollover: input.autoRollover, showInTimetable: input.showInTimetable, timetableId: input.timetableId ?? null, courseStartDate: input.courseStartDate ?? null, courseEndDate: input.courseEndDate ?? null,
     courseSlots: input.courseSlots,
     timetableColor: input.timetableColor,
     recurrence: input.recurrence ?? null, searchText: searchableText(input), updatedAt: new Date() };

@@ -27,7 +27,7 @@ async function importPortable(workspaceId: string, portable: PortableItem[]) {
       const [created] = await db.insert(items).values({ workspaceId, calendarId: calendar.id, parentId: parsed.parentId ?? null, kind: parsed.kind,
         title: parsed.title, description: parsed.description, location: parsed.location, startAt: parsed.startAt ? new Date(parsed.startAt) : null,
         endAt: parsed.endAt ? new Date(parsed.endAt) : null, dueAt: parsed.dueAt ? new Date(parsed.dueAt) : null, isAllDay: parsed.isAllDay,
-        timezone: parsed.timezone, priority: parsed.priority, status: parsed.status, completedAt: parsed.completedAt ? new Date(parsed.completedAt) : null, autoRollover: parsed.autoRollover, showInTimetable: parsed.showInTimetable, courseStartDate: parsed.courseStartDate ?? null, courseEndDate: parsed.courseEndDate ?? null,
+        timezone: parsed.timezone, priority: parsed.priority, status: parsed.status, completedAt: parsed.completedAt ? new Date(parsed.completedAt) : null, autoRollover: parsed.autoRollover, showInTimetable: parsed.showInTimetable, timetableId: parsed.timetableId ?? null, courseStartDate: parsed.courseStartDate ?? null, courseEndDate: parsed.courseEndDate ?? null,
         courseSlots: parsed.courseSlots,
         timetableColor: parsed.timetableColor,
         recurrence: parsed.recurrence ?? null, searchText: searchableText(parsed) }).returning();

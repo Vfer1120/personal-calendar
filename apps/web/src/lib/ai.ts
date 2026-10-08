@@ -11,26 +11,43 @@ export function valueToIso(value: string): string | null {
   return value ? new Date(value).toISOString() : null;
 }
 
+function timetableAnchor(draft: AiDraft): { startAt: string | null; endAt: string | null } {
+  const first = draft.courseSlots[0];
+  if (!first) return { startAt: draft.startAt, endAt: draft.endAt };
+  const date = draft.courseStartDate ?? new Date().toISOString().slice(0, 10);
+  const start = new Date(`${date}T${first.startTime}:00`);
+  const end = new Date(`${date}T${first.endTime}:00`);
+  return {
+    startAt: Number.isNaN(start.getTime()) ? draft.startAt : start.toISOString(),
+    endAt: Number.isNaN(end.getTime()) ? draft.endAt : end.toISOString()
+  };
+}
+
 export function draftToItemPayload(draft: AiDraft, tags: Tag[]): ItemInput {
   const matchedTagIds = tags.filter((tag) => draft.suggestedTagNames.some((name) => name.toLowerCase() === tag.name.toLowerCase())).map((tag) => tag.id);
   const reminders = [...new Set(draft.reminderMinutes)].map((offsetMinutes) => ({ trigger: "before_start" as const, offsetMinutes, channels: ["in_app", "browser_push"] as Array<"in_app" | "browser_push">, repeatEveryMinutes: 5, enabled: true }));
+  const timetable = draft.importTarget === "timetable";
+  const anchor = timetable ? timetableAnchor(draft) : { startAt: draft.startAt, endAt: draft.endAt };
   return {
-    kind: draft.kind,
+    kind: timetable ? "event" : draft.kind,
     title: draft.title.trim(),
     description: draft.description,
     location: draft.location,
-    startAt: draft.startAt,
-    endAt: draft.endAt,
-    dueAt: draft.dueAt,
-    isAllDay: draft.isAllDay,
+    startAt: anchor.startAt,
+    endAt: anchor.endAt,
+    dueAt: timetable ? null : draft.dueAt,
+    isAllDay: timetable ? false : draft.isAllDay,
     timezone: draft.timezone,
     priority: draft.priority,
     status: "active",
     autoRollover: false,
-    showInTimetable: false,
+    showInTimetable: timetable,
+    timetableId: timetable ? draft.timetableId : null,
     timetableColor: null,
-    courseSlots: [],
-    recurrence: draft.recurrence,
+    courseStartDate: timetable ? draft.courseStartDate : null,
+    courseEndDate: timetable ? draft.courseEndDate : null,
+    courseSlots: timetable ? draft.courseSlots : [],
+    recurrence: timetable ? null : draft.recurrence,
     tagIds: matchedTagIds,
     reminders
   };
@@ -41,6 +58,10 @@ export function isPossibleDuplicate(draft: AiDraft, items: ExpandedItem[]): bool
   if (!title) return false;
   return items.some((item) => {
     if (item.title.trim().toLowerCase() !== title) return false;
+    if (draft.importTarget === "timetable") {
+      const existingSlots = new Set(item.courseSlots.map((slot) => `${slot.weekday}-${slot.startTime}-${slot.endTime}`));
+      return draft.courseSlots.some((slot) => existingSlots.has(`${slot.weekday}-${slot.startTime}-${slot.endTime}`));
+    }
     if (!draft.startAt || !item.startAt) return true;
     return Math.abs(new Date(draft.startAt).getTime() - new Date(item.startAt).getTime()) < 60 * 60_000;
   });

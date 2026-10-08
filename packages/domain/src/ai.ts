@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { itemKindSchema, prioritySchema, recurrenceSchema, reminderOffsetSchema } from "./schemas";
+import { courseSlotSchema, itemKindSchema, prioritySchema, recurrenceSchema, reminderOffsetSchema } from "./schemas";
+
+export const aiImportTargetSchema = z.enum(["calendar", "timetable"]);
+export const aiPeriodMatchSchema = z.enum(["exact", "mapped", "uncertain"]);
 
 export const aiDraftSchema = z.object({
   kind: itemKindSchema.default("task"),
@@ -17,7 +20,13 @@ export const aiDraftSchema = z.object({
   suggestedTagNames: z.array(z.string().trim().min(1).max(60)).max(20).default([]),
   confidence: z.number().min(0).max(1).default(0.5),
   evidence: z.string().max(2000).default(""),
-  warnings: z.array(z.string().max(300)).max(20).default([])
+  warnings: z.array(z.string().max(300)).max(20).default([]),
+  importTarget: aiImportTargetSchema.default("calendar"),
+  timetableId: z.string().uuid().nullable().default(null),
+  courseStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+  courseEndDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+  courseSlots: z.array(courseSlotSchema).max(20).default([]),
+  periodMatch: aiPeriodMatchSchema.default("exact")
 });
 
 export const aiProviderResponseSchema = z.object({
@@ -25,32 +34,24 @@ export const aiProviderResponseSchema = z.object({
   transcript: z.string().max(50_000).default("")
 });
 
-export const aiUsageSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  used: z.number().int().nonnegative(),
-  limit: z.number().int().positive(),
-  remaining: z.number().int().nonnegative()
-});
-
 export const aiStatusSchema = z.object({
   enabled: z.boolean(),
   configured: z.boolean(),
   provider: z.string(),
   textModel: z.string(),
-  visionModel: z.string(),
-  usage: aiUsageSchema
+  visionModel: z.string()
 });
 
 export const aiExtractResponseSchema = z.object({
   drafts: z.array(aiDraftSchema),
   transcript: z.string().default(""),
-  usage: aiUsageSchema,
   provider: z.string(),
   model: z.string()
 });
 
+export type AiImportTarget = z.infer<typeof aiImportTargetSchema>;
+export type AiPeriodMatch = z.infer<typeof aiPeriodMatchSchema>;
 export type AiDraft = z.infer<typeof aiDraftSchema>;
 export type AiProviderResponse = z.infer<typeof aiProviderResponseSchema>;
-export type AiUsage = z.infer<typeof aiUsageSchema>;
 export type AiStatus = z.infer<typeof aiStatusSchema>;
 export type AiExtractResponse = z.infer<typeof aiExtractResponseSchema>;

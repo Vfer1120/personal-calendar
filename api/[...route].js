@@ -181,14 +181,14 @@ var require_postgres_date = __commonJS({
       var ms = matches[7];
       ms = ms ? 1e3 * parseFloat(ms) : 0;
       var date7;
-      var offset = timeZoneOffset(isoDate);
-      if (offset != null) {
+      var offset2 = timeZoneOffset(isoDate);
+      if (offset2 != null) {
         date7 = new Date(Date.UTC(year2, month, day, hour, minute, second, ms));
         if (is0To99(year2)) {
           date7.setUTCFullYear(year2);
         }
-        if (offset !== 0) {
-          date7.setTime(date7.getTime() - offset);
+        if (offset2 !== 0) {
+          date7.setTime(date7.getTime() - offset2);
         }
       } else {
         date7 = new Date(year2, month, day, hour, minute, second, ms);
@@ -227,8 +227,8 @@ var require_postgres_date = __commonJS({
         return 0;
       }
       var sign3 = type === "-" ? -1 : 1;
-      var offset = parseInt(zone[2], 10) * 3600 + parseInt(zone[3] || 0, 10) * 60 + parseInt(zone[4] || 0, 10);
-      return offset * sign3 * 1e3;
+      var offset2 = parseInt(zone[2], 10) * 3600 + parseInt(zone[3] || 0, 10) * 60 + parseInt(zone[4] || 0, 10);
+      return offset2 * sign3 * 1e3;
     }
     function bcYearToNegativeYear(year2) {
       return -(year2 - 1);
@@ -243,12 +243,12 @@ var require_postgres_date = __commonJS({
 var require_mutable = __commonJS({
   "node_modules/.pnpm/xtend@4.0.2/node_modules/xtend/mutable.js"(exports2, module2) {
     module2.exports = extend2;
-    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    var hasOwnProperty2 = Object.prototype.hasOwnProperty;
     function extend2(target) {
       for (var i5 = 1; i5 < arguments.length; i5++) {
         var source = arguments[i5];
         for (var key in source) {
-          if (hasOwnProperty.call(source, key)) {
+          if (hasOwnProperty2.call(source, key)) {
             target[key] = source[key];
           }
         }
@@ -268,7 +268,7 @@ var require_postgres_interval = __commonJS({
       if (!(this instanceof PostgresInterval)) {
         return new PostgresInterval(raw2);
       }
-      extend2(this, parse9(raw2));
+      extend2(this, parse10(raw2));
     }
     var properties = ["seconds", "minutes", "hours", "days", "months", "years"];
     PostgresInterval.prototype.toPostgres = function() {
@@ -329,7 +329,7 @@ var require_postgres_interval = __commonJS({
       var microseconds = fraction + "000000".slice(fraction.length);
       return parseInt(microseconds, 10) / 1e3;
     }
-    function parse9(interval2) {
+    function parse10(interval2) {
       if (!interval2) return {};
       var matches = INTERVAL.exec(interval2);
       var isNegative = matches[8] === "-";
@@ -481,7 +481,7 @@ var require_textParsers = __commonJS({
       }
       return array2.parse(value, allowNull(parseByteA));
     };
-    var parseInteger = function(value) {
+    var parseInteger2 = function(value) {
       return parseInt(value, 10);
     };
     var parseBigInteger = function(value) {
@@ -535,9 +535,9 @@ var require_textParsers = __commonJS({
     };
     var init2 = function(register) {
       register(20, parseBigInteger);
-      register(21, parseInteger);
-      register(23, parseInteger);
-      register(26, parseInteger);
+      register(21, parseInteger2);
+      register(23, parseInteger2);
+      register(26, parseInteger2);
       register(700, parseFloat);
       register(701, parseFloat);
       register(16, parseBool);
@@ -604,7 +604,7 @@ var require_pg_int8 = __commonJS({
       var t;
       var digits;
       var pad3;
-      var l3;
+      var l4;
       var i5;
       {
         carry = high % BASE;
@@ -616,8 +616,8 @@ var require_pg_int8 = __commonJS({
           return sign3 + digits + result;
         }
         pad3 = "";
-        l3 = 6 - digits.length;
-        for (i5 = 0; i5 < l3; i5++) {
+        l4 = 6 - digits.length;
+        for (i5 = 0; i5 < l4; i5++) {
           pad3 += "0";
         }
         result = pad3 + digits + result;
@@ -632,8 +632,8 @@ var require_pg_int8 = __commonJS({
           return sign3 + digits + result;
         }
         pad3 = "";
-        l3 = 6 - digits.length;
-        for (i5 = 0; i5 < l3; i5++) {
+        l4 = 6 - digits.length;
+        for (i5 = 0; i5 < l4; i5++) {
           pad3 += "0";
         }
         result = pad3 + digits + result;
@@ -648,8 +648,8 @@ var require_pg_int8 = __commonJS({
           return sign3 + digits + result;
         }
         pad3 = "";
-        l3 = 6 - digits.length;
-        for (i5 = 0; i5 < l3; i5++) {
+        l4 = 6 - digits.length;
+        for (i5 = 0; i5 < l4; i5++) {
           pad3 += "0";
         }
         result = pad3 + digits + result;
@@ -669,13 +669,13 @@ var require_pg_int8 = __commonJS({
 var require_binaryParsers = __commonJS({
   "node_modules/.pnpm/pg-types@2.2.0/node_modules/pg-types/lib/binaryParsers.js"(exports2, module2) {
     var parseInt64 = require_pg_int8();
-    var parseBits = function(data, bits, offset, invert, callback) {
-      offset = offset || 0;
+    var parseBits = function(data, bits, offset2, invert, callback) {
+      offset2 = offset2 || 0;
       invert = invert || false;
       callback = callback || function(lastValue, newValue, bits2) {
         return lastValue * Math.pow(2, bits2) + newValue;
       };
-      var offsetBytes = offset >> 3;
+      var offsetBytes = offset2 >> 3;
       var inv = function(value) {
         if (invert) {
           return ~value & 255;
@@ -683,23 +683,23 @@ var require_binaryParsers = __commonJS({
         return value;
       };
       var mask = 255;
-      var firstBits = 8 - offset % 8;
+      var firstBits = 8 - offset2 % 8;
       if (bits < firstBits) {
         mask = 255 << 8 - bits & 255;
         firstBits = bits;
       }
-      if (offset) {
-        mask = mask >> offset % 8;
+      if (offset2) {
+        mask = mask >> offset2 % 8;
       }
       var result = 0;
-      if (offset % 8 + bits >= 8) {
+      if (offset2 % 8 + bits >= 8) {
         result = callback(0, inv(data[offsetBytes]) & mask, firstBits);
       }
-      var bytes = bits + offset >> 3;
+      var bytes = bits + offset2 >> 3;
       for (var i5 = offsetBytes + 1; i5 < bytes; i5++) {
         result = callback(result, inv(data[i5]), 8);
       }
-      var lastBits = (bits + offset) % 8;
+      var lastBits = (bits + offset2) % 8;
       if (lastBits > 0) {
         result = callback(result, inv(data[bytes]) >> 8 - lastBits, lastBits);
       }
@@ -791,38 +791,38 @@ var require_binaryParsers = __commonJS({
       var dim = parseBits(value, 32);
       var flags = parseBits(value, 32, 32);
       var elementType = parseBits(value, 32, 64);
-      var offset = 96;
+      var offset2 = 96;
       var dims = [];
       for (var i5 = 0; i5 < dim; i5++) {
-        dims[i5] = parseBits(value, 32, offset);
-        offset += 32;
-        offset += 32;
+        dims[i5] = parseBits(value, 32, offset2);
+        offset2 += 32;
+        offset2 += 32;
       }
       var parseElement = function(elementType2) {
-        var length = parseBits(value, 32, offset);
-        offset += 32;
+        var length = parseBits(value, 32, offset2);
+        offset2 += 32;
         if (length == 4294967295) {
           return null;
         }
         var result;
         if (elementType2 == 23 || elementType2 == 20) {
-          result = parseBits(value, length * 8, offset);
-          offset += length * 8;
+          result = parseBits(value, length * 8, offset2);
+          offset2 += length * 8;
           return result;
         } else if (elementType2 == 25) {
-          result = value.toString(this.encoding, offset >> 3, (offset += length << 3) >> 3);
+          result = value.toString(this.encoding, offset2 >> 3, (offset2 += length << 3) >> 3);
           return result;
         } else {
           console.log("ERROR: ElementType not implemented: " + elementType2);
         }
       };
-      var parse9 = function(dimension, elementType2) {
+      var parse10 = function(dimension, elementType2) {
         var array2 = [];
         var i6;
         if (dimension.length > 1) {
           var count2 = dimension.shift();
           for (i6 = 0; i6 < count2; i6++) {
-            array2[i6] = parse9(dimension, elementType2);
+            array2[i6] = parse10(dimension, elementType2);
           }
           dimension.unshift(count2);
         } else {
@@ -832,7 +832,7 @@ var require_binaryParsers = __commonJS({
         }
         return array2;
       };
-      return parse9(dims, elementType);
+      return parse10(dims, elementType);
     };
     var parseText = function(value) {
       return value.toString("utf8");
@@ -1048,7 +1048,7 @@ var require_utils = __commonJS({
   "node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/utils.js"(exports2, module2) {
     "use strict";
     var defaults2 = require_defaults();
-    var { isDate: isDate2 } = require("util/types");
+    var { isDate: isDate3 } = require("util/types");
     function escapeElement(elementRepresentation) {
       const escaped = elementRepresentation.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
       return '"' + escaped + '"';
@@ -1087,7 +1087,7 @@ var require_utils = __commonJS({
         if (ArrayBuffer.isView(val)) {
           return Buffer.from(val.buffer, val.byteOffset, val.byteLength);
         }
-        if (isDate2(val)) {
+        if (isDate3(val)) {
           if (defaults2.parseInputDatesAsUTC) {
             return dateToStringUTC(val);
           } else {
@@ -1113,18 +1113,18 @@ var require_utils = __commonJS({
       return JSON.stringify(val);
     }
     function dateToString(date7) {
-      let offset = -date7.getTimezoneOffset();
+      let offset2 = -date7.getTimezoneOffset();
       let year2 = date7.getFullYear();
       const isBCYear = year2 < 1;
       if (isBCYear) year2 = Math.abs(year2) + 1;
       let ret = String(year2).padStart(4, "0") + "-" + String(date7.getMonth() + 1).padStart(2, "0") + "-" + String(date7.getDate()).padStart(2, "0") + "T" + String(date7.getHours()).padStart(2, "0") + ":" + String(date7.getMinutes()).padStart(2, "0") + ":" + String(date7.getSeconds()).padStart(2, "0") + "." + String(date7.getMilliseconds()).padStart(3, "0");
-      if (offset < 0) {
+      if (offset2 < 0) {
         ret += "-";
-        offset *= -1;
+        offset2 *= -1;
       } else {
         ret += "+";
       }
-      ret += String(Math.floor(offset / 60)).padStart(2, "0") + ":" + String(offset % 60).padStart(2, "0");
+      ret += String(Math.floor(offset2 / 60)).padStart(2, "0") + ":" + String(offset2 % 60).padStart(2, "0");
       if (isBCYear) ret += " BC";
       return ret;
     }
@@ -1579,7 +1579,7 @@ var require_type_overrides = __commonJS({
 var require_pg_connection_string = __commonJS({
   "node_modules/.pnpm/pg-connection-string@2.14.0/node_modules/pg-connection-string/index.js"(exports2, module2) {
     "use strict";
-    function parse9(str, options = {}) {
+    function parse10(str, options = {}) {
       if (str.charAt(0) === "/") {
         const config6 = str.split(" ");
         return { host: config6[0], database: config6[1] };
@@ -1741,7 +1741,7 @@ var require_pg_connection_string = __commonJS({
       return poolConfig;
     }
     function parseIntoClientConfig(str) {
-      return toClientConfig(parse9(str));
+      return toClientConfig(parse10(str));
     }
     function deprecatedSslModeWarning(sslmode) {
       if (!deprecatedSslModeWarning.warned && typeof process !== "undefined" && process.emitWarning) {
@@ -1756,10 +1756,10 @@ To prepare for this change:
 See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.`);
       }
     }
-    module2.exports = parse9;
-    parse9.parse = parse9;
-    parse9.toClientConfig = toClientConfig;
-    parse9.parseIntoClientConfig = parseIntoClientConfig;
+    module2.exports = parse10;
+    parse10.parse = parse10;
+    parse10.toClientConfig = toClientConfig;
+    parse10.parseIntoClientConfig = parseIntoClientConfig;
   }
 });
 
@@ -1769,7 +1769,7 @@ var require_connection_parameters = __commonJS({
     "use strict";
     var dns = require("dns");
     var defaults2 = require_defaults();
-    var parse9 = require_pg_connection_string().parse;
+    var parse10 = require_pg_connection_string().parse;
     var val = function(key, config5, envVar) {
       if (config5[key]) {
         return config5[key];
@@ -1807,9 +1807,9 @@ var require_connection_parameters = __commonJS({
     };
     var ConnectionParameters = class {
       constructor(config5) {
-        config5 = typeof config5 === "string" ? parse9(config5) : config5 || {};
+        config5 = typeof config5 === "string" ? parse10(config5) : config5 || {};
         if (config5.connectionString) {
-          config5 = Object.assign({}, config5, parse9(config5.connectionString));
+          config5 = Object.assign({}, config5, parse10(config5.connectionString));
         }
         this.user = val("user", config5);
         this.database = val("database", config5);
@@ -1938,19 +1938,19 @@ var require_result = __commonJS({
       }
       // adds a command complete message
       addCommandComplete(msg) {
-        let match2;
+        let match3;
         if (msg.text) {
-          match2 = matchRegexp.exec(msg.text);
+          match3 = matchRegexp.exec(msg.text);
         } else {
-          match2 = matchRegexp.exec(msg.command);
+          match3 = matchRegexp.exec(msg.command);
         }
-        if (match2) {
-          this.command = match2[1];
-          if (match2[3]) {
-            this.oid = parseInt(match2[2], 10);
-            this.rowCount = parseInt(match2[3], 10);
-          } else if (match2[2]) {
-            this.rowCount = parseInt(match2[2], 10);
+        if (match3) {
+          this.command = match3[1];
+          if (match3[3]) {
+            this.oid = parseInt(match3[2], 10);
+            this.rowCount = parseInt(match3[3], 10);
+          } else if (match3[2]) {
+            this.rowCount = parseInt(match3[2], 10);
           }
         }
       }
@@ -2437,13 +2437,13 @@ var require_buffer_writer = __commonJS({
         const len = Buffer.byteLength(string4);
         this.ensure(4 + len);
         const buffer = this.buffer;
-        let offset = this.offset;
-        buffer[offset++] = len >>> 24 & 255;
-        buffer[offset++] = len >>> 16 & 255;
-        buffer[offset++] = len >>> 8 & 255;
-        buffer[offset++] = len >>> 0 & 255;
-        buffer.write(string4, offset, "utf-8");
-        this.offset = offset + len;
+        let offset2 = this.offset;
+        buffer[offset2++] = len >>> 24 & 255;
+        buffer[offset2++] = len >>> 16 & 255;
+        buffer[offset2++] = len >>> 8 & 255;
+        buffer[offset2++] = len >>> 0 & 255;
+        buffer.write(string4, offset2, "utf-8");
+        this.offset = offset2 + len;
         return this;
       }
       add(otherBuffer) {
@@ -2526,7 +2526,7 @@ var require_serializer = __commonJS({
       );
     };
     var emptyArray = [];
-    var parse9 = (query2) => {
+    var parse10 = (query2) => {
       const name = query2.name || "";
       if (name.length > 63) {
         console.error("Warning! Postgres only supports 63 characters for query names.");
@@ -2681,7 +2681,7 @@ var require_serializer = __commonJS({
       sendSASLInitialResponseMessage,
       sendSCRAMClientFinalMessage,
       query,
-      parse: parse9,
+      parse: parse10,
       bind: bind2,
       execute,
       describe: describe3,
@@ -2705,13 +2705,13 @@ var require_buffer_reader = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.BufferReader = void 0;
     var BufferReader = class {
-      constructor(offset = 0) {
-        this.offset = offset;
+      constructor(offset2 = 0) {
+        this.offset = offset2;
         this.buffer = Buffer.allocUnsafe(0);
         this.encoding = "utf-8";
       }
-      setBuffer(offset, buffer) {
-        this.offset = offset;
+      setBuffer(offset2, buffer) {
+        this.offset = offset2;
         this.buffer = buffer;
       }
       int16() {
@@ -2784,26 +2784,26 @@ var require_parser = __commonJS({
       parse(buffer, callback) {
         this.mergeBuffer(buffer);
         const bufferFullLength = this.bufferOffset + this.bufferLength;
-        let offset = this.bufferOffset;
-        while (offset + HEADER_LENGTH <= bufferFullLength) {
-          const code = this.buffer[offset];
-          const length = this.buffer.readUInt32BE(offset + CODE_LENGTH);
+        let offset2 = this.bufferOffset;
+        while (offset2 + HEADER_LENGTH <= bufferFullLength) {
+          const code = this.buffer[offset2];
+          const length = this.buffer.readUInt32BE(offset2 + CODE_LENGTH);
           const fullMessageLength = CODE_LENGTH + length;
-          if (fullMessageLength + offset <= bufferFullLength) {
-            const message2 = this.handlePacket(offset + HEADER_LENGTH, code, length, this.buffer);
+          if (fullMessageLength + offset2 <= bufferFullLength) {
+            const message2 = this.handlePacket(offset2 + HEADER_LENGTH, code, length, this.buffer);
             callback(message2);
-            offset += fullMessageLength;
+            offset2 += fullMessageLength;
           } else {
             break;
           }
         }
-        if (offset === bufferFullLength) {
+        if (offset2 === bufferFullLength) {
           this.buffer = emptyBuffer;
           this.bufferLength = 0;
           this.bufferOffset = 0;
         } else {
-          this.bufferLength = bufferFullLength - offset;
-          this.bufferOffset = offset;
+          this.bufferLength = bufferFullLength - offset2;
+          this.bufferOffset = offset2;
         }
       }
       mergeBuffer(buffer) {
@@ -2833,9 +2833,9 @@ var require_parser = __commonJS({
           this.bufferLength = buffer.byteLength;
         }
       }
-      handlePacket(offset, code, length, bytes) {
+      handlePacket(offset2, code, length, bytes) {
         const { reader } = this;
-        reader.setBuffer(offset, bytes);
+        reader.setBuffer(offset2, bytes);
         let message2;
         switch (code) {
           case 50:
@@ -3070,7 +3070,7 @@ var require_dist = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DatabaseError = exports2.serialize = void 0;
-    exports2.parse = parse9;
+    exports2.parse = parse10;
     var messages_1 = require_messages();
     Object.defineProperty(exports2, "DatabaseError", { enumerable: true, get: function() {
       return messages_1.DatabaseError;
@@ -3080,7 +3080,7 @@ var require_dist = __commonJS({
       return serializer_1.serialize;
     } });
     var parser_1 = require_parser();
-    function parse9(stream2, callback) {
+    function parse10(stream2, callback) {
       const parser = new parser_1.Parser();
       stream2.on("data", (buffer) => parser.parse(buffer, callback));
       return new Promise((resolve) => stream2.on("end", () => resolve()));
@@ -3168,7 +3168,7 @@ var require_connection = __commonJS({
   "node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/connection.js"(exports2, module2) {
     "use strict";
     var EventEmitter = require("events").EventEmitter;
-    var { parse: parse9, serialize: serialize2 } = require_dist();
+    var { parse: parse10, serialize: serialize2 } = require_dist();
     var stream2 = require_stream();
     var { getStream } = stream2;
     var flushBuffer = serialize2.flush();
@@ -3269,7 +3269,7 @@ var require_connection = __commonJS({
         self2.emit("sslconnect");
       }
       attachListeners(stream3) {
-        parse9(stream3, (msg) => {
+        parse10(stream3, (msg) => {
           const eventName = msg.name === "error" ? "errorMessage" : msg.name;
           if (this._emitMessage) {
             this.emit("message", msg);
@@ -3697,8 +3697,8 @@ var require_client = __commonJS({
         return Number.isFinite(value) ? value : defaultValue;
       }
       if (typeof value === "string" && value.trim() !== "") {
-        const n3 = Number(value);
-        return Number.isFinite(n3) ? n3 : defaultValue;
+        const n4 = Number(value);
+        return Number.isFinite(n4) ? n4 : defaultValue;
       }
       return defaultValue;
     }
@@ -6605,18 +6605,18 @@ var init_parse = __esm({
       return result.issues.length === 0;
     };
     _encode = (_Err) => {
-      const parse9 = _parse(_Err);
+      const parse10 = _parse(_Err);
       const fn = (schema3, value, _ctx, _params) => {
         const ctx = _ctx ? { ..._ctx, direction: "backward" } : { direction: "backward" };
-        return parse9(schema3, value, ctx, finalizeParams(fn, _params));
+        return parse10(schema3, value, ctx, finalizeParams(fn, _params));
       };
       return fn;
     };
     encode = /* @__PURE__ */ _encode($ZodRealError);
     _decode = (_Err) => {
-      const parse9 = _parse(_Err);
+      const parse10 = _parse(_Err);
       const fn = (schema3, value, _ctx, _params) => {
-        return parse9(schema3, value, _ctx, finalizeParams(fn, _params));
+        return parse10(schema3, value, _ctx, finalizeParams(fn, _params));
       };
       return fn;
     };
@@ -8015,7 +8015,7 @@ function partPattern(schema3) {
   if (def.options) {
     const sources = def.options.map(partPattern);
     if (sources.every(Boolean))
-      return `^(${sources.map((s2) => cleanRegex(s2)).join("|")})$`;
+      return `^(${sources.map((s4) => cleanRegex(s4)).join("|")})$`;
   }
   return leafPattern(schema3);
 }
@@ -8629,15 +8629,15 @@ var init_schemas = __esm({
           }
         }
         const input2 = payload.value;
-        const isDate2 = input2 instanceof Date;
-        const isValidDate = isDate2 && !Number.isNaN(input2.getTime());
+        const isDate3 = input2 instanceof Date;
+        const isValidDate = isDate3 && !Number.isNaN(input2.getTime());
         if (isValidDate)
           return payload;
         payload.issues.push({
           expected: "date",
           code: "invalid_type",
           input: input2,
-          ...isDate2 ? { received: "Invalid Date" } : {},
+          ...isDate3 ? { received: "Invalid Date" } : {},
           inst
         });
         return payload;
@@ -18163,9 +18163,9 @@ function compileValidator(schema3, parser) {
 function compile(schema3, options) {
   try {
     const parser = compileFn(schema3);
-    const clone2 = withParser(schema3, parser);
-    clone2._zod.bag.validator = compileValidator(schema3, parser);
-    return clone2;
+    const clone3 = withParser(schema3, parser);
+    clone3._zod.bag.validator = compileValidator(schema3, parser);
+    return clone3;
   } catch (err) {
     if (options?.strict)
       throw err;
@@ -18176,7 +18176,7 @@ function withParser(schema3, parser) {
   if (isRecursiveSchema(schema3)) {
     throw new ZodCompileUnsupportedError("a schema whose subtree contains a reference cycle");
   }
-  const clone2 = clone(schema3);
+  const clone3 = clone(schema3);
   const liveRun = schema3._zod.run;
   const originalRun = liveRun.__originalRun ?? liveRun;
   const wrapped = (payload, ctx) => {
@@ -18196,12 +18196,12 @@ function withParser(schema3, parser) {
     return originalRun(payload, ctx);
   };
   wrapped.__originalRun = originalRun;
-  clone2._zod.bag.fallbackRun = originalRun;
-  clone2._zod.bag.validator = parser;
-  clone2._zod.run = wrapped;
+  clone3._zod.bag.fallbackRun = originalRun;
+  clone3._zod.bag.validator = parser;
+  clone3._zod.run = wrapped;
   if (!liveRun.__originalRun)
-    installCompiledUserMethods(clone2, schema3, parser);
-  return clone2;
+    installCompiledUserMethods(clone3, schema3, parser);
+  return clone3;
 }
 function installCompiledUserMethods(target, source, parser) {
   const targetAny = target;
@@ -23979,17 +23979,17 @@ var init_schemas2 = __esm({
       inst._zod.processJSONSchema = (ctx, json3, params) => arrayProcessor(inst, ctx, json3, params);
       inst.element = def.element;
     }, {
-      min(n3, params) {
-        return this.check(_minLength(n3, params));
+      min(n4, params) {
+        return this.check(_minLength(n4, params));
       },
       nonempty(params) {
         return this.check(_minLength(1, params));
       },
-      max(n3, params) {
-        return this.check(_maxLength(n3, params));
+      max(n4, params) {
+        return this.check(_maxLength(n4, params));
       },
-      length(n3, params) {
-        return this.check(_length(n3, params));
+      length(n4, params) {
+        return this.check(_length(n4, params));
       },
       unwrap() {
         return this.element;
@@ -24533,8 +24533,8 @@ function containsRef(value) {
     return Object.values(sub).some(containsRef);
   });
 }
-function plural(n3) {
-  return n3 === 1 ? "element" : "elements";
+function plural(n4) {
+  return n4 === 1 ? "element" : "elements";
 }
 function checkArrayGuards(arraySchema, guards) {
   const guard = z.transform((value) => value).check((payload) => {
@@ -24928,12 +24928,12 @@ function convertSchema(schema3, ctx) {
   let baseSchema = convertBaseSchema(schema3, ctx);
   const hasExplicitType = schema3.type || schema3.enum !== void 0 || schema3.const !== void 0;
   if (schema3.anyOf && Array.isArray(schema3.anyOf)) {
-    const options = schema3.anyOf.map((s2) => convertSchema(s2, ctx));
+    const options = schema3.anyOf.map((s4) => convertSchema(s4, ctx));
     const anyOfUnion = z.union(options);
     baseSchema = hasExplicitType ? z.intersection(baseSchema, anyOfUnion) : anyOfUnion;
   }
   if (schema3.oneOf && Array.isArray(schema3.oneOf)) {
-    const options = schema3.oneOf.map((s2) => convertSchema(s2, ctx));
+    const options = schema3.oneOf.map((s4) => convertSchema(s4, ctx));
     const oneOfUnion = z.xor(options);
     baseSchema = hasExplicitType ? z.intersection(baseSchema, oneOfUnion) : oneOfUnion;
   }
@@ -25145,24 +25145,24 @@ function visit(schema3, fnOrHandlers) {
     return h5 ? h5(node2, rewritten) : node2;
   };
   const cache7 = /* @__PURE__ */ new Map();
-  function run2(s2) {
-    const cached2 = cache7.get(s2);
+  function run2(s4) {
+    const cached2 = cache7.get(s4);
     if (cached2 === RESOLVING) {
       return new $ZodLazy({
         type: "lazy",
-        getter: () => cache7.get(s2)
+        getter: () => cache7.get(s4)
       });
     }
     if (cached2 !== void 0)
       return cached2;
-    cache7.set(s2, RESOLVING);
-    const inner = mapInner(s2);
-    const mapped = fn(inner, inner !== s2);
-    cache7.set(s2, mapped);
+    cache7.set(s4, RESOLVING);
+    const inner = mapInner(s4);
+    const mapped = fn(inner, inner !== s4);
+    cache7.set(s4, mapped);
     return mapped;
   }
-  function mapInner(s2) {
-    const def = s2._zod.def;
+  function mapInner(s4) {
+    const def = s4._zod.def;
     const kind = def.type;
     switch (kind) {
       case "object": {
@@ -25182,11 +25182,11 @@ function visit(schema3, fnOrHandlers) {
           if (newCatchall !== def.catchall)
             changed = true;
         }
-        return changed ? clone(s2, { ...def, shape: newShape, catchall: newCatchall }) : s2;
+        return changed ? clone(s4, { ...def, shape: newShape, catchall: newCatchall }) : s4;
       }
       case "array": {
         const mapped = run2(def.element);
-        return mapped === def.element ? s2 : clone(s2, { ...def, element: mapped });
+        return mapped === def.element ? s4 : clone(s4, { ...def, element: mapped });
       }
       case "tuple": {
         const oldItems = def.items;
@@ -25204,17 +25204,17 @@ function visit(schema3, fnOrHandlers) {
           if (newRest !== def.rest)
             changed = true;
         }
-        return changed ? clone(s2, { ...def, items: newItems, rest: newRest }) : s2;
+        return changed ? clone(s4, { ...def, items: newItems, rest: newRest }) : s4;
       }
       case "record":
       case "map": {
         const newKey = run2(def.keyType);
         const newVal = run2(def.valueType);
-        return newKey === def.keyType && newVal === def.valueType ? s2 : clone(s2, { ...def, keyType: newKey, valueType: newVal });
+        return newKey === def.keyType && newVal === def.valueType ? s4 : clone(s4, { ...def, keyType: newKey, valueType: newVal });
       }
       case "set": {
         const newVal = run2(def.valueType);
-        return newVal === def.valueType ? s2 : clone(s2, { ...def, valueType: newVal });
+        return newVal === def.valueType ? s4 : clone(s4, { ...def, valueType: newVal });
       }
       case "union": {
         const oldOptions = def.options;
@@ -25226,12 +25226,12 @@ function visit(schema3, fnOrHandlers) {
             changed = true;
           newOptions.push(mapped);
         }
-        return changed ? clone(s2, { ...def, options: newOptions }) : s2;
+        return changed ? clone(s4, { ...def, options: newOptions }) : s4;
       }
       case "intersection": {
         const newLeft = run2(def.left);
         const newRight = run2(def.right);
-        return newLeft === def.left && newRight === def.right ? s2 : clone(s2, { ...def, left: newLeft, right: newRight });
+        return newLeft === def.left && newRight === def.right ? s4 : clone(s4, { ...def, left: newLeft, right: newRight });
       }
       case "optional":
       case "nullable":
@@ -25243,22 +25243,22 @@ function visit(schema3, fnOrHandlers) {
       case "promise":
       case "success": {
         const newInner = run2(def.innerType);
-        return newInner === def.innerType ? s2 : clone(s2, { ...def, innerType: newInner });
+        return newInner === def.innerType ? s4 : clone(s4, { ...def, innerType: newInner });
       }
       case "pipe": {
         const newIn = run2(def.in);
         const newOut = run2(def.out);
-        return newIn === def.in && newOut === def.out ? s2 : clone(s2, { ...def, in: newIn, out: newOut });
+        return newIn === def.in && newOut === def.out ? s4 : clone(s4, { ...def, in: newIn, out: newOut });
       }
       case "function": {
         const newInput = run2(def.input);
         const newOutput = run2(def.output);
-        return newInput === def.input && newOutput === def.output ? s2 : clone(s2, { ...def, input: newInput, output: newOutput });
+        return newInput === def.input && newOutput === def.output ? s4 : clone(s4, { ...def, input: newInput, output: newOutput });
       }
       case "lazy": {
         const original = def.getter;
         const { _cachedInner, ...rest } = def;
-        return clone(s2, { ...rest, getter: () => run2(original()) });
+        return clone(s4, { ...rest, getter: () => run2(original()) });
       }
       // A leaf by choice: `parts` are regex fragments, not data positions.
       case "template_literal":
@@ -25282,10 +25282,10 @@ function visit(schema3, fnOrHandlers) {
       case "file":
       case "transform":
       case "custom":
-        return s2;
+        return s4;
       default: {
         kind;
-        return s2;
+        return s4;
       }
     }
   }
@@ -25303,11 +25303,11 @@ var init_visit = __esm({
 // node_modules/.pnpm/zod@4.6.5/node_modules/zod/v4/classic/deep-partial.js
 function deepPartial(schema3) {
   return visit(schema3, {
-    object: (s2) => s2.partial(),
+    object: (s4) => s4.partial(),
     // Every partialed option now admits `undefined`, which the constructor rejects as a duplicate.
-    union: (s2) => {
-      const def = s2._zod.def;
-      return def.discriminator === void 0 ? s2 : union2(def.options);
+    union: (s4) => {
+      const def = s4._zod.def;
+      return def.discriminator === void 0 ? s4 : union2(def.options);
     }
   });
 }
@@ -25333,18 +25333,18 @@ function inSide(def) {
 }
 function input(schema3) {
   return visit(schema3, {
-    pipe: (s2) => inSide(s2._zod.def),
+    pipe: (s4) => inSide(s4._zod.def),
     // A default value belongs to the output side, so a rewritten inner type leaves it stranded. `.default()` widens the declared input type with `undefined`, and `optional` is what carries that across.
-    default: (s2, rewritten) => rewritten ? optional(s2._zod.def.innerType) : s2,
+    default: (s4, rewritten) => rewritten ? optional(s4._zod.def.innerType) : s4,
     // A catch value is output-side too, but `.catch()` leaves the declared input type alone, so the inner schema stands on its own.
-    catch: (s2, rewritten) => rewritten ? s2._zod.def.innerType : s2
+    catch: (s4, rewritten) => rewritten ? s4._zod.def.innerType : s4
   });
 }
 function output(schema3) {
   return visit(schema3, {
-    pipe: (s2) => outSide(s2._zod.def),
+    pipe: (s4) => outSide(s4._zod.def),
     // A prefault value is fed through the schema, which makes it input-side, so a rewritten inner type leaves it stranded.
-    prefault: (s2, rewritten) => rewritten ? s2._zod.def.innerType : s2
+    prefault: (s4, rewritten) => rewritten ? s4._zod.def.innerType : s4
   });
 }
 var init_in_out = __esm({
@@ -26022,26 +26022,26 @@ var require_rrule = __commonJS({
           var Weekday = (
             /** @class */
             (function() {
-              function Weekday2(weekday, n3) {
-                if (n3 === 0)
+              function Weekday2(weekday, n4) {
+                if (n4 === 0)
                   throw new Error("Can't create weekday with n == 0");
                 this.weekday = weekday;
-                this.n = n3;
+                this.n = n4;
               }
               Weekday2.fromStr = function(str) {
                 return new Weekday2(ALL_WEEKDAYS.indexOf(str));
               };
-              Weekday2.prototype.nth = function(n3) {
-                return this.n === n3 ? this : new Weekday2(this.weekday, n3);
+              Weekday2.prototype.nth = function(n4) {
+                return this.n === n4 ? this : new Weekday2(this.weekday, n4);
               };
               Weekday2.prototype.equals = function(other) {
                 return this.weekday === other.weekday && this.n === other.n;
               };
               Weekday2.prototype.toString = function() {
-                var s2 = ALL_WEEKDAYS[this.weekday];
+                var s4 = ALL_WEEKDAYS[this.weekday];
                 if (this.n)
-                  s2 = (this.n > 0 ? "+" : "") + String(this.n) + s2;
-                return s2;
+                  s4 = (this.n > 0 ? "+" : "") + String(this.n) + s4;
+                return s4;
               };
               Weekday2.prototype.getJsWeekday = function() {
                 return this.weekday === 6 ? 0 : this.weekday + 1;
@@ -26053,7 +26053,7 @@ var require_rrule = __commonJS({
           var isPresent = function(value) {
             return value !== null && value !== void 0;
           };
-          var isNumber2 = function(value) {
+          var isNumber3 = function(value) {
             return typeof value === "number";
           };
           var isWeekdayStr = function(value) {
@@ -26073,7 +26073,7 @@ var require_rrule = __commonJS({
               rang.push(i5);
             return rang;
           };
-          var clone2 = function(array2) {
+          var clone3 = function(array2) {
             return [].concat(array2);
           };
           var repeat = function(value, times) {
@@ -26094,7 +26094,7 @@ var require_rrule = __commonJS({
             }
             return [item];
           };
-          function padStart(item, targetLength, padString) {
+          function padStart2(item, targetLength, padString) {
             if (padString === void 0) {
               padString = " ";
             }
@@ -26130,17 +26130,17 @@ var require_rrule = __commonJS({
             return notEmpty(arr) && arr.indexOf(val) !== -1;
           };
           ;
-          var datetime3 = function(y, m3, d5, h5, i5, s2) {
+          var datetime3 = function(y, m3, d5, h5, i5, s4) {
             if (h5 === void 0) {
               h5 = 0;
             }
             if (i5 === void 0) {
               i5 = 0;
             }
-            if (s2 === void 0) {
-              s2 = 0;
+            if (s4 === void 0) {
+              s4 = 0;
             }
-            return new Date(Date.UTC(y, m3 - 1, d5, h5, i5, s2));
+            return new Date(Date.UTC(y, m3 - 1, d5, h5, i5, s4));
           };
           var MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
           var ONE_DAY = 1e3 * 60 * 60 * 24;
@@ -26151,14 +26151,14 @@ var require_rrule = __commonJS({
             var dateNoTime = new Date(date7.getUTCFullYear(), date7.getUTCMonth(), date7.getUTCDate());
             return Math.ceil((dateNoTime.valueOf() - new Date(date7.getUTCFullYear(), 0, 1).valueOf()) / ONE_DAY) + 1;
           };
-          var isLeapYear2 = function(year2) {
+          var isLeapYear3 = function(year2) {
             return year2 % 4 === 0 && year2 % 100 !== 0 || year2 % 400 === 0;
           };
-          var isDate2 = function(value) {
+          var isDate3 = function(value) {
             return value instanceof Date;
           };
           var isValidDate = function(value) {
-            return isDate2(value) && !isNaN(value.getTime());
+            return isDate3(value) && !isNaN(value.getTime());
           };
           var tzOffset = function(date7) {
             return date7.getTimezoneOffset() * 60 * 1e3;
@@ -26177,7 +26177,7 @@ var require_rrule = __commonJS({
           };
           var getMonthDays = function(date7) {
             var month = date7.getUTCMonth();
-            return month === 1 && isLeapYear2(date7.getUTCFullYear()) ? 29 : MONTH_DAYS[month];
+            return month === 1 && isLeapYear3(date7.getUTCFullYear()) ? 29 : MONTH_DAYS[month];
           };
           var getWeekday = function(date7) {
             return PY_WEEKDAYS[date7.getUTCDay()];
@@ -26212,13 +26212,13 @@ var require_rrule = __commonJS({
             }
             var date7 = new Date(time6);
             return [
-              padStart(date7.getUTCFullYear().toString(), 4, "0"),
-              padStart(date7.getUTCMonth() + 1, 2, "0"),
-              padStart(date7.getUTCDate(), 2, "0"),
+              padStart2(date7.getUTCFullYear().toString(), 4, "0"),
+              padStart2(date7.getUTCMonth() + 1, 2, "0"),
+              padStart2(date7.getUTCDate(), 2, "0"),
               "T",
-              padStart(date7.getUTCHours(), 2, "0"),
-              padStart(date7.getUTCMinutes(), 2, "0"),
-              padStart(date7.getUTCSeconds(), 2, "0"),
+              padStart2(date7.getUTCHours(), 2, "0"),
+              padStart2(date7.getUTCMinutes(), 2, "0"),
+              padStart2(date7.getUTCSeconds(), 2, "0"),
               utc ? "Z" : ""
             ].join("");
           };
@@ -26323,22 +26323,22 @@ var require_rrule = __commonJS({
           }
           var __assign3 = function() {
             __assign3 = Object.assign || function __assign4(t) {
-              for (var s2, i5 = 1, n3 = arguments.length; i5 < n3; i5++) {
-                s2 = arguments[i5];
-                for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3)) t[p3] = s2[p3];
+              for (var s4, i5 = 1, n4 = arguments.length; i5 < n4; i5++) {
+                s4 = arguments[i5];
+                for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3)) t[p3] = s4[p3];
               }
               return t;
             };
             return __assign3.apply(this, arguments);
           };
-          function __rest3(s2, e5) {
+          function __rest3(s4, e5) {
             var t = {};
-            for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3) && e5.indexOf(p3) < 0)
-              t[p3] = s2[p3];
-            if (s2 != null && typeof Object.getOwnPropertySymbols === "function")
-              for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s2); i5 < p3.length; i5++) {
-                if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s2, p3[i5]))
-                  t[p3[i5]] = s2[p3[i5]];
+            for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3) && e5.indexOf(p3) < 0)
+              t[p3] = s4[p3];
+            if (s4 != null && typeof Object.getOwnPropertySymbols === "function")
+              for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s4); i5 < p3.length; i5++) {
+                if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s4, p3[i5]))
+                  t[p3[i5]] = s4[p3[i5]];
               }
             return t;
           }
@@ -26391,9 +26391,9 @@ var require_rrule = __commonJS({
             return g5 = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g5[Symbol.iterator] = function() {
               return this;
             }), g5;
-            function verb(n3) {
+            function verb(n4) {
               return function(v) {
-                return step([n3, v]);
+                return step([n4, v]);
               };
             }
             function step(op2) {
@@ -26469,7 +26469,7 @@ var require_rrule = __commonJS({
             for (var p3 in m3) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(o3, p3)) __createBinding3(o3, m3, p3);
           }
           function __values3(o3) {
-            var s2 = typeof Symbol === "function" && Symbol.iterator, m3 = s2 && o3[s2], i5 = 0;
+            var s4 = typeof Symbol === "function" && Symbol.iterator, m3 = s4 && o3[s4], i5 = 0;
             if (m3) return m3.call(o3);
             if (o3 && typeof o3.length === "number") return {
               next: function() {
@@ -26477,14 +26477,14 @@ var require_rrule = __commonJS({
                 return { value: o3 && o3[i5++], done: !o3 };
               }
             };
-            throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
+            throw new TypeError(s4 ? "Object is not iterable." : "Symbol.iterator is not defined.");
           }
-          function __read3(o3, n3) {
+          function __read3(o3, n4) {
             var m3 = typeof Symbol === "function" && o3[Symbol.iterator];
             if (!m3) return o3;
             var i5 = m3.call(o3), r5, ar = [], e5;
             try {
-              while ((n3 === void 0 || n3-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
+              while ((n4 === void 0 || n4-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
             } catch (error64) {
               e5 = { error: error64 };
             } finally {
@@ -26502,14 +26502,14 @@ var require_rrule = __commonJS({
             return ar;
           }
           function __spreadArrays3() {
-            for (var s2 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s2 += arguments[i5].length;
-            for (var r5 = Array(s2), k5 = 0, i5 = 0; i5 < il; i5++)
+            for (var s4 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s4 += arguments[i5].length;
+            for (var r5 = Array(s4), k5 = 0, i5 = 0; i5 < il; i5++)
               for (var a5 = arguments[i5], j5 = 0, jl = a5.length; j5 < jl; j5++, k5++)
                 r5[k5] = a5[j5];
             return r5;
           }
           function __spreadArray2(to, from, pack) {
-            if (pack || arguments.length === 2) for (var i5 = 0, l3 = from.length, ar; i5 < l3; i5++) {
+            if (pack || arguments.length === 2) for (var i5 = 0, l4 = from.length, ar; i5 < l4; i5++) {
               if (ar || !(i5 in from)) {
                 if (!ar) ar = Array.prototype.slice.call(from, 0, i5);
                 ar[i5] = from[i5];
@@ -26526,16 +26526,16 @@ var require_rrule = __commonJS({
             return i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
               return this;
             }, i5;
-            function verb(n3) {
-              if (g5[n3]) i5[n3] = function(v) {
+            function verb(n4) {
+              if (g5[n4]) i5[n4] = function(v) {
                 return new Promise(function(a5, b5) {
-                  q3.push([n3, v, a5, b5]) > 1 || resume(n3, v);
+                  q3.push([n4, v, a5, b5]) > 1 || resume(n4, v);
                 });
               };
             }
-            function resume(n3, v) {
+            function resume(n4, v) {
               try {
-                step(g5[n3](v));
+                step(g5[n4](v));
               } catch (e5) {
                 settle2(q3[0][3], e5);
               }
@@ -26560,9 +26560,9 @@ var require_rrule = __commonJS({
             }), verb("return"), i5[Symbol.iterator] = function() {
               return this;
             }, i5;
-            function verb(n3, f5) {
-              i5[n3] = o3[n3] ? function(v) {
-                return (p3 = !p3) ? { value: __await3(o3[n3](v)), done: n3 === "return" } : f5 ? f5(v) : v;
+            function verb(n4, f5) {
+              i5[n4] = o3[n4] ? function(v) {
+                return (p3 = !p3) ? { value: __await3(o3[n4](v)), done: n4 === "return" } : f5 ? f5(v) : v;
               } : f5;
             }
           }
@@ -26572,10 +26572,10 @@ var require_rrule = __commonJS({
             return m3 ? m3.call(o3) : (o3 = typeof __values3 === "function" ? __values3(o3) : o3[Symbol.iterator](), i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
               return this;
             }, i5);
-            function verb(n3) {
-              i5[n3] = o3[n3] && function(v) {
+            function verb(n4) {
+              i5[n4] = o3[n4] && function(v) {
                 return new Promise(function(resolve, reject) {
-                  v = o3[n3](v), settle2(resolve, reject, v.done, v.value);
+                  v = o3[n4](v), settle2(resolve, reject, v.done, v.value);
                 });
               };
             }
@@ -26962,13 +26962,13 @@ var require_rrule = __commonJS({
               ToText2.prototype._bymonth = function() {
                 this.add(this.list(this.options.bymonth, this.monthtext, this.gettext("and")));
               };
-              ToText2.prototype.nth = function(n3) {
-                n3 = parseInt(n3.toString(), 10);
+              ToText2.prototype.nth = function(n4) {
+                n4 = parseInt(n4.toString(), 10);
                 var nth;
                 var gettext = this.gettext;
-                if (n3 === -1)
+                if (n4 === -1)
                   return gettext("last");
-                var npos = Math.abs(n3);
+                var npos = Math.abs(n4);
                 switch (npos) {
                   case 1:
                   case 21:
@@ -26986,21 +26986,21 @@ var require_rrule = __commonJS({
                   default:
                     nth = npos + gettext("th");
                 }
-                return n3 < 0 ? nth + " " + gettext("last") : nth;
+                return n4 < 0 ? nth + " " + gettext("last") : nth;
               };
               ToText2.prototype.monthtext = function(m3) {
                 return this.language.monthNames[m3 - 1];
               };
               ToText2.prototype.weekdaytext = function(wday) {
-                var weekday = isNumber2(wday) ? (wday + 1) % 7 : wday.getJsWeekday();
+                var weekday = isNumber3(wday) ? (wday + 1) % 7 : wday.getJsWeekday();
                 return (wday.n ? this.nth(wday.n) + " " : "") + this.language.dayNames[weekday];
               };
-              ToText2.prototype.plural = function(n3) {
-                return n3 % 100 !== 1;
+              ToText2.prototype.plural = function(n4) {
+                return n4 % 100 !== 1;
               };
-              ToText2.prototype.add = function(s2) {
+              ToText2.prototype.add = function(s4) {
                 this.text.push(" ");
-                this.text.push(s2);
+                this.text.push(s4);
                 return this;
               };
               ToText2.prototype.list = function(arr, callback, finalDelim, delim) {
@@ -27069,10 +27069,10 @@ var require_rrule = __commonJS({
                   best = null;
                   for (var name_1 in this.rules) {
                     rule = this.rules[name_1];
-                    var match2 = rule.exec(this.text);
-                    if (match2) {
-                      if (best === null || match2[0].length > best[0].length) {
-                        best = match2;
+                    var match3 = rule.exec(this.text);
+                    if (match3) {
+                      if (best === null || match3[0].length > best[0].length) {
+                        best = match3;
                         bestSymbol = name_1;
                       }
                     }
@@ -27128,9 +27128,9 @@ var require_rrule = __commonJS({
             return options;
             function S2() {
               ttr.expect("every");
-              var n3 = ttr.acceptNumber();
-              if (n3)
-                options.interval = parseInt(n3[0], 10);
+              var n4 = ttr.acceptNumber();
+              if (n4)
+                options.interval = parseInt(n4[0], 10);
               if (ttr.isDone())
                 throw new Error("Unexpected end");
               switch (ttr.symbol) {
@@ -27278,17 +27278,17 @@ var require_rrule = __commonJS({
                   }
                 } else if (ttr.symbol === "week(s)") {
                   ttr.nextSymbol();
-                  var n3 = ttr.acceptNumber();
-                  if (!n3) {
+                  var n4 = ttr.acceptNumber();
+                  if (!n4) {
                     throw new Error("Unexpected symbol " + ttr.symbol + ", expected week number");
                   }
-                  options.byweekno = [parseInt(n3[0], 10)];
+                  options.byweekno = [parseInt(n4[0], 10)];
                   while (ttr.accept("comma")) {
-                    n3 = ttr.acceptNumber();
-                    if (!n3) {
+                    n4 = ttr.acceptNumber();
+                    if (!n4) {
                       throw new Error("Unexpected symbol " + ttr.symbol + "; expected monthday");
                     }
-                    options.byweekno.push(parseInt(n3[0], 10));
+                    options.byweekno.push(parseInt(n4[0], 10));
                   }
                 } else if (m3) {
                   ttr.nextSymbol();
@@ -27305,17 +27305,17 @@ var require_rrule = __commonJS({
               if (!at)
                 return;
               do {
-                var n3 = ttr.acceptNumber();
-                if (!n3) {
+                var n4 = ttr.acceptNumber();
+                if (!n4) {
                   throw new Error("Unexpected symbol " + ttr.symbol + ", expected hour");
                 }
-                options.byhour = [parseInt(n3[0], 10)];
+                options.byhour = [parseInt(n4[0], 10)];
                 while (ttr.accept("comma")) {
-                  n3 = ttr.acceptNumber();
-                  if (!n3) {
+                  n4 = ttr.acceptNumber();
+                  if (!n4) {
                     throw new Error("Unexpected symbol " + ttr.symbol + "; expected hour");
                   }
-                  options.byhour.push(parseInt(n3[0], 10));
+                  options.byhour.push(parseInt(n4[0], 10));
                 }
               } while (ttr.accept("comma") || ttr.accept("at"));
             }
@@ -27484,40 +27484,40 @@ var require_rrule = __commonJS({
               return Time4;
             })()
           );
-          var DateTime = (
+          var DateTime2 = (
             /** @class */
             (function(_super) {
-              __extends3(DateTime2, _super);
-              function DateTime2(year2, month, day, hour, minute, second, millisecond) {
+              __extends3(DateTime3, _super);
+              function DateTime3(year2, month, day, hour, minute, second, millisecond) {
                 var _this = _super.call(this, hour, minute, second, millisecond) || this;
                 _this.year = year2;
                 _this.month = month;
                 _this.day = day;
                 return _this;
               }
-              DateTime2.fromDate = function(date7) {
+              DateTime3.fromDate = function(date7) {
                 return new this(date7.getUTCFullYear(), date7.getUTCMonth() + 1, date7.getUTCDate(), date7.getUTCHours(), date7.getUTCMinutes(), date7.getUTCSeconds(), date7.valueOf() % 1e3);
               };
-              DateTime2.prototype.getWeekday = function() {
+              DateTime3.prototype.getWeekday = function() {
                 return getWeekday(new Date(this.getTime()));
               };
-              DateTime2.prototype.getTime = function() {
+              DateTime3.prototype.getTime = function() {
                 return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hour, this.minute, this.second, this.millisecond)).getTime();
               };
-              DateTime2.prototype.getDay = function() {
+              DateTime3.prototype.getDay = function() {
                 return this.day;
               };
-              DateTime2.prototype.getMonth = function() {
+              DateTime3.prototype.getMonth = function() {
                 return this.month;
               };
-              DateTime2.prototype.getYear = function() {
+              DateTime3.prototype.getYear = function() {
                 return this.year;
               };
-              DateTime2.prototype.addYears = function(years) {
+              DateTime3.prototype.addYears = function(years) {
                 this.year += years;
               };
-              DateTime2.prototype.addMonths = function(months2) {
-                this.month += months2;
+              DateTime3.prototype.addMonths = function(months3) {
+                this.month += months3;
                 if (this.month > 12) {
                   var yearDiv = Math.floor(this.month / 12);
                   var monthMod = pymod(this.month, 12);
@@ -27529,7 +27529,7 @@ var require_rrule = __commonJS({
                   }
                 }
               };
-              DateTime2.prototype.addWeekly = function(days, wkst) {
+              DateTime3.prototype.addWeekly = function(days, wkst) {
                 if (wkst > this.getWeekday()) {
                   this.day += -(this.getWeekday() + 1 + (6 - wkst)) + days * 7;
                 } else {
@@ -27537,11 +27537,11 @@ var require_rrule = __commonJS({
                 }
                 this.fixDay();
               };
-              DateTime2.prototype.addDaily = function(days) {
+              DateTime3.prototype.addDaily = function(days) {
                 this.day += days;
                 this.fixDay();
               };
-              DateTime2.prototype.addHours = function(hours, filtered, byhour) {
+              DateTime3.prototype.addHours = function(hours, filtered, byhour) {
                 if (filtered) {
                   this.hour += Math.floor((23 - this.hour) / hours) * hours;
                 }
@@ -27556,7 +27556,7 @@ var require_rrule = __commonJS({
                     break;
                 }
               };
-              DateTime2.prototype.addMinutes = function(minutes, filtered, byhour, byminute) {
+              DateTime3.prototype.addMinutes = function(minutes, filtered, byhour, byminute) {
                 if (filtered) {
                   this.minute += Math.floor((1439 - (this.hour * 60 + this.minute)) / minutes) * minutes;
                 }
@@ -27572,7 +27572,7 @@ var require_rrule = __commonJS({
                   }
                 }
               };
-              DateTime2.prototype.addSeconds = function(seconds, filtered, byhour, byminute, bysecond) {
+              DateTime3.prototype.addSeconds = function(seconds, filtered, byhour, byminute, bysecond) {
                 if (filtered) {
                   this.second += Math.floor((86399 - (this.hour * 3600 + this.minute * 60 + this.second)) / seconds) * seconds;
                 }
@@ -27588,7 +27588,7 @@ var require_rrule = __commonJS({
                   }
                 }
               };
-              DateTime2.prototype.fixDay = function() {
+              DateTime3.prototype.fixDay = function() {
                 if (this.day <= 28) {
                   return;
                 }
@@ -27609,7 +27609,7 @@ var require_rrule = __commonJS({
                   daysinmonth = monthRange(this.year, this.month - 1)[1];
                 }
               };
-              DateTime2.prototype.add = function(options, filtered) {
+              DateTime3.prototype.add = function(options, filtered) {
                 var freq = options.freq, interval2 = options.interval, wkst = options.wkst, byhour = options.byhour, byminute = options.byminute, bysecond = options.bysecond;
                 switch (freq) {
                   case Frequency.YEARLY:
@@ -27628,7 +27628,7 @@ var require_rrule = __commonJS({
                     return this.addSeconds(interval2, filtered, byhour, byminute, bysecond);
                 }
               };
-              return DateTime2;
+              return DateTime3;
             })(Time3)
           );
           ;
@@ -27639,7 +27639,7 @@ var require_rrule = __commonJS({
               var key = keys_1[_i];
               if (!includes2(defaultKeys, key))
                 invalid2.push(key);
-              if (isDate2(options[key]) && !isValidDate(options[key])) {
+              if (isDate3(options[key]) && !isValidDate(options[key])) {
                 invalid2.push(key);
               }
             }
@@ -27659,12 +27659,12 @@ var require_rrule = __commonJS({
               opts.dtstart = new Date((/* @__PURE__ */ new Date()).setMilliseconds(0));
             if (!isPresent(opts.wkst)) {
               opts.wkst = RRule2.MO.weekday;
-            } else if (isNumber2(opts.wkst)) {
+            } else if (isNumber3(opts.wkst)) {
             } else {
               opts.wkst = opts.wkst.weekday;
             }
             if (isPresent(opts.bysetpos)) {
-              if (isNumber2(opts.bysetpos))
+              if (isNumber3(opts.bysetpos))
                 opts.bysetpos = [opts.bysetpos];
               for (var i5 = 0; i5 < opts.bysetpos.length; i5++) {
                 var v = opts.bysetpos[i5];
@@ -27691,7 +27691,7 @@ var require_rrule = __commonJS({
             if (isPresent(opts.bymonth) && !isArray(opts.bymonth)) {
               opts.bymonth = [opts.bymonth];
             }
-            if (isPresent(opts.byyearday) && !isArray(opts.byyearday) && isNumber2(opts.byyearday)) {
+            if (isPresent(opts.byyearday) && !isArray(opts.byyearday) && isNumber3(opts.byyearday)) {
               opts.byyearday = [opts.byyearday];
             }
             if (!isPresent(opts.bymonthday)) {
@@ -27722,7 +27722,7 @@ var require_rrule = __commonJS({
             }
             if (!isPresent(opts.byweekday)) {
               opts.bynweekday = null;
-            } else if (isNumber2(opts.byweekday)) {
+            } else if (isNumber3(opts.byweekday)) {
               opts.byweekday = [opts.byweekday];
               opts.bynweekday = null;
             } else if (isWeekdayStr(opts.byweekday)) {
@@ -27741,7 +27741,7 @@ var require_rrule = __commonJS({
               var bynweekday = [];
               for (var i5 = 0; i5 < opts.byweekday.length; i5++) {
                 var wday = opts.byweekday[i5];
-                if (isNumber2(wday)) {
+                if (isNumber3(wday)) {
                   byweekday.push(wday);
                   continue;
                 } else if (isWeekdayStr(wday)) {
@@ -27759,17 +27759,17 @@ var require_rrule = __commonJS({
             }
             if (!isPresent(opts.byhour)) {
               opts.byhour = opts.freq < RRule2.HOURLY ? [opts.dtstart.getUTCHours()] : null;
-            } else if (isNumber2(opts.byhour)) {
+            } else if (isNumber3(opts.byhour)) {
               opts.byhour = [opts.byhour];
             }
             if (!isPresent(opts.byminute)) {
               opts.byminute = opts.freq < RRule2.MINUTELY ? [opts.dtstart.getUTCMinutes()] : null;
-            } else if (isNumber2(opts.byminute)) {
+            } else if (isNumber3(opts.byminute)) {
               opts.byminute = [opts.byminute];
             }
             if (!isPresent(opts.bysecond)) {
               opts.bysecond = opts.freq < RRule2.SECONDLY ? [opts.dtstart.getUTCSeconds()] : null;
-            } else if (isNumber2(opts.bysecond)) {
+            } else if (isNumber3(opts.bysecond)) {
               opts.bysecond = [opts.bysecond];
             }
             return { parsedOptions: opts };
@@ -27900,10 +27900,10 @@ var require_rrule = __commonJS({
               if (!parts || parts.length < 3) {
                 throw new SyntaxError("Invalid weekday string: ".concat(day));
               }
-              var n3 = Number(parts[1]);
+              var n4 = Number(parts[1]);
               var wdaypart = parts[2];
               var wday = Days[wdaypart].weekday;
-              return new Weekday(wday, n3);
+              return new Weekday(wday, n4);
             });
           }
           ;
@@ -27964,7 +27964,7 @@ var require_rrule = __commonJS({
                   outValue = RRule2.FREQUENCIES[options.freq];
                   break;
                 case "WKST":
-                  if (isNumber2(value)) {
+                  if (isNumber3(value)) {
                     outValue = new Weekday(value).toString();
                   } else {
                     outValue = value.toString();
@@ -28121,8 +28121,8 @@ var require_rrule = __commonJS({
           ;
           function rebuildYear(year2, options) {
             var firstyday = datetime3(year2, 1, 1);
-            var yearlen = isLeapYear2(year2) ? 366 : 365;
-            var nextyearlen = isLeapYear2(year2 + 1) ? 366 : 365;
+            var yearlen = isLeapYear3(year2) ? 366 : 365;
+            var nextyearlen = isLeapYear3(year2 + 1) ? 366 : 365;
             var yearordinal = toOrdinal(firstyday);
             var yearweekday = getWeekday(firstyday);
             var result = __assign3(__assign3({ yearlen, nextyearlen, yearordinal, yearweekday }, baseYearMasks(year2)), { wnomask: null });
@@ -28143,16 +28143,16 @@ var require_rrule = __commonJS({
             var mod = pymod(wyearlen, 7);
             var numweeks = Math.floor(div + mod / 4);
             for (var j5 = 0; j5 < options.byweekno.length; j5++) {
-              var n3 = options.byweekno[j5];
-              if (n3 < 0) {
-                n3 += numweeks + 1;
+              var n4 = options.byweekno[j5];
+              if (n4 < 0) {
+                n4 += numweeks + 1;
               }
-              if (!(n3 > 0 && n3 <= numweeks)) {
+              if (!(n4 > 0 && n4 <= numweeks)) {
                 continue;
               }
               var i5 = void 0;
-              if (n3 > 1) {
-                i5 = no1wkst + (n3 - 1) * 7;
+              if (n4 > 1) {
+                i5 = no1wkst + (n4 - 1) * 7;
                 if (no1wkst !== firstwkst) {
                   i5 -= 7 - firstwkst;
                 }
@@ -28184,7 +28184,7 @@ var require_rrule = __commonJS({
               if (!includes2(options.byweekno, -1)) {
                 var lyearweekday = getWeekday(datetime3(year2 - 1, 1, 1));
                 var lno1wkst = pymod(7 - lyearweekday.valueOf() + options.wkst, 7);
-                var lyearlen = isLeapYear2(year2 - 1) ? 366 : 365;
+                var lyearlen = isLeapYear3(year2 - 1) ? 366 : 365;
                 var weekst = void 0;
                 if (lno1wkst >= 4) {
                   lno1wkst = 0;
@@ -28204,7 +28204,7 @@ var require_rrule = __commonJS({
             return result;
           }
           function baseYearMasks(year2) {
-            var yearlen = isLeapYear2(year2) ? 366 : 365;
+            var yearlen = isLeapYear3(year2) ? 366 : 365;
             var firstyday = datetime3(year2, 1, 1);
             var wday = getWeekday(firstyday);
             if (yearlen === 365) {
@@ -28254,12 +28254,12 @@ var require_rrule = __commonJS({
               var last = rang[1] - 1;
               for (var k5 = 0; k5 < options.bynweekday.length; k5++) {
                 var i5 = void 0;
-                var _a8 = options.bynweekday[k5], wday = _a8[0], n3 = _a8[1];
-                if (n3 < 0) {
-                  i5 = last + (n3 + 1) * 7;
+                var _a8 = options.bynweekday[k5], wday = _a8[0], n4 = _a8[1];
+                if (n4 < 0) {
+                  i5 = last + (n4 + 1) * 7;
                   i5 -= pymod(wdaymask[i5] - wday, 7);
                 } else {
-                  i5 = first + (n3 - 1) * 7;
+                  i5 = first + (n4 - 1) * 7;
                   i5 += pymod(7 - wdaymask[i5] + wday, 7);
                 }
                 if (first <= i5 && i5 <= last)
@@ -28269,9 +28269,9 @@ var require_rrule = __commonJS({
             return result;
           }
           ;
-          function easter(y, offset) {
-            if (offset === void 0) {
-              offset = 0;
+          function easter(y, offset2) {
+            if (offset2 === void 0) {
+              offset2 = 0;
             }
             var a5 = y % 19;
             var b5 = Math.floor(y / 100);
@@ -28283,11 +28283,11 @@ var require_rrule = __commonJS({
             var h5 = Math.floor(19 * a5 + b5 - d5 - g5 + 15) % 30;
             var i5 = Math.floor(c5 / 4);
             var k5 = c5 % 4;
-            var l3 = Math.floor(32 + 2 * e5 + 2 * i5 - h5 - k5) % 7;
-            var m3 = Math.floor((a5 + 11 * h5 + 22 * l3) / 451);
-            var month = Math.floor((h5 + l3 - 7 * m3 + 114) / 31);
-            var day = (h5 + l3 - 7 * m3 + 114) % 31 + 1;
-            var date7 = Date.UTC(y, month - 1, day + offset);
+            var l4 = Math.floor(32 + 2 * e5 + 2 * i5 - h5 - k5) % 7;
+            var m3 = Math.floor((a5 + 11 * h5 + 22 * l4) / 451);
+            var month = Math.floor((h5 + l4 - 7 * m3 + 114) / 31);
+            var day = (h5 + l4 - 7 * m3 + 114) % 31 + 1;
+            var date7 = Date.UTC(y, month - 1, day + offset2);
             var yearStart = Date.UTC(y, 0, 1);
             return [Math.ceil((date7 - yearStart) / (1e3 * 60 * 60 * 24))];
           }
@@ -28514,7 +28514,7 @@ var require_rrule = __commonJS({
             if (count2 === 0 || interval2 === 0) {
               return emitResult(iterResult);
             }
-            var counterDate = DateTime.fromDate(dtstart);
+            var counterDate = DateTime2.fromDate(dtstart);
             var ii = new iterinfo(options);
             ii.rebuild(counterDate.year, counterDate.month);
             var timeset = makeTimeset(ii, counterDate, options);
@@ -28856,15 +28856,15 @@ var require_rrule = __commonJS({
             compatible: false,
             tzid: null
           };
-          function parseInput(s2, options) {
+          function parseInput(s4, options) {
             var rrulevals = [];
             var rdatevals = [];
             var exrulevals = [];
             var exdatevals = [];
-            var parsedDtstart = parseDtstart(s2);
+            var parsedDtstart = parseDtstart(s4);
             var dtstart = parsedDtstart.dtstart;
             var tzid = parsedDtstart.tzid;
-            var lines = splitIntoLines(s2, options.unfold);
+            var lines = splitIntoLines(s4, options.unfold);
             lines.forEach(function(line3) {
               var _a8;
               if (!line3)
@@ -28908,8 +28908,8 @@ var require_rrule = __commonJS({
               exdatevals
             };
           }
-          function buildRule(s2, options) {
-            var _a8 = parseInput(s2, options), rrulevals = _a8.rrulevals, rdatevals = _a8.rdatevals, exrulevals = _a8.exrulevals, exdatevals = _a8.exdatevals, dtstart = _a8.dtstart, tzid = _a8.tzid;
+          function buildRule(s4, options) {
+            var _a8 = parseInput(s4, options), rrulevals = _a8.rrulevals, rdatevals = _a8.rdatevals, exrulevals = _a8.exrulevals, exdatevals = _a8.exdatevals, dtstart = _a8.dtstart, tzid = _a8.tzid;
             var noCache = options.cache === false;
             if (options.compatible) {
               options.forceset = true;
@@ -28938,11 +28938,11 @@ var require_rrule = __commonJS({
             var val = rrulevals[0] || {};
             return new RRule2(groomRruleOptions(val, val.dtstart || options.dtstart || dtstart, val.tzid || options.tzid || tzid), noCache);
           }
-          function rrulestr(s2, options) {
+          function rrulestr(s4, options) {
             if (options === void 0) {
               options = {};
             }
-            return buildRule(s2, rrulestr_initializeOptions(options));
+            return buildRule(s4, rrulestr_initializeOptions(options));
           }
           function groomRruleOptions(val, dtstart, tzid) {
             return __assign3(__assign3({}, val), { dtstart, tzid });
@@ -28984,17 +28984,17 @@ var require_rrule = __commonJS({
               value
             };
           }
-          function splitIntoLines(s2, unfold) {
+          function splitIntoLines(s4, unfold) {
             if (unfold === void 0) {
               unfold = false;
             }
-            s2 = s2 && s2.trim();
-            if (!s2)
+            s4 = s4 && s4.trim();
+            if (!s4)
               throw new Error("Invalid empty string");
             if (!unfold) {
-              return s2.split(/\s/);
+              return s4.split(/\s/);
             }
-            var lines = s2.split("\n");
+            var lines = s4.split("\n");
             var i5 = 0;
             while (i5 < lines.length) {
               var line3 = lines[i5] = lines[i5].replace(/\s+$/g, "");
@@ -31315,7 +31315,7 @@ var init_factory = __esm({
               if (!Number.isNaN(parsed)) newValue = parsed;
             } else if (Array.isArray(newValue)) {
               const parsed = newValue.map((v) => typeof v === "string" && v.trim() !== "" ? Number(v) : NaN);
-              if (parsed.every((n3) => !Number.isNaN(n3))) newValue = parsed;
+              if (parsed.every((n4) => !Number.isNaN(n4))) newValue = parsed;
             }
           }
           if (fieldAttr.type === "boolean" && typeof newValue === "boolean" && !config5.supportsBooleans) newValue = newValue ? 1 : 0;
@@ -31651,7 +31651,7 @@ var init_factory = __esm({
           });
           return transformed;
         },
-        findMany: async ({ model: unsafeModel, where: unsafeWhere, limit: unsafeLimit, select, sortBy, offset, join: unsafeJoin }) => {
+        findMany: async ({ model: unsafeModel, where: unsafeWhere, limit: unsafeLimit, select, sortBy, offset: offset2, join: unsafeJoin }) => {
           transactionId++;
           const thisTransactionId = transactionId;
           const limit = unsafeLimit ?? options.advanced?.database?.defaultFindManyLimit ?? 100;
@@ -31677,7 +31677,7 @@ var init_factory = __esm({
             where,
             limit,
             sortBy,
-            offset,
+            offset: offset2,
             join: join6
           });
           const res = await withSpan2(`db findMany ${model}`, {
@@ -31689,7 +31689,7 @@ var init_factory = __esm({
             limit,
             select,
             sortBy,
-            offset,
+            offset: offset2,
             join: passJoinToAdapter ? join6 : void 0
           }));
           debugLog({ method: "findMany" }, `${formatTransactionId(thisTransactionId)} ${formatStep(2, 3)}`, `${formatMethod("findMany")} ${formatAction("DB Result")}:`, {
@@ -31956,15 +31956,15 @@ function indexById(rows) {
   for (const row of rows) byId.set(row.id, row);
   return byId;
 }
-function mergeTransactionInto(target, base, clone2) {
-  const models = /* @__PURE__ */ new Set([...Object.keys(base), ...Object.keys(clone2)]);
+function mergeTransactionInto(target, base, clone3) {
+  const models = /* @__PURE__ */ new Set([...Object.keys(base), ...Object.keys(clone3)]);
   for (const model of models) {
-    if (!(model in clone2)) {
+    if (!(model in clone3)) {
       delete target[model];
       continue;
     }
     const baseById = indexById(base[model] ?? []);
-    const cloneRows = clone2[model] ?? [];
+    const cloneRows = clone3[model] ?? [];
     const cloneById = indexById(cloneRows);
     const liveRows = target[model] ?? [];
     const merged = [];
@@ -32006,9 +32006,9 @@ var init_dist = __esm({
           },
           transaction: async (cb) => {
             const base = structuredClone(activeDb);
-            const clone2 = structuredClone(activeDb);
-            const result = await cb(buildAdapterFactory(clone2)(lazyOptions));
-            mergeTransactionInto(activeDb, base, clone2);
+            const clone3 = structuredClone(activeDb);
+            const result = await cb(buildAdapterFactory(clone3)(lazyOptions));
+            mergeTransactionInto(activeDb, base, clone3);
             return result;
           }
         },
@@ -32154,19 +32154,19 @@ var init_dist = __esm({
               }
               return res[0] || null;
             },
-            findMany: async ({ model, where, sortBy, limit, select, offset, join: join6 }) => {
+            findMany: async ({ model, where, sortBy, limit, select, offset: offset2, join: join6 }) => {
               const res = convertWhereClause(where || [], model, join6, select);
               if (join6) {
                 const resArray = res;
                 if (!resArray.length) return [];
                 applySortToRecords(resArray, sortBy, model);
                 let paginatedRecords = resArray;
-                if (offset !== void 0) paginatedRecords = paginatedRecords.slice(offset);
+                if (offset2 !== void 0) paginatedRecords = paginatedRecords.slice(offset2);
                 if (limit !== void 0) paginatedRecords = paginatedRecords.slice(0, limit);
                 return paginatedRecords;
               }
               let table2 = applySortToRecords(res, sortBy, model);
-              if (offset !== void 0) table2 = table2.slice(offset);
+              if (offset2 !== void 0) table2 = table2.slice(offset2);
               if (limit !== void 0) table2 = table2.slice(0, limit);
               return table2 || [];
             },
@@ -32235,13 +32235,13 @@ var init_dist = __esm({
 });
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/util/object-utils.js
-function isUndefined(obj) {
+function isUndefined2(obj) {
   return typeof obj === "undefined" || obj === void 0;
 }
-function isString(obj) {
+function isString2(obj) {
   return typeof obj === "string";
 }
-function isNumber(obj) {
+function isNumber2(obj) {
   return typeof obj === "number";
 }
 function isBoolean(obj) {
@@ -32250,7 +32250,7 @@ function isBoolean(obj) {
 function isNull2(obj) {
   return obj === null;
 }
-function isDate(obj) {
+function isDate2(obj) {
   return obj instanceof Date;
 }
 function isBigInt(obj) {
@@ -32623,7 +32623,7 @@ function isExpression(obj) {
   return isObject3(obj) && "expressionType" in obj && isOperationNodeSource(obj);
 }
 function isAliasedExpression(obj) {
-  return isObject3(obj) && "expression" in obj && isString(obj.alias) && isOperationNodeSource(obj);
+  return isObject3(obj) && "expression" in obj && isString2(obj.alias) && isOperationNodeSource(obj);
 }
 var init_expression = __esm({
   "node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/expression/expression.js"() {
@@ -32784,13 +32784,13 @@ var init_binary_operation_node = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/operation-node/operator-node.js
 function isBinaryOperator(op2) {
-  return isString(op2) && BINARY_OPERATORS_DICTIONARY[op2];
+  return isString2(op2) && BINARY_OPERATORS_DICTIONARY[op2];
 }
 function isJSONOperator(op2) {
-  return isString(op2) && JSON_OPERATORS_DICTIONARY[op2];
+  return isString2(op2) && JSON_OPERATORS_DICTIONARY[op2];
 }
 function isUnaryOperator(op2) {
-  return isString(op2) && UNARY_OPERATORS_DICTIONARY[op2];
+  return isString2(op2) && UNARY_OPERATORS_DICTIONARY[op2];
 }
 var COMPARISON_OPERATORS_DICTIONARY, COMPARISON_OPERATORS, ARITHMETIC_OPERATORS_DICTIONARY, ARITHMETIC_OPERATORS, JSON_OPERATORS_DICTIONARY, JSON_OPERATORS, BINARY_OPERATORS_DICTIONARY, BINARY_OPERATORS, UNARY_FILTER_OPERATORS_DICTIONARY, UNARY_FILTER_OPERATORS, UNARY_OPERATORS_DICTIONARY, UNARY_OPERATORS, OPERATORS, OperatorNode;
 var init_operator_node = __esm({
@@ -32962,7 +32962,7 @@ var init_reference_node = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/dynamic/dynamic-reference-builder.js
 function isDynamicReferenceBuilder(obj) {
-  return isObject3(obj) && isOperationNodeSource(obj) && isString(obj.dynamicReference);
+  return isObject3(obj) && isOperationNodeSource(obj) && isString2(obj.dynamicReference);
 }
 var DynamicReferenceBuilder;
 var init_dynamic_reference_builder = __esm({
@@ -33316,7 +33316,7 @@ var init_json_path_node = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/parser/reference-parser.js
 function parseSimpleReferenceExpression(exp) {
-  if (isString(exp)) {
+  if (isString2(exp)) {
     return parseStringReference(exp);
   }
   return exp.toOperationNode();
@@ -33487,7 +33487,7 @@ function parseValueExpression(exp) {
   return ValueNode.create(exp);
 }
 function isSafeImmediateValue(value) {
-  return isNumber(value) || isBoolean(value) || isNull2(value);
+  return isNumber2(value) || isBoolean(value) || isNull2(value);
 }
 function parseSafeImmediateValue(value) {
   if (!isSafeImmediateValue(value)) {
@@ -33549,7 +33549,7 @@ function parseReferentialBinaryOperation(left, operator, right) {
   return BinaryOperationNode.create(parseReferenceExpression(left), parseBinaryOperator(operator), parseReferenceExpression(right));
 }
 function parseFilterObject(obj, combinator) {
-  return parseFilterList(Object.entries(obj).filter(([, v]) => !isUndefined(v)).map(([k5, v]) => parseValueBinaryOperation(k5, needsIsOperator(v) ? "is" : "=", v)), combinator);
+  return parseFilterList(Object.entries(obj).filter(([, v]) => !isUndefined2(v)).map(([k5, v]) => parseValueBinaryOperation(k5, needsIsOperator(v) ? "is" : "=", v)), combinator);
 }
 function parseFilterList(list2, combinator, withParens = true) {
   const combine2 = combinator === "and" ? AndNode.create : OrNode.create;
@@ -34245,10 +34245,10 @@ var init_select_query_node = __esm({
           limit
         });
       },
-      cloneWithOffset(selectNode, offset) {
+      cloneWithOffset(selectNode, offset2) {
         return freeze({
           ...selectNode,
-          offset
+          offset: offset2
         });
       },
       cloneWithFetch(selectNode, fetch3) {
@@ -34473,7 +34473,7 @@ function parseSelectArg(selection) {
   }
 }
 function parseSelectExpression(selection) {
-  if (isString(selection)) {
+  if (isString2(selection)) {
     return SelectionNode.create(parseAliasedStringReference(selection));
   } else if (isDynamicReferenceBuilder(selection)) {
     return SelectionNode.create(selection.toOperationNode());
@@ -34491,7 +34491,7 @@ function parseSelectAll(table2) {
   }
 }
 function parseSelectAllArg(table2) {
-  if (isString(table2)) {
+  if (isString2(table2)) {
     return SelectionNode.createSelectAllFromTable(parseTable(table2));
   }
   throw new Error(`invalid value selectAll expression: ${JSON.stringify(table2)}`);
@@ -34579,12 +34579,12 @@ function parseRowValues(row, columns) {
   let indexedRowColumns = rowColumns.length;
   for (const col of rowColumns) {
     const columnIdx = columns.get(col);
-    if (isUndefined(columnIdx)) {
+    if (isUndefined2(columnIdx)) {
       indexedRowColumns--;
       continue;
     }
     const value = row[col];
-    if (isUndefined(value) || isExpressionOrFactory(value)) {
+    if (isUndefined2(value) || isExpressionOrFactory(value)) {
       hasUndefinedOrComplexColumns = true;
     }
     rowValues[columnIdx] = value;
@@ -34592,7 +34592,7 @@ function parseRowValues(row, columns) {
   const hasMissingColumns = indexedRowColumns < columns.size;
   if (hasMissingColumns || hasUndefinedOrComplexColumns) {
     const defaultValue = DefaultInsertValueNode.create();
-    return ValueListNode.create(rowValues.map((it) => isUndefined(it) ? defaultValue : parseValueExpression(it)));
+    return ValueListNode.create(rowValues.map((it) => isUndefined2(it) ? defaultValue : parseValueExpression(it)));
   }
   return PrimitiveValueListNode.create(rowValues);
 }
@@ -35062,10 +35062,10 @@ var init_top_node = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/parser/top-parser.js
 function parseTop(expression, modifiers) {
-  if (!isNumber(expression) && !isBigInt(expression)) {
+  if (!isNumber2(expression) && !isBigInt(expression)) {
     throw new Error(`Invalid top expression: ${expression}`);
   }
-  if (!isUndefined(modifiers) && !isTopModifiers(modifiers)) {
+  if (!isUndefined2(modifiers) && !isTopModifiers(modifiers)) {
     throw new Error(`Invalid top modifiers: ${modifiers}`);
   }
   return TopNode.create(expression, modifiers);
@@ -38489,7 +38489,7 @@ var init_operation_node_transformer = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/operation-node/operation-node.js
 function isOperationNode(thing) {
-  return isObject3(thing) && isString(thing.kind);
+  return isObject3(thing) && isString2(thing.kind);
 }
 var init_operation_node = __esm({
   "node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/operation-node/operation-node.js"() {
@@ -38748,7 +38748,7 @@ function parseMergeWhen(type, args, refRight) {
   ], "and", false));
 }
 function parseMergeThen(result) {
-  if (isString(result)) {
+  if (isString2(result)) {
     return RawNode.create([result], []);
   }
   if (isOperationNodeSource(result)) {
@@ -40405,10 +40405,10 @@ var init_offset_node = __esm({
       is(node2) {
         return node2.kind === "OffsetNode";
       },
-      create(offset) {
+      create(offset2) {
         return freeze({
           kind: "OffsetNode",
-          offset
+          offset: offset2
         });
       }
     });
@@ -40643,7 +40643,7 @@ var init_fetch_node = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/parser/fetch-parser.js
 function parseFetch(rowCount, modifier) {
-  if (!isNumber(rowCount) && !isBigInt(rowCount)) {
+  if (!isNumber2(rowCount) && !isBigInt(rowCount)) {
     throw new Error(`Invalid fetch row count: ${rowCount}`);
   }
   if (!isFetchModifier(modifier)) {
@@ -40850,10 +40850,10 @@ var init_select_query_builder = __esm({
           queryNode: SelectQueryNode.cloneWithLimit(this.#props.queryNode, LimitNode.create(parseValueExpression(limit)))
         });
       }
-      offset(offset) {
+      offset(offset2) {
         return new _a5({
           ...this.#props,
-          queryNode: SelectQueryNode.cloneWithOffset(this.#props.queryNode, OffsetNode.create(parseValueExpression(offset)))
+          queryNode: SelectQueryNode.cloneWithOffset(this.#props.queryNode, OffsetNode.create(parseValueExpression(offset2)))
         });
       }
       fetch(rowCount, modifier = "only") {
@@ -41403,13 +41403,13 @@ function createFunctionModule() {
     jsonAgg(table2) {
       return new AggregateFunctionBuilder({
         aggregateFunctionNode: AggregateFunctionNode.create("json_agg", [
-          isString(table2) ? parseTable(table2) : table2.toOperationNode()
+          isString2(table2) ? parseTable(table2) : table2.toOperationNode()
         ])
       });
     },
     toJson(table2) {
       return new ExpressionWrapper(FunctionNode.create("to_json", [
-        isString(table2) ? parseTable(table2) : table2.toOperationNode()
+        isString2(table2) ? parseTable(table2) : table2.toOperationNode()
       ]));
     }
   });
@@ -42000,11 +42000,11 @@ function createExpressionBuilder(executor = NOOP_QUERY_EXECUTOR) {
     },
     case(reference) {
       return new CaseBuilder({
-        node: CaseNode.create(isUndefined(reference) ? void 0 : parseReferenceExpression(reference))
+        node: CaseNode.create(isUndefined2(reference) ? void 0 : parseReferenceExpression(reference))
       });
     },
     ref(reference, op2) {
-      if (isUndefined(op2)) {
+      if (isUndefined2(op2)) {
         return new ExpressionWrapper(parseStringReference(reference));
       }
       return new JSONPathBuilder(parseJSONReference(reference, op2));
@@ -42133,7 +42133,7 @@ var init_expression_parser = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/dynamic/dynamic-table-builder.js
 function isAliasedDynamicTableBuilder(obj) {
-  return isObject3(obj) && isOperationNodeSource(obj) && isString(obj.table) && isString(obj.alias);
+  return isObject3(obj) && isOperationNodeSource(obj) && isString2(obj.table) && isString2(obj.alias);
 }
 var DynamicTableBuilder, AliasedDynamicTableBuilder;
 var init_dynamic_table_builder = __esm({
@@ -42184,7 +42184,7 @@ function parseTableExpressionOrList(table2) {
   }
 }
 function parseTableExpression(table2) {
-  if (isString(table2)) {
+  if (isString2(table2)) {
     return parseAliasedTable(table2);
   } else if (isAliasedDynamicTableBuilder(table2)) {
     return table2.toOperationNode();
@@ -42352,7 +42352,7 @@ var init_check_constraint_node = __esm({
 
 // node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/operation-node/references-node.js
 function isOnModifyForeignAction(thing) {
-  return isString(thing) && ON_MODIFY_FOREIGN_ACTIONS_DICTIONARY[thing];
+  return isString2(thing) && ON_MODIFY_FOREIGN_ACTIONS_DICTIONARY[thing];
 }
 var ON_MODIFY_FOREIGN_ACTIONS_DICTIONARY, ON_MODIFY_FOREIGN_ACTIONS, ReferencesNode;
 var init_references_node = __esm({
@@ -43202,7 +43202,7 @@ var init_unique_constraint_node = __esm({
         return node2.kind === "UniqueConstraintNode";
       },
       create(columns, constraintName, nullsNotDistinct) {
-        if (isString(columns.at(0))) {
+        if (isString2(columns.at(0))) {
           logOnce("`UniqueConstraintNode.create(columns: string[], ...)` is deprecated - pass `ColumnNode[]` instead.");
           columns = columns.map(ColumnNode.create);
         }
@@ -43575,7 +43575,7 @@ var init_alter_table_add_index_builder = __esm({
           ...this.#props,
           node: AlterTableNode.cloneWithTableProps(this.#props.node, {
             addIndex: AddIndexNode.cloneWithColumns(this.#props.node.addIndex, [
-              isString(arg) ? parseOrderedColumnName(arg) : arg.toOperationNode()
+              isString2(arg) ? parseOrderedColumnName(arg) : arg.toOperationNode()
             ])
           })
         });
@@ -43613,7 +43613,7 @@ var init_alter_table_add_index_builder = __esm({
         return new _AlterTableAddIndexBuilder({
           ...this.#props,
           node: AlterTableNode.cloneWithTableProps(this.#props.node, {
-            addIndex: AddIndexNode.cloneWithColumns(this.#props.node.addIndex, columns.map((item) => isString(item) ? parseOrderedColumnName(item) : item.toOperationNode()))
+            addIndex: AddIndexNode.cloneWithColumns(this.#props.node.addIndex, columns.map((item) => isString2(item) ? parseOrderedColumnName(item) : item.toOperationNode()))
           })
         });
       }
@@ -43932,7 +43932,7 @@ var init_alter_table_builder = __esm({
        * See {@link CreateTableBuilder.addUniqueConstraint}
        */
       addUniqueConstraint(constraintName, columns, build2 = noop) {
-        const uniqueConstraintBuilder = build2(new UniqueConstraintNodeBuilder(UniqueConstraintNode.create(columns.map((column) => isString(column) ? ColumnNode.create(column) : parseExpression(column)), constraintName)));
+        const uniqueConstraintBuilder = build2(new UniqueConstraintNodeBuilder(UniqueConstraintNode.create(columns.map((column) => isString2(column) ? ColumnNode.create(column) : parseExpression(column)), constraintName)));
         return new AlterTableExecutor({
           ...this.#props,
           node: AlterTableNode.cloneWithTableProps(this.#props.node, {
@@ -44211,7 +44211,7 @@ var init_create_index_builder = __esm({
         return new _CreateIndexBuilder({
           ...this.#props,
           node: CreateIndexNode.cloneWithColumns(this.#props.node, [
-            isString(arg) ? parseOrderedColumnName(arg) : arg.toOperationNode()
+            isString2(arg) ? parseOrderedColumnName(arg) : arg.toOperationNode()
           ])
         });
       }
@@ -44242,7 +44242,7 @@ var init_create_index_builder = __esm({
       columns(columns) {
         return new _CreateIndexBuilder({
           ...this.#props,
-          node: CreateIndexNode.cloneWithColumns(this.#props.node, columns.map((item) => isString(item) ? parseOrderedColumnName(item) : item.toOperationNode()))
+          node: CreateIndexNode.cloneWithColumns(this.#props.node, columns.map((item) => isString2(item) ? parseOrderedColumnName(item) : item.toOperationNode()))
         });
       }
       /**
@@ -44600,7 +44600,7 @@ var init_create_table_builder = __esm({
        * ```
        */
       addUniqueConstraint(constraintName, columns, build2 = noop) {
-        const uniqueConstraintBuilder = build2(new UniqueConstraintNodeBuilder(UniqueConstraintNode.create(columns.map((column) => isString(column) ? ColumnNode.create(column) : parseExpression(column)), constraintName)));
+        const uniqueConstraintBuilder = build2(new UniqueConstraintNodeBuilder(UniqueConstraintNode.create(columns.map((column) => isString2(column) ? ColumnNode.create(column) : parseExpression(column)), constraintName)));
         return new _CreateTableBuilder({
           ...this.#props,
           node: CreateTableNode.cloneWithConstraint(this.#props.node, uniqueConstraintBuilder.toOperationNode())
@@ -44634,7 +44634,7 @@ var init_create_table_builder = __esm({
        * ```
        */
       addIndex(indexName, columns, build2 = noop) {
-        const addIndexBuilder = build2(new CreateTableAddIndexBuilder(AddIndexNode.cloneWithColumns(AddIndexNode.create(indexName), columns.map((column) => isString(column) ? ColumnNode.create(column) : parseExpression(column)))));
+        const addIndexBuilder = build2(new CreateTableAddIndexBuilder(AddIndexNode.cloneWithColumns(AddIndexNode.create(indexName), columns.map((column) => isString2(column) ? ColumnNode.create(column) : parseExpression(column)))));
         return new _CreateTableBuilder({
           ...this.#props,
           node: CreateTableNode.cloneWithIndex(this.#props.node, addIndexBuilder.toOperationNode())
@@ -46723,7 +46723,7 @@ var init_kysely = __esm({
       }
       case(value) {
         return new CaseBuilder({
-          node: CaseNode.create(isUndefined(value) ? void 0 : parseExpression(value))
+          node: CaseNode.create(isUndefined2(value) ? void 0 : parseExpression(value))
         });
       }
       /**
@@ -48206,7 +48206,7 @@ var init_default_query_compiler = __esm({
         this.append(this.getRightIdentifierWrapper());
       }
       compileUnwrappedIdentifier(node2) {
-        if (!isString(node2.name)) {
+        if (!isString2(node2.name)) {
           throw new Error("a non-string identifier was passed to compileUnwrappedIdentifier.");
         }
         this.append(this.sanitizeIdentifier(node2.name));
@@ -49270,13 +49270,13 @@ var init_default_query_compiler = __esm({
         this.#parameters.push(parameter);
       }
       appendImmediateValue(value) {
-        if (isString(value)) {
+        if (isString2(value)) {
           this.appendStringLiteral(value);
-        } else if (isNumber(value) || isBoolean(value) || isBigInt(value)) {
+        } else if (isNumber2(value) || isBoolean(value) || isBigInt(value)) {
           this.append(value.toString());
         } else if (isNull2(value)) {
           this.append("null");
-        } else if (isDate(value)) {
+        } else if (isDate2(value)) {
           this.appendImmediateValue(value.toISOString());
         } else {
           throw new Error(`invalid immediate value ${value}`);
@@ -49676,7 +49676,7 @@ ${stackExtension}`;
   return err;
 }
 function isStackHolder(obj) {
-  return isObject3(obj) && isString(obj.stack);
+  return isObject3(obj) && isString2(obj.stack);
 }
 var init_stack_trace_utils = __esm({
   "node_modules/.pnpm/kysely@0.29.5/node_modules/kysely/dist/util/stack-trace-utils.js"() {
@@ -50785,23 +50785,23 @@ var init_mssql_driver = __esm({
         });
       }
       #getTediousDataType(value) {
-        if (isNull2(value) || isUndefined(value) || isString(value)) {
+        if (isNull2(value) || isUndefined2(value) || isString2(value)) {
           return this.#tedious.TYPES.NVarChar;
         }
-        if (isBigInt(value) || isNumber(value) && value % 1 === 0) {
+        if (isBigInt(value) || isNumber2(value) && value % 1 === 0) {
           if (value < -2147483648 || value > 2147483647) {
             return this.#tedious.TYPES.BigInt;
           } else {
             return this.#tedious.TYPES.Int;
           }
         }
-        if (isNumber(value)) {
+        if (isNumber2(value)) {
           return this.#tedious.TYPES.Float;
         }
         if (isBoolean(value)) {
           return this.#tedious.TYPES.Bit;
         }
-        if (isDate(value)) {
+        if (isDate2(value)) {
           return this.#tedious.TYPES.DateTime;
         }
         if (isBuffer(value)) {
@@ -52318,21 +52318,21 @@ var init_dist3 = __esm({
               if (join6) return processJoinedResults(res, join6, allSelectsStr)[0];
               return row;
             },
-            async findMany({ model, where, limit, select, offset, sortBy, join: join6 }) {
+            async findMany({ model, where, limit, select, offset: offset2, sortBy, join: join6 }) {
               const { and: and2, or: or2 } = convertWhereClause(model, where);
               let query = db4.selectFrom((eb) => {
                 let b5 = eb.selectFrom(model);
                 if (config5?.type === "mssql") {
-                  if (offset !== void 0) {
+                  if (offset2 !== void 0) {
                     if (!sortBy) b5 = b5.orderBy(getFieldName({
                       model,
                       field: "id"
                     }));
-                    b5 = b5.offset(offset).fetch(limit || 100);
+                    b5 = b5.offset(offset2).fetch(limit || 100);
                   } else if (limit !== void 0) b5 = b5.top(limit);
                 } else {
                   if (limit !== void 0) b5 = b5.limit(limit);
-                  if (offset !== void 0) b5 = b5.offset(offset);
+                  if (offset2 !== void 0) b5 = b5.offset(offset2);
                 }
                 if (sortBy?.field) b5 = b5.orderBy(`${getFieldName({
                   model,
@@ -52601,11 +52601,11 @@ var require_build = __commonJS({
           size += buffer.byteLength;
         }
         const res = new Uint8Array(size);
-        let offset = 0;
+        let offset2 = 0;
         for (const buffer of buffers) {
           const view = this.toUint8Array(buffer);
-          res.set(view, offset);
-          offset += view.length;
+          res.set(view, offset2);
+          offset2 += view.length;
         }
         if (args[args.length - 1] instanceof Function) {
           return this.toView(res, args[args.length - 1]);
@@ -52619,10 +52619,10 @@ var require_build = __commonJS({
     var BASE64URL_REGEX2 = /^[a-zA-Z0-9-_]+$/;
     var Utf8Converter = class {
       static fromString(text2) {
-        const s2 = unescape(encodeURIComponent(text2));
-        const uintArray = new Uint8Array(s2.length);
-        for (let i5 = 0; i5 < s2.length; i5++) {
-          uintArray[i5] = s2.charCodeAt(i5);
+        const s4 = unescape(encodeURIComponent(text2));
+        const uintArray = new Uint8Array(s4.length);
+        for (let i5 = 0; i5 < s4.length; i5++) {
+          uintArray[i5] = s4.charCodeAt(i5);
         }
         return uintArray.buffer;
       }
@@ -53252,12 +53252,12 @@ var require_build2 = __commonJS({
     var pvtsutils = require_build();
     var pvutils = require_utils3();
     function _interopNamespaceDefault(e5) {
-      var n3 = /* @__PURE__ */ Object.create(null);
+      var n4 = /* @__PURE__ */ Object.create(null);
       if (e5) {
         Object.keys(e5).forEach(function(k5) {
           if (k5 !== "default") {
             var d5 = Object.getOwnPropertyDescriptor(e5, k5);
-            Object.defineProperty(n3, k5, d5.get ? d5 : {
+            Object.defineProperty(n4, k5, d5.get ? d5 : {
               enumerable: true,
               get: function() {
                 return e5[k5];
@@ -53266,8 +53266,8 @@ var require_build2 = __commonJS({
           }
         });
       }
-      n3.default = e5;
-      return Object.freeze(n3);
+      n4.default = e5;
+      return Object.freeze(n4);
     }
     var pvtsutils__namespace = /* @__PURE__ */ _interopNamespaceDefault(pvtsutils);
     var pvutils__namespace = /* @__PURE__ */ _interopNamespaceDefault(pvutils);
@@ -54640,9 +54640,9 @@ ${values.join("\n")}` : `${blockName} :`;
         firstViewCopy = pvutils__namespace.utilConcatView(c5, firstViewCopy);
       return firstViewCopy;
     }
-    function power2(n3) {
-      if (n3 >= powers2.length) {
-        for (let p3 = powers2.length; p3 <= n3; p3++) {
+    function power2(n4) {
+      if (n4 >= powers2.length) {
+        for (let p3 = powers2.length; p3 <= n4; p3++) {
           const c5 = new Uint8Array([0]);
           let digits = powers2[p3 - 1].slice(0);
           for (let i5 = digits.length - 1; i5 >= 0; i5--) {
@@ -54655,7 +54655,7 @@ ${values.join("\n")}` : `${blockName} :`;
           powers2.push(digits);
         }
       }
-      return powers2[n3];
+      return powers2[n4];
     }
     function viewSub(first, second) {
       let b5 = 0;
@@ -54726,9 +54726,9 @@ ${values.join("\n")}` : `${blockName} :`;
         return this._valueDec;
       }
       fromDER(inputBuffer, inputOffset, inputLength, expectedLength = 0) {
-        const offset = this.fromBER(inputBuffer, inputOffset, inputLength);
-        if (offset === -1)
-          return offset;
+        const offset2 = this.fromBER(inputBuffer, inputOffset, inputLength);
+        if (offset2 === -1)
+          return offset2;
         const view = this.valueHexView;
         if (view[0] === 0 && (view[1] & 128) !== 0) {
           this.valueHexView = view.subarray(1);
@@ -54741,7 +54741,7 @@ ${values.join("\n")}` : `${blockName} :`;
             }
           }
         }
-        return offset;
+        return offset2;
       }
       toDER(sizeOnly = false) {
         const view = this.valueHexView;
@@ -55922,31 +55922,31 @@ ${values.join("\n")}` : `${blockName} :`;
     })();
     TimeOfDay.NAME = "TimeOfDay";
     var _a$2;
-    var DateTime = class extends Utf8String2 {
+    var DateTime2 = class extends Utf8String2 {
       constructor(parameters = {}) {
         super(parameters);
         this.idBlock.tagClass = 1;
         this.idBlock.tagNumber = 33;
       }
     };
-    _a$2 = DateTime;
+    _a$2 = DateTime2;
     (() => {
       typeStore.DateTime = _a$2;
     })();
-    DateTime.NAME = "DateTime";
+    DateTime2.NAME = "DateTime";
     var _a$1;
-    var Duration = class extends Utf8String2 {
+    var Duration2 = class extends Utf8String2 {
       constructor(parameters = {}) {
         super(parameters);
         this.idBlock.tagClass = 1;
         this.idBlock.tagNumber = 34;
       }
     };
-    _a$1 = Duration;
+    _a$1 = Duration2;
     (() => {
       typeStore.Duration = _a$1;
     })();
-    Duration.NAME = "Duration";
+    Duration2.NAME = "Duration";
     var _a8;
     var TIME = class extends Utf8String2 {
       constructor(parameters = {}) {
@@ -56323,8 +56323,8 @@ ${values.join("\n")}` : `${blockName} :`;
     exports2.DEFAULT_MAX_CONTENT_LENGTH = DEFAULT_MAX_CONTENT_LENGTH;
     exports2.DEFAULT_MAX_DEPTH = DEFAULT_MAX_DEPTH;
     exports2.DEFAULT_MAX_NODES = DEFAULT_MAX_NODES;
-    exports2.DateTime = DateTime;
-    exports2.Duration = Duration;
+    exports2.DateTime = DateTime2;
+    exports2.Duration = Duration2;
     exports2.EndOfContent = EndOfContent;
     exports2.Enumerated = Enumerated2;
     exports2.GeneralString = GeneralString2;
@@ -56406,14 +56406,14 @@ function __extends(d5, b5) {
   }
   d5.prototype = b5 === null ? Object.create(b5) : (__.prototype = b5.prototype, new __());
 }
-function __rest(s2, e5) {
+function __rest(s4, e5) {
   var t = {};
-  for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3) && e5.indexOf(p3) < 0)
-    t[p3] = s2[p3];
-  if (s2 != null && typeof Object.getOwnPropertySymbols === "function")
-    for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s2); i5 < p3.length; i5++) {
-      if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s2, p3[i5]))
-        t[p3[i5]] = s2[p3[i5]];
+  for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3) && e5.indexOf(p3) < 0)
+    t[p3] = s4[p3];
+  if (s4 != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s4); i5 < p3.length; i5++) {
+      if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s4, p3[i5]))
+        t[p3[i5]] = s4[p3[i5]];
     }
   return t;
 }
@@ -56512,9 +56512,9 @@ function __generator(thisArg, body) {
   return g5.next = verb(0), g5["throw"] = verb(1), g5["return"] = verb(2), typeof Symbol === "function" && (g5[Symbol.iterator] = function() {
     return this;
   }), g5;
-  function verb(n3) {
+  function verb(n4) {
     return function(v) {
-      return step([n3, v]);
+      return step([n4, v]);
     };
   }
   function step(op2) {
@@ -56577,7 +56577,7 @@ function __exportStar(m3, o3) {
   for (var p3 in m3) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(o3, p3)) __createBinding(o3, m3, p3);
 }
 function __values(o3) {
-  var s2 = typeof Symbol === "function" && Symbol.iterator, m3 = s2 && o3[s2], i5 = 0;
+  var s4 = typeof Symbol === "function" && Symbol.iterator, m3 = s4 && o3[s4], i5 = 0;
   if (m3) return m3.call(o3);
   if (o3 && typeof o3.length === "number") return {
     next: function() {
@@ -56585,14 +56585,14 @@ function __values(o3) {
       return { value: o3 && o3[i5++], done: !o3 };
     }
   };
-  throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
+  throw new TypeError(s4 ? "Object is not iterable." : "Symbol.iterator is not defined.");
 }
-function __read(o3, n3) {
+function __read(o3, n4) {
   var m3 = typeof Symbol === "function" && o3[Symbol.iterator];
   if (!m3) return o3;
   var i5 = m3.call(o3), r5, ar = [], e5;
   try {
-    while ((n3 === void 0 || n3-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
+    while ((n4 === void 0 || n4-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
   } catch (error64) {
     e5 = { error: error64 };
   } finally {
@@ -56610,14 +56610,14 @@ function __spread() {
   return ar;
 }
 function __spreadArrays() {
-  for (var s2 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s2 += arguments[i5].length;
-  for (var r5 = Array(s2), k5 = 0, i5 = 0; i5 < il; i5++)
+  for (var s4 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s4 += arguments[i5].length;
+  for (var r5 = Array(s4), k5 = 0, i5 = 0; i5 < il; i5++)
     for (var a5 = arguments[i5], j5 = 0, jl = a5.length; j5 < jl; j5++, k5++)
       r5[k5] = a5[j5];
   return r5;
 }
 function __spreadArray(to, from, pack) {
-  if (pack || arguments.length === 2) for (var i5 = 0, l3 = from.length, ar; i5 < l3; i5++) {
+  if (pack || arguments.length === 2) for (var i5 = 0, l4 = from.length, ar; i5 < l4; i5++) {
     if (ar || !(i5 in from)) {
       if (!ar) ar = Array.prototype.slice.call(from, 0, i5);
       ar[i5] = from[i5];
@@ -56639,19 +56639,19 @@ function __asyncGenerator(thisArg, _arguments, generator2) {
       return Promise.resolve(v).then(f5, reject);
     };
   }
-  function verb(n3, f5) {
-    if (g5[n3]) {
-      i5[n3] = function(v) {
+  function verb(n4, f5) {
+    if (g5[n4]) {
+      i5[n4] = function(v) {
         return new Promise(function(a5, b5) {
-          q3.push([n3, v, a5, b5]) > 1 || resume(n3, v);
+          q3.push([n4, v, a5, b5]) > 1 || resume(n4, v);
         });
       };
-      if (f5) i5[n3] = f5(i5[n3]);
+      if (f5) i5[n4] = f5(i5[n4]);
     }
   }
-  function resume(n3, v) {
+  function resume(n4, v) {
     try {
-      step(g5[n3](v));
+      step(g5[n4](v));
     } catch (e5) {
       settle2(q3[0][3], e5);
     }
@@ -56676,9 +56676,9 @@ function __asyncDelegator(o3) {
   }), verb("return"), i5[Symbol.iterator] = function() {
     return this;
   }, i5;
-  function verb(n3, f5) {
-    i5[n3] = o3[n3] ? function(v) {
-      return (p3 = !p3) ? { value: __await(o3[n3](v)), done: false } : f5 ? f5(v) : v;
+  function verb(n4, f5) {
+    i5[n4] = o3[n4] ? function(v) {
+      return (p3 = !p3) ? { value: __await(o3[n4](v)), done: false } : f5 ? f5(v) : v;
     } : f5;
   }
 }
@@ -56688,10 +56688,10 @@ function __asyncValues(o3) {
   return m3 ? m3.call(o3) : (o3 = typeof __values === "function" ? __values(o3) : o3[Symbol.iterator](), i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
     return this;
   }, i5);
-  function verb(n3) {
-    i5[n3] = o3[n3] && function(v) {
+  function verb(n4) {
+    i5[n4] = o3[n4] && function(v) {
       return new Promise(function(resolve, reject) {
-        v = o3[n3](v), settle2(resolve, reject, v.done, v.value);
+        v = o3[n4](v), settle2(resolve, reject, v.done, v.value);
       });
     };
   }
@@ -56768,23 +56768,23 @@ function __disposeResources(env3) {
     env3.error = env3.hasError ? new _SuppressedError(e5, env3.error, "An error was suppressed during disposal.") : e5;
     env3.hasError = true;
   }
-  var r5, s2 = 0;
+  var r5, s4 = 0;
   function next() {
     while (r5 = env3.stack.pop()) {
       try {
-        if (!r5.async && s2 === 1) return s2 = 0, env3.stack.push(r5), Promise.resolve().then(next);
+        if (!r5.async && s4 === 1) return s4 = 0, env3.stack.push(r5), Promise.resolve().then(next);
         if (r5.dispose) {
           var result = r5.dispose.call(r5.value);
-          if (r5.async) return s2 |= 2, Promise.resolve(result).then(next, function(e5) {
+          if (r5.async) return s4 |= 2, Promise.resolve(result).then(next, function(e5) {
             fail(e5);
             return next();
           });
-        } else s2 |= 1;
+        } else s4 |= 1;
       } catch (e5) {
         fail(e5);
       }
     }
-    if (s2 === 1) return env3.hasError ? Promise.reject(env3.error) : Promise.resolve();
+    if (s4 === 1) return env3.hasError ? Promise.reject(env3.error) : Promise.resolve();
     if (env3.hasError) throw env3.error;
   }
   return next();
@@ -56810,9 +56810,9 @@ var init_tslib_es6 = __esm({
     };
     __assign = function() {
       __assign = Object.assign || function __assign3(t) {
-        for (var s2, i5 = 1, n3 = arguments.length; i5 < n3; i5++) {
-          s2 = arguments[i5];
-          for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3)) t[p3] = s2[p3];
+        for (var s4, i5 = 1, n4 = arguments.length; i5 < n4; i5++) {
+          s4 = arguments[i5];
+          for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3)) t[p3] = s4[p3];
         }
         return t;
       };
@@ -57949,9 +57949,9 @@ var require_Reflect = __commonJS({
             data[6] = data[6] & 79 | 64;
             data[8] = data[8] & 191 | 128;
             var result = "";
-            for (var offset = 0; offset < UUID_SIZE; ++offset) {
-              var byte = data[offset];
-              if (offset === 4 || offset === 6 || offset === 8)
+            for (var offset2 = 0; offset2 < UUID_SIZE; ++offset2) {
+              var byte = data[offset2];
+              if (offset2 === 4 || offset2 === 6 || offset2 === 8)
                 result += "-";
               if (byte < 16)
                 result += "0";
@@ -58106,10 +58106,10 @@ var require_concat = __commonJS({
         length += view.byteLength;
       }
       const result = new Uint8Array(length);
-      let offset = 0;
+      let offset2 = 0;
       for (const view of views) {
-        result.set(view, offset);
-        offset += view.byteLength;
+        result.set(view, offset2);
+        offset2 += view.byteLength;
       }
       return result;
     }
@@ -58148,11 +58148,11 @@ var require_equal = __commonJS({
         return false;
       }
       const length = Math.max(left.byteLength, right.byteLength);
-      let diff = left.byteLength ^ right.byteLength;
+      let diff2 = left.byteLength ^ right.byteLength;
       for (let i5 = 0; i5 < length; i5++) {
-        diff |= (left[i5] ?? 0) ^ (right[i5] ?? 0);
+        diff2 |= (left[i5] ?? 0) ^ (right[i5] ?? 0);
       }
-      return diff === 0;
+      return diff2 === 0;
     }
   }
 });
@@ -58218,9 +58218,9 @@ var require_sequence = __commonJS({
       }
       return (0, buffer_source_js_1.toUint8Array)(pattern);
     }
-    function bytesEqualAt(data, pattern, offset) {
+    function bytesEqualAt(data, pattern, offset2) {
       for (let index2 = 0; index2 < pattern.byteLength; index2++) {
-        if (data[offset + index2] !== pattern[index2]) {
+        if (data[offset2 + index2] !== pattern[index2]) {
           return false;
         }
       }
@@ -58237,9 +58237,9 @@ var require_sequence = __commonJS({
       if (lastOffset < start) {
         return -1;
       }
-      for (let offset = start; offset <= lastOffset; offset++) {
-        if (bytesEqualAt(bytes, needle, offset)) {
-          return offset;
+      for (let offset2 = start; offset2 <= lastOffset; offset2++) {
+        if (bytesEqualAt(bytes, needle, offset2)) {
+          return offset2;
         }
       }
       return -1;
@@ -58255,9 +58255,9 @@ var require_sequence = __commonJS({
       if (firstOffset < end) {
         return -1;
       }
-      for (let offset = firstOffset; offset >= end; offset--) {
-        if (bytesEqualAt(bytes, needle, offset)) {
-          return offset;
+      for (let offset2 = firstOffset; offset2 >= end; offset2--) {
+        if (bytesEqualAt(bytes, needle, offset2)) {
+          return offset2;
         }
       }
       return -1;
@@ -58451,7 +58451,7 @@ var require_hex = __commonJS({
     exports2.is = is6;
     exports2.encode = encode14;
     exports2.decode = decode12;
-    exports2.parse = parse9;
+    exports2.parse = parse10;
     exports2.format = format5;
     var index_js_1 = require_bytes();
     var HEX_CHARACTER_REGEX2 = /^[0-9a-f]$/i;
@@ -58484,11 +58484,11 @@ var require_hex = __commonJS({
       return hasUpper && !hasLower ? "upper" : "lower";
     }
     function detectLineSeparator2(text2) {
-      const match2 = /\r\n|\n/.exec(text2);
-      if (!match2) {
+      const match3 = /\r\n|\n/.exec(text2);
+      if (!match3) {
         return void 0;
       }
-      return match2[0] === "\r\n" ? "\r\n" : "\n";
+      return match3[0] === "\r\n" ? "\r\n" : "\n";
     }
     function compactForDetection2(text2) {
       return text2.replace(/[^0-9a-f]/gi, "");
@@ -58651,7 +58651,7 @@ var require_hex = __commonJS({
       }
       return result;
     }
-    function parse9(text2, options = {}) {
+    function parse10(text2, options = {}) {
       const normalized = normalize5(text2, options);
       return {
         bytes: decode12(normalized),
@@ -58670,7 +58670,7 @@ var require_hex = __commonJS({
       groupsOf4: Object.freeze({ group: { size: 4, separator: " " } }),
       prefixed: Object.freeze({ prefix: "0x" })
     };
-    exports2.hex = { encode: encode14, decode: decode12, format: format5, formats: exports2.formats, is: is6, normalize: normalize5, parse: parse9 };
+    exports2.hex = { encode: encode14, decode: decode12, format: format5, formats: exports2.formats, is: is6, normalize: normalize5, parse: parse10 };
   }
 });
 
@@ -58837,7 +58837,7 @@ var require_pem = __commonJS({
     exports2.find = find2;
     exports2.findAll = findAll2;
     exports2.decodeFirst = decodeFirst3;
-    exports2.parse = parse9;
+    exports2.parse = parse10;
     exports2.format = format5;
     var base64_js_1 = require_base64();
     var LABEL_REGEX2 = /^[A-Z0-9][A-Z0-9 ._-]*[A-Z0-9]$/i;
@@ -58879,21 +58879,21 @@ var require_pem = __commonJS({
     function collectBlocks2(text2, options = {}) {
       const blocks = [];
       const requestedLabel = options.label;
-      let match2;
+      let match3;
       PEM_BLOCK_REGEX2.lastIndex = 0;
-      while (match2 = PEM_BLOCK_REGEX2.exec(text2)) {
-        const label = match2[1].trim();
+      while (match3 = PEM_BLOCK_REGEX2.exec(text2)) {
+        const label = match3[1].trim();
         if (requestedLabel && label !== requestedLabel) {
           continue;
         }
         assertLabel2(label);
-        const parsed = parseBody3(match2[2]);
+        const parsed = parseBody3(match3[2]);
         blocks.push({
           label,
           data: base64_js_1.base64.decode(parsed.base64Text),
           headers: parsed.headers,
           lineLength: parsed.base64Lines[0]?.length ?? 64,
-          newline: detectNewline2(match2[0])
+          newline: detectNewline2(match3[0])
         });
       }
       if (options.strict && blocks.length === 0) {
@@ -58935,7 +58935,7 @@ var require_pem = __commonJS({
       const [block] = decode12(text2, { label, strict: true });
       return block.data;
     }
-    function parse9(text2, options = {}) {
+    function parse10(text2, options = {}) {
       const [block] = collectBlocks2(text2, { ...options, strict: true });
       const format6 = {
         label: block.label,
@@ -58952,7 +58952,7 @@ var require_pem = __commonJS({
     function format5(data, value) {
       return encode14(value.label, data, value);
     }
-    exports2.pem = { decode: decode12, decodeFirst: decodeFirst3, encode: encode14, encodeMany: encodeMany2, find: find2, findAll: findAll2, format: format5, parse: parse9 };
+    exports2.pem = { decode: decode12, decodeFirst: decodeFirst3, encode: encode14, encodeMany: encodeMany2, find: find2, findAll: findAll2, format: format5, parse: parse10 };
     exports2.pemConverter = {
       name: "pem",
       encode: (data, options) => {
@@ -58964,7 +58964,7 @@ var require_pem = __commonJS({
       decode: (text2, options) => decodeFirst3(text2, options?.label),
       format: format5,
       is: (text2) => typeof text2 === "string" && /-----BEGIN [^-]+-----/.test(text2),
-      parse: parse9
+      parse: parse10
     };
   }
 });
@@ -59298,7 +59298,7 @@ var require_convert = __commonJS({
     function normalize5(name, text2, ...args) {
       return defaults_js_1.defaultConverterRegistry.normalize(name, text2, ...args);
     }
-    function parse9(name, text2, ...args) {
+    function parse10(name, text2, ...args) {
       return defaults_js_1.defaultConverterRegistry.parse(name, text2, ...args);
     }
     function format5(name, data, value) {
@@ -59318,7 +59318,7 @@ var require_convert = __commonJS({
       decode: decode12,
       tryDecode: tryDecode6,
       normalize: normalize5,
-      parse: parse9,
+      parse: parse10,
       format: format5,
       transcode: transcode2,
       detect: detect2,
@@ -60881,7 +60881,7 @@ var require_ip_converter = __commonJS({
           return value;
         }
         const mask = parseInt(value.slice(8), 16).toString(2).split("").reduce((a5, k5) => a5 + +k5, 0);
-        let ip = value.slice(0, 8).replace(/(.{2})/g, (match2) => `${parseInt(match2, 16)}.`);
+        let ip = value.slice(0, 8).replace(/(.{2})/g, (match3) => `${parseInt(match3, 16)}.`);
         ip = ip.slice(0, -1);
         return `${ip}/${mask}`;
       }
@@ -65695,14 +65695,14 @@ function __extends2(d5, b5) {
   }
   d5.prototype = b5 === null ? Object.create(b5) : (__.prototype = b5.prototype, new __());
 }
-function __rest2(s2, e5) {
+function __rest2(s4, e5) {
   var t = {};
-  for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3) && e5.indexOf(p3) < 0)
-    t[p3] = s2[p3];
-  if (s2 != null && typeof Object.getOwnPropertySymbols === "function")
-    for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s2); i5 < p3.length; i5++) {
-      if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s2, p3[i5]))
-        t[p3[i5]] = s2[p3[i5]];
+  for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3) && e5.indexOf(p3) < 0)
+    t[p3] = s4[p3];
+  if (s4 != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i5 = 0, p3 = Object.getOwnPropertySymbols(s4); i5 < p3.length; i5++) {
+      if (e5.indexOf(p3[i5]) < 0 && Object.prototype.propertyIsEnumerable.call(s4, p3[i5]))
+        t[p3[i5]] = s4[p3[i5]];
     }
   return t;
 }
@@ -65755,9 +65755,9 @@ function __generator2(thisArg, body) {
   return g5 = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g5[Symbol.iterator] = function() {
     return this;
   }), g5;
-  function verb(n3) {
+  function verb(n4) {
     return function(v) {
-      return step([n3, v]);
+      return step([n4, v]);
     };
   }
   function step(op2) {
@@ -65824,7 +65824,7 @@ function __exportStar2(m3, exports2) {
   for (var p3 in m3) if (p3 !== "default" && !exports2.hasOwnProperty(p3)) exports2[p3] = m3[p3];
 }
 function __values2(o3) {
-  var s2 = typeof Symbol === "function" && Symbol.iterator, m3 = s2 && o3[s2], i5 = 0;
+  var s4 = typeof Symbol === "function" && Symbol.iterator, m3 = s4 && o3[s4], i5 = 0;
   if (m3) return m3.call(o3);
   if (o3 && typeof o3.length === "number") return {
     next: function() {
@@ -65832,14 +65832,14 @@ function __values2(o3) {
       return { value: o3 && o3[i5++], done: !o3 };
     }
   };
-  throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
+  throw new TypeError(s4 ? "Object is not iterable." : "Symbol.iterator is not defined.");
 }
-function __read2(o3, n3) {
+function __read2(o3, n4) {
   var m3 = typeof Symbol === "function" && o3[Symbol.iterator];
   if (!m3) return o3;
   var i5 = m3.call(o3), r5, ar = [], e5;
   try {
-    while ((n3 === void 0 || n3-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
+    while ((n4 === void 0 || n4-- > 0) && !(r5 = i5.next()).done) ar.push(r5.value);
   } catch (error64) {
     e5 = { error: error64 };
   } finally {
@@ -65857,8 +65857,8 @@ function __spread2() {
   return ar;
 }
 function __spreadArrays2() {
-  for (var s2 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s2 += arguments[i5].length;
-  for (var r5 = Array(s2), k5 = 0, i5 = 0; i5 < il; i5++)
+  for (var s4 = 0, i5 = 0, il = arguments.length; i5 < il; i5++) s4 += arguments[i5].length;
+  for (var r5 = Array(s4), k5 = 0, i5 = 0; i5 < il; i5++)
     for (var a5 = arguments[i5], j5 = 0, jl = a5.length; j5 < jl; j5++, k5++)
       r5[k5] = a5[j5];
   return r5;
@@ -65872,16 +65872,16 @@ function __asyncGenerator2(thisArg, _arguments, generator2) {
   return i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
     return this;
   }, i5;
-  function verb(n3) {
-    if (g5[n3]) i5[n3] = function(v) {
+  function verb(n4) {
+    if (g5[n4]) i5[n4] = function(v) {
       return new Promise(function(a5, b5) {
-        q3.push([n3, v, a5, b5]) > 1 || resume(n3, v);
+        q3.push([n4, v, a5, b5]) > 1 || resume(n4, v);
       });
     };
   }
-  function resume(n3, v) {
+  function resume(n4, v) {
     try {
-      step(g5[n3](v));
+      step(g5[n4](v));
     } catch (e5) {
       settle2(q3[0][3], e5);
     }
@@ -65906,9 +65906,9 @@ function __asyncDelegator2(o3) {
   }), verb("return"), i5[Symbol.iterator] = function() {
     return this;
   }, i5;
-  function verb(n3, f5) {
-    i5[n3] = o3[n3] ? function(v) {
-      return (p3 = !p3) ? { value: __await2(o3[n3](v)), done: n3 === "return" } : f5 ? f5(v) : v;
+  function verb(n4, f5) {
+    i5[n4] = o3[n4] ? function(v) {
+      return (p3 = !p3) ? { value: __await2(o3[n4](v)), done: n4 === "return" } : f5 ? f5(v) : v;
     } : f5;
   }
 }
@@ -65918,10 +65918,10 @@ function __asyncValues2(o3) {
   return m3 ? m3.call(o3) : (o3 = typeof __values2 === "function" ? __values2(o3) : o3[Symbol.iterator](), i5 = {}, verb("next"), verb("throw"), verb("return"), i5[Symbol.asyncIterator] = function() {
     return this;
   }, i5);
-  function verb(n3) {
-    i5[n3] = o3[n3] && function(v) {
+  function verb(n4) {
+    i5[n4] = o3[n4] && function(v) {
       return new Promise(function(resolve, reject) {
-        v = o3[n3](v), settle2(resolve, reject, v.done, v.value);
+        v = o3[n4](v), settle2(resolve, reject, v.done, v.value);
       });
     };
   }
@@ -65977,9 +65977,9 @@ var init_tslib_es62 = __esm({
     };
     __assign2 = function() {
       __assign2 = Object.assign || function __assign3(t) {
-        for (var s2, i5 = 1, n3 = arguments.length; i5 < n3; i5++) {
-          s2 = arguments[i5];
-          for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3)) t[p3] = s2[p3];
+        for (var s4, i5 = 1, n4 = arguments.length; i5 < n4; i5++) {
+          s4 = arguments[i5];
+          for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3)) t[p3] = s4[p3];
         }
         return t;
       };
@@ -66315,7 +66315,7 @@ var require_error_helpers = __commonJS({
       return `"${argName}" at position #${idx}`;
     }
     function composeErrorMessage(msg, e5, indent = "    ") {
-      return [msg, ...e5.message.split("\n").map((l3) => indent + l3)].join("\n");
+      return [msg, ...e5.message.split("\n").map((l4) => indent + l4)].join("\n");
     }
     function formatErrorCtor(ctor, paramIdx, error64) {
       const [, params = null] = ctor.toString().match(/constructor\(([\w, ]+)\)/) || [];
@@ -66796,13 +66796,13 @@ var require_singleton = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     var injectable_1 = require_injectable();
     var dependency_container_1 = require_dependency_container();
-    function singleton() {
+    function singleton2() {
       return function(target) {
         injectable_1.default()(target);
         dependency_container_1.instance.registerSingleton(target);
       };
     }
-    exports2.default = singleton;
+    exports2.default = singleton2;
   }
 });
 
@@ -67950,12 +67950,12 @@ var require_x509_cjs = __commonJS({
     var asnPkcs9 = require_cjs11();
     var asn1Csr = require_cjs12();
     function _interopNamespaceDefault(e5) {
-      var n3 = /* @__PURE__ */ Object.create(null);
+      var n4 = /* @__PURE__ */ Object.create(null);
       if (e5) {
         Object.keys(e5).forEach(function(k5) {
           if (k5 !== "default") {
             var d5 = Object.getOwnPropertyDescriptor(e5, k5);
-            Object.defineProperty(n3, k5, d5.get ? d5 : {
+            Object.defineProperty(n4, k5, d5.get ? d5 : {
               enumerable: true,
               get: function() {
                 return e5[k5];
@@ -67964,8 +67964,8 @@ var require_x509_cjs = __commonJS({
           }
         });
       }
-      n3.default = e5;
-      return Object.freeze(n3);
+      n4.default = e5;
+      return Object.freeze(n4);
     }
     var asn1X509__namespace = /* @__PURE__ */ _interopNamespaceDefault(asn1X509);
     var asn1Cms__namespace = /* @__PURE__ */ _interopNamespaceDefault(asn1Cms);
@@ -69093,14 +69093,14 @@ var require_x509_cjs = __commonJS({
         }
         const base646 = pvtsutils.Convert.ToBase64(pem2.rawData);
         let sliced;
-        let offset = 0;
+        let offset2 = 0;
         const rows = Array();
-        while (offset < base646.length) {
-          if (base646.length - offset < 64) {
-            sliced = base646.substring(offset);
+        while (offset2 < base646.length) {
+          if (base646.length - offset2 < 64) {
+            sliced = base646.substring(offset2);
           } else {
-            sliced = base646.substring(offset, offset + 64);
-            offset += 64;
+            sliced = base646.substring(offset2, offset2 + 64);
+            offset2 += 64;
           }
           if (sliced.length !== 0) {
             rows.push(sliced);
@@ -70000,8 +70000,8 @@ var require_x509_cjs = __commonJS({
           const namedCurve = algorithm2.namedCurve;
           const pointSize = _AsnEcSignatureFormatter.namedCurveSize.get(namedCurve) || _AsnEcSignatureFormatter.defaultNamedCurveSize;
           const r5 = this.addPadding(pointSize, this.removePadding(ecSigValue.r));
-          const s2 = this.addPadding(pointSize, this.removePadding(ecSigValue.s));
-          return pvtsutils.combine(r5, s2);
+          const s4 = this.addPadding(pointSize, this.removePadding(ecSigValue.s));
+          return pvtsutils.combine(r5, s4);
         }
         return null;
       }
@@ -71246,14 +71246,14 @@ var require_main = __commonJS({
       return supportsAnsi() ? `\x1B[2m${text2}\x1B[0m` : text2;
     }
     var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
-    function parse9(src) {
+    function parse10(src) {
       const obj = {};
       let lines = src.toString();
       lines = lines.replace(/\r\n?/mg, "\n");
-      let match2;
-      while ((match2 = LINE.exec(lines)) != null) {
-        const key = match2[1];
-        let value = match2[2] || "";
+      let match3;
+      while ((match3 = LINE.exec(lines)) != null) {
+        const key = match3[1];
+        let value = match3[2] || "";
         value = value.trim();
         const maybeQuote = value[0];
         value = value.replace(/^(['"`])([\s\S]*)\1$/mg, "$2");
@@ -71518,7 +71518,7 @@ var require_main = __commonJS({
       _parseVault,
       config: config5,
       decrypt: decrypt3,
-      parse: parse9,
+      parse: parse10,
       populate
     };
     module2.exports.configDotenv = DotenvModule.configDotenv;
@@ -72175,11 +72175,11 @@ var require_shared = __commonJS({
       let cached2;
       if (dnsCache.has(options.host)) {
         cached2 = dnsCache.get(options.host);
-        const now2 = Date.now();
-        if (now2 - lastCacheCleanup > CACHE_CLEANUP_INTERVAL) {
-          lastCacheCleanup = now2;
+        const now3 = Date.now();
+        if (now3 - lastCacheCleanup > CACHE_CLEANUP_INTERVAL) {
+          lastCacheCleanup = now3;
           for (const [host, entry] of dnsCache.entries()) {
-            if (entry.expires && entry.expires < now2) {
+            if (entry.expires && entry.expires < now3) {
               dnsCache.delete(host);
             }
           }
@@ -72189,7 +72189,7 @@ var require_shared = __commonJS({
             keys.forEach((key) => dnsCache.delete(key));
           }
         }
-        if (!cached2.expires || cached2.expires >= now2) {
+        if (!cached2.expires || cached2.expires >= now3) {
           return callback(
             null,
             formatDNSValue(cached2.value, {
@@ -74853,7 +74853,7 @@ var require_punycode = __commonJS({
       const output2 = [];
       const inputLength = input2.length;
       let i5 = 0;
-      let n3 = initialN;
+      let n4 = initialN;
       let bias = initialBias;
       let basic = input2.lastIndexOf(delimiter);
       if (basic < 0) {
@@ -74891,12 +74891,12 @@ var require_punycode = __commonJS({
         }
         const out = output2.length + 1;
         bias = adapt(i5 - oldi, out, oldi == 0);
-        if (floor(i5 / out) > maxInt - n3) {
+        if (floor(i5 / out) > maxInt - n4) {
           error64("overflow");
         }
-        n3 += floor(i5 / out);
+        n4 += floor(i5 / out);
         i5 %= out;
-        output2.splice(i5++, 0, n3);
+        output2.splice(i5++, 0, n4);
       }
       return String.fromCodePoint(...output2);
     };
@@ -74904,7 +74904,7 @@ var require_punycode = __commonJS({
       const output2 = [];
       input2 = ucs2decode(input2);
       const inputLength = input2.length;
-      let n3 = initialN;
+      let n4 = initialN;
       let delta = 0;
       let bias = initialBias;
       for (const currentValue of input2) {
@@ -74920,21 +74920,21 @@ var require_punycode = __commonJS({
       while (handledCPCount < inputLength) {
         let m3 = maxInt;
         for (const currentValue of input2) {
-          if (currentValue >= n3 && currentValue < m3) {
+          if (currentValue >= n4 && currentValue < m3) {
             m3 = currentValue;
           }
         }
         const handledCPCountPlusOne = handledCPCount + 1;
-        if (m3 - n3 > floor((maxInt - delta) / handledCPCountPlusOne)) {
+        if (m3 - n4 > floor((maxInt - delta) / handledCPCountPlusOne)) {
           error64("overflow");
         }
-        delta += (m3 - n3) * handledCPCountPlusOne;
-        n3 = m3;
+        delta += (m3 - n4) * handledCPCountPlusOne;
+        n4 = m3;
         for (const currentValue of input2) {
-          if (currentValue < n3 && ++delta > maxInt) {
+          if (currentValue < n4 && ++delta > maxInt) {
             error64("overflow");
           }
-          if (currentValue === n3) {
+          if (currentValue === n4) {
             let q3 = delta;
             for (let k5 = base; ; k5 += base) {
               const t = k5 <= bias ? tMin : k5 >= bias + tMax ? tMax : k5 - bias;
@@ -74953,7 +74953,7 @@ var require_punycode = __commonJS({
           }
         }
         ++delta;
-        ++n3;
+        ++n4;
       }
       return output2.join("");
     };
@@ -75136,13 +75136,13 @@ var require_qp = __commonJS({
       }
       let pos = 0;
       let len = str.length;
-      let match2, code, line3;
+      let match3, code, line3;
       let lineMargin = Math.floor(lineLength / 3);
       let result = "";
       while (pos < len) {
         line3 = str.substr(pos, lineLength);
-        if (match2 = line3.match(/\r\n/)) {
-          line3 = line3.substr(0, match2.index + match2[0].length);
+        if (match3 = line3.match(/\r\n/)) {
+          line3 = line3.substr(0, match3.index + match3[0].length);
           result += line3;
           pos += line3.length;
           continue;
@@ -75151,19 +75151,19 @@ var require_qp = __commonJS({
           result += line3;
           pos += line3.length;
           continue;
-        } else if (match2 = line3.substr(-lineMargin).match(/\n.*?$/)) {
-          line3 = line3.substr(0, line3.length - (match2[0].length - 1));
+        } else if (match3 = line3.substr(-lineMargin).match(/\n.*?$/)) {
+          line3 = line3.substr(0, line3.length - (match3[0].length - 1));
           result += line3;
           pos += line3.length;
           continue;
-        } else if (line3.length > lineLength - lineMargin && (match2 = line3.substr(-lineMargin).match(/[ \t.,!?][^ \t.,!?]*$/))) {
-          line3 = line3.substr(0, line3.length - (match2[0].length - 1));
+        } else if (line3.length > lineLength - lineMargin && (match3 = line3.substr(-lineMargin).match(/[ \t.,!?][^ \t.,!?]*$/))) {
+          line3 = line3.substr(0, line3.length - (match3[0].length - 1));
         } else if (line3.match(/[=][\da-f]{0,2}$/i)) {
-          if (match2 = line3.match(/[=][\da-f]{0,1}$/i)) {
-            line3 = line3.substr(0, line3.length - match2[0].length);
+          if (match3 = line3.match(/[=][\da-f]{0,1}$/i)) {
+            line3 = line3.substr(0, line3.length - match3[0].length);
           }
-          while (line3.length > 3 && line3.length < len - pos && !line3.match(/^(?:=[\da-f]{2}){1,4}$/i) && (match2 = line3.match(/[=][\da-f]{2}$/gi))) {
-            code = parseInt(match2[0].substr(1, 2), 16);
+          while (line3.length > 3 && line3.length < len - pos && !line3.match(/^(?:=[\da-f]{2}){1,4}$/i) && (match3 = line3.match(/[=][\da-f]{2}$/gi))) {
+            code = parseInt(match3[0].substr(1, 2), 16);
             if (code < 128) {
               break;
             }
@@ -75225,7 +75225,7 @@ var require_qp = __commonJS({
         if (this.options.lineLength) {
           qp = this._curLine + encode14(chunk);
           qp = wrap3(qp, this.options.lineLength);
-          qp = qp.replace(/(^|\n)([^\n]*)$/, (match2, lineBreak, lastLine) => {
+          qp = qp.replace(/(^|\n)([^\n]*)$/, (match3, lineBreak, lastLine) => {
             this._curLine = lastLine;
             return lineBreak;
           });
@@ -75599,10 +75599,10 @@ var require_mime_funcs = __commonJS({
           response.params[value.trim().toLowerCase()] = "";
         }
         Object.keys(response.params).forEach((key2) => {
-          let actualKey, nr, match2, value2;
-          if (match2 = key2.match(/(\*(\d+)|\*(\d+)\*|\*)$/)) {
-            actualKey = key2.substr(0, match2.index);
-            nr = Number(match2[2] || match2[3]) || 0;
+          let actualKey, nr, match3, value2;
+          if (match3 = key2.match(/(\*(\d+)|\*(\d+)\*|\*)$/)) {
+            actualKey = key2.substr(0, match3.index);
+            nr = Number(match3[2] || match3[3]) || 0;
             if (!response.params[actualKey] || typeof response.params[actualKey] !== "object") {
               response.params[actualKey] = {
                 charset: false,
@@ -75610,9 +75610,9 @@ var require_mime_funcs = __commonJS({
               };
             }
             value2 = response.params[key2];
-            if (nr === 0 && match2[0].substr(-1) === "*" && (match2 = value2.match(/^([^']*)'[^']*'(.*)$/))) {
-              response.params[actualKey].charset = match2[1] || "iso-8859-1";
-              value2 = match2[2];
+            if (nr === 0 && match3[0].substr(-1) === "*" && (match3 = value2.match(/^([^']*)'[^']*'(.*)$/))) {
+              response.params[actualKey].charset = match3[1] || "iso-8859-1";
+              value2 = match3[2];
             }
             response.params[actualKey].values[nr] = value2;
             delete response.params[key2];
@@ -75623,9 +75623,9 @@ var require_mime_funcs = __commonJS({
           if (response.params[key2] && Array.isArray(response.params[key2].values)) {
             value2 = response.params[key2].values.map((val) => val || "").join("");
             if (response.params[key2].charset) {
-              response.params[key2] = "=?" + response.params[key2].charset + "?Q?" + value2.replace(/[=?_\s]/g, (s2) => {
-                let c5 = s2.charCodeAt(0).toString(16);
-                if (s2 === " ") {
+              response.params[key2] = "=?" + response.params[key2].charset + "?Q?" + value2.replace(/[=?_\s]/g, (s4) => {
+                let c5 = s4.charCodeAt(0).toString(16);
+                if (s4 === " ") {
                   return "_";
                 } else {
                   return "%" + (c5.length < 2 ? "0" : "") + c5;
@@ -75666,22 +75666,22 @@ var require_mime_funcs = __commonJS({
       foldLines(str, lineLength, afterSpace) {
         str = (str || "").toString();
         lineLength = lineLength || 76;
-        let pos = 0, len = str.length, result = "", line3, match2;
+        let pos = 0, len = str.length, result = "", line3, match3;
         while (pos < len) {
           line3 = str.substr(pos, lineLength);
           if (line3.length < lineLength) {
             result += line3;
             break;
           }
-          if (match2 = line3.match(/^[^\n\r]*(\r?\n|\r)/)) {
-            line3 = match2[0];
+          if (match3 = line3.match(/^[^\n\r]*(\r?\n|\r)/)) {
+            line3 = match3[0];
             result += line3;
             pos += line3.length;
             continue;
-          } else if ((match2 = line3.match(/(\s+)[^\s]*$/)) && match2[0].length - (afterSpace ? (match2[1] || "").length : 0) < line3.length) {
-            line3 = line3.substr(0, line3.length - (match2[0].length - (afterSpace ? (match2[1] || "").length : 0)));
-          } else if (match2 = str.substr(pos + line3.length).match(/^[^\s]+(\s*)/)) {
-            line3 = line3 + match2[0].substr(0, match2[0].length - (!afterSpace ? (match2[1] || "").length : 0));
+          } else if ((match3 = line3.match(/(\s+)[^\s]*$/)) && match3[0].length - (afterSpace ? (match3[1] || "").length : 0) < line3.length) {
+            line3 = line3.substr(0, line3.length - (match3[0].length - (afterSpace ? (match3[1] || "").length : 0)));
+          } else if (match3 = str.substr(pos + line3.length).match(/^[^\s]+(\s*)/)) {
+            line3 = line3 + match3[0].substr(0, match3[0].length - (!afterSpace ? (match3[1] || "").length : 0));
           }
           result += line3;
           pos += line3.length;
@@ -75699,18 +75699,18 @@ var require_mime_funcs = __commonJS({
        * @return {Array} Split string
        */
       splitMimeEncodedString: (str, maxlen) => {
-        let curLine, match2, chr, done, lines = [];
+        let curLine, match3, chr, done, lines = [];
         maxlen = Math.max(maxlen || 0, 12);
         while (str.length) {
           curLine = str.substr(0, maxlen);
-          if (match2 = curLine.match(/[=][0-9A-F]?$/i)) {
-            curLine = curLine.substr(0, match2.index);
+          if (match3 = curLine.match(/[=][0-9A-F]?$/i)) {
+            curLine = curLine.substr(0, match3.index);
           }
           done = false;
           while (!done) {
             done = true;
-            if (match2 = str.substr(curLine.length).match(/^[=]([0-9A-F]{2})/i)) {
-              chr = parseInt(match2[1], 16);
+            if (match3 = str.substr(curLine.length).match(/^[=]([0-9A-F]{2})/i)) {
+              chr = parseInt(match3[1], 16);
               if (chr < 194 && chr > 127) {
                 curLine = curLine.substr(0, curLine.length - 3);
                 done = false;
@@ -78179,27 +78179,27 @@ var require_http_proxy_client = __commonJS({
         );
         let headers = "";
         let onSocketData = (chunk) => {
-          let match2;
+          let match3;
           let remainder;
           if (finished) {
             return;
           }
           headers += chunk.toString("binary");
-          if (match2 = headers.match(/\r\n\r\n/)) {
+          if (match3 = headers.match(/\r\n\r\n/)) {
             socket.removeListener("data", onSocketData);
-            remainder = headers.substr(match2.index + match2[0].length);
-            headers = headers.substr(0, match2.index);
+            remainder = headers.substr(match3.index + match3[0].length);
+            headers = headers.substr(0, match3.index);
             if (remainder) {
               socket.unshift(Buffer.from(remainder, "binary"));
             }
             finished = true;
-            match2 = headers.match(/^HTTP\/\d+\.\d+ (\d+)/i);
-            if (!match2 || (match2[1] || "").charAt(0) !== "2") {
+            match3 = headers.match(/^HTTP\/\d+\.\d+ (\d+)/i);
+            if (!match3 || (match3[1] || "").charAt(0) !== "2") {
               try {
                 socket.destroy();
               } catch (_E3) {
               }
-              return callback(new Error("Invalid response from proxy" + (match2 && ": " + match2[1] || "")));
+              return callback(new Error("Invalid response from proxy" + (match3 && ": " + match3[1] || "")));
             }
             socket.removeListener("error", tempSocketErr);
             socket.removeListener("timeout", timeoutErr);
@@ -78830,7 +78830,7 @@ var require_mailer = __commonJS({
             return callback(err);
           }
           let cidCounter = 0;
-          html2 = (html2 || "").toString().replace(/(<img\b[^<>]{0,1024} src\s{0,20}=[\s"']{0,20})(data:([^;]+);[^"'>\s]+)/gi, (match2, prefix, dataUri, mimeType) => {
+          html2 = (html2 || "").toString().replace(/(<img\b[^<>]{0,1024} src\s{0,20}=[\s"']{0,20})(data:([^;]+);[^"'>\s]+)/gi, (match3, prefix, dataUri, mimeType) => {
             let cid = crypto2.randomBytes(10).toString("hex") + "@localhost";
             if (!mail.data.attachments) {
               mail.data.attachments = [];
@@ -79810,9 +79810,9 @@ var require_smtp_connection = __commonJS({
           if (typeof notify === "string") {
             notify = notify.split(",");
           }
-          notify = notify.map((n3) => n3.trim().toUpperCase());
+          notify = notify.map((n4) => n4.trim().toUpperCase());
           let validNotify = ["NEVER", "SUCCESS", "FAILURE", "DELAY"];
-          let invalidNotify = notify.filter((n3) => !validNotify.includes(n3));
+          let invalidNotify = notify.filter((n4) => !validNotify.includes(n4));
           if (invalidNotify.length || notify.length > 1 && notify.includes("NEVER")) {
             throw new Error("notify: " + JSON.stringify(notify.join(",")));
           }
@@ -79932,7 +79932,7 @@ var require_smtp_connection = __commonJS({
        * @param {String} str Message from the server
        */
       _actionEHLO(str) {
-        let match2;
+        let match3;
         if (str.substr(0, 3) === "421") {
           this._onError(new Error("Server terminates connection. response=" + str), "ECONNECTION", str, "EHLO");
           return;
@@ -79987,9 +79987,9 @@ var require_smtp_connection = __commonJS({
         if (/[ -]AUTH(?:(\s+|=)[^\n]*\s+|\s+|=)XOAUTH2/i.test(str)) {
           this._supportedAuth.push("XOAUTH2");
         }
-        if (match2 = str.match(/[ -]SIZE(?:[ \t]+(\d+))?/im)) {
+        if (match3 = str.match(/[ -]SIZE(?:[ \t]+(\d+))?/im)) {
           this._supportedExtensions.push("SIZE");
-          this._maxAllowedSize = Number(match2[1]) || 0;
+          this._maxAllowedSize = Number(match3[1]) || 0;
         }
         this.emit("connect");
       }
@@ -81954,16 +81954,16 @@ var require_smtp_pool = __commonJS({
         if (!this._rateLimit.limit) {
           return callback();
         }
-        let now2 = Date.now();
+        let now3 = Date.now();
         if (this._rateLimit.counter < this._rateLimit.limit) {
           return callback();
         }
         this._rateLimit.waiting.push(callback);
-        if (this._rateLimit.checkpoint <= now2 - this._rateLimit.delta) {
+        if (this._rateLimit.checkpoint <= now3 - this._rateLimit.delta) {
           return this._clearRateLimit();
         } else if (!this._rateLimit.timeout) {
-          this._rateLimit.timeout = setTimeout(() => this._clearRateLimit(), this._rateLimit.delta - (now2 - this._rateLimit.checkpoint));
-          this._rateLimit.checkpoint = now2;
+          this._rateLimit.timeout = setTimeout(() => this._clearRateLimit(), this._rateLimit.delta - (now3 - this._rateLimit.checkpoint));
+          this._rateLimit.checkpoint = now3;
         }
       }
       /**
@@ -84033,10 +84033,10 @@ var init_poller = __esm({
       let maxCount = 0;
       let count403 = 0;
       for (const response of orderedErrors) {
-        const n3 = observedResponses[response] | 0;
-        maxCount = Math.max(n3, maxCount);
+        const n4 = observedResponses[response] | 0;
+        maxCount = Math.max(n4, maxCount);
         if (response.startsWith("403:")) {
-          count403 += n3;
+          count403 += n4;
         }
       }
       const clientLogger = client?.config?.logger;
@@ -84240,9 +84240,9 @@ var init_schemaDeserializationMiddleware = __esm({
     schemaDeserializationMiddleware = (config5) => (next, context) => async (args) => {
       const { response } = await next(args);
       const { operationSchema } = getSmithyContext(context);
-      const [, ns, n3, t, i5, o3] = operationSchema ?? [];
+      const [, ns, n4, t, i5, o3] = operationSchema ?? [];
       try {
-        const parsed = await config5.protocol.deserializeResponse(operation(ns, n3, t, i5, o3), {
+        const parsed = await config5.protocol.deserializeResponse(operation(ns, n4, t, i5, o3), {
           ...config5,
           ...context
         }, response);
@@ -84306,9 +84306,9 @@ var init_schemaSerializationMiddleware = __esm({
     init_operation();
     schemaSerializationMiddleware = (config5) => (next, context) => async (args) => {
       const { operationSchema } = getSmithyContext(context);
-      const [, ns, n3, t, i5, o3] = operationSchema ?? [];
+      const [, ns, n4, t, i5, o3] = operationSchema ?? [];
       const endpoint = context.endpointV2 ? async () => toEndpointV1(context.endpointV2) : config5.endpoint;
-      const request = await config5.protocol.serializeRequest(operation(ns, n3, t, i5, o3), args.input, {
+      const request = await config5.protocol.serializeRequest(operation(ns, n4, t, i5, o3), args.input, {
         ...config5,
         ...context,
         endpoint
@@ -85781,11 +85781,11 @@ var fromArrayBuffer, fromString;
 var init_buffer_from = __esm({
   "node_modules/.pnpm/@smithy+core@3.34.1/node_modules/@smithy/core/dist-es/submodules/serde/util-buffer-from/buffer-from.js"() {
     init_is_array_buffer();
-    fromArrayBuffer = (input2, offset = 0, length = input2.byteLength - offset) => {
+    fromArrayBuffer = (input2, offset2 = 0, length = input2.byteLength - offset2) => {
       if (!isArrayBuffer2(input2)) {
         throw new TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof input2} (${input2})`);
       }
-      return Buffer.from(input2, offset, length);
+      return Buffer.from(input2, offset2, length);
     };
     fromString = (input2, encoding) => {
       if (typeof input2 !== "string") {
@@ -86153,7 +86153,7 @@ var init_parse_utils2 = __esm({
       return expectByte(value);
     };
     stackTraceWarning = (message2) => {
-      return String(new TypeError(message2).stack || message2).split("\n").slice(0, 5).filter((s2) => !s2.includes("stackTraceWarning")).join("\n");
+      return String(new TypeError(message2).stack || message2).split("\n").slice(0, 5).filter((s4) => !s4.includes("stackTraceWarning")).join("\n");
     };
     logger3 = {
       warn: console.warn
@@ -86165,7 +86165,7 @@ var init_parse_utils2 = __esm({
 function dateToUtcString(date7) {
   const year2 = date7.getUTCFullYear();
   const month = date7.getUTCMonth();
-  const dayOfWeek = date7.getUTCDay();
+  const dayOfWeek2 = date7.getUTCDay();
   const dayOfMonthInt = date7.getUTCDate();
   const hoursInt = date7.getUTCHours();
   const minutesInt = date7.getUTCMinutes();
@@ -86174,9 +86174,9 @@ function dateToUtcString(date7) {
   const hoursString = hoursInt < 10 ? `0${hoursInt}` : `${hoursInt}`;
   const minutesString = minutesInt < 10 ? `0${minutesInt}` : `${minutesInt}`;
   const secondsString = secondsInt < 10 ? `0${secondsInt}` : `${secondsInt}`;
-  return `${DAYS[dayOfWeek]}, ${dayOfMonthString} ${MONTHS[month]} ${year2} ${hoursString}:${minutesString}:${secondsString} GMT`;
+  return `${DAYS[dayOfWeek2]}, ${dayOfMonthString} ${MONTHS[month]} ${year2} ${hoursString}:${minutesString}:${secondsString} GMT`;
 }
-var DAYS, MONTHS, RFC3339, parseRfc3339DateTime, RFC3339_WITH_OFFSET, parseRfc3339DateTimeWithOffset, IMF_FIXDATE, RFC_850_DATE, ASC_TIME, parseRfc7231DateTime, parseEpochTimestamp, buildDate, parseTwoDigitYear, FIFTY_YEARS_IN_MILLIS, adjustRfc850Year, parseMonthByShortName, DAYS_IN_MONTH, validateDayOfMonth, isLeapYear, parseDateValue, parseMilliseconds, parseOffsetToMilliseconds, stripLeadingZeroes;
+var DAYS, MONTHS, RFC3339, parseRfc3339DateTime, RFC3339_WITH_OFFSET, parseRfc3339DateTimeWithOffset, IMF_FIXDATE, RFC_850_DATE, ASC_TIME, parseRfc7231DateTime, parseEpochTimestamp, buildDate, parseTwoDigitYear, FIFTY_YEARS_IN_MILLIS, adjustRfc850Year, parseMonthByShortName, DAYS_IN_MONTH, validateDayOfMonth, isLeapYear2, parseDateValue, parseMilliseconds, parseOffsetToMilliseconds, stripLeadingZeroes;
 var init_date_utils = __esm({
   "node_modules/.pnpm/@smithy+core@3.34.1/node_modules/@smithy/core/dist-es/submodules/serde/date-utils.js"() {
     init_parse_utils2();
@@ -86190,11 +86190,11 @@ var init_date_utils = __esm({
       if (typeof value !== "string") {
         throw new TypeError("RFC-3339 date-times must be expressed as strings");
       }
-      const match2 = RFC3339.exec(value);
-      if (!match2) {
+      const match3 = RFC3339.exec(value);
+      if (!match3) {
         throw new TypeError("Invalid RFC-3339 date-time value");
       }
-      const [_, yearStr, monthStr, dayStr, hours, minutes, seconds, fractionalMilliseconds] = match2;
+      const [_, yearStr, monthStr, dayStr, hours, minutes, seconds, fractionalMilliseconds] = match3;
       const year2 = strictParseShort(stripLeadingZeroes(yearStr));
       const month = parseDateValue(monthStr, "month", 1, 12);
       const day = parseDateValue(dayStr, "day", 1, 31);
@@ -86208,11 +86208,11 @@ var init_date_utils = __esm({
       if (typeof value !== "string") {
         throw new TypeError("RFC-3339 date-times must be expressed as strings");
       }
-      const match2 = RFC3339_WITH_OFFSET.exec(value);
-      if (!match2) {
+      const match3 = RFC3339_WITH_OFFSET.exec(value);
+      if (!match3) {
         throw new TypeError("Invalid RFC-3339 date-time value");
       }
-      const [_, yearStr, monthStr, dayStr, hours, minutes, seconds, fractionalMilliseconds, offsetStr] = match2;
+      const [_, yearStr, monthStr, dayStr, hours, minutes, seconds, fractionalMilliseconds, offsetStr] = match3;
       const year2 = strictParseShort(stripLeadingZeroes(yearStr));
       const month = parseDateValue(monthStr, "month", 1, 12);
       const day = parseDateValue(dayStr, "day", 1, 31);
@@ -86232,14 +86232,14 @@ var init_date_utils = __esm({
       if (typeof value !== "string") {
         throw new TypeError("RFC-7231 date-times must be expressed as strings");
       }
-      let match2 = IMF_FIXDATE.exec(value);
-      if (match2) {
-        const [_, dayStr, monthStr, yearStr, hours, minutes, seconds, fractionalMilliseconds] = match2;
+      let match3 = IMF_FIXDATE.exec(value);
+      if (match3) {
+        const [_, dayStr, monthStr, yearStr, hours, minutes, seconds, fractionalMilliseconds] = match3;
         return buildDate(strictParseShort(stripLeadingZeroes(yearStr)), parseMonthByShortName(monthStr), parseDateValue(dayStr, "day", 1, 31), { hours, minutes, seconds, fractionalMilliseconds });
       }
-      match2 = RFC_850_DATE.exec(value);
-      if (match2) {
-        const [_, dayStr, monthStr, yearStr, hours, minutes, seconds, fractionalMilliseconds] = match2;
+      match3 = RFC_850_DATE.exec(value);
+      if (match3) {
+        const [_, dayStr, monthStr, yearStr, hours, minutes, seconds, fractionalMilliseconds] = match3;
         return adjustRfc850Year(buildDate(parseTwoDigitYear(yearStr), parseMonthByShortName(monthStr), parseDateValue(dayStr, "day", 1, 31), {
           hours,
           minutes,
@@ -86247,9 +86247,9 @@ var init_date_utils = __esm({
           fractionalMilliseconds
         }));
       }
-      match2 = ASC_TIME.exec(value);
-      if (match2) {
-        const [_, monthStr, dayStr, hours, minutes, seconds, fractionalMilliseconds, yearStr] = match2;
+      match3 = ASC_TIME.exec(value);
+      if (match3) {
+        const [_, monthStr, dayStr, hours, minutes, seconds, fractionalMilliseconds, yearStr] = match3;
         return buildDate(strictParseShort(stripLeadingZeroes(yearStr)), parseMonthByShortName(monthStr), parseDateValue(dayStr.trimLeft(), "day", 1, 31), { hours, minutes, seconds, fractionalMilliseconds });
       }
       throw new TypeError("Invalid RFC-7231 date-time value");
@@ -86303,14 +86303,14 @@ var init_date_utils = __esm({
     DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     validateDayOfMonth = (year2, month, day) => {
       let maxDays = DAYS_IN_MONTH[month];
-      if (month === 1 && isLeapYear(year2)) {
+      if (month === 1 && isLeapYear2(year2)) {
         maxDays = 29;
       }
       if (day > maxDays) {
         throw new TypeError(`Invalid day for ${MONTHS[month]} in ${year2}: ${day}`);
       }
     };
-    isLeapYear = (year2) => {
+    isLeapYear2 = (year2) => {
       return year2 % 4 === 0 && (year2 % 100 !== 0 || year2 % 400 === 0);
     };
     parseDateValue = (value, type, lower, upper) => {
@@ -86402,7 +86402,7 @@ function range(v, min, max) {
     throw new Error(`Value ${_v} out of range [${min}, ${max}]`);
   }
 }
-var ddd, mmm, time5, date6, year, RFC3339_WITH_OFFSET2, IMF_FIXDATE2, RFC_850_DATE2, ASC_TIME2, months, _parseEpochTimestamp, _parseRfc3339DateTimeWithOffset, _parseRfc7231DateTime;
+var ddd, mmm, time5, date6, year, RFC3339_WITH_OFFSET2, IMF_FIXDATE2, RFC_850_DATE2, ASC_TIME2, months2, _parseEpochTimestamp, _parseRfc3339DateTimeWithOffset, _parseRfc7231DateTime;
 var init_schema_date_utils = __esm({
   "node_modules/.pnpm/@smithy+core@3.34.1/node_modules/@smithy/core/dist-es/submodules/serde/schema-serde-lib/schema-date-utils.js"() {
     ddd = `(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)(?:[ne|u?r]?s?day)?`;
@@ -86414,7 +86414,7 @@ var init_schema_date_utils = __esm({
     IMF_FIXDATE2 = new RegExp(`^${ddd}, ${date6} ${mmm} ${year} ${time5} GMT$`);
     RFC_850_DATE2 = new RegExp(`^${ddd}, ${date6}-${mmm}-(\\d\\d) ${time5} GMT$`);
     ASC_TIME2 = new RegExp(`^${ddd} ${mmm} ( [1-9]|\\d\\d) ${time5} ${year}$`);
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    months2 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     _parseEpochTimestamp = (value) => {
       if (value == null) {
         return void 0;
@@ -86485,7 +86485,7 @@ var init_schema_date_utils = __esm({
         [, month, day, hour, minute, second, fraction, year2] = matches;
       }
       if (year2 && second) {
-        const timestamp2 = Date.UTC(Number(year2), months.indexOf(month), Number(day), Number(hour), Number(minute), Number(second), fraction ? Math.round(parseFloat(`0.${fraction}`) * 1e3) : 0);
+        const timestamp2 = Date.UTC(Number(year2), months2.indexOf(month), Number(day), Number(hour), Number(minute), Number(second), fraction ? Math.round(parseFloat(`0.${fraction}`) * 1e3) : 0);
         range(day, 1, 31);
         range(hour, 0, 23);
         range(minute, 0, 59);
@@ -86704,10 +86704,10 @@ function concatBytes2(arrays, length) {
     }
   }
   const result = new Uint8Array(length);
-  let offset = 0;
+  let offset2 = 0;
   for (const buf of arrays) {
-    result.set(buf, offset);
-    offset += buf.byteLength;
+    result.set(buf, offset2);
+    offset2 += buf.byteLength;
   }
   return result;
 }
@@ -89390,8 +89390,8 @@ function toBase643(_input) {
     const bitClusterCount = Math.ceil(bitLength / bitsPerLetter);
     bits <<= bitClusterCount * bitsPerLetter - bitLength;
     for (let k5 = 1; k5 <= bitClusterCount; k5++) {
-      const offset = (bitClusterCount - k5) * bitsPerLetter;
-      str += alphabetByValue[(bits & maxLetterValue << offset) >> offset];
+      const offset2 = (bitClusterCount - k5) * bitsPerLetter;
+      str += alphabetByValue[(bits & maxLetterValue << offset2) >> offset2];
     }
     str += "==".slice(0, 4 - bitClusterCount);
   }
@@ -89577,9 +89577,9 @@ function merge2(buffers, mode, chunk) {
 function flush(buffers, mode) {
   switch (mode) {
     case 0:
-      const s2 = buffers[0];
+      const s4 = buffers[0];
       buffers[0] = "";
-      return s2;
+      return s4;
     case 1:
     case 2:
       return buffers[mode].flush();
@@ -89786,15 +89786,15 @@ async function headStream(stream2, bytes) {
   }
   reader.releaseLock();
   const collected = new Uint8Array(Math.min(bytes, byteLengthCounter));
-  let offset = 0;
+  let offset2 = 0;
   for (const chunk of chunks) {
-    if (chunk.byteLength > collected.byteLength - offset) {
-      collected.set(chunk.subarray(0, collected.byteLength - offset), offset);
+    if (chunk.byteLength > collected.byteLength - offset2) {
+      collected.set(chunk.subarray(0, collected.byteLength - offset2), offset2);
       break;
     } else {
-      collected.set(chunk, offset);
+      collected.set(chunk, offset2);
     }
-    offset += chunk.length;
+    offset2 += chunk.length;
   }
   return collected;
 }
@@ -90390,9 +90390,9 @@ function compress2(state2, block) {
     const tmp = d5;
     d5 = c5;
     c5 = b5;
-    const s2 = S[(i5 >> 4) * 4 + (i5 & 3)];
+    const s4 = S[(i5 >> 4) * 4 + (i5 & 3)];
     const sum = (a5 + f5 & M) + (x + T[i5] & M) & M;
-    b5 = b5 + ((sum << s2 | sum >>> 32 - s2) >>> 0) & M;
+    b5 = b5 + ((sum << s4 | sum >>> 32 - s4) >>> 0) & M;
     a5 = tmp;
   }
   state2[0] = state2[0] + a5 & M;
@@ -90694,7 +90694,7 @@ var init_Sha256Js = __esm({
       }
       hashBufferWith(state2, buffer) {
         const w = this.w ??= new Int32Array(64);
-        let s0 = state2[0], s1 = state2[1], s2 = state2[2], s33 = state2[3], s4 = state2[4], s5 = state2[5], s6 = state2[6], s7 = state2[7];
+        let s0 = state2[0], s1 = state2[1], s22 = state2[2], s33 = state2[3], s4 = state2[4], s5 = state2[5], s6 = state2[6], s7 = state2[7];
         for (let i5 = 0; i5 < BLOCK; ++i5) {
           if (i5 < 16) {
             w[i5] = (buffer[i5 * 4] & 255) << 24 | (buffer[i5 * 4 + 1] & 255) << 16 | (buffer[i5 * 4 + 2] & 255) << 8 | buffer[i5 * 4 + 3] & 255;
@@ -90706,19 +90706,19 @@ var init_Sha256Js = __esm({
             w[i5] = (t13 + w[i5 - 7] | 0) + (t23 + w[i5 - 16] | 0);
           }
           const t12 = (((s4 >>> 6 | s4 << 26) ^ (s4 >>> 11 | s4 << 21) ^ (s4 >>> 25 | s4 << 7)) + (s4 & s5 ^ ~s4 & s6) | 0) + (s7 + (K[i5] + w[i5] | 0) | 0) | 0;
-          const t22 = ((s0 >>> 2 | s0 << 30) ^ (s0 >>> 13 | s0 << 19) ^ (s0 >>> 22 | s0 << 10)) + (s0 & s1 ^ s0 & s2 ^ s1 & s2) | 0;
+          const t22 = ((s0 >>> 2 | s0 << 30) ^ (s0 >>> 13 | s0 << 19) ^ (s0 >>> 22 | s0 << 10)) + (s0 & s1 ^ s0 & s22 ^ s1 & s22) | 0;
           s7 = s6;
           s6 = s5;
           s5 = s4;
           s4 = s33 + t12 | 0;
-          s33 = s2;
-          s2 = s1;
+          s33 = s22;
+          s22 = s1;
           s1 = s0;
           s0 = t12 + t22 | 0;
         }
         state2[0] += s0;
         state2[1] += s1;
-        state2[2] += s2;
+        state2[2] += s22;
         state2[3] += s33;
         state2[4] += s4;
         state2[5] += s5;
@@ -95613,8 +95613,8 @@ var require_es5 = __commonJS({
         var t = {};
         function r5(i5) {
           if (t[i5]) return t[i5].exports;
-          var n3 = t[i5] = { i: i5, l: false, exports: {} };
-          return e5[i5].call(n3.exports, n3, n3.exports, r5), n3.l = true, n3.exports;
+          var n4 = t[i5] = { i: i5, l: false, exports: {} };
+          return e5[i5].call(n4.exports, n4, n4.exports, r5), n4.l = true, n4.exports;
         }
         return r5.m = e5, r5.c = t, r5.d = function(e6, t8, i5) {
           r5.o(e6, t8) || Object.defineProperty(e6, t8, { enumerable: true, get: i5 });
@@ -95624,9 +95624,9 @@ var require_es5 = __commonJS({
           if (1 & t8 && (e6 = r5(e6)), 8 & t8) return e6;
           if (4 & t8 && "object" == typeof e6 && e6 && e6.__esModule) return e6;
           var i5 = /* @__PURE__ */ Object.create(null);
-          if (r5.r(i5), Object.defineProperty(i5, "default", { enumerable: true, value: e6 }), 2 & t8 && "string" != typeof e6) for (var n3 in e6) r5.d(i5, n3, function(t9) {
+          if (r5.r(i5), Object.defineProperty(i5, "default", { enumerable: true, value: e6 }), 2 & t8 && "string" != typeof e6) for (var n4 in e6) r5.d(i5, n4, function(t9) {
             return e6[t9];
-          }.bind(null, n3));
+          }.bind(null, n4));
           return i5;
         }, r5.n = function(e6) {
           var t8 = e6 && e6.__esModule ? function() {
@@ -95641,7 +95641,7 @@ var require_es5 = __commonJS({
       })({ 17: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.default = void 0;
-        var i5 = r5(18), n3 = (function() {
+        var i5 = r5(18), n4 = (function() {
           function e6() {
           }
           return e6.getFirstMatch = function(e7, t8) {
@@ -95732,16 +95732,16 @@ var require_es5 = __commonJS({
             return e7.split(".").length;
           }, e6.compareVersions = function(t8, r6, i6) {
             void 0 === i6 && (i6 = false);
-            var n4 = e6.getVersionPrecision(t8), a5 = e6.getVersionPrecision(r6), o3 = Math.max(n4, a5), s2 = 0, u = e6.map([t8, r6], (function(t9) {
+            var n5 = e6.getVersionPrecision(t8), a5 = e6.getVersionPrecision(r6), o3 = Math.max(n5, a5), s4 = 0, u = e6.map([t8, r6], (function(t9) {
               var r7 = o3 - e6.getVersionPrecision(t9), i7 = t9 + new Array(r7 + 1).join(".0");
               return e6.map(i7.split("."), (function(e7) {
                 return new Array(20 - e7.length).join("0") + e7;
               })).reverse();
             }));
-            for (i6 && (s2 = o3 - Math.min(n4, a5)), o3 -= 1; o3 >= s2; ) {
+            for (i6 && (s4 = o3 - Math.min(n5, a5)), o3 -= 1; o3 >= s4; ) {
               if (u[0][o3] > u[1][o3]) return 1;
               if (u[0][o3] === u[1][o3]) {
-                if (o3 === s2) return 0;
+                if (o3 === s4) return 0;
                 o3 -= 1;
               } else if (u[0][o3] < u[1][o3]) return -1;
             }
@@ -95754,19 +95754,19 @@ var require_es5 = __commonJS({
             var r6, i6;
             if (Array.prototype.find) return Array.prototype.find.call(e7, t8);
             for (r6 = 0, i6 = e7.length; r6 < i6; r6 += 1) {
-              var n4 = e7[r6];
-              if (t8(n4, r6)) return n4;
+              var n5 = e7[r6];
+              if (t8(n5, r6)) return n5;
             }
           }, e6.assign = function(e7) {
-            for (var t8, r6, i6 = e7, n4 = arguments.length, a5 = new Array(n4 > 1 ? n4 - 1 : 0), o3 = 1; o3 < n4; o3++) a5[o3 - 1] = arguments[o3];
+            for (var t8, r6, i6 = e7, n5 = arguments.length, a5 = new Array(n5 > 1 ? n5 - 1 : 0), o3 = 1; o3 < n5; o3++) a5[o3 - 1] = arguments[o3];
             if (Object.assign) return Object.assign.apply(Object, [e7].concat(a5));
-            var s2 = function() {
+            var s4 = function() {
               var e8 = a5[t8];
               "object" == typeof e8 && null !== e8 && Object.keys(e8).forEach((function(t9) {
                 i6[t9] = e8[t9];
               }));
             };
-            for (t8 = 0, r6 = a5.length; t8 < r6; t8 += 1) s2();
+            for (t8 = 0, r6 = a5.length; t8 < r6; t8 += 1) s4();
             return e7;
           }, e6.getBrowserAlias = function(e7) {
             return i5.BROWSER_ALIASES_MAP[e7];
@@ -95774,7 +95774,7 @@ var require_es5 = __commonJS({
             return i5.BROWSER_MAP[e7] || "";
           }, e6;
         })();
-        t.default = n3, e5.exports = t.default;
+        t.default = n4, e5.exports = t.default;
       }, 18: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.ENGINE_MAP = t.OS_MAP = t.PLATFORMS_MAP = t.BROWSER_MAP = t.BROWSER_ALIASES_MAP = void 0;
@@ -95786,22 +95786,22 @@ var require_es5 = __commonJS({
       }, 90: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.default = void 0;
-        var i5, n3 = (i5 = r5(91)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
+        var i5, n4 = (i5 = r5(91)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
         function o3(e6, t8) {
           for (var r6 = 0; r6 < t8.length; r6++) {
             var i6 = t8[r6];
             i6.enumerable = i6.enumerable || false, i6.configurable = true, "value" in i6 && (i6.writable = true), Object.defineProperty(e6, i6.key, i6);
           }
         }
-        var s2 = (function() {
+        var s4 = (function() {
           function e6() {
           }
           var t8, r6, i6;
           return e6.getParser = function(e7, t9, r7) {
             if (void 0 === t9 && (t9 = false), void 0 === r7 && (r7 = null), "string" != typeof e7) throw new Error("UserAgent should be a string");
-            return new n3.default(e7, t9, r7);
+            return new n4.default(e7, t9, r7);
           }, e6.parse = function(e7, t9) {
-            return void 0 === t9 && (t9 = null), new n3.default(e7, t9).getResult();
+            return void 0 === t9 && (t9 = null), new n4.default(e7, t9).getResult();
           }, t8 = e6, i6 = [{ key: "BROWSER_MAP", get: function() {
             return a5.BROWSER_MAP;
           } }, { key: "ENGINE_MAP", get: function() {
@@ -95812,11 +95812,11 @@ var require_es5 = __commonJS({
             return a5.PLATFORMS_MAP;
           } }], (r6 = null) && o3(t8.prototype, r6), i6 && o3(t8, i6), e6;
         })();
-        t.default = s2, e5.exports = t.default;
+        t.default = s4, e5.exports = t.default;
       }, 91: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.default = void 0;
-        var i5 = u(r5(92)), n3 = u(r5(93)), a5 = u(r5(94)), o3 = u(r5(95)), s2 = u(r5(17));
+        var i5 = u(r5(92)), n4 = u(r5(93)), a5 = u(r5(94)), o3 = u(r5(95)), s4 = u(r5(17));
         function u(e6) {
           return e6 && e6.__esModule ? e6 : { default: e6 };
         }
@@ -95850,7 +95850,7 @@ var require_es5 = __commonJS({
           }, t8.parseBrowser = function() {
             var e7 = this;
             this.parsedResult.browser = {};
-            var t9 = s2.default.find(i5.default, (function(t10) {
+            var t9 = s4.default.find(i5.default, (function(t10) {
               if ("function" == typeof t10.test) return t10.test(e7);
               if (Array.isArray(t10.test)) return t10.test.some((function(t11) {
                 return e7.test(t11);
@@ -95869,7 +95869,7 @@ var require_es5 = __commonJS({
           }, t8.parseOS = function() {
             var e7 = this;
             this.parsedResult.os = {};
-            var t9 = s2.default.find(n3.default, (function(t10) {
+            var t9 = s4.default.find(n4.default, (function(t10) {
               if ("function" == typeof t10.test) return t10.test(e7);
               if (Array.isArray(t10.test)) return t10.test.some((function(t11) {
                 return e7.test(t11);
@@ -95891,7 +95891,7 @@ var require_es5 = __commonJS({
           }, t8.parsePlatform = function() {
             var e7 = this;
             this.parsedResult.platform = {};
-            var t9 = s2.default.find(a5.default, (function(t10) {
+            var t9 = s4.default.find(a5.default, (function(t10) {
               if ("function" == typeof t10.test) return t10.test(e7);
               if (Array.isArray(t10.test)) return t10.test.some((function(t11) {
                 return e7.test(t11);
@@ -95906,7 +95906,7 @@ var require_es5 = __commonJS({
           }, t8.parseEngine = function() {
             var e7 = this;
             this.parsedResult.engine = {};
-            var t9 = s2.default.find(o3.default, (function(t10) {
+            var t9 = s4.default.find(o3.default, (function(t10) {
               if ("function" == typeof t10.test) return t10.test(e7);
               if (Array.isArray(t10.test)) return t10.test.some((function(t11) {
                 return e7.test(t11);
@@ -95917,21 +95917,21 @@ var require_es5 = __commonJS({
           }, t8.parse = function() {
             return this.parseBrowser(), this.parseOS(), this.parsePlatform(), this.parseEngine(), this;
           }, t8.getResult = function() {
-            return s2.default.assign({}, this.parsedResult);
+            return s4.default.assign({}, this.parsedResult);
           }, t8.satisfies = function(e7) {
-            var t9 = this, r6 = {}, i6 = 0, n4 = {}, a6 = 0;
+            var t9 = this, r6 = {}, i6 = 0, n5 = {}, a6 = 0;
             if (Object.keys(e7).forEach((function(t10) {
               var o5 = e7[t10];
-              "string" == typeof o5 ? (n4[t10] = o5, a6 += 1) : "object" == typeof o5 && (r6[t10] = o5, i6 += 1);
+              "string" == typeof o5 ? (n5[t10] = o5, a6 += 1) : "object" == typeof o5 && (r6[t10] = o5, i6 += 1);
             })), i6 > 0) {
-              var o4 = Object.keys(r6), u2 = s2.default.find(o4, (function(e8) {
+              var o4 = Object.keys(r6), u2 = s4.default.find(o4, (function(e8) {
                 return t9.isOS(e8);
               }));
               if (u2) {
                 var d6 = this.satisfies(r6[u2]);
                 if (void 0 !== d6) return d6;
               }
-              var c5 = s2.default.find(o4, (function(e8) {
+              var c5 = s4.default.find(o4, (function(e8) {
                 return t9.isPlatform(e8);
               }));
               if (c5) {
@@ -95940,18 +95940,18 @@ var require_es5 = __commonJS({
               }
             }
             if (a6 > 0) {
-              var l3 = Object.keys(n4), b5 = s2.default.find(l3, (function(e8) {
+              var l4 = Object.keys(n5), b5 = s4.default.find(l4, (function(e8) {
                 return t9.isBrowser(e8, true);
               }));
-              if (void 0 !== b5) return this.compareVersion(n4[b5]);
+              if (void 0 !== b5) return this.compareVersion(n5[b5]);
             }
           }, t8.isBrowser = function(e7, t9) {
             void 0 === t9 && (t9 = false);
-            var r6 = this.getBrowserName().toLowerCase(), i6 = e7.toLowerCase(), n4 = s2.default.getBrowserTypeByAlias(i6);
-            return t9 && n4 && (i6 = n4.toLowerCase()), i6 === r6;
+            var r6 = this.getBrowserName().toLowerCase(), i6 = e7.toLowerCase(), n5 = s4.default.getBrowserTypeByAlias(i6);
+            return t9 && n5 && (i6 = n5.toLowerCase()), i6 === r6;
           }, t8.compareVersion = function(e7) {
-            var t9 = [0], r6 = e7, i6 = false, n4 = this.getBrowserVersion();
-            if ("string" == typeof n4) return ">" === e7[0] || "<" === e7[0] ? (r6 = e7.substr(1), "=" === e7[1] ? (i6 = true, r6 = e7.substr(2)) : t9 = [], ">" === e7[0] ? t9.push(1) : t9.push(-1)) : "=" === e7[0] ? r6 = e7.substr(1) : "~" === e7[0] && (i6 = true, r6 = e7.substr(1)), t9.indexOf(s2.default.compareVersions(n4, r6, i6)) > -1;
+            var t9 = [0], r6 = e7, i6 = false, n5 = this.getBrowserVersion();
+            if ("string" == typeof n5) return ">" === e7[0] || "<" === e7[0] ? (r6 = e7.substr(1), "=" === e7[1] ? (i6 = true, r6 = e7.substr(2)) : t9 = [], ">" === e7[0] ? t9.push(1) : t9.push(-1)) : "=" === e7[0] ? r6 = e7.substr(1) : "~" === e7[0] && (i6 = true, r6 = e7.substr(1)), t9.indexOf(s4.default.compareVersions(n5, r6, i6)) > -1;
           }, t8.isOS = function(e7) {
             return this.getOSName(true) === String(e7).toLowerCase();
           }, t8.isPlatform = function(e7) {
@@ -95971,71 +95971,71 @@ var require_es5 = __commonJS({
       }, 92: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.default = void 0;
-        var i5, n3 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 };
+        var i5, n4 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 };
         var a5 = /version\/(\d+(\.?_?\d+)+)/i, o3 = [{ test: [/gptbot/i], describe: function(e6) {
-          var t8 = { name: "GPTBot" }, r6 = n3.default.getFirstMatch(/gptbot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "GPTBot" }, r6 = n4.default.getFirstMatch(/gptbot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/chatgpt-user/i], describe: function(e6) {
-          var t8 = { name: "ChatGPT-User" }, r6 = n3.default.getFirstMatch(/chatgpt-user\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "ChatGPT-User" }, r6 = n4.default.getFirstMatch(/chatgpt-user\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/oai-searchbot/i], describe: function(e6) {
-          var t8 = { name: "OAI-SearchBot" }, r6 = n3.default.getFirstMatch(/oai-searchbot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "OAI-SearchBot" }, r6 = n4.default.getFirstMatch(/oai-searchbot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/claudebot/i, /claude-web/i, /claude-user/i, /claude-searchbot/i], describe: function(e6) {
-          var t8 = { name: "ClaudeBot" }, r6 = n3.default.getFirstMatch(/(?:claudebot|claude-web|claude-user|claude-searchbot)\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "ClaudeBot" }, r6 = n4.default.getFirstMatch(/(?:claudebot|claude-web|claude-user|claude-searchbot)\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/omgilibot/i, /webzio-extended/i], describe: function(e6) {
-          var t8 = { name: "Omgilibot" }, r6 = n3.default.getFirstMatch(/(?:omgilibot|webzio-extended)\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Omgilibot" }, r6 = n4.default.getFirstMatch(/(?:omgilibot|webzio-extended)\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/diffbot/i], describe: function(e6) {
-          var t8 = { name: "Diffbot" }, r6 = n3.default.getFirstMatch(/diffbot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Diffbot" }, r6 = n4.default.getFirstMatch(/diffbot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/perplexitybot/i], describe: function(e6) {
-          var t8 = { name: "PerplexityBot" }, r6 = n3.default.getFirstMatch(/perplexitybot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "PerplexityBot" }, r6 = n4.default.getFirstMatch(/perplexitybot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/perplexity-user/i], describe: function(e6) {
-          var t8 = { name: "Perplexity-User" }, r6 = n3.default.getFirstMatch(/perplexity-user\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Perplexity-User" }, r6 = n4.default.getFirstMatch(/perplexity-user\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/youbot/i], describe: function(e6) {
-          var t8 = { name: "YouBot" }, r6 = n3.default.getFirstMatch(/youbot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "YouBot" }, r6 = n4.default.getFirstMatch(/youbot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/meta-webindexer/i], describe: function(e6) {
-          var t8 = { name: "Meta-WebIndexer" }, r6 = n3.default.getFirstMatch(/meta-webindexer\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Meta-WebIndexer" }, r6 = n4.default.getFirstMatch(/meta-webindexer\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/meta-externalads/i], describe: function(e6) {
-          var t8 = { name: "Meta-ExternalAds" }, r6 = n3.default.getFirstMatch(/meta-externalads\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Meta-ExternalAds" }, r6 = n4.default.getFirstMatch(/meta-externalads\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/meta-externalagent/i], describe: function(e6) {
-          var t8 = { name: "Meta-ExternalAgent" }, r6 = n3.default.getFirstMatch(/meta-externalagent\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Meta-ExternalAgent" }, r6 = n4.default.getFirstMatch(/meta-externalagent\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/meta-externalfetcher/i], describe: function(e6) {
-          var t8 = { name: "Meta-ExternalFetcher" }, r6 = n3.default.getFirstMatch(/meta-externalfetcher\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Meta-ExternalFetcher" }, r6 = n4.default.getFirstMatch(/meta-externalfetcher\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/googlebot/i], describe: function(e6) {
-          var t8 = { name: "Googlebot" }, r6 = n3.default.getFirstMatch(/googlebot\/(\d+(\.\d+))/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Googlebot" }, r6 = n4.default.getFirstMatch(/googlebot\/(\d+(\.\d+))/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/linespider/i], describe: function(e6) {
-          var t8 = { name: "Linespider" }, r6 = n3.default.getFirstMatch(/(?:linespider)(?:-[-\w]+)?[\s/](\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Linespider" }, r6 = n4.default.getFirstMatch(/(?:linespider)(?:-[-\w]+)?[\s/](\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/amazonbot/i], describe: function(e6) {
-          var t8 = { name: "AmazonBot" }, r6 = n3.default.getFirstMatch(/amazonbot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "AmazonBot" }, r6 = n4.default.getFirstMatch(/amazonbot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/bingbot/i], describe: function(e6) {
-          var t8 = { name: "BingCrawler" }, r6 = n3.default.getFirstMatch(/bingbot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "BingCrawler" }, r6 = n4.default.getFirstMatch(/bingbot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/baiduspider/i], describe: function(e6) {
-          var t8 = { name: "BaiduSpider" }, r6 = n3.default.getFirstMatch(/baiduspider\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "BaiduSpider" }, r6 = n4.default.getFirstMatch(/baiduspider\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/duckduckbot/i], describe: function(e6) {
-          var t8 = { name: "DuckDuckBot" }, r6 = n3.default.getFirstMatch(/duckduckbot\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "DuckDuckBot" }, r6 = n4.default.getFirstMatch(/duckduckbot\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/ia_archiver/i], describe: function(e6) {
-          var t8 = { name: "InternetArchiveCrawler" }, r6 = n3.default.getFirstMatch(/ia_archiver\/(\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "InternetArchiveCrawler" }, r6 = n4.default.getFirstMatch(/ia_archiver\/(\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/facebookexternalhit/i, /facebookcatalog/i], describe: function() {
           return { name: "FacebookExternalHit" };
         } }, { test: [/slackbot/i, /slack-imgProxy/i], describe: function(e6) {
-          var t8 = { name: "SlackBot" }, r6 = n3.default.getFirstMatch(/(?:slackbot|slack-imgproxy)(?:-[-\w]+)?[\s/](\d+(\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "SlackBot" }, r6 = n4.default.getFirstMatch(/(?:slackbot|slack-imgproxy)(?:-[-\w]+)?[\s/](\d+(\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/yahoo!?[\s/]*slurp/i], describe: function() {
           return { name: "YahooSlurp" };
@@ -96044,118 +96044,118 @@ var require_es5 = __commonJS({
         } }, { test: [/pingdom/i], describe: function() {
           return { name: "PingdomBot" };
         } }, { test: [/opera/i], describe: function(e6) {
-          var t8 = { name: "Opera" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:opera)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Opera" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:opera)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/opr\/|opios/i], describe: function(e6) {
-          var t8 = { name: "Opera" }, r6 = n3.default.getFirstMatch(/(?:opr|opios)[\s/](\S+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Opera" }, r6 = n4.default.getFirstMatch(/(?:opr|opios)[\s/](\S+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/SamsungBrowser/i], describe: function(e6) {
-          var t8 = { name: "Samsung Internet for Android" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:SamsungBrowser)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Samsung Internet for Android" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:SamsungBrowser)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/Whale/i], describe: function(e6) {
-          var t8 = { name: "NAVER Whale Browser" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:whale)[\s/](\d+(?:\.\d+)+)/i, e6);
+          var t8 = { name: "NAVER Whale Browser" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:whale)[\s/](\d+(?:\.\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/PaleMoon/i], describe: function(e6) {
-          var t8 = { name: "Pale Moon" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:PaleMoon)[\s/](\d+(?:\.\d+)+)/i, e6);
+          var t8 = { name: "Pale Moon" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:PaleMoon)[\s/](\d+(?:\.\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/MZBrowser/i], describe: function(e6) {
-          var t8 = { name: "MZ Browser" }, r6 = n3.default.getFirstMatch(/(?:MZBrowser)[\s/](\d+(?:\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "MZ Browser" }, r6 = n4.default.getFirstMatch(/(?:MZBrowser)[\s/](\d+(?:\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/focus/i], describe: function(e6) {
-          var t8 = { name: "Focus" }, r6 = n3.default.getFirstMatch(/(?:focus)[\s/](\d+(?:\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Focus" }, r6 = n4.default.getFirstMatch(/(?:focus)[\s/](\d+(?:\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/swing/i], describe: function(e6) {
-          var t8 = { name: "Swing" }, r6 = n3.default.getFirstMatch(/(?:swing)[\s/](\d+(?:\.\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Swing" }, r6 = n4.default.getFirstMatch(/(?:swing)[\s/](\d+(?:\.\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/coast/i], describe: function(e6) {
-          var t8 = { name: "Opera Coast" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:coast)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Opera Coast" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:coast)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/opt\/\d+(?:.?_?\d+)+/i], describe: function(e6) {
-          var t8 = { name: "Opera Touch" }, r6 = n3.default.getFirstMatch(/(?:opt)[\s/](\d+(\.?_?\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Opera Touch" }, r6 = n4.default.getFirstMatch(/(?:opt)[\s/](\d+(\.?_?\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/yabrowser/i], describe: function(e6) {
-          var t8 = { name: "Yandex Browser" }, r6 = n3.default.getFirstMatch(/(?:yabrowser)[\s/](\d+(\.?_?\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Yandex Browser" }, r6 = n4.default.getFirstMatch(/(?:yabrowser)[\s/](\d+(\.?_?\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/ucbrowser/i], describe: function(e6) {
-          var t8 = { name: "UC Browser" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:ucbrowser)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "UC Browser" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:ucbrowser)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/Maxthon|mxios/i], describe: function(e6) {
-          var t8 = { name: "Maxthon" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:Maxthon|mxios)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Maxthon" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:Maxthon|mxios)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/epiphany/i], describe: function(e6) {
-          var t8 = { name: "Epiphany" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:epiphany)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Epiphany" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:epiphany)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/puffin/i], describe: function(e6) {
-          var t8 = { name: "Puffin" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:puffin)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Puffin" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:puffin)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/sleipnir/i], describe: function(e6) {
-          var t8 = { name: "Sleipnir" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:sleipnir)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Sleipnir" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:sleipnir)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/k-meleon/i], describe: function(e6) {
-          var t8 = { name: "K-Meleon" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/(?:k-meleon)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "K-Meleon" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/(?:k-meleon)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/micromessenger/i], describe: function(e6) {
-          var t8 = { name: "WeChat" }, r6 = n3.default.getFirstMatch(/(?:micromessenger)[\s/](\d+(\.?_?\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "WeChat" }, r6 = n4.default.getFirstMatch(/(?:micromessenger)[\s/](\d+(\.?_?\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/qqbrowser/i], describe: function(e6) {
-          var t8 = { name: /qqbrowserlite/i.test(e6) ? "QQ Browser Lite" : "QQ Browser" }, r6 = n3.default.getFirstMatch(/(?:qqbrowserlite|qqbrowser)[/](\d+(\.?_?\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: /qqbrowserlite/i.test(e6) ? "QQ Browser Lite" : "QQ Browser" }, r6 = n4.default.getFirstMatch(/(?:qqbrowserlite|qqbrowser)[/](\d+(\.?_?\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/msie|trident/i], describe: function(e6) {
-          var t8 = { name: "Internet Explorer" }, r6 = n3.default.getFirstMatch(/(?:msie |rv:)(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Internet Explorer" }, r6 = n4.default.getFirstMatch(/(?:msie |rv:)(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/\sedg\//i], describe: function(e6) {
-          var t8 = { name: "Microsoft Edge" }, r6 = n3.default.getFirstMatch(/\sedg\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Microsoft Edge" }, r6 = n4.default.getFirstMatch(/\sedg\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/edg([ea]|ios)/i], describe: function(e6) {
-          var t8 = { name: "Microsoft Edge" }, r6 = n3.default.getSecondMatch(/edg([ea]|ios)\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Microsoft Edge" }, r6 = n4.default.getSecondMatch(/edg([ea]|ios)\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/vivaldi/i], describe: function(e6) {
-          var t8 = { name: "Vivaldi" }, r6 = n3.default.getFirstMatch(/vivaldi\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Vivaldi" }, r6 = n4.default.getFirstMatch(/vivaldi\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/seamonkey/i], describe: function(e6) {
-          var t8 = { name: "SeaMonkey" }, r6 = n3.default.getFirstMatch(/seamonkey\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "SeaMonkey" }, r6 = n4.default.getFirstMatch(/seamonkey\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/sailfish/i], describe: function(e6) {
-          var t8 = { name: "Sailfish" }, r6 = n3.default.getFirstMatch(/sailfish\s?browser\/(\d+(\.\d+)?)/i, e6);
+          var t8 = { name: "Sailfish" }, r6 = n4.default.getFirstMatch(/sailfish\s?browser\/(\d+(\.\d+)?)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/silk/i], describe: function(e6) {
-          var t8 = { name: "Amazon Silk" }, r6 = n3.default.getFirstMatch(/silk\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Amazon Silk" }, r6 = n4.default.getFirstMatch(/silk\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/phantom/i], describe: function(e6) {
-          var t8 = { name: "PhantomJS" }, r6 = n3.default.getFirstMatch(/phantomjs\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "PhantomJS" }, r6 = n4.default.getFirstMatch(/phantomjs\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/slimerjs/i], describe: function(e6) {
-          var t8 = { name: "SlimerJS" }, r6 = n3.default.getFirstMatch(/slimerjs\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "SlimerJS" }, r6 = n4.default.getFirstMatch(/slimerjs\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/blackberry|\bbb\d+/i, /rim\stablet/i], describe: function(e6) {
-          var t8 = { name: "BlackBerry" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/blackberry[\d]+\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "BlackBerry" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/blackberry[\d]+\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/(web|hpw)[o0]s/i], describe: function(e6) {
-          var t8 = { name: "WebOS Browser" }, r6 = n3.default.getFirstMatch(a5, e6) || n3.default.getFirstMatch(/w(?:eb)?[o0]sbrowser\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "WebOS Browser" }, r6 = n4.default.getFirstMatch(a5, e6) || n4.default.getFirstMatch(/w(?:eb)?[o0]sbrowser\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/bada/i], describe: function(e6) {
-          var t8 = { name: "Bada" }, r6 = n3.default.getFirstMatch(/dolfin\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Bada" }, r6 = n4.default.getFirstMatch(/dolfin\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/tizen/i], describe: function(e6) {
-          var t8 = { name: "Tizen" }, r6 = n3.default.getFirstMatch(/(?:tizen\s?)?browser\/(\d+(\.?_?\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Tizen" }, r6 = n4.default.getFirstMatch(/(?:tizen\s?)?browser\/(\d+(\.?_?\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/qupzilla/i], describe: function(e6) {
-          var t8 = { name: "QupZilla" }, r6 = n3.default.getFirstMatch(/(?:qupzilla)[\s/](\d+(\.?_?\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "QupZilla" }, r6 = n4.default.getFirstMatch(/(?:qupzilla)[\s/](\d+(\.?_?\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/librewolf/i], describe: function(e6) {
-          var t8 = { name: "LibreWolf" }, r6 = n3.default.getFirstMatch(/(?:librewolf)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "LibreWolf" }, r6 = n4.default.getFirstMatch(/(?:librewolf)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/firefox|iceweasel|fxios/i], describe: function(e6) {
-          var t8 = { name: "Firefox" }, r6 = n3.default.getFirstMatch(/(?:firefox|iceweasel|fxios)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Firefox" }, r6 = n4.default.getFirstMatch(/(?:firefox|iceweasel|fxios)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/electron/i], describe: function(e6) {
-          var t8 = { name: "Electron" }, r6 = n3.default.getFirstMatch(/(?:electron)\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Electron" }, r6 = n4.default.getFirstMatch(/(?:electron)\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/sogoumobilebrowser/i, /metasr/i, /se 2\.[x]/i], describe: function(e6) {
-          var t8 = { name: "Sogou Browser" }, r6 = n3.default.getFirstMatch(/(?:sogoumobilebrowser)[\s/](\d+(\.?_?\d+)+)/i, e6), i6 = n3.default.getFirstMatch(/(?:chrome|crios|crmo)\/(\d+(\.?_?\d+)+)/i, e6), a6 = n3.default.getFirstMatch(/se ([\d.]+)x/i, e6), o4 = r6 || i6 || a6;
+          var t8 = { name: "Sogou Browser" }, r6 = n4.default.getFirstMatch(/(?:sogoumobilebrowser)[\s/](\d+(\.?_?\d+)+)/i, e6), i6 = n4.default.getFirstMatch(/(?:chrome|crios|crmo)\/(\d+(\.?_?\d+)+)/i, e6), a6 = n4.default.getFirstMatch(/se ([\d.]+)x/i, e6), o4 = r6 || i6 || a6;
           return o4 && (t8.version = o4), t8;
         } }, { test: [/MiuiBrowser/i], describe: function(e6) {
-          var t8 = { name: "Miui" }, r6 = n3.default.getFirstMatch(/(?:MiuiBrowser)[\s/](\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Miui" }, r6 = n4.default.getFirstMatch(/(?:MiuiBrowser)[\s/](\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: function(e6) {
           return !!e6.hasBrand("DuckDuckGo") || e6.test(/\sDdg\/[\d.]+$/i);
@@ -96165,7 +96165,7 @@ var require_es5 = __commonJS({
             var i6 = t8.getBrandVersion("DuckDuckGo");
             if (i6) return r6.version = i6, r6;
           }
-          var a6 = n3.default.getFirstMatch(/\sDdg\/([\d.]+)$/i, e6);
+          var a6 = n4.default.getFirstMatch(/\sDdg\/([\d.]+)$/i, e6);
           return a6 && (r6.version = a6), r6;
         } }, { test: function(e6) {
           return e6.hasBrand("Brave");
@@ -96177,87 +96177,87 @@ var require_es5 = __commonJS({
           }
           return r6;
         } }, { test: [/chromium/i], describe: function(e6) {
-          var t8 = { name: "Chromium" }, r6 = n3.default.getFirstMatch(/(?:chromium)[\s/](\d+(\.?_?\d+)+)/i, e6) || n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Chromium" }, r6 = n4.default.getFirstMatch(/(?:chromium)[\s/](\d+(\.?_?\d+)+)/i, e6) || n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/chrome|crios|crmo/i], describe: function(e6) {
-          var t8 = { name: "Chrome" }, r6 = n3.default.getFirstMatch(/(?:chrome|crios|crmo)\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Chrome" }, r6 = n4.default.getFirstMatch(/(?:chrome|crios|crmo)\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/GSA/i], describe: function(e6) {
-          var t8 = { name: "Google Search" }, r6 = n3.default.getFirstMatch(/(?:GSA)\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: "Google Search" }, r6 = n4.default.getFirstMatch(/(?:GSA)\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: function(e6) {
           var t8 = !e6.test(/like android/i), r6 = e6.test(/android/i);
           return t8 && r6;
         }, describe: function(e6) {
-          var t8 = { name: "Android Browser" }, r6 = n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Android Browser" }, r6 = n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/playstation 4/i], describe: function(e6) {
-          var t8 = { name: "PlayStation 4" }, r6 = n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "PlayStation 4" }, r6 = n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/safari|applewebkit/i], describe: function(e6) {
-          var t8 = { name: "Safari" }, r6 = n3.default.getFirstMatch(a5, e6);
+          var t8 = { name: "Safari" }, r6 = n4.default.getFirstMatch(a5, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/.*/i], describe: function(e6) {
           var t8 = -1 !== e6.search("\\(") ? /^(.*)\/(.*)[ \t]\((.*)/ : /^(.*)\/(.*) /;
-          return { name: n3.default.getFirstMatch(t8, e6), version: n3.default.getSecondMatch(t8, e6) };
+          return { name: n4.default.getFirstMatch(t8, e6), version: n4.default.getSecondMatch(t8, e6) };
         } }];
         t.default = o3, e5.exports = t.default;
       }, 93: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.default = void 0;
-        var i5, n3 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
+        var i5, n4 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
         var o3 = [{ test: [/Roku\/DVP/], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/Roku\/DVP-(\d+\.\d+)/i, e6);
+          var t8 = n4.default.getFirstMatch(/Roku\/DVP-(\d+\.\d+)/i, e6);
           return { name: a5.OS_MAP.Roku, version: t8 };
         } }, { test: [/windows phone/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/windows phone (?:os)?\s?(\d+(\.\d+)*)/i, e6);
+          var t8 = n4.default.getFirstMatch(/windows phone (?:os)?\s?(\d+(\.\d+)*)/i, e6);
           return { name: a5.OS_MAP.WindowsPhone, version: t8 };
         } }, { test: [/windows /i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/Windows ((NT|XP)( \d\d?.\d)?)/i, e6), r6 = n3.default.getWindowsVersionName(t8);
+          var t8 = n4.default.getFirstMatch(/Windows ((NT|XP)( \d\d?.\d)?)/i, e6), r6 = n4.default.getWindowsVersionName(t8);
           return { name: a5.OS_MAP.Windows, version: t8, versionName: r6 };
         } }, { test: [/Macintosh(.*?) FxiOS(.*?)\//], describe: function(e6) {
-          var t8 = { name: a5.OS_MAP.iOS }, r6 = n3.default.getSecondMatch(/(Version\/)(\d[\d.]+)/, e6);
+          var t8 = { name: a5.OS_MAP.iOS }, r6 = n4.default.getSecondMatch(/(Version\/)(\d[\d.]+)/, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/macintosh/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/mac os x (\d+(\.?_?\d+)+)/i, e6).replace(/[_\s]/g, "."), r6 = n3.default.getMacOSVersionName(t8), i6 = { name: a5.OS_MAP.MacOS, version: t8 };
+          var t8 = n4.default.getFirstMatch(/mac os x (\d+(\.?_?\d+)+)/i, e6).replace(/[_\s]/g, "."), r6 = n4.default.getMacOSVersionName(t8), i6 = { name: a5.OS_MAP.MacOS, version: t8 };
           return r6 && (i6.versionName = r6), i6;
         } }, { test: [/(ipod|iphone|ipad)/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/os (\d+([_\s]\d+)*) like mac os x/i, e6).replace(/[_\s]/g, ".");
+          var t8 = n4.default.getFirstMatch(/os (\d+([_\s]\d+)*) like mac os x/i, e6).replace(/[_\s]/g, ".");
           return { name: a5.OS_MAP.iOS, version: t8 };
         } }, { test: [/OpenHarmony/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/OpenHarmony\s+(\d+(\.\d+)*)/i, e6);
+          var t8 = n4.default.getFirstMatch(/OpenHarmony\s+(\d+(\.\d+)*)/i, e6);
           return { name: a5.OS_MAP.HarmonyOS, version: t8 };
         } }, { test: function(e6) {
           var t8 = !e6.test(/like android/i), r6 = e6.test(/android/i);
           return t8 && r6;
         }, describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/android[\s/-](\d+(\.\d+)*)/i, e6), r6 = n3.default.getAndroidVersionName(t8), i6 = { name: a5.OS_MAP.Android, version: t8 };
+          var t8 = n4.default.getFirstMatch(/android[\s/-](\d+(\.\d+)*)/i, e6), r6 = n4.default.getAndroidVersionName(t8), i6 = { name: a5.OS_MAP.Android, version: t8 };
           return r6 && (i6.versionName = r6), i6;
         } }, { test: [/(web|hpw)[o0]s/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/(?:web|hpw)[o0]s\/(\d+(\.\d+)*)/i, e6), r6 = { name: a5.OS_MAP.WebOS };
+          var t8 = n4.default.getFirstMatch(/(?:web|hpw)[o0]s\/(\d+(\.\d+)*)/i, e6), r6 = { name: a5.OS_MAP.WebOS };
           return t8 && t8.length && (r6.version = t8), r6;
         } }, { test: [/blackberry|\bbb\d+/i, /rim\stablet/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/rim\stablet\sos\s(\d+(\.\d+)*)/i, e6) || n3.default.getFirstMatch(/blackberry\d+\/(\d+([_\s]\d+)*)/i, e6) || n3.default.getFirstMatch(/\bbb(\d+)/i, e6);
+          var t8 = n4.default.getFirstMatch(/rim\stablet\sos\s(\d+(\.\d+)*)/i, e6) || n4.default.getFirstMatch(/blackberry\d+\/(\d+([_\s]\d+)*)/i, e6) || n4.default.getFirstMatch(/\bbb(\d+)/i, e6);
           return { name: a5.OS_MAP.BlackBerry, version: t8 };
         } }, { test: [/bada/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/bada\/(\d+(\.\d+)*)/i, e6);
+          var t8 = n4.default.getFirstMatch(/bada\/(\d+(\.\d+)*)/i, e6);
           return { name: a5.OS_MAP.Bada, version: t8 };
         } }, { test: [/tizen/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/tizen[/\s](\d+(\.\d+)*)/i, e6);
+          var t8 = n4.default.getFirstMatch(/tizen[/\s](\d+(\.\d+)*)/i, e6);
           return { name: a5.OS_MAP.Tizen, version: t8 };
         } }, { test: [/linux/i], describe: function() {
           return { name: a5.OS_MAP.Linux };
         } }, { test: [/CrOS/], describe: function() {
           return { name: a5.OS_MAP.ChromeOS };
         } }, { test: [/PlayStation 4/], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/PlayStation 4[/\s](\d+(\.\d+)*)/i, e6);
+          var t8 = n4.default.getFirstMatch(/PlayStation 4[/\s](\d+(\.\d+)*)/i, e6);
           return { name: a5.OS_MAP.PlayStation4, version: t8 };
         } }];
         t.default = o3, e5.exports = t.default;
       }, 94: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.default = void 0;
-        var i5, n3 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
+        var i5, n4 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
         var o3 = [{ test: [/googlebot/i], describe: function() {
           return { type: a5.PLATFORMS_MAP.bot, vendor: "Google" };
         } }, { test: [/linespider/i], describe: function() {
@@ -96309,7 +96309,7 @@ var require_es5 = __commonJS({
         } }, { test: [/pingdom/i], describe: function() {
           return { type: a5.PLATFORMS_MAP.bot, vendor: "Pingdom" };
         } }, { test: [/huawei/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/(can-l01)/i, e6) && "Nova", r6 = { type: a5.PLATFORMS_MAP.mobile, vendor: "Huawei" };
+          var t8 = n4.default.getFirstMatch(/(can-l01)/i, e6) && "Nova", r6 = { type: a5.PLATFORMS_MAP.mobile, vendor: "Huawei" };
           return t8 && (r6.model = t8), r6;
         } }, { test: [/nexus\s*(?:7|8|9|10).*/i], describe: function() {
           return { type: a5.PLATFORMS_MAP.tablet, vendor: "Nexus" };
@@ -96327,12 +96327,12 @@ var require_es5 = __commonJS({
           var t8 = e6.test(/ipod|iphone/i), r6 = e6.test(/like (ipod|iphone)/i);
           return t8 && !r6;
         }, describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/(ipod|iphone)/i, e6);
+          var t8 = n4.default.getFirstMatch(/(ipod|iphone)/i, e6);
           return { type: a5.PLATFORMS_MAP.mobile, vendor: "Apple", model: t8 };
         } }, { test: [/nexus\s*[0-6].*/i, /galaxy nexus/i], describe: function() {
           return { type: a5.PLATFORMS_MAP.mobile, vendor: "Nexus" };
         } }, { test: [/Nokia/i], describe: function(e6) {
-          var t8 = n3.default.getFirstMatch(/Nokia\s+([0-9]+(\.[0-9]+)?)/i, e6), r6 = { type: a5.PLATFORMS_MAP.mobile, vendor: "Nokia" };
+          var t8 = n4.default.getFirstMatch(/Nokia\s+([0-9]+(\.[0-9]+)?)/i, e6), r6 = { type: a5.PLATFORMS_MAP.mobile, vendor: "Nokia" };
           return t8 && (r6.model = t8), r6;
         } }, { test: [/[^-]mobi/i], describe: function() {
           return { type: a5.PLATFORMS_MAP.mobile };
@@ -96386,31 +96386,31 @@ var require_es5 = __commonJS({
       }, 95: function(e5, t, r5) {
         "use strict";
         t.__esModule = true, t.default = void 0;
-        var i5, n3 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
+        var i5, n4 = (i5 = r5(17)) && i5.__esModule ? i5 : { default: i5 }, a5 = r5(18);
         var o3 = [{ test: function(e6) {
           return "microsoft edge" === e6.getBrowserName(true);
         }, describe: function(e6) {
           if (/\sedg\//i.test(e6)) return { name: a5.ENGINE_MAP.Blink };
-          var t8 = n3.default.getFirstMatch(/edge\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = n4.default.getFirstMatch(/edge\/(\d+(\.?_?\d+)+)/i, e6);
           return { name: a5.ENGINE_MAP.EdgeHTML, version: t8 };
         } }, { test: [/trident/i], describe: function(e6) {
-          var t8 = { name: a5.ENGINE_MAP.Trident }, r6 = n3.default.getFirstMatch(/trident\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: a5.ENGINE_MAP.Trident }, r6 = n4.default.getFirstMatch(/trident\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: function(e6) {
           return e6.test(/presto/i);
         }, describe: function(e6) {
-          var t8 = { name: a5.ENGINE_MAP.Presto }, r6 = n3.default.getFirstMatch(/presto\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: a5.ENGINE_MAP.Presto }, r6 = n4.default.getFirstMatch(/presto\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: function(e6) {
           var t8 = e6.test(/gecko/i), r6 = e6.test(/like gecko/i);
           return t8 && !r6;
         }, describe: function(e6) {
-          var t8 = { name: a5.ENGINE_MAP.Gecko }, r6 = n3.default.getFirstMatch(/gecko\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: a5.ENGINE_MAP.Gecko }, r6 = n4.default.getFirstMatch(/gecko\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }, { test: [/(apple)?webkit\/537\.36/i], describe: function() {
           return { name: a5.ENGINE_MAP.Blink };
         } }, { test: [/(apple)?webkit/i], describe: function(e6) {
-          var t8 = { name: a5.ENGINE_MAP.WebKit }, r6 = n3.default.getFirstMatch(/webkit\/(\d+(\.?_?\d+)+)/i, e6);
+          var t8 = { name: a5.ENGINE_MAP.WebKit }, r6 = n4.default.getFirstMatch(/webkit\/(\d+(\.?_?\d+)+)/i, e6);
           return r6 && (t8.version = r6), t8;
         } }];
         t.default = o3, e5.exports = t.default;
@@ -96425,8 +96425,8 @@ var init_createUserAgentStringParsingProvider = __esm({
   "node_modules/.pnpm/@aws-sdk+core@3.978.0/node_modules/@aws-sdk/core/dist-es/submodules/client/util-user-agent-browser/createUserAgentStringParsingProvider.js"() {
     createUserAgentStringParsingProvider = ({ serviceId, clientVersion }) => async (config5) => {
       const module2 = await Promise.resolve().then(() => __toESM(require_es5()));
-      const parse9 = module2.parse ?? module2.default.parse ?? (() => "");
-      const parsedUA = typeof window !== "undefined" && window?.navigator?.userAgent ? parse9(window.navigator.userAgent) : void 0;
+      const parse10 = module2.parse ?? module2.default.parse ?? (() => "");
+      const parsedUA = typeof window !== "undefined" && window?.navigator?.userAgent ? parse10(window.navigator.userAgent) : void 0;
       const sections = [
         ["aws-sdk-js", clientVersion],
         ["ua", "2.1"],
@@ -97595,8 +97595,8 @@ var init_S3ExpressIdentityCache = __esm({
         delete this.data[key];
       }
       async purgeExpired() {
-        const now2 = Date.now();
-        if (this.lastPurgeTime + _S3ExpressIdentityCache.EXPIRED_CREDENTIAL_PURGE_INTERVAL_MS > now2) {
+        const now3 = Date.now();
+        if (this.lastPurgeTime + _S3ExpressIdentityCache.EXPIRED_CREDENTIAL_PURGE_INTERVAL_MS > now3) {
           return;
         }
         for (const key in this.data) {
@@ -97604,7 +97604,7 @@ var init_S3ExpressIdentityCache = __esm({
           if (!entry.isRefreshing) {
             const credential = await entry.identity;
             if (credential.expiration) {
-              if (credential.expiration.getTime() < now2) {
+              if (credential.expiration.getTime() < now3) {
                 delete this.data[key];
               }
             }
@@ -98021,8 +98021,8 @@ ${toHex3(hashedRequest)}`;
           throw new Error("Resolved credential object is not valid");
         }
       }
-      formatDate(now2) {
-        const longDate = iso8601(now2).replace(/[-:]/g, "");
+      formatDate(now3) {
+        const longDate = iso8601(now3).replace(/[-:]/g, "");
         return {
           longDate,
           shortDate: longDate.slice(0, 8)
@@ -98640,11 +98640,11 @@ var init_throw_200_exceptions = __esm({
 });
 
 // node_modules/.pnpm/@aws-sdk+core@3.978.0/node_modules/@aws-sdk/core/dist-es/submodules/util/util-arn-parser/arn.js
-var validate2, parse8, build;
+var validate2, parse9, build;
 var init_arn = __esm({
   "node_modules/.pnpm/@aws-sdk+core@3.978.0/node_modules/@aws-sdk/core/dist-es/submodules/util/util-arn-parser/arn.js"() {
     validate2 = (str) => typeof str === "string" && str.indexOf("arn:") === 0 && str.split(":").length >= 6;
-    parse8 = (arn) => {
+    parse9 = (arn) => {
       const segments = arn.split(":");
       if (segments.length < 6 || segments[0] !== "arn")
         throw new Error("Malformed ARN");
@@ -98717,7 +98717,7 @@ __export(util_exports2, {
   build: () => build,
   formatUrl: () => formatUrl,
   hasOwn: () => hasOwn2,
-  parse: () => parse8,
+  parse: () => parse9,
   validate: () => validate2
 });
 var init_util3 = __esm({
@@ -99034,17 +99034,17 @@ function jsonReviver(key, value, context) {
   }
   return value;
 }
-function isFractionalBigNumeric(s2) {
-  const dotIndex = s2.indexOf(".");
+function isFractionalBigNumeric(s4) {
+  const dotIndex = s4.indexOf(".");
   if (dotIndex === -1) {
     return false;
   }
-  const eIndex = s2.search(/[eE]/);
+  const eIndex = s4.search(/[eE]/);
   if (eIndex === -1) {
     return true;
   }
   const fracDigits = eIndex - dotIndex - 1;
-  const exp = parseInt(s2.slice(eIndex + 1), 10);
+  const exp = parseInt(s4.slice(eIndex + 1), 10);
   return exp < fracDigits;
 }
 function isRepresentable(numericString, value) {
@@ -99067,9 +99067,9 @@ function isRepresentable(numericString, value) {
   }
   return false;
 }
-function expandToDecimal(s2) {
-  const negative = s2.startsWith("-");
-  const abs = negative ? s2.slice(1) : s2;
+function expandToDecimal(s4) {
+  const negative = s4.startsWith("-");
+  const abs = negative ? s4.slice(1) : s4;
   const eIndex = abs.search(/[eE]/);
   let result;
   if (eIndex === -1) {
@@ -99104,11 +99104,11 @@ function expandToDecimal(s2) {
   }
   return (negative ? "-" : "") + result;
 }
-function expandExponentToBigInt(s2) {
-  const eIndex = s2.search(/[eE]/);
-  const exp = parseInt(s2.slice(eIndex + 1), 10);
-  const negative = s2.startsWith("-");
-  const mantissa = s2.slice(negative ? 1 : 0, eIndex);
+function expandExponentToBigInt(s4) {
+  const eIndex = s4.search(/[eE]/);
+  const exp = parseInt(s4.slice(eIndex + 1), 10);
+  const negative = s4.startsWith("-");
+  const mantissa = s4.slice(negative ? 1 : 0, eIndex);
   const dotIndex = mantissa.indexOf(".");
   let digits;
   let shift;
@@ -99579,10 +99579,10 @@ var init_JsonBytesStringAdapter = __esm({
       }
       s() {
         if (this.string == null) {
-          const n3 = Date.now();
-          if (n3 > warned + 6e4) {
+          const n4 = Date.now();
+          if (n4 > warned + 6e4) {
             console.warn("@aws-sdk/core/protocols - WARN - JsonCodec2: you have called a string method on a Uint8Array request body. It has been automatically converted to string. In a future version this will throw an error.");
-            warned = n3;
+            warned = n4;
           }
           this.string = toUtf8(this);
         }
@@ -99693,33 +99693,33 @@ var init_JsonShapeSerializer2 = __esm({
           this.json = next;
         }
       }
-      writeAscii(s2) {
-        const z2 = s2.length;
+      writeAscii(s4) {
+        const z2 = s4.length;
         this.ensure(z2);
         let { i: i5, json: json3 } = this;
         for (let j5 = 0; j5 < z2; ++j5) {
-          json3[i5] = s2.charCodeAt(j5);
+          json3[i5] = s4.charCodeAt(j5);
           i5 += 1;
         }
         this.i = i5;
       }
-      writeAsciiQuoted(s2) {
-        const z2 = s2.length;
+      writeAsciiQuoted(s4) {
+        const z2 = s4.length;
         this.ensure(z2 + 4);
         let { json: json3, i: i5 } = this;
         json3[i5++] = QUOTE;
         for (let j5 = 0; j5 < z2; ++j5) {
-          json3[i5++] = s2.charCodeAt(j5);
+          json3[i5++] = s4.charCodeAt(j5);
         }
         json3[i5++] = QUOTE;
         this.i = i5;
       }
-      writeJsonString(s2) {
-        this.ensure(s2.length * 3 + 2);
+      writeJsonString(s4) {
+        this.ensure(s4.length * 3 + 2);
         this.json[this.i++] = QUOTE;
-        const z2 = s2.length;
+        const z2 = s4.length;
         for (let j5 = 0; j5 < z2; ++j5) {
-          const c5 = s2.charCodeAt(j5);
+          const c5 = s4.charCodeAt(j5);
           if (c5 > 34 && c5 < 92) {
             this.json[this.i++] = c5;
           } else if (c5 < 128) {
@@ -99734,10 +99734,10 @@ var init_JsonShapeSerializer2 = __esm({
               this.json[this.i++] = c5;
             }
           } else if (c5 >= 55296 && c5 <= 56319) {
-            const next = j5 + 1 < z2 ? s2.charCodeAt(j5 + 1) : 0;
+            const next = j5 + 1 < z2 ? s4.charCodeAt(j5 + 1) : 0;
             if (next >= 56320 && next <= 57343) {
               this.ensure(4);
-              const { written } = encoder3.encodeInto(s2.substring(j5, j5 + 2), this.json.subarray(this.i));
+              const { written } = encoder3.encodeInto(s4.substring(j5, j5 + 2), this.json.subarray(this.i));
               this.i += written;
               ++j5;
             } else {
@@ -100388,12 +100388,12 @@ var require_dist_cjs4 = __commonJS({
         }
         throw new Error("@aws-sdk XML parse error: no root element.");
       }
-      isNext(s2, caseSensitive = true) {
+      isNext(s4, caseSensitive = true) {
         const p3 = this;
         if (caseSensitive) {
-          return p3.x.startsWith(s2, p3.i);
+          return p3.x.startsWith(s4, p3.i);
         }
-        return p3.x.toLowerCase().startsWith(s2.toLowerCase(), p3.i);
+        return p3.x.toLowerCase().startsWith(s4.toLowerCase(), p3.i);
       }
       readTo(stop) {
         const p3 = this;
@@ -100566,8 +100566,8 @@ var require_dist_cjs4 = __commonJS({
         }
         throw new Error("@aws-sdk XML parse error: unclosed DOCTYPE.");
       }
-      decodeEntities(s2) {
-        return s2.replace(/&(?:#x([0-9a-fA-F]{1,6})|#(\d{1,7})|([a-zA-Z][a-zA-Z0-9]{0,30}));/g, (_, hex5, dec, named) => {
+      decodeEntities(s4) {
+        return s4.replace(/&(?:#x([0-9a-fA-F]{1,6})|#(\d{1,7})|([a-zA-Z][a-zA-Z0-9]{0,30}));/g, (_, hex5, dec, named) => {
           if (hex5) {
             return String.fromCharCode(parseInt(hex5, 16));
           }
@@ -101786,7 +101786,7 @@ var init_bucketEndpointMiddleware = __esm({
         if (options.bucketEndpoint) {
           request.hostname = bucketName;
         } else if (validate2(bucketName)) {
-          const bucketArn = parse8(bucketName);
+          const bucketArn = parse9(bucketName);
           const clientRegion = await options.region();
           const useDualstackEndpoint = await options.useDualstackEndpoint();
           const useFipsEndpoint = await options.useFipsEndpoint();
@@ -103006,13 +103006,13 @@ var require_dist_cjs7 = __commonJS({
       if (!timeoutInMs) {
         return -1;
       }
-      const registerTimeout = (offset) => {
+      const registerTimeout = (offset2) => {
         const timeoutId = timing.setTimeout(() => {
           request.destroy();
           reject(Object.assign(new Error(`@smithy/node-http-handler - the request socket did not establish a connection with the server within the configured timeout of ${timeoutInMs} ms.`), {
             name: "TimeoutError"
           }));
-        }, timeoutInMs - offset);
+        }, timeoutInMs - offset2);
         const doWithSocket = (socket) => {
           if (socket?.connecting) {
             socket.on("connect", () => {
@@ -103075,8 +103075,8 @@ var require_dist_cjs7 = __commonJS({
     };
     var DEFER_EVENT_LISTENER_TIME = 3e3;
     var setSocketTimeout = (request, reject, timeoutInMs = 0) => {
-      const registerTimeout = (offset) => {
-        const timeout = timeoutInMs - offset;
+      const registerTimeout = (offset2) => {
+        const timeout = timeoutInMs - offset2;
         const onTimeout = () => {
           request.destroy();
           reject(Object.assign(new Error(`@smithy/node-http-handler - the request socket timed out after ${timeoutInMs} ms of inactivity (configured by client requestHandler).`), { name: "TimeoutError" }));
@@ -103132,8 +103132,8 @@ var require_dist_cjs7 = __commonJS({
       }
       if (body) {
         const isBuffer2 = Buffer.isBuffer(body);
-        const isString2 = typeof body === "string";
-        if (isBuffer2 || isString2) {
+        const isString3 = typeof body === "string";
+        if (isBuffer2 || isString3) {
           if (isBuffer2 && body.byteLength === 0) {
             httpRequest.end();
           } else {
@@ -106011,7 +106011,7 @@ Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.ht
 });
 
 // node_modules/.pnpm/@aws-sdk+nested-clients@3.997.45/node_modules/@aws-sdk/nested-clients/dist-es/submodules/sts/endpoint/bdd.js
-var q, a3, b3, c3, d3, e3, f3, g3, h3, i3, j3, k3, l, m, n, o, p, _data3, root3, r3, nodes3, bdd3;
+var q, a3, b3, c3, d3, e3, f3, g3, h3, i3, j3, k3, l2, m, n2, o, p, _data3, root3, r3, nodes3, bdd3;
 var init_bdd3 = __esm({
   "node_modules/.pnpm/@aws-sdk+nested-clients@3.997.45/node_modules/@aws-sdk/nested-clients/dist-es/submodules/sts/endpoint/bdd.js"() {
     init_endpoints();
@@ -106027,14 +106027,14 @@ var init_bdd3 = __esm({
     i3 = "sigv4";
     j3 = "sts";
     k3 = "https://sts.{Region}.{PartitionResult#dnsSuffix}";
-    l = { [q]: "Endpoint" };
+    l2 = { [q]: "Endpoint" };
     m = { [q]: "Region" };
-    n = { [q]: d3 };
+    n2 = { [q]: d3 };
     o = {};
     p = [m];
     _data3 = {
       conditions: [
-        [c3, [l]],
+        [c3, [l2]],
         [c3, p],
         ["aws.partition", p, d3],
         [e3, [{ [q]: "UseFIPS" }, b3]],
@@ -106042,8 +106042,8 @@ var init_bdd3 = __esm({
         [f3, [m, "aws-global"]],
         [e3, [{ [q]: "UseGlobalEndpoint" }, b3]],
         [f3, [m, "eu-central-1"]],
-        [e3, [{ fn: g3, argv: [n, "supportsDualStack"] }, b3]],
-        [e3, [{ fn: g3, argv: [n, "supportsFIPS"] }, b3]],
+        [e3, [{ fn: g3, argv: [n2, "supportsDualStack"] }, b3]],
+        [e3, [{ fn: g3, argv: [n2, "supportsFIPS"] }, b3]],
         [f3, [m, "ap-south-1"]],
         [f3, [m, "eu-north-1"]],
         [f3, [m, "eu-west-1"]],
@@ -106058,7 +106058,7 @@ var init_bdd3 = __esm({
         [f3, [m, "ap-southeast-1"]],
         [f3, [m, "ap-northeast-1"]],
         [f3, [m, "ap-southeast-2"]],
-        [f3, [{ fn: g3, argv: [n, "name"] }, "aws-us-gov"]]
+        [f3, [{ fn: g3, argv: [n2, "name"] }, "aws-us-gov"]]
       ],
       results: [
         [a3],
@@ -106066,7 +106066,7 @@ var init_bdd3 = __esm({
         [k3, { authSchemes: [{ name: i3, signingName: j3, signingRegion: "{Region}" }] }],
         [a3, "Invalid Configuration: FIPS and custom endpoint are not supported"],
         [a3, "Invalid Configuration: Dualstack and custom endpoint are not supported"],
-        [l, o],
+        [l2, o],
         ["https://sts-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", o],
         [a3, "FIPS and DualStack are enabled, but this partition does not support one or both"],
         ["https://sts.{Region}.amazonaws.com", o],
@@ -106282,8 +106282,8 @@ var init_httpAuthSchemeProvider3 = __esm({
           let schemeId;
           if (name === "sigv4a") {
             schemeId = "aws.auth#sigv4a";
-            const sigv4Present = authSchemes.find((s2) => {
-              const name2 = s2.name.toLowerCase();
+            const sigv4Present = authSchemes.find((s4) => {
+              const name2 = s4.name.toLowerCase();
               return name2 !== "sigv4a" && name2.startsWith("sigv4");
             });
             if (import_signature_v4_multi_region2.SignatureV4MultiRegion.sigv4aDependency() === "none" && sigv4Present) {
@@ -107302,11 +107302,11 @@ var init_EndpointParameters4 = __esm({
 });
 
 // node_modules/.pnpm/@aws-sdk+nested-clients@3.997.45/node_modules/@aws-sdk/nested-clients/dist-es/submodules/signin/endpoint/bdd.js
-var s, a4, b4, c4, d4, e4, f4, g4, h4, i4, j4, k4, l2, m2, n2, o2, p2, q2, _data4, root4, r4, nodes4, bdd4;
+var s2, a4, b4, c4, d4, e4, f4, g4, h4, i4, j4, k4, l3, m2, n3, o2, p2, q2, _data4, root4, r4, nodes4, bdd4;
 var init_bdd4 = __esm({
   "node_modules/.pnpm/@aws-sdk+nested-clients@3.997.45/node_modules/@aws-sdk/nested-clients/dist-es/submodules/signin/endpoint/bdd.js"() {
     init_endpoints();
-    s = "ref";
+    s2 = "ref";
     a4 = -1;
     b4 = false;
     c4 = true;
@@ -107317,33 +107317,33 @@ var init_bdd4 = __esm({
     h4 = "stringEquals";
     i4 = "getAttr";
     j4 = "https://signin.{Region}.{PartitionResult#dualStackDnsSuffix}";
-    k4 = { [s]: "Endpoint" };
-    l2 = { "fn": i4, "argv": [{ [s]: g4 }, "name"] };
-    m2 = { [s]: "Region" };
-    n2 = { [s]: g4 };
+    k4 = { [s2]: "Endpoint" };
+    l3 = { "fn": i4, "argv": [{ [s2]: g4 }, "name"] };
+    m2 = { [s2]: "Region" };
+    n3 = { [s2]: g4 };
     o2 = { "authSchemes": [{ "name": "sigv4", "signingName": "signin", "signingRegion": "{Region}" }] };
     p2 = {};
     q2 = [m2];
     _data4 = {
       conditions: [
         [d4, q2],
-        [e4, [{ fn: f4, argv: [{ [s]: "IsControlPlane" }, b4] }, c4]],
+        [e4, [{ fn: f4, argv: [{ [s2]: "IsControlPlane" }, b4] }, c4]],
         [d4, [k4]],
         ["aws.partition", q2, g4],
-        [e4, [{ [s]: "UseFIPS" }, c4]],
-        [h4, [l2, "aws"]],
-        [e4, [{ fn: f4, argv: [{ [s]: "IsOAuthEndpoint" }, b4] }, c4]],
-        [e4, [{ [s]: "UseDualStack" }, c4]],
-        [h4, [l2, "aws-cn"]],
+        [e4, [{ [s2]: "UseFIPS" }, c4]],
+        [h4, [l3, "aws"]],
+        [e4, [{ fn: f4, argv: [{ [s2]: "IsOAuthEndpoint" }, b4] }, c4]],
+        [e4, [{ [s2]: "UseDualStack" }, c4]],
+        [h4, [l3, "aws-cn"]],
         [h4, [m2, "us-gov-west-1"]],
-        [h4, [l2, "aws-us-gov"]],
-        [e4, [{ fn: i4, argv: [n2, "supportsFIPS"] }, c4]],
-        [h4, [l2, "aws-iso"]],
-        [h4, [l2, "aws-iso-b"]],
-        [h4, [l2, "aws-iso-f"]],
-        [h4, [l2, "aws-iso-e"]],
-        [h4, [l2, "aws-eusc"]],
-        [e4, [{ fn: i4, argv: [n2, "supportsDualStack"] }, c4]]
+        [h4, [l3, "aws-us-gov"]],
+        [e4, [{ fn: i4, argv: [n3, "supportsFIPS"] }, c4]],
+        [h4, [l3, "aws-iso"]],
+        [h4, [l3, "aws-iso-b"]],
+        [h4, [l3, "aws-iso-f"]],
+        [h4, [l3, "aws-iso-e"]],
+        [h4, [l3, "aws-eusc"]],
+        [e4, [{ fn: i4, argv: [n3, "supportsDualStack"] }, c4]]
       ],
       results: [
         [a4],
@@ -108160,9 +108160,9 @@ var require_dist_cjs11 = __commonJS({
           throw new CredentialsProviderError2(`Failed to load a token for session ${this.loginSession}, please re-authenticate using aws login`, { tryNextLink: false, logger: this.logger });
         }
         const accessToken = token.accessToken;
-        const now2 = Date.now();
+        const now3 = Date.now();
         const expiryTime = new Date(accessToken.expiresAt).getTime();
-        const timeUntilExpiry = expiryTime - now2;
+        const timeUntilExpiry = expiryTime - now3;
         if (timeUntilExpiry <= _LoginCredentialsFetcher.REFRESH_THRESHOLD) {
           return this.refresh(token);
         }
@@ -108185,10 +108185,10 @@ var require_dist_cjs11 = __commonJS({
       }
       async refresh(token) {
         const diskToken = await this.loadToken().catch(() => token);
-        const now2 = Date.now();
+        const now3 = Date.now();
         const diskExpiry = new Date(diskToken.accessToken.expiresAt).getTime();
         const tokenExpiry = new Date(token.accessToken.expiresAt).getTime();
-        const freshToken = diskExpiry <= now2 && tokenExpiry > now2 ? token : diskToken;
+        const freshToken = diskExpiry <= now3 && tokenExpiry > now3 ? token : diskToken;
         const freshExpiry = new Date(freshToken.accessToken.expiresAt).getTime();
         if (freshExpiry - Date.now() > _LoginCredentialsFetcher.REFRESH_THRESHOLD) {
           return this.toCredentials(freshToken.accessToken);
@@ -108313,24 +108313,24 @@ var require_dist_cjs11 = __commonJS({
         return join6(directory, `${loginSessionSha256}.json`);
       }
       derToRawSignature(derSignature) {
-        let offset = 2;
-        if (derSignature[offset] !== 2) {
+        let offset2 = 2;
+        if (derSignature[offset2] !== 2) {
           throw new Error("Invalid DER signature");
         }
-        offset++;
-        const rLength = derSignature[offset++];
-        let r5 = derSignature.subarray(offset, offset + rLength);
-        offset += rLength;
-        if (derSignature[offset] !== 2) {
+        offset2++;
+        const rLength = derSignature[offset2++];
+        let r5 = derSignature.subarray(offset2, offset2 + rLength);
+        offset2 += rLength;
+        if (derSignature[offset2] !== 2) {
           throw new Error("Invalid DER signature");
         }
-        offset++;
-        const sLength = derSignature[offset++];
-        let s2 = derSignature.subarray(offset, offset + sLength);
+        offset2++;
+        const sLength = derSignature[offset2++];
+        let s4 = derSignature.subarray(offset2, offset2 + sLength);
         r5 = r5[0] === 0 ? r5.subarray(1) : r5;
-        s2 = s2[0] === 0 ? s2.subarray(1) : s2;
+        s4 = s4[0] === 0 ? s4.subarray(1) : s4;
         const rPadded = Buffer.concat([Buffer.alloc(32 - r5.length), r5]);
-        const sPadded = Buffer.concat([Buffer.alloc(32 - s2.length), s2]);
+        const sPadded = Buffer.concat([Buffer.alloc(32 - s4.length), s4]);
         return Buffer.concat([rPadded, sPadded]);
       }
       createDPoPInterceptor(middlewareStack) {
@@ -109046,14 +109046,14 @@ var init_Sha1Js = __esm({
         padded.set(key);
         return padded;
       }
-      hashBuffer(data, offset) {
-        this.hashBufferWith(this.state, data, offset);
+      hashBuffer(data, offset2) {
+        this.hashBufferWith(this.state, data, offset2);
       }
-      hashBufferWith(state2, data, offset) {
+      hashBufferWith(state2, data, offset2) {
         const w = this.w ??= new Int32Array(80);
-        let s0 = state2[0], s1 = state2[1], s2 = state2[2], s33 = state2[3], s4 = state2[4];
+        let s0 = state2[0], s1 = state2[1], s22 = state2[2], s33 = state2[3], s4 = state2[4];
         for (let t = 0; t < 16; ++t) {
-          w[t] = (data[offset + t * 4] & 255) << 24 | (data[offset + t * 4 + 1] & 255) << 16 | (data[offset + t * 4 + 2] & 255) << 8 | data[offset + t * 4 + 3] & 255;
+          w[t] = (data[offset2 + t * 4] & 255) << 24 | (data[offset2 + t * 4 + 1] & 255) << 16 | (data[offset2 + t * 4 + 2] & 255) << 8 | data[offset2 + t * 4 + 3] & 255;
         }
         for (let t = 16; t < 80; ++t) {
           const x = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16];
@@ -109061,16 +109061,16 @@ var init_Sha1Js = __esm({
         }
         for (let t = 0; t < 80; ++t) {
           const r5 = t < 20 ? 0 : t < 40 ? 1 : t < 60 ? 2 : 3;
-          const temp = ((s0 << 5 | s0 >>> 27) + (r5 === 0 ? s1 & s2 ^ ~s1 & s33 : r5 === 2 ? s1 & s2 ^ s1 & s33 ^ s2 & s33 : s1 ^ s2 ^ s33) | 0) + (s4 + (K2[r5] + w[t] | 0) | 0) | 0;
+          const temp = ((s0 << 5 | s0 >>> 27) + (r5 === 0 ? s1 & s22 ^ ~s1 & s33 : r5 === 2 ? s1 & s22 ^ s1 & s33 ^ s22 & s33 : s1 ^ s22 ^ s33) | 0) + (s4 + (K2[r5] + w[t] | 0) | 0) | 0;
           s4 = s33;
-          s33 = s2;
-          s2 = s1 << 30 | s1 >>> 2;
+          s33 = s22;
+          s22 = s1 << 30 | s1 >>> 2;
           s1 = s0;
           s0 = temp;
         }
         state2[0] = state2[0] + s0 | 0;
         state2[1] = state2[1] + s1 | 0;
-        state2[2] = state2[2] + s2 | 0;
+        state2[2] = state2[2] + s22 | 0;
         state2[3] = state2[3] + s33 | 0;
         state2[4] = state2[4] + s4 | 0;
       }
@@ -109281,13 +109281,13 @@ var require_dist_cjs16 = __commonJS({
     var i5 = "";
     var j5 = "aws.partition";
     var k5 = "partitionResult";
-    var l3 = "accessPointSuffix";
+    var l4 = "accessPointSuffix";
     var m3 = "regionPrefix";
-    var n3 = (n4) => "outpostId_ssa_" + n4 + i5;
+    var n4 = (n5) => "outpostId_ssa_" + n5 + i5;
     var o3 = "hardwareType";
     var p3 = "ite";
     var q3 = "isValidHostLabel";
-    var s2 = "sigv4";
+    var s4 = "sigv4";
     var t = "aws.isVirtualHostableS3Bucket";
     var u = "url";
     var v = "getAttr";
@@ -109295,7 +109295,7 @@ var require_dist_cjs16 = __commonJS({
     var x = "--";
     var y = "arnType";
     var z2 = "accesspoint";
-    var A = (n4) => "accessPointName_ssa_" + n4 + i5;
+    var A = (n5) => "accessPointName_ssa_" + n5 + i5;
     var B = "s3-object-lambda";
     var C = "s3-outposts";
     var D = "bucketPartition";
@@ -109308,8 +109308,8 @@ var require_dist_cjs16 = __commonJS({
     var K3 = "{url#scheme}://{url#authority}{url#normalizedPath}{Bucket}";
     var L = "https://{Bucket}.s3-accelerate.{partitionResult#dnsSuffix}";
     var M2 = "https://{Bucket}.s3.{partitionResult#dnsSuffix}";
-    var N = (n4) => "{url#scheme}://{accessPointName_ssa_" + n4 + "}-{bucketArn#accountId}.{url#authority}{url#path}";
-    var O = (n4) => "Invalid ARN: The access point name may only contain a-z, A-Z, 0-9 and `-`. Found: `{accessPointName_ssa_" + n4 + "}`";
+    var N = (n5) => "{url#scheme}://{accessPointName_ssa_" + n5 + "}-{bucketArn#accountId}.{url#authority}{url#path}";
+    var O = (n5) => "Invalid ARN: The access point name may only contain a-z, A-Z, 0-9 and `-`. Found: `{accessPointName_ssa_" + n5 + "}`";
     var P = "sigv4a";
     var Q = "{url#scheme}://{url#authority}{url#normalizedPath}{uri_encoded_bucket}";
     var R = "https://s3.{partitionResult#dnsSuffix}/{uri_encoded_bucket}";
@@ -109328,14 +109328,14 @@ var require_dist_cjs16 = __commonJS({
     var ae = { "fn": v, [ax]: [Z, "service"] };
     var af = { "fn": v, [ax]: [Z, "accountId"] };
     var ag = { [ay]: "S3Express", [az]: [{ [aA]: true, [G]: "{_s3e_auth}", [aB]: "s3express", [aC]: "{Region}" }] };
-    var ah = { [ay]: "S3Express", [az]: [{ [aA]: true, [G]: s2, [aB]: "s3express", [aC]: "{Region}" }] };
-    var ai = { [az]: [{ [aA]: true, [G]: P, [aB]: C, [aD]: ["*"] }, { [aA]: true, [G]: s2, [aB]: C, [aC]: "{Region}" }] };
-    var aj = { [az]: [{ [aA]: true, [G]: s2, [aB]: H, [aC]: E }] };
-    var ak = { [az]: [{ [aA]: true, [G]: s2, [aB]: H, [aC]: "{Region}" }] };
-    var al = { [az]: [{ [aA]: true, [G]: s2, [aB]: B, [aC]: "{bucketArn#region}" }] };
-    var am = { [az]: [{ [aA]: true, [G]: s2, [aB]: H, [aC]: "{bucketArn#region}" }] };
-    var an = { [az]: [{ [aA]: true, [G]: P, [aB]: C, [aD]: ["*"] }, { [aA]: true, [G]: s2, [aB]: C, [aC]: "{bucketArn#region}" }] };
-    var ao = { [az]: [{ [aA]: true, [G]: s2, [aB]: B, [aC]: "{Region}" }] };
+    var ah = { [ay]: "S3Express", [az]: [{ [aA]: true, [G]: s4, [aB]: "s3express", [aC]: "{Region}" }] };
+    var ai = { [az]: [{ [aA]: true, [G]: P, [aB]: C, [aD]: ["*"] }, { [aA]: true, [G]: s4, [aB]: C, [aC]: "{Region}" }] };
+    var aj = { [az]: [{ [aA]: true, [G]: s4, [aB]: H, [aC]: E }] };
+    var ak = { [az]: [{ [aA]: true, [G]: s4, [aB]: H, [aC]: "{Region}" }] };
+    var al = { [az]: [{ [aA]: true, [G]: s4, [aB]: B, [aC]: "{bucketArn#region}" }] };
+    var am = { [az]: [{ [aA]: true, [G]: s4, [aB]: H, [aC]: "{bucketArn#region}" }] };
+    var an = { [az]: [{ [aA]: true, [G]: P, [aB]: C, [aD]: ["*"] }, { [aA]: true, [G]: s4, [aB]: C, [aC]: "{bucketArn#region}" }] };
+    var ao = { [az]: [{ [aA]: true, [G]: s4, [aB]: B, [aC]: "{Region}" }] };
     var ap = [Y];
     var aq = [{ [aw]: "Endpoint" }];
     var as = [V];
@@ -109353,17 +109353,17 @@ var require_dist_cjs16 = __commonJS({
         [f5, [{ fn: g5, [ax]: [{ fn: h5, [ax]: [V, 0, 6, b5] }, i5] }, "--x-s3"]],
         [f5, [{ fn: g5, [ax]: [{ fn: h5, [ax]: at }, i5] }, "--xa-s3"]],
         [j5, ap, k5],
-        [h5, at, l3],
-        [f5, [{ [aw]: l3 }, "--op-s3"]],
+        [h5, at, l4],
+        [f5, [{ [aw]: l4 }, "--op-s3"]],
         [h5, [V, 8, 12, b5], m3],
-        [h5, [V, 32, 49, b5], n3(2)],
+        [h5, [V, 32, 49, b5], n4(2)],
         [h5, [V, 49, 50, b5], o3],
         [e5, [{ [aw]: "ForcePathStyle" }, b5]],
         [f5, [W, "aws-cn"]],
         [p3, [U, ".dualstack", i5], "_s3e_ds"],
-        [q3, [{ [aw]: n3(2) }, c5]],
+        [q3, [{ [aw]: n4(2) }, c5]],
         [p3, [T3, "-fips", i5], "_s3e_fips"],
-        [p3, [{ fn: g5, [ax]: [{ [aw]: "DisableS3ExpressSessionAuth" }, c5] }, s2, "sigv4-s3express"], "_s3e_auth"],
+        [p3, [{ fn: g5, [ax]: [{ [aw]: "DisableS3ExpressSessionAuth" }, c5] }, s4, "sigv4-s3express"], "_s3e_auth"],
         [t, [V, c5]],
         ["parseURL", aq, u],
         [e5, [{ fn: g5, [ax]: [{ [aw]: "UseS3ExpressControlEndpoint" }, c5] }, b5]],
@@ -109403,9 +109403,9 @@ var require_dist_cjs16 = __commonJS({
         [f5, [{ fn: g5, [ax]: [{ fn: h5, [ax]: [V, 20, 22, b5] }, i5] }, x]],
         [e5, [{ [aw]: "UseGlobalEndpoint" }, b5]],
         [f5, [Y, E]],
-        [v, au, n3(1)],
+        [v, au, n4(1)],
         [e5, [{ fn: g5, [ax]: [{ [aw]: "UseArnRegion" }, b5] }, b5]],
-        [q3, [{ [aw]: n3(1) }, c5]],
+        [q3, [{ [aw]: n4(1) }, c5]],
         [v, [Z, "resourceId[2]"], F],
         [f5, [Y, ac]],
         [f5, [{ fn: v, [ax]: [{ [aw]: D }, G] }, W]],
@@ -111297,8 +111297,8 @@ var require_dist_cjs16 = __commonJS({
           let schemeId;
           if (name === "sigv4a") {
             schemeId = "aws.auth#sigv4a";
-            const sigv4Present = authSchemes.find((s4) => {
-              const name2 = s4.name.toLowerCase();
+            const sigv4Present = authSchemes.find((s5) => {
+              const name2 = s5.name.toLowerCase();
               return name2 !== "sigv4a" && name2.startsWith("sigv4");
             });
             if (SignatureV4MultiRegion3.sigv4aDependency() === "none" && sigv4Present) {
@@ -119367,7 +119367,7 @@ var require_bn = __commonJS({
         dest.negative = this.negative;
         dest.red = this.red;
       };
-      BN.prototype.clone = function clone2() {
+      BN.prototype.clone = function clone3() {
         var r5 = new BN(null);
         this.copy(r5);
         return r5;
@@ -120587,17 +120587,17 @@ var require_bn = __commonJS({
       }
       FFTM.prototype.makeRBT = function makeRBT(N) {
         var t = new Array(N);
-        var l3 = BN.prototype._countBits(N) - 1;
+        var l4 = BN.prototype._countBits(N) - 1;
         for (var i5 = 0; i5 < N; i5++) {
-          t[i5] = this.revBin(i5, l3, N);
+          t[i5] = this.revBin(i5, l4, N);
         }
         return t;
       };
-      FFTM.prototype.revBin = function revBin(x, l3, N) {
+      FFTM.prototype.revBin = function revBin(x, l4, N) {
         if (x === 0 || x === N - 1) return x;
         var rb = 0;
-        for (var i5 = 0; i5 < l3; i5++) {
-          rb |= (x & 1) << l3 - i5 - 1;
+        for (var i5 = 0; i5 < l4; i5++) {
+          rb |= (x & 1) << l4 - i5 - 1;
           x >>= 1;
         }
         return rb;
@@ -120610,26 +120610,26 @@ var require_bn = __commonJS({
       };
       FFTM.prototype.transform = function transform4(rws, iws, rtws, itws, N, rbt) {
         this.permute(rbt, rws, iws, rtws, itws, N);
-        for (var s2 = 1; s2 < N; s2 <<= 1) {
-          var l3 = s2 << 1;
-          var rtwdf = Math.cos(2 * Math.PI / l3);
-          var itwdf = Math.sin(2 * Math.PI / l3);
-          for (var p3 = 0; p3 < N; p3 += l3) {
+        for (var s4 = 1; s4 < N; s4 <<= 1) {
+          var l4 = s4 << 1;
+          var rtwdf = Math.cos(2 * Math.PI / l4);
+          var itwdf = Math.sin(2 * Math.PI / l4);
+          for (var p3 = 0; p3 < N; p3 += l4) {
             var rtwdf_ = rtwdf;
             var itwdf_ = itwdf;
-            for (var j5 = 0; j5 < s2; j5++) {
+            for (var j5 = 0; j5 < s4; j5++) {
               var re = rtws[p3 + j5];
               var ie = itws[p3 + j5];
-              var ro = rtws[p3 + j5 + s2];
-              var io = itws[p3 + j5 + s2];
+              var ro = rtws[p3 + j5 + s4];
+              var io = itws[p3 + j5 + s4];
               var rx = rtwdf_ * ro - itwdf_ * io;
               io = rtwdf_ * io + itwdf_ * ro;
               ro = rx;
               rtws[p3 + j5] = re + ro;
               itws[p3 + j5] = ie + io;
-              rtws[p3 + j5 + s2] = re - ro;
-              itws[p3 + j5 + s2] = ie - io;
-              if (j5 !== l3) {
+              rtws[p3 + j5 + s4] = re - ro;
+              itws[p3 + j5 + s4] = ie - io;
+              if (j5 !== l4) {
                 rx = rtwdf * rtwdf_ - itwdf * itwdf_;
                 itwdf_ = rtwdf * itwdf_ + itwdf * rtwdf_;
                 rtwdf_ = rx;
@@ -120638,8 +120638,8 @@ var require_bn = __commonJS({
           }
         }
       };
-      FFTM.prototype.guessLen13b = function guessLen13b(n3, m3) {
-        var N = Math.max(m3, n3) | 1;
+      FFTM.prototype.guessLen13b = function guessLen13b(n4, m3) {
+        var N = Math.max(m3, n4) | 1;
         var odd = N & 1;
         var i5 = 0;
         for (N = N / 2 | 0; N; N = N >>> 1) {
@@ -120784,7 +120784,7 @@ var require_bn = __commonJS({
       BN.prototype.iushln = function iushln(bits) {
         assert2(typeof bits === "number" && bits >= 0);
         var r5 = bits % 26;
-        var s2 = (bits - r5) / 26;
+        var s4 = (bits - r5) / 26;
         var carryMask = 67108863 >>> 26 - r5 << 26 - r5;
         var i5;
         if (r5 !== 0) {
@@ -120800,14 +120800,14 @@ var require_bn = __commonJS({
             this.length++;
           }
         }
-        if (s2 !== 0) {
+        if (s4 !== 0) {
           for (i5 = this.length - 1; i5 >= 0; i5--) {
-            this.words[i5 + s2] = this.words[i5];
+            this.words[i5 + s4] = this.words[i5];
           }
-          for (i5 = 0; i5 < s2; i5++) {
+          for (i5 = 0; i5 < s4; i5++) {
             this.words[i5] = 0;
           }
-          this.length += s2;
+          this.length += s4;
         }
         return this.strip();
       };
@@ -120824,22 +120824,22 @@ var require_bn = __commonJS({
           h5 = 0;
         }
         var r5 = bits % 26;
-        var s2 = Math.min((bits - r5) / 26, this.length);
+        var s4 = Math.min((bits - r5) / 26, this.length);
         var mask = 67108863 ^ 67108863 >>> r5 << r5;
         var maskedWords = extended2;
-        h5 -= s2;
+        h5 -= s4;
         h5 = Math.max(0, h5);
         if (maskedWords) {
-          for (var i5 = 0; i5 < s2; i5++) {
+          for (var i5 = 0; i5 < s4; i5++) {
             maskedWords.words[i5] = this.words[i5];
           }
-          maskedWords.length = s2;
+          maskedWords.length = s4;
         }
-        if (s2 === 0) {
-        } else if (this.length > s2) {
-          this.length -= s2;
+        if (s4 === 0) {
+        } else if (this.length > s4) {
+          this.length -= s4;
           for (i5 = 0; i5 < this.length; i5++) {
-            this.words[i5] = this.words[i5 + s2];
+            this.words[i5] = this.words[i5 + s4];
           }
         } else {
           this.words[0] = 0;
@@ -120879,24 +120879,24 @@ var require_bn = __commonJS({
       BN.prototype.testn = function testn(bit2) {
         assert2(typeof bit2 === "number" && bit2 >= 0);
         var r5 = bit2 % 26;
-        var s2 = (bit2 - r5) / 26;
+        var s4 = (bit2 - r5) / 26;
         var q3 = 1 << r5;
-        if (this.length <= s2) return false;
-        var w = this.words[s2];
+        if (this.length <= s4) return false;
+        var w = this.words[s4];
         return !!(w & q3);
       };
       BN.prototype.imaskn = function imaskn(bits) {
         assert2(typeof bits === "number" && bits >= 0);
         var r5 = bits % 26;
-        var s2 = (bits - r5) / 26;
+        var s4 = (bits - r5) / 26;
         assert2(this.negative === 0, "imaskn works only with positive numbers");
-        if (this.length <= s2) {
+        if (this.length <= s4) {
           return this;
         }
         if (r5 !== 0) {
-          s2++;
+          s4++;
         }
-        this.length = Math.min(s2, this.length);
+        this.length = Math.min(s4, this.length);
         if (r5 !== 0) {
           var mask = 67108863 ^ 67108863 >>> r5 << r5;
           this.words[this.length - 1] &= mask;
@@ -121026,9 +121026,9 @@ var require_bn = __commonJS({
             q3.words[i5] = 0;
           }
         }
-        var diff = a5.clone()._ishlnsubmul(b5, 1, m3);
-        if (diff.negative === 0) {
-          a5 = diff;
+        var diff2 = a5.clone()._ishlnsubmul(b5, 1, m3);
+        if (diff2.negative === 0) {
+          a5 = diff2;
           if (q3) {
             q3.words[m3] = 1;
           }
@@ -121339,15 +121339,15 @@ var require_bn = __commonJS({
       BN.prototype.bincn = function bincn(bit2) {
         assert2(typeof bit2 === "number");
         var r5 = bit2 % 26;
-        var s2 = (bit2 - r5) / 26;
+        var s4 = (bit2 - r5) / 26;
         var q3 = 1 << r5;
-        if (this.length <= s2) {
-          this._expand(s2 + 1);
-          this.words[s2] |= q3;
+        if (this.length <= s4) {
+          this._expand(s4 + 1);
+          this.words[s4] |= q3;
           return this;
         }
         var carry = q3;
-        for (var i5 = s2; carry !== 0 && i5 < this.length; i5++) {
+        for (var i5 = s4; carry !== 0 && i5 < this.length; i5++) {
           var w = this.words[i5] | 0;
           w += carry;
           carry = w >>> 26;
@@ -121764,9 +121764,9 @@ var require_bn = __commonJS({
           return this.pow(a5, pow);
         }
         var q3 = this.m.subn(1);
-        var s2 = 0;
+        var s4 = 0;
         while (!q3.isZero() && q3.andln(1) === 0) {
-          s2++;
+          s4++;
           q3.iushrn(1);
         }
         assert2(!q3.isZero());
@@ -121781,7 +121781,7 @@ var require_bn = __commonJS({
         var c5 = this.pow(z2, q3);
         var r5 = this.pow(a5, q3.addn(1).iushrn(1));
         var t = this.pow(a5, q3);
-        var m3 = s2;
+        var m3 = s4;
         while (t.cmp(one) !== 0) {
           var tmp = t;
           for (var i5 = 0; tmp.cmp(one) !== 0; i5++) {
@@ -122081,9 +122081,9 @@ var require_reporter = __commonJS({
     };
     Reporter.prototype.leaveObject = function leaveObject(prev) {
       const state2 = this._reporterState;
-      const now2 = state2.obj;
+      const now3 = state2.obj;
       state2.obj = prev;
-      return now2;
+      return now3;
     };
     Reporter.prototype.error = function error64(msg) {
       let err;
@@ -122223,26 +122223,26 @@ var require_buffer = __commonJS({
       const isCompatible = typeof data === "object" && data.constructor.name === "EncoderBuffer" && typeof data.length === "number" && typeof data.join === "function";
       return isCompatible;
     };
-    EncoderBuffer.prototype.join = function join6(out, offset) {
+    EncoderBuffer.prototype.join = function join6(out, offset2) {
       if (!out)
         out = Buffer2.alloc(this.length);
-      if (!offset)
-        offset = 0;
+      if (!offset2)
+        offset2 = 0;
       if (this.length === 0)
         return out;
       if (Array.isArray(this.value)) {
         this.value.forEach(function(item) {
-          item.join(out, offset);
-          offset += item.length;
+          item.join(out, offset2);
+          offset2 += item.length;
         });
       } else {
         if (typeof this.value === "number")
-          out[offset] = this.value;
+          out[offset2] = this.value;
         else if (typeof this.value === "string")
-          out.write(this.value, offset);
+          out.write(this.value, offset2);
         else if (Buffer2.isBuffer(this.value))
-          this.value.copy(out, offset);
-        offset += this.length;
+          this.value.copy(out, offset2);
+        offset2 += this.length;
       }
       return out;
     };
@@ -122257,9 +122257,9 @@ var require_minimalistic_assert = __commonJS({
       if (!val)
         throw new Error(msg || "Assertion failed");
     }
-    assert2.equal = function assertEqual2(l3, r5, msg) {
-      if (l3 != r5)
-        throw new Error(msg || "Assertion failed: " + l3 + " != " + r5);
+    assert2.equal = function assertEqual2(l4, r5, msg) {
+      if (l4 != r5)
+        throw new Error(msg || "Assertion failed: " + l4 + " != " + r5);
     };
   }
 });
@@ -122377,7 +122377,7 @@ var require_node = __commonJS({
       "implicit",
       "contains"
     ];
-    Node3.prototype.clone = function clone2() {
+    Node3.prototype.clone = function clone3() {
       const state2 = this._baseState;
       const cstate = {};
       stateProps.forEach(function(prop) {
@@ -122391,9 +122391,9 @@ var require_node = __commonJS({
       const state2 = this._baseState;
       methods2.forEach(function(method) {
         this[method] = function _wrappedMethod() {
-          const clone2 = new this.constructor(this);
-          state2.children.push(clone2);
-          return clone2[method].apply(clone2, arguments);
+          const clone3 = new this.constructor(this);
+          state2.children.push(clone3);
+          return clone3[method].apply(clone3, arguments);
         };
       }, this);
     };
@@ -122653,7 +122653,7 @@ var require_node = __commonJS({
     Node3.prototype._decodeChoice = function decodeChoice(input2, options) {
       const state2 = this._baseState;
       let result = null;
-      let match2 = false;
+      let match3 = false;
       Object.keys(state2.choice).some(function(key) {
         const save = input2.save();
         const node2 = state2.choice[key];
@@ -122662,14 +122662,14 @@ var require_node = __commonJS({
           if (input2.isError(value))
             return false;
           result = { type: key, value };
-          match2 = true;
+          match3 = true;
         } catch (e5) {
           input2.restore(save);
           return false;
         }
         return true;
       }, this);
-      if (!match2)
+      if (!match3)
         return input2.error("Choice not matched");
       return result;
     };
@@ -122952,12 +122952,12 @@ var require_der2 = __commonJS({
           size++;
       }
       const objid = Buffer2.alloc(size);
-      let offset = objid.length - 1;
+      let offset2 = objid.length - 1;
       for (let i5 = id.length - 1; i5 >= 0; i5--) {
         let ident = id[i5];
-        objid[offset--] = ident & 127;
+        objid[offset2--] = ident & 127;
         while ((ident >>= 7) > 0)
-          objid[offset--] = 128 | ident & 127;
+          objid[offset2--] = 128 | ident & 127;
       }
       return this._createEncoderBuffer(objid);
     };
@@ -123412,17 +123412,17 @@ var require_pem4 = __commonJS({
       let start = -1;
       let end = -1;
       for (let i5 = 0; i5 < lines.length; i5++) {
-        const match2 = lines[i5].match(re);
-        if (match2 === null)
+        const match3 = lines[i5].match(re);
+        if (match3 === null)
           continue;
-        if (match2[2] !== label)
+        if (match3[2] !== label)
           continue;
         if (start === -1) {
-          if (match2[1] !== "BEGIN")
+          if (match3[1] !== "BEGIN")
             break;
           start = i5;
         } else {
-          if (match2[1] !== "END")
+          if (match3[1] !== "END")
             break;
           end = i5;
           break;
@@ -123701,55 +123701,55 @@ var require_ecdsa_sig_formatter = __commonJS({
       var paramBytes = getParamBytesForAlg(alg2);
       var maxEncodedParamLength = paramBytes + 1;
       var inputLength = signature.length;
-      var offset = 0;
-      if (signature[offset++] !== ENCODED_TAG_SEQ) {
+      var offset2 = 0;
+      if (signature[offset2++] !== ENCODED_TAG_SEQ) {
         throw new Error('Could not find expected "seq"');
       }
-      var seqLength = signature[offset++];
+      var seqLength = signature[offset2++];
       if (seqLength === (MAX_OCTET | 1)) {
-        seqLength = signature[offset++];
+        seqLength = signature[offset2++];
       }
-      if (inputLength - offset < seqLength) {
-        throw new Error('"seq" specified length of "' + seqLength + '", only "' + (inputLength - offset) + '" remaining');
+      if (inputLength - offset2 < seqLength) {
+        throw new Error('"seq" specified length of "' + seqLength + '", only "' + (inputLength - offset2) + '" remaining');
       }
-      if (signature[offset++] !== ENCODED_TAG_INT) {
+      if (signature[offset2++] !== ENCODED_TAG_INT) {
         throw new Error('Could not find expected "int" for "r"');
       }
-      var rLength = signature[offset++];
-      if (inputLength - offset - 2 < rLength) {
-        throw new Error('"r" specified length of "' + rLength + '", only "' + (inputLength - offset - 2) + '" available');
+      var rLength = signature[offset2++];
+      if (inputLength - offset2 - 2 < rLength) {
+        throw new Error('"r" specified length of "' + rLength + '", only "' + (inputLength - offset2 - 2) + '" available');
       }
       if (maxEncodedParamLength < rLength) {
         throw new Error('"r" specified length of "' + rLength + '", max of "' + maxEncodedParamLength + '" is acceptable');
       }
-      var rOffset = offset;
-      offset += rLength;
-      if (signature[offset++] !== ENCODED_TAG_INT) {
+      var rOffset = offset2;
+      offset2 += rLength;
+      if (signature[offset2++] !== ENCODED_TAG_INT) {
         throw new Error('Could not find expected "int" for "s"');
       }
-      var sLength = signature[offset++];
-      if (inputLength - offset !== sLength) {
-        throw new Error('"s" specified length of "' + sLength + '", expected "' + (inputLength - offset) + '"');
+      var sLength = signature[offset2++];
+      if (inputLength - offset2 !== sLength) {
+        throw new Error('"s" specified length of "' + sLength + '", expected "' + (inputLength - offset2) + '"');
       }
       if (maxEncodedParamLength < sLength) {
         throw new Error('"s" specified length of "' + sLength + '", max of "' + maxEncodedParamLength + '" is acceptable');
       }
-      var sOffset = offset;
-      offset += sLength;
-      if (offset !== inputLength) {
-        throw new Error('Expected to consume entire buffer, but "' + (inputLength - offset) + '" bytes remain');
+      var sOffset = offset2;
+      offset2 += sLength;
+      if (offset2 !== inputLength) {
+        throw new Error('Expected to consume entire buffer, but "' + (inputLength - offset2) + '" bytes remain');
       }
       var rPadding = paramBytes - rLength, sPadding = paramBytes - sLength;
       var dst = Buffer2.allocUnsafe(rPadding + rLength + sPadding + sLength);
-      for (offset = 0; offset < rPadding; ++offset) {
-        dst[offset] = 0;
+      for (offset2 = 0; offset2 < rPadding; ++offset2) {
+        dst[offset2] = 0;
       }
-      signature.copy(dst, offset, rOffset + Math.max(-rPadding, 0), rOffset + rLength);
-      offset = paramBytes;
-      for (var o3 = offset; offset < o3 + sPadding; ++offset) {
-        dst[offset] = 0;
+      signature.copy(dst, offset2, rOffset + Math.max(-rPadding, 0), rOffset + rLength);
+      offset2 = paramBytes;
+      for (var o3 = offset2; offset2 < o3 + sPadding; ++offset2) {
+        dst[offset2] = 0;
       }
-      signature.copy(dst, offset, sOffset + Math.max(-sPadding, 0), sOffset + sLength);
+      signature.copy(dst, offset2, sOffset + Math.max(-sPadding, 0), sOffset + sLength);
       dst = dst.toString("base64");
       dst = base64Url2(dst);
       return dst;
@@ -123779,29 +123779,29 @@ var require_ecdsa_sig_formatter = __commonJS({
       var rsBytes = 1 + 1 + rLength + 1 + 1 + sLength;
       var shortLength = rsBytes < MAX_OCTET;
       var dst = Buffer2.allocUnsafe((shortLength ? 2 : 3) + rsBytes);
-      var offset = 0;
-      dst[offset++] = ENCODED_TAG_SEQ;
+      var offset2 = 0;
+      dst[offset2++] = ENCODED_TAG_SEQ;
       if (shortLength) {
-        dst[offset++] = rsBytes;
+        dst[offset2++] = rsBytes;
       } else {
-        dst[offset++] = MAX_OCTET | 1;
-        dst[offset++] = rsBytes & 255;
+        dst[offset2++] = MAX_OCTET | 1;
+        dst[offset2++] = rsBytes & 255;
       }
-      dst[offset++] = ENCODED_TAG_INT;
-      dst[offset++] = rLength;
+      dst[offset2++] = ENCODED_TAG_INT;
+      dst[offset2++] = rLength;
       if (rPadding < 0) {
-        dst[offset++] = 0;
-        offset += signature.copy(dst, offset, 0, paramBytes);
+        dst[offset2++] = 0;
+        offset2 += signature.copy(dst, offset2, 0, paramBytes);
       } else {
-        offset += signature.copy(dst, offset, rPadding, paramBytes);
+        offset2 += signature.copy(dst, offset2, rPadding, paramBytes);
       }
-      dst[offset++] = ENCODED_TAG_INT;
-      dst[offset++] = sLength;
+      dst[offset2++] = ENCODED_TAG_INT;
+      dst[offset2++] = sLength;
       if (sPadding < 0) {
-        dst[offset++] = 0;
-        signature.copy(dst, offset, paramBytes);
+        dst[offset2++] = 0;
+        signature.copy(dst, offset2, paramBytes);
       } else {
-        signature.copy(dst, offset, paramBytes + sPadding);
+        signature.copy(dst, offset2, paramBytes + sPadding);
       }
       return dst;
     }
@@ -124057,11 +124057,11 @@ var require_jwa = __commonJS({
         es: createECDSAVerifer,
         none: createNoneVerifier
       };
-      var match2 = algorithm2.match(/^(RS|PS|ES|HS)(256|384|512)$|^(none)$/);
-      if (!match2)
+      var match3 = algorithm2.match(/^(RS|PS|ES|HS)(256|384|512)$|^(none)$/);
+      if (!match3)
         throw typeError(MSG_INVALID_ALGORITHM, algorithm2);
-      var algo = (match2[1] || match2[3]).toLowerCase();
-      var bits = match2[2];
+      var algo = (match3[1] || match3[3]).toLowerCase();
+      var bits = match3[2];
       return {
         sign: signerFactories[algo](bits),
         verify: verifierFactories[algo](bits)
@@ -124556,7 +124556,7 @@ var require_ece = __commonJS({
       keylog("ikm", ikm);
       return keylog("extract", HMAC_hash(salt, ikm));
     }
-    function HKDF_expand(prk, info3, l3) {
+    function HKDF_expand(prk, info3, l4) {
       keylog("prk", prk);
       keylog("info", info3);
       var output2 = Buffer.alloc(0);
@@ -124564,12 +124564,12 @@ var require_ece = __commonJS({
       info3 = Buffer.from(info3, "ascii");
       var counter = 0;
       var cbuf = Buffer.alloc(1);
-      while (output2.length < l3) {
+      while (output2.length < l4) {
         cbuf.writeUIntBE(++counter, 0, 1);
         T3 = HMAC_hash(prk, Buffer.concat([T3, info3, cbuf]));
         output2 = Buffer.concat([output2, T3]);
       }
-      return keylog("expand", output2.slice(0, l3));
+      return keylog("expand", output2.slice(0, l4));
     }
     function HKDF(salt, ikm, info3, len) {
       return HKDF_expand(HKDF_extract(salt, ikm), info3, len);
@@ -124704,10 +124704,10 @@ var require_ece = __commonJS({
       var nonceInfo;
       var secret;
       if (header.version === "aesgcm") {
-        var s2 = extractSecretAndContext(header, mode, lookupKeyCallback);
-        keyInfo = info2("aesgcm", s2.context);
-        nonceInfo = info2("nonce", s2.context);
-        secret = s2.secret;
+        var s4 = extractSecretAndContext(header, mode, lookupKeyCallback);
+        keyInfo = info2("aesgcm", s4.context);
+        nonceInfo = info2("nonce", s4.context);
+        secret = s4.secret;
       } else if (header.version === "aes128gcm") {
         keyInfo = Buffer.from("Content-Encoding: aes128gcm\0");
         nonceInfo = Buffer.from("Content-Encoding: nonce\0");
@@ -125041,8 +125041,8 @@ var require_web_push_error = __commonJS({
 // node_modules/.pnpm/ms@2.1.3/node_modules/ms/index.js
 var require_ms = __commonJS({
   "node_modules/.pnpm/ms@2.1.3/node_modules/ms/index.js"(exports2, module2) {
-    var s2 = 1e3;
-    var m3 = s2 * 60;
+    var s4 = 1e3;
+    var m3 = s4 * 60;
     var h5 = m3 * 60;
     var d5 = h5 * 24;
     var w = d5 * 7;
@@ -125051,7 +125051,7 @@ var require_ms = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse9(val);
+        return parse10(val);
       } else if (type === "number" && isFinite(val)) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -125059,58 +125059,58 @@ var require_ms = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse9(str) {
+    function parse10(str) {
       str = String(str);
       if (str.length > 100) {
         return;
       }
-      var match2 = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
+      var match3 = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
         str
       );
-      if (!match2) {
+      if (!match3) {
         return;
       }
-      var n3 = parseFloat(match2[1]);
-      var type = (match2[2] || "ms").toLowerCase();
+      var n4 = parseFloat(match3[1]);
+      var type = (match3[2] || "ms").toLowerCase();
       switch (type) {
         case "years":
         case "year":
         case "yrs":
         case "yr":
         case "y":
-          return n3 * y;
+          return n4 * y;
         case "weeks":
         case "week":
         case "w":
-          return n3 * w;
+          return n4 * w;
         case "days":
         case "day":
         case "d":
-          return n3 * d5;
+          return n4 * d5;
         case "hours":
         case "hour":
         case "hrs":
         case "hr":
         case "h":
-          return n3 * h5;
+          return n4 * h5;
         case "minutes":
         case "minute":
         case "mins":
         case "min":
         case "m":
-          return n3 * m3;
+          return n4 * m3;
         case "seconds":
         case "second":
         case "secs":
         case "sec":
         case "s":
-          return n3 * s2;
+          return n4 * s4;
         case "milliseconds":
         case "millisecond":
         case "msecs":
         case "msec":
         case "ms":
-          return n3;
+          return n4;
         default:
           return void 0;
       }
@@ -125126,8 +125126,8 @@ var require_ms = __commonJS({
       if (msAbs >= m3) {
         return Math.round(ms / m3) + "m";
       }
-      if (msAbs >= s2) {
-        return Math.round(ms / s2) + "s";
+      if (msAbs >= s4) {
+        return Math.round(ms / s4) + "s";
       }
       return ms + "ms";
     }
@@ -125142,14 +125142,14 @@ var require_ms = __commonJS({
       if (msAbs >= m3) {
         return plural2(ms, msAbs, m3, "minute");
       }
-      if (msAbs >= s2) {
-        return plural2(ms, msAbs, s2, "second");
+      if (msAbs >= s4) {
+        return plural2(ms, msAbs, s4, "second");
       }
       return ms + " ms";
     }
-    function plural2(ms, msAbs, n3, name) {
-      var isPlural = msAbs >= n3 * 1.5;
-      return Math.round(ms / n3) + " " + name + (isPlural ? "s" : "");
+    function plural2(ms, msAbs, n4, name) {
+      var isPlural = msAbs >= n4 * 1.5;
+      return Math.round(ms / n4) + " " + name + (isPlural ? "s" : "");
     }
   }
 });
@@ -125202,19 +125202,19 @@ var require_common = __commonJS({
             args.unshift("%O");
           }
           let index2 = 0;
-          args[0] = args[0].replace(/%([a-zA-Z%])/g, (match2, format5) => {
-            if (match2 === "%%") {
+          args[0] = args[0].replace(/%([a-zA-Z%])/g, (match3, format5) => {
+            if (match3 === "%%") {
               return "%";
             }
             index2++;
             const formatter = createDebug.formatters[format5];
             if (typeof formatter === "function") {
               const val = args[index2];
-              match2 = formatter.call(self2, val);
+              match3 = formatter.call(self2, val);
               args.splice(index2, 1);
               index2--;
             }
-            return match2;
+            return match3;
           });
           createDebug.formatArgs.call(self2, args);
           const logFn = self2.log || createDebug.log;
@@ -125449,12 +125449,12 @@ var require_browser = __commonJS({
       args.splice(1, 0, c5, "color: inherit");
       let index2 = 0;
       let lastC = 0;
-      args[0].replace(/%[a-zA-Z%]/g, (match2) => {
-        if (match2 === "%%") {
+      args[0].replace(/%[a-zA-Z%]/g, (match3) => {
+        if (match3 === "%%") {
           return;
         }
         index2++;
-        if (match2 === "%c") {
+        if (match3 === "%c") {
           lastC = index2;
         }
       });
@@ -125817,7 +125817,7 @@ var require_dist2 = __commonJS({
         const { stack } = new Error();
         if (typeof stack !== "string")
           return false;
-        return stack.split("\n").some((l3) => l3.indexOf("(https.js:") !== -1 || l3.indexOf("node:https:") !== -1);
+        return stack.split("\n").some((l4) => l4.indexOf("(https.js:") !== -1 || l4.indexOf("node:https:") !== -1);
       }
       // In order to support async signatures in `connect()` and Node's native
       // connection pooling in `http.Agent`, the array of sockets for each origin
@@ -126131,11 +126131,11 @@ var require_dist3 = __commonJS({
         socket.destroy();
         const fakeSocket = new net.Socket({ writable: false });
         fakeSocket.readable = true;
-        req.once("socket", (s2) => {
+        req.once("socket", (s4) => {
           debug("Replaying proxy buffer for failed request");
-          (0, assert_1.default)(s2.listenerCount("data") > 0);
-          s2.push(buffered);
-          s2.push(null);
+          (0, assert_1.default)(s4.listenerCount("data") > 0);
+          s4.push(buffered);
+          s4.push(null);
         });
         return fakeSocket;
       }
@@ -126647,9 +126647,9 @@ var splitRoutingPath = (routePath) => {
 };
 var extractGroupsFromPath = (path2) => {
   const groups = [];
-  path2 = path2.replace(/\{[^}]+\}/g, (match2, index2) => {
+  path2 = path2.replace(/\{[^}]+\}/g, (match3, index2) => {
     const mark = `@${index2}`;
-    groups.push([mark, match2]);
+    groups.push([mark, match3]);
     return mark;
   });
   return { groups, path: path2 };
@@ -126671,14 +126671,14 @@ var getPattern = (label, next) => {
   if (label === "*") {
     return "*";
   }
-  const match2 = label.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
-  if (match2) {
+  const match3 = label.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
+  if (match3) {
     const cacheKey = `${label}#${next}`;
     if (!patternCache[cacheKey]) {
-      if (match2[2]) {
-        patternCache[cacheKey] = next && next[0] !== ":" && next[0] !== "*" ? [cacheKey, match2[1], new RegExp(`^${match2[2]}(?=/${next})`)] : [label, match2[1], new RegExp(`^${match2[2]}$`)];
+      if (match3[2]) {
+        patternCache[cacheKey] = next && next[0] !== ":" && next[0] !== "*" ? [cacheKey, match3[1], new RegExp(`^${match3[2]}(?=/${next})`)] : [label, match3[1], new RegExp(`^${match3[2]}$`)];
       } else {
-        patternCache[cacheKey] = [label, match2[1], true];
+        patternCache[cacheKey] = [label, match3[1], true];
       }
     }
     return patternCache[cacheKey];
@@ -126689,11 +126689,11 @@ var tryDecode = (str, decoder2) => {
   try {
     return decoder2(str);
   } catch {
-    return str.replace(/(?:%[0-9A-Fa-f]{2})+/g, (match2) => {
+    return str.replace(/(?:%[0-9A-Fa-f]{2})+/g, (match3) => {
       try {
-        return decoder2(match2);
+        return decoder2(match3);
       } catch {
-        return match2;
+        return match3;
       }
     });
   }
@@ -127676,14 +127676,14 @@ var Hono = class _Hono {
     this.getPath = strict ?? true ? options.getPath ?? getPath : getPathNoStrict;
   }
   #clone() {
-    const clone2 = new _Hono({
+    const clone3 = new _Hono({
       router: this.router,
       getPath: this.getPath
     });
-    clone2.errorHandler = this.errorHandler;
-    clone2.#notFoundHandler = this.#notFoundHandler;
-    clone2.routes = this.routes;
-    return clone2;
+    clone3.errorHandler = this.errorHandler;
+    clone3.#notFoundHandler = this.#notFoundHandler;
+    clone3.routes = this.routes;
+    return clone3;
   }
   #notFoundHandler = notFoundHandler;
   // Cannot use `#` because it requires visibility at JavaScript runtime.
@@ -127983,7 +127983,7 @@ var createNullObject = () => /* @__PURE__ */ Object.create(null);
 var emptyParam = [];
 function match(method, path2) {
   const matchers = this.buildAllMatchers();
-  const match2 = ((method2, path22) => {
+  const match22 = ((method2, path22) => {
     const matcher = matchers[method2] || matchers[METHOD_NAME_ALL];
     const staticMatch = matcher[2][path22];
     if (staticMatch) {
@@ -127996,8 +127996,8 @@ function match(method, path2) {
     const index2 = match3.indexOf("", 1);
     return [matcher[1][index2], match3];
   });
-  this.match = match2;
-  return match2(method, path2);
+  this.match = match22;
+  return match22(method, path2);
 }
 
 // node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/node.js
@@ -128177,7 +128177,7 @@ function buildWildcardRegExp(path2) {
   return wildcardRegExpCache[path2] ??= new RegExp(
     `^${path2.replace(
       /\/:[^/{}]+(?:\{\[\^\/]\+})?(?=[/{]|$)|\/?\*$|([.\\+*[^\]$()?{}|])/g,
-      (match2, metaChar) => metaChar ? `\\${metaChar}` : match2 === "/*" ? TAIL_WILDCARD_REG_EXP_STR : match2 === "*" ? ONLY_WILDCARD_REG_EXP_STR : `/:${LABEL_REG_EXP_STR}`
+      (match22, metaChar) => metaChar ? `\\${metaChar}` : match22 === "/*" ? TAIL_WILDCARD_REG_EXP_STR : match22 === "*" ? ONLY_WILDCARD_REG_EXP_STR : `/:${LABEL_REG_EXP_STR}`
     )}$`
   );
 }
@@ -128445,10 +128445,10 @@ var Node2 = class _Node2 {
           if (matcher !== true) {
             if (!partOffsets) {
               partOffsets = [];
-              let offset = path2[0] === "/" ? 1 : 0;
+              let offset2 = path2[0] === "/" ? 1 : 0;
               for (let p3 = 0; p3 < len; p3++) {
-                partOffsets[p3] = offset;
-                offset += parts[p3].length + 1;
+                partOffsets[p3] = offset2;
+                offset2 += parts[p3].length + 1;
               }
             }
             const restPathString = path2.slice(partOffsets[i5]);
@@ -128539,11 +128539,11 @@ var Hono2 = class extends Hono {
 // node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/mime.js
 var getMimeType = (filename, mimes = baseMimes) => {
   const regexp = /\.([a-zA-Z0-9]+?)$/;
-  const match2 = filename.match(regexp);
-  if (!match2) {
+  const match3 = filename.match(regexp);
+  if (!match3) {
     return;
   }
-  return mimes[match2[1].toLowerCase()];
+  return mimes[match3[1].toLowerCase()];
 };
 var _baseMimes = {
   aac: "audio/aac",
@@ -128656,11 +128656,11 @@ var tryDecode2 = (str, decoder2) => {
   try {
     return decoder2(str);
   } catch {
-    return str.replace(/(?:%[0-9A-Fa-f]{2})+/g, (match2) => {
+    return str.replace(/(?:%[0-9A-Fa-f]{2})+/g, (match3) => {
       try {
-        return decoder2(match2);
+        return decoder2(match3);
       } catch {
-        return match2;
+        return match3;
       }
     });
   }
@@ -129170,7 +129170,7 @@ function getCSPDirectives(contentSecurityPolicy, headerName) {
     resultValues.push(
       directive.replace(
         /[A-Z]+(?![a-z])|[A-Z]/g,
-        (match2, offset) => offset ? "-" + match2.toLowerCase() : match2.toLowerCase()
+        (match3, offset2) => offset2 ? "-" + match3.toLowerCase() : match3.toLowerCase()
       ),
       ...valueArray.flatMap((value2) => [" ", value2]),
       "; "
@@ -129180,11 +129180,11 @@ function getCSPDirectives(contentSecurityPolicy, headerName) {
   return callbacks.length === 0 ? [void 0, resultValues.join("")] : [
     (ctx, headersToSet) => headersToSet.map((values) => {
       if (values[0] === headerName) {
-        const clone2 = values[1].slice();
+        const clone3 = values[1].slice();
         callbacks.forEach((cb) => {
-          cb(ctx, clone2);
+          cb(ctx, clone3);
         });
-        return [values[0], clone2.join("")];
+        return [values[0], clone3.join("")];
       } else {
         return values;
       }
@@ -131655,32 +131655,32 @@ function hexToBytes(hex5) {
   }
   return new Uint8Array(bytes);
 }
-function bytesToFloat64(bytes, offset) {
+function bytesToFloat64(bytes, offset2) {
   const buffer = new ArrayBuffer(8);
   const view = new DataView(buffer);
   for (let i5 = 0; i5 < 8; i5++) {
-    view.setUint8(i5, bytes[offset + i5]);
+    view.setUint8(i5, bytes[offset2 + i5]);
   }
   return view.getFloat64(0, true);
 }
 function parseEWKB(hex5) {
   const bytes = hexToBytes(hex5);
-  let offset = 0;
-  const byteOrder = bytes[offset];
-  offset += 1;
+  let offset2 = 0;
+  const byteOrder = bytes[offset2];
+  offset2 += 1;
   const view = new DataView(bytes.buffer);
-  const geomType = view.getUint32(offset, byteOrder === 1);
-  offset += 4;
+  const geomType = view.getUint32(offset2, byteOrder === 1);
+  offset2 += 4;
   let _srid;
   if (geomType & 536870912) {
-    _srid = view.getUint32(offset, byteOrder === 1);
-    offset += 4;
+    _srid = view.getUint32(offset2, byteOrder === 1);
+    offset2 += 4;
   }
   if ((geomType & 65535) === 1) {
-    const x = bytesToFloat64(bytes, offset);
-    offset += 8;
-    const y = bytesToFloat64(bytes, offset);
-    offset += 8;
+    const x = bytesToFloat64(bytes, offset2);
+    offset2 += 8;
+    const y = bytesToFloat64(bytes, offset2);
+    offset2 += 8;
     return [x, y];
   }
   throw new Error("Unsupported geometry type");
@@ -131977,9 +131977,9 @@ var PgTimestampString = class extends PgColumn {
     if (typeof value === "string") return value;
     const shortened = value.toISOString().slice(0, -1).replace("T", " ");
     if (this.withTimezone) {
-      const offset = value.getTimezoneOffset();
-      const sign3 = offset <= 0 ? "+" : "-";
-      return `${shortened}${sign3}${Math.floor(Math.abs(offset) / 60).toString().padStart(2, "0")}`;
+      const offset2 = value.getTimezoneOffset();
+      const sign3 = offset2 <= 0 ? "+" : "-";
+      return `${shortened}${sign3}${Math.floor(Math.abs(offset2) / 60).toString().padStart(2, "0")}`;
     }
     return shortened;
   }
@@ -132710,6 +132710,7 @@ __export(schema_exports, {
   session: () => session,
   syncMutations: () => syncMutations,
   tags: () => tags,
+  timetables: () => timetables,
   user: () => user,
   verification: () => verification,
   workspaces: () => workspaces
@@ -133167,7 +133168,7 @@ var PgDialect = class {
     orderBy,
     groupBy,
     limit,
-    offset,
+    offset: offset2,
     lockingClause,
     distinct,
     setOperators
@@ -133203,7 +133204,7 @@ var PgDialect = class {
       groupBySql = sql` group by ${sql.join(groupBy, sql`, `)}`;
     }
     const limitSql = typeof limit === "object" || typeof limit === "number" && limit >= 0 ? sql` limit ${limit}` : void 0;
-    const offsetSql = offset ? sql` offset ${offset}` : void 0;
+    const offsetSql = offset2 ? sql` offset ${offset2}` : void 0;
     const lockingClauseSql = sql.empty();
     if (lockingClause) {
       const clauseSql = sql` for ${sql.raw(lockingClause.strength)}`;
@@ -133243,7 +133244,7 @@ var PgDialect = class {
   }
   buildSetOperationQuery({
     leftSelect,
-    setOperator: { type, isAll, rightSelect, limit, orderBy, offset }
+    setOperator: { type, isAll, rightSelect, limit, orderBy, offset: offset2 }
   }) {
     const leftChunk = sql`(${leftSelect.getSQL()}) `;
     const rightChunk = sql`(${rightSelect.getSQL()})`;
@@ -133269,7 +133270,7 @@ var PgDialect = class {
     }
     const limitSql = typeof limit === "object" || typeof limit === "number" && limit >= 0 ? sql` limit ${limit}` : void 0;
     const operatorChunk = sql.raw(`${type} ${isAll ? "all " : ""}`);
-    const offsetSql = offset ? sql` offset ${offset}` : void 0;
+    const offsetSql = offset2 ? sql` offset ${offset2}` : void 0;
     return sql`${leftChunk}${operatorChunk}${rightChunk}${orderBySql}${limitSql}${offsetSql}`;
   }
   buildInsertQuery({ table: table2, values: valuesOrSelect, onConflict, returning, withList, select, overridingSystemValue_ }) {
@@ -133847,7 +133848,7 @@ var PgDialect = class {
     joinOn
   }) {
     let selection = [];
-    let limit, offset, orderBy = [], where;
+    let limit, offset2, orderBy = [], where;
     const joins = [];
     if (config5 === true) {
       const selectionEntries = Object.entries(tableConfig.columns);
@@ -133927,7 +133928,7 @@ var PgDialect = class {
         return mapColumnsInSQLToAlias(orderByValue, tableAlias);
       });
       limit = config5.limit;
-      offset = config5.offset;
+      offset2 = config5.offset;
       for (const {
         tsKey: selectedRelationTsKey,
         queryConfig: selectedRelationConfigValue,
@@ -133997,7 +133998,7 @@ var PgDialect = class {
         relationTableTsKey: tableConfig.tsName,
         selection
       }];
-      const needsSubquery = limit !== void 0 || offset !== void 0 || orderBy.length > 0;
+      const needsSubquery = limit !== void 0 || offset2 !== void 0 || orderBy.length > 0;
       if (needsSubquery) {
         result = this.buildSelectQuery({
           table: aliasedTable(table2, tableAlias),
@@ -134008,13 +134009,13 @@ var PgDialect = class {
           }],
           where,
           limit,
-          offset,
+          offset: offset2,
           orderBy,
           setOperators: []
         });
         where = void 0;
         limit = void 0;
-        offset = void 0;
+        offset2 = void 0;
         orderBy = [];
       } else {
         result = aliasedTable(table2, tableAlias);
@@ -134029,7 +134030,7 @@ var PgDialect = class {
         joins,
         where,
         limit,
-        offset,
+        offset: offset2,
         orderBy,
         setOperators: []
       });
@@ -134044,7 +134045,7 @@ var PgDialect = class {
         joins,
         where,
         limit,
-        offset,
+        offset: offset2,
         orderBy,
         setOperators: []
       });
@@ -134752,11 +134753,11 @@ var PgSelectQueryBuilderBase = class extends TypedQueryBuilder {
    * await db.select().from(people).offset(10).limit(10);
    * ```
    */
-  offset(offset) {
+  offset(offset2) {
     if (this.config.setOperators.length > 0) {
-      this.config.setOperators.at(-1).offset = offset;
+      this.config.setOperators.at(-1).offset = offset2;
     } else {
-      this.config.offset = offset;
+      this.config.offset = offset2;
     }
     return this;
   }
@@ -136258,7 +136259,8 @@ var passkey = pgTable("passkey", {
 var workspaces = pgTable("workspaces", { id: uuid("id").primaryKey().defaultRandom(), ownerId: text("owner_id").notNull().references(() => user.id, { onDelete: "cascade" }), name: text("name").notNull().default("\u6211\u7684\u65E5\u7A0B"), timezone: text("timezone").notNull().default("Asia/Shanghai"), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() });
 var calendars = pgTable("calendars", { id: uuid("id").primaryKey().defaultRandom(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), name: text("name").notNull(), color: text("color").notNull().default("#f97316"), kind: text("kind").notNull().default("local"), timezone: text("timezone").notNull().default("Asia/Shanghai"), isVisible: boolean("is_visible").notNull().default(true), version: integer("version").notNull().default(1), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("calendars_workspace_idx").on(table2.workspaceId)]);
 var tags = pgTable("tags", { id: uuid("id").primaryKey().defaultRandom(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), name: text("name").notNull(), color: text("color").notNull().default("#64748b"), version: integer("version").notNull().default(1), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [uniqueIndex("tags_workspace_name_idx").on(table2.workspaceId, table2.name)]);
-var items = pgTable("items", { id: uuid("id").primaryKey().defaultRandom(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), calendarId: uuid("calendar_id").references(() => calendars.id, { onDelete: "set null" }), parentId: uuid("parent_id"), kind: text("kind").notNull().default("event"), title: text("title").notNull(), description: text("description").notNull().default(""), location: text("location").notNull().default(""), startAt: timestamp("start_at", { withTimezone: true }), endAt: timestamp("end_at", { withTimezone: true }), dueAt: timestamp("due_at", { withTimezone: true }), isAllDay: boolean("is_all_day").notNull().default(false), timezone: text("timezone").notNull().default("Asia/Shanghai"), priority: text("priority").notNull().default("none"), status: text("status").notNull().default("active"), completedAt: timestamp("completed_at", { withTimezone: true }), autoRollover: boolean("auto_rollover").notNull().default(false), showInTimetable: boolean("show_in_timetable").notNull().default(false), timetableColor: text("timetable_color"), courseStartDate: date("course_start_date"), courseEndDate: date("course_end_date"), courseSlots: jsonb("course_slots").$type().notNull().default([]), recurrence: jsonb("recurrence").$type(), searchText: text("search_text").notNull().default(""), version: integer("version").notNull().default(1), deletedAt: timestamp("deleted_at", { withTimezone: true }), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("items_workspace_start_idx").on(table2.workspaceId, table2.startAt), index("items_workspace_status_idx").on(table2.workspaceId, table2.status), index("items_parent_idx").on(table2.parentId)]);
+var timetables = pgTable("timetables", { id: uuid("id").primaryKey().defaultRandom(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), name: text("name").notNull(), sortOrder: integer("sort_order").notNull().default(0), semesterStartDate: date("semester_start_date"), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [uniqueIndex("timetables_workspace_name_idx").on(table2.workspaceId, table2.name), uniqueIndex("timetables_workspace_order_idx").on(table2.workspaceId, table2.sortOrder)]);
+var items = pgTable("items", { id: uuid("id").primaryKey().defaultRandom(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), calendarId: uuid("calendar_id").references(() => calendars.id, { onDelete: "set null" }), parentId: uuid("parent_id"), kind: text("kind").notNull().default("event"), title: text("title").notNull(), description: text("description").notNull().default(""), location: text("location").notNull().default(""), startAt: timestamp("start_at", { withTimezone: true }), endAt: timestamp("end_at", { withTimezone: true }), dueAt: timestamp("due_at", { withTimezone: true }), isAllDay: boolean("is_all_day").notNull().default(false), timezone: text("timezone").notNull().default("Asia/Shanghai"), priority: text("priority").notNull().default("none"), status: text("status").notNull().default("active"), completedAt: timestamp("completed_at", { withTimezone: true }), autoRollover: boolean("auto_rollover").notNull().default(false), showInTimetable: boolean("show_in_timetable").notNull().default(false), timetableId: uuid("timetable_id").references(() => timetables.id, { onDelete: "set null" }), timetableColor: text("timetable_color"), courseStartDate: date("course_start_date"), courseEndDate: date("course_end_date"), courseSlots: jsonb("course_slots").$type().notNull().default([]), recurrence: jsonb("recurrence").$type(), searchText: text("search_text").notNull().default(""), version: integer("version").notNull().default(1), deletedAt: timestamp("deleted_at", { withTimezone: true }), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("items_workspace_start_idx").on(table2.workspaceId, table2.startAt), index("items_workspace_status_idx").on(table2.workspaceId, table2.status), index("items_parent_idx").on(table2.parentId)]);
 var recurrenceExceptions = pgTable("recurrence_exceptions", { id: uuid("id").primaryKey().defaultRandom(), itemId: uuid("item_id").notNull().references(() => items.id, { onDelete: "cascade" }), occurrenceKey: text("occurrence_key").notNull(), action: text("action").notNull(), override: jsonb("override").$type(), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [uniqueIndex("recurrence_exception_item_key_idx").on(table2.itemId, table2.occurrenceKey)]);
 var itemTags = pgTable("item_tags", { itemId: uuid("item_id").notNull().references(() => items.id, { onDelete: "cascade" }), tagId: uuid("tag_id").notNull().references(() => tags.id, { onDelete: "cascade" }) }, (table2) => [primaryKey({ columns: [table2.itemId, table2.tagId] })]);
 var reminderRules = pgTable("reminder_rules", { id: uuid("id").primaryKey().defaultRandom(), itemId: uuid("item_id").notNull().references(() => items.id, { onDelete: "cascade" }), trigger: text("trigger").notNull().default("before_start"), offsetMinutes: integer("offset_minutes").notNull(), channels: jsonb("channels").$type().notNull().default(["in_app"]), repeatEveryMinutes: integer("repeat_every_minutes"), enabled: boolean("enabled").notNull().default(true), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("reminder_rules_item_idx").on(table2.itemId)]);
@@ -136270,7 +136272,7 @@ var syncMutations = pgTable("sync_mutations", { id: uuid("id").primaryKey().defa
 var changeLog = pgTable("change_log", { id: bigserial("id", { mode: "number" }).primaryKey(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), entity: text("entity").notNull(), entityId: uuid("entity_id").notNull(), operation: text("operation").notNull(), version: integer("version").notNull(), payload: jsonb("payload").$type(), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("change_log_workspace_id_idx").on(table2.workspaceId, table2.id)]);
 var auditLogs = pgTable("audit_logs", { id: bigserial("id", { mode: "number" }).primaryKey(), workspaceId: uuid("workspace_id").references(() => workspaces.id, { onDelete: "set null" }), actorId: text("actor_id"), action: text("action").notNull(), entity: text("entity"), entityId: text("entity_id"), metadata: jsonb("metadata").$type(), ipAddress: text("ip_address"), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("audit_logs_workspace_idx").on(table2.workspaceId, table2.createdAt)]);
 var appSettings = pgTable("app_settings", { workspaceId: uuid("workspace_id").primaryKey().references(() => workspaces.id, { onDelete: "cascade" }), theme: text("theme").notNull().default("system"), defaultView: text("default_view").notNull().default("responsive"), defaultReminderMinutes: integer("default_reminder_minutes").notNull().default(15), defaultReminderChannels: jsonb("default_reminder_channels").$type().notNull().default(["in_app", "browser_push"]), weekStartsOn: integer("week_starts_on").notNull().default(1), semesterStartDate: date("semester_start_date"), reminderSoundEnabled: boolean("reminder_sound_enabled").notNull().default(true), icsToken: text("ics_token").notNull(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() });
-var schedulePeriods = pgTable("schedule_periods", { id: uuid("id").primaryKey().defaultRandom(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), name: text("name").notNull(), startTime: text("start_time").notNull(), endTime: text("end_time").notNull(), sortOrder: integer("sort_order").notNull(), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [uniqueIndex("schedule_periods_workspace_order_idx").on(table2.workspaceId, table2.sortOrder)]);
+var schedulePeriods = pgTable("schedule_periods", { id: uuid("id").primaryKey().defaultRandom(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), timetableId: uuid("timetable_id").references(() => timetables.id, { onDelete: "cascade" }), name: text("name").notNull(), startTime: text("start_time").notNull(), endTime: text("end_time").notNull(), sortOrder: integer("sort_order").notNull(), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("schedule_periods_workspace_idx").on(table2.workspaceId), uniqueIndex("schedule_periods_timetable_order_idx").on(table2.timetableId, table2.sortOrder)]);
 var aiUsage = pgTable("ai_usage", { workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), usageDate: date("usage_date").notNull(), requestCount: integer("request_count").notNull().default(0), updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [primaryKey({ columns: [table2.workspaceId, table2.usageDate] })]);
 var demoSessions = pgTable("demo_sessions", { id: uuid("id").primaryKey().defaultRandom(), tokenHash: text("token_hash").notNull().unique(), workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }), expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(), lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull().defaultNow(), createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow() }, (table2) => [index("demo_sessions_expires_idx").on(table2.expiresAt), index("demo_sessions_workspace_idx").on(table2.workspaceId)]);
 
@@ -136647,6 +136649,7 @@ var itemFieldsSchema = external_exports.object({
   completedAt: external_exports.string().datetime({ offset: true }).nullable().optional(),
   autoRollover: external_exports.boolean().default(false),
   showInTimetable: external_exports.boolean().default(false),
+  timetableId: external_exports.string().uuid().nullable().optional(),
   timetableColor: external_exports.string().regex(/^#[0-9a-fA-F]{6}$/).nullable().optional(),
   courseStartDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   courseEndDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
@@ -136722,20 +136725,6532 @@ var searchFiltersSchema = external_exports.object({
 
 // packages/domain/src/recurrence.ts
 var rruleImport = __toESM(require_rrule(), 1);
+
+// node_modules/.pnpm/luxon@3.7.2/node_modules/luxon/build/es6/luxon.mjs
+var LuxonError = class extends Error {
+};
+var InvalidDateTimeError = class extends LuxonError {
+  constructor(reason) {
+    super(`Invalid DateTime: ${reason.toMessage()}`);
+  }
+};
+var InvalidIntervalError = class extends LuxonError {
+  constructor(reason) {
+    super(`Invalid Interval: ${reason.toMessage()}`);
+  }
+};
+var InvalidDurationError = class extends LuxonError {
+  constructor(reason) {
+    super(`Invalid Duration: ${reason.toMessage()}`);
+  }
+};
+var ConflictingSpecificationError = class extends LuxonError {
+};
+var InvalidUnitError = class extends LuxonError {
+  constructor(unit) {
+    super(`Invalid unit ${unit}`);
+  }
+};
+var InvalidArgumentError = class extends LuxonError {
+};
+var ZoneIsAbstractError = class extends LuxonError {
+  constructor() {
+    super("Zone is an abstract class");
+  }
+};
+var n = "numeric";
+var s = "short";
+var l = "long";
+var DATE_SHORT = {
+  year: n,
+  month: n,
+  day: n
+};
+var DATE_MED = {
+  year: n,
+  month: s,
+  day: n
+};
+var DATE_MED_WITH_WEEKDAY = {
+  year: n,
+  month: s,
+  day: n,
+  weekday: s
+};
+var DATE_FULL = {
+  year: n,
+  month: l,
+  day: n
+};
+var DATE_HUGE = {
+  year: n,
+  month: l,
+  day: n,
+  weekday: l
+};
+var TIME_SIMPLE = {
+  hour: n,
+  minute: n
+};
+var TIME_WITH_SECONDS = {
+  hour: n,
+  minute: n,
+  second: n
+};
+var TIME_WITH_SHORT_OFFSET = {
+  hour: n,
+  minute: n,
+  second: n,
+  timeZoneName: s
+};
+var TIME_WITH_LONG_OFFSET = {
+  hour: n,
+  minute: n,
+  second: n,
+  timeZoneName: l
+};
+var TIME_24_SIMPLE = {
+  hour: n,
+  minute: n,
+  hourCycle: "h23"
+};
+var TIME_24_WITH_SECONDS = {
+  hour: n,
+  minute: n,
+  second: n,
+  hourCycle: "h23"
+};
+var TIME_24_WITH_SHORT_OFFSET = {
+  hour: n,
+  minute: n,
+  second: n,
+  hourCycle: "h23",
+  timeZoneName: s
+};
+var TIME_24_WITH_LONG_OFFSET = {
+  hour: n,
+  minute: n,
+  second: n,
+  hourCycle: "h23",
+  timeZoneName: l
+};
+var DATETIME_SHORT = {
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: n
+};
+var DATETIME_SHORT_WITH_SECONDS = {
+  year: n,
+  month: n,
+  day: n,
+  hour: n,
+  minute: n,
+  second: n
+};
+var DATETIME_MED = {
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: n
+};
+var DATETIME_MED_WITH_SECONDS = {
+  year: n,
+  month: s,
+  day: n,
+  hour: n,
+  minute: n,
+  second: n
+};
+var DATETIME_MED_WITH_WEEKDAY = {
+  year: n,
+  month: s,
+  day: n,
+  weekday: s,
+  hour: n,
+  minute: n
+};
+var DATETIME_FULL = {
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: n,
+  timeZoneName: s
+};
+var DATETIME_FULL_WITH_SECONDS = {
+  year: n,
+  month: l,
+  day: n,
+  hour: n,
+  minute: n,
+  second: n,
+  timeZoneName: s
+};
+var DATETIME_HUGE = {
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: n,
+  timeZoneName: l
+};
+var DATETIME_HUGE_WITH_SECONDS = {
+  year: n,
+  month: l,
+  day: n,
+  weekday: l,
+  hour: n,
+  minute: n,
+  second: n,
+  timeZoneName: l
+};
+var Zone = class {
+  /**
+   * The type of zone
+   * @abstract
+   * @type {string}
+   */
+  get type() {
+    throw new ZoneIsAbstractError();
+  }
+  /**
+   * The name of this zone.
+   * @abstract
+   * @type {string}
+   */
+  get name() {
+    throw new ZoneIsAbstractError();
+  }
+  /**
+   * The IANA name of this zone.
+   * Defaults to `name` if not overwritten by a subclass.
+   * @abstract
+   * @type {string}
+   */
+  get ianaName() {
+    return this.name;
+  }
+  /**
+   * Returns whether the offset is known to be fixed for the whole year.
+   * @abstract
+   * @type {boolean}
+   */
+  get isUniversal() {
+    throw new ZoneIsAbstractError();
+  }
+  /**
+   * Returns the offset's common name (such as EST) at the specified timestamp
+   * @abstract
+   * @param {number} ts - Epoch milliseconds for which to get the name
+   * @param {Object} opts - Options to affect the format
+   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
+   * @param {string} opts.locale - What locale to return the offset name in.
+   * @return {string}
+   */
+  offsetName(ts, opts) {
+    throw new ZoneIsAbstractError();
+  }
+  /**
+   * Returns the offset's value as a string
+   * @abstract
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */
+  formatOffset(ts, format5) {
+    throw new ZoneIsAbstractError();
+  }
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   * @abstract
+   * @param {number} ts - Epoch milliseconds for which to compute the offset
+   * @return {number}
+   */
+  offset(ts) {
+    throw new ZoneIsAbstractError();
+  }
+  /**
+   * Return whether this Zone is equal to another zone
+   * @abstract
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */
+  equals(otherZone) {
+    throw new ZoneIsAbstractError();
+  }
+  /**
+   * Return whether this Zone is valid.
+   * @abstract
+   * @type {boolean}
+   */
+  get isValid() {
+    throw new ZoneIsAbstractError();
+  }
+};
+var singleton$1 = null;
+var SystemZone = class _SystemZone extends Zone {
+  /**
+   * Get a singleton instance of the local zone
+   * @return {SystemZone}
+   */
+  static get instance() {
+    if (singleton$1 === null) {
+      singleton$1 = new _SystemZone();
+    }
+    return singleton$1;
+  }
+  /** @override **/
+  get type() {
+    return "system";
+  }
+  /** @override **/
+  get name() {
+    return new Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+  /** @override **/
+  get isUniversal() {
+    return false;
+  }
+  /** @override **/
+  offsetName(ts, { format: format5, locale }) {
+    return parseZoneInfo(ts, format5, locale);
+  }
+  /** @override **/
+  formatOffset(ts, format5) {
+    return formatOffset(this.offset(ts), format5);
+  }
+  /** @override **/
+  offset(ts) {
+    return -new Date(ts).getTimezoneOffset();
+  }
+  /** @override **/
+  equals(otherZone) {
+    return otherZone.type === "system";
+  }
+  /** @override **/
+  get isValid() {
+    return true;
+  }
+};
+var dtfCache = /* @__PURE__ */ new Map();
+function makeDTF(zoneName) {
+  let dtf = dtfCache.get(zoneName);
+  if (dtf === void 0) {
+    dtf = new Intl.DateTimeFormat("en-US", {
+      hour12: false,
+      timeZone: zoneName,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      era: "short"
+    });
+    dtfCache.set(zoneName, dtf);
+  }
+  return dtf;
+}
+var typeToPos = {
+  year: 0,
+  month: 1,
+  day: 2,
+  era: 3,
+  hour: 4,
+  minute: 5,
+  second: 6
+};
+function hackyOffset(dtf, date7) {
+  const formatted = dtf.format(date7).replace(/\u200E/g, ""), parsed = /(\d+)\/(\d+)\/(\d+) (AD|BC),? (\d+):(\d+):(\d+)/.exec(formatted), [, fMonth, fDay, fYear, fadOrBc, fHour, fMinute, fSecond] = parsed;
+  return [fYear, fMonth, fDay, fadOrBc, fHour, fMinute, fSecond];
+}
+function partsOffset(dtf, date7) {
+  const formatted = dtf.formatToParts(date7);
+  const filled = [];
+  for (let i5 = 0; i5 < formatted.length; i5++) {
+    const { type, value } = formatted[i5];
+    const pos = typeToPos[type];
+    if (type === "era") {
+      filled[pos] = value;
+    } else if (!isUndefined(pos)) {
+      filled[pos] = parseInt(value, 10);
+    }
+  }
+  return filled;
+}
+var ianaZoneCache = /* @__PURE__ */ new Map();
+var IANAZone = class _IANAZone extends Zone {
+  /**
+   * @param {string} name - Zone name
+   * @return {IANAZone}
+   */
+  static create(name) {
+    let zone = ianaZoneCache.get(name);
+    if (zone === void 0) {
+      ianaZoneCache.set(name, zone = new _IANAZone(name));
+    }
+    return zone;
+  }
+  /**
+   * Reset local caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCache() {
+    ianaZoneCache.clear();
+    dtfCache.clear();
+  }
+  /**
+   * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
+   * @param {string} s - The string to check validity on
+   * @example IANAZone.isValidSpecifier("America/New_York") //=> true
+   * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
+   * @deprecated For backward compatibility, this forwards to isValidZone, better use `isValidZone()` directly instead.
+   * @return {boolean}
+   */
+  static isValidSpecifier(s4) {
+    return this.isValidZone(s4);
+  }
+  /**
+   * Returns whether the provided string identifies a real zone
+   * @param {string} zone - The string to check
+   * @example IANAZone.isValidZone("America/New_York") //=> true
+   * @example IANAZone.isValidZone("Fantasia/Castle") //=> false
+   * @example IANAZone.isValidZone("Sport~~blorp") //=> false
+   * @return {boolean}
+   */
+  static isValidZone(zone) {
+    if (!zone) {
+      return false;
+    }
+    try {
+      new Intl.DateTimeFormat("en-US", { timeZone: zone }).format();
+      return true;
+    } catch (e5) {
+      return false;
+    }
+  }
+  constructor(name) {
+    super();
+    this.zoneName = name;
+    this.valid = _IANAZone.isValidZone(name);
+  }
+  /**
+   * The type of zone. `iana` for all instances of `IANAZone`.
+   * @override
+   * @type {string}
+   */
+  get type() {
+    return "iana";
+  }
+  /**
+   * The name of this zone (i.e. the IANA zone name).
+   * @override
+   * @type {string}
+   */
+  get name() {
+    return this.zoneName;
+  }
+  /**
+   * Returns whether the offset is known to be fixed for the whole year:
+   * Always returns false for all IANA zones.
+   * @override
+   * @type {boolean}
+   */
+  get isUniversal() {
+    return false;
+  }
+  /**
+   * Returns the offset's common name (such as EST) at the specified timestamp
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the name
+   * @param {Object} opts - Options to affect the format
+   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
+   * @param {string} opts.locale - What locale to return the offset name in.
+   * @return {string}
+   */
+  offsetName(ts, { format: format5, locale }) {
+    return parseZoneInfo(ts, format5, locale, this.name);
+  }
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */
+  formatOffset(ts, format5) {
+    return formatOffset(this.offset(ts), format5);
+  }
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to compute the offset
+   * @return {number}
+   */
+  offset(ts) {
+    if (!this.valid) return NaN;
+    const date7 = new Date(ts);
+    if (isNaN(date7)) return NaN;
+    const dtf = makeDTF(this.name);
+    let [year2, month, day, adOrBc, hour, minute, second] = dtf.formatToParts ? partsOffset(dtf, date7) : hackyOffset(dtf, date7);
+    if (adOrBc === "BC") {
+      year2 = -Math.abs(year2) + 1;
+    }
+    const adjustedHour = hour === 24 ? 0 : hour;
+    const asUTC = objToLocalTS({
+      year: year2,
+      month,
+      day,
+      hour: adjustedHour,
+      minute,
+      second,
+      millisecond: 0
+    });
+    let asTS = +date7;
+    const over = asTS % 1e3;
+    asTS -= over >= 0 ? over : 1e3 + over;
+    return (asUTC - asTS) / (60 * 1e3);
+  }
+  /**
+   * Return whether this Zone is equal to another zone
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */
+  equals(otherZone) {
+    return otherZone.type === "iana" && otherZone.name === this.name;
+  }
+  /**
+   * Return whether this Zone is valid.
+   * @override
+   * @type {boolean}
+   */
+  get isValid() {
+    return this.valid;
+  }
+};
+var intlLFCache = {};
+function getCachedLF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let dtf = intlLFCache[key];
+  if (!dtf) {
+    dtf = new Intl.ListFormat(locString, opts);
+    intlLFCache[key] = dtf;
+  }
+  return dtf;
+}
+var intlDTCache = /* @__PURE__ */ new Map();
+function getCachedDTF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let dtf = intlDTCache.get(key);
+  if (dtf === void 0) {
+    dtf = new Intl.DateTimeFormat(locString, opts);
+    intlDTCache.set(key, dtf);
+  }
+  return dtf;
+}
+var intlNumCache = /* @__PURE__ */ new Map();
+function getCachedINF(locString, opts = {}) {
+  const key = JSON.stringify([locString, opts]);
+  let inf = intlNumCache.get(key);
+  if (inf === void 0) {
+    inf = new Intl.NumberFormat(locString, opts);
+    intlNumCache.set(key, inf);
+  }
+  return inf;
+}
+var intlRelCache = /* @__PURE__ */ new Map();
+function getCachedRTF(locString, opts = {}) {
+  const { base, ...cacheKeyOpts } = opts;
+  const key = JSON.stringify([locString, cacheKeyOpts]);
+  let inf = intlRelCache.get(key);
+  if (inf === void 0) {
+    inf = new Intl.RelativeTimeFormat(locString, opts);
+    intlRelCache.set(key, inf);
+  }
+  return inf;
+}
+var sysLocaleCache = null;
+function systemLocale() {
+  if (sysLocaleCache) {
+    return sysLocaleCache;
+  } else {
+    sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
+    return sysLocaleCache;
+  }
+}
+var intlResolvedOptionsCache = /* @__PURE__ */ new Map();
+function getCachedIntResolvedOptions(locString) {
+  let opts = intlResolvedOptionsCache.get(locString);
+  if (opts === void 0) {
+    opts = new Intl.DateTimeFormat(locString).resolvedOptions();
+    intlResolvedOptionsCache.set(locString, opts);
+  }
+  return opts;
+}
+var weekInfoCache = /* @__PURE__ */ new Map();
+function getCachedWeekInfo(locString) {
+  let data = weekInfoCache.get(locString);
+  if (!data) {
+    const locale = new Intl.Locale(locString);
+    data = "getWeekInfo" in locale ? locale.getWeekInfo() : locale.weekInfo;
+    if (!("minimalDays" in data)) {
+      data = { ...fallbackWeekSettings, ...data };
+    }
+    weekInfoCache.set(locString, data);
+  }
+  return data;
+}
+function parseLocaleString(localeStr) {
+  const xIndex = localeStr.indexOf("-x-");
+  if (xIndex !== -1) {
+    localeStr = localeStr.substring(0, xIndex);
+  }
+  const uIndex = localeStr.indexOf("-u-");
+  if (uIndex === -1) {
+    return [localeStr];
+  } else {
+    let options;
+    let selectedStr;
+    try {
+      options = getCachedDTF(localeStr).resolvedOptions();
+      selectedStr = localeStr;
+    } catch (e5) {
+      const smaller = localeStr.substring(0, uIndex);
+      options = getCachedDTF(smaller).resolvedOptions();
+      selectedStr = smaller;
+    }
+    const { numberingSystem, calendar } = options;
+    return [selectedStr, numberingSystem, calendar];
+  }
+}
+function intlConfigString(localeStr, numberingSystem, outputCalendar) {
+  if (outputCalendar || numberingSystem) {
+    if (!localeStr.includes("-u-")) {
+      localeStr += "-u";
+    }
+    if (outputCalendar) {
+      localeStr += `-ca-${outputCalendar}`;
+    }
+    if (numberingSystem) {
+      localeStr += `-nu-${numberingSystem}`;
+    }
+    return localeStr;
+  } else {
+    return localeStr;
+  }
+}
+function mapMonths(f5) {
+  const ms = [];
+  for (let i5 = 1; i5 <= 12; i5++) {
+    const dt = DateTime.utc(2009, i5, 1);
+    ms.push(f5(dt));
+  }
+  return ms;
+}
+function mapWeekdays(f5) {
+  const ms = [];
+  for (let i5 = 1; i5 <= 7; i5++) {
+    const dt = DateTime.utc(2016, 11, 13 + i5);
+    ms.push(f5(dt));
+  }
+  return ms;
+}
+function listStuff(loc, length, englishFn, intlFn) {
+  const mode = loc.listingMode();
+  if (mode === "error") {
+    return null;
+  } else if (mode === "en") {
+    return englishFn(length);
+  } else {
+    return intlFn(length);
+  }
+}
+function supportsFastNumbers(loc) {
+  if (loc.numberingSystem && loc.numberingSystem !== "latn") {
+    return false;
+  } else {
+    return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || getCachedIntResolvedOptions(loc.locale).numberingSystem === "latn";
+  }
+}
+var PolyNumberFormatter = class {
+  constructor(intl, forceSimple, opts) {
+    this.padTo = opts.padTo || 0;
+    this.floor = opts.floor || false;
+    const { padTo, floor, ...otherOpts } = opts;
+    if (!forceSimple || Object.keys(otherOpts).length > 0) {
+      const intlOpts = { useGrouping: false, ...opts };
+      if (opts.padTo > 0) intlOpts.minimumIntegerDigits = opts.padTo;
+      this.inf = getCachedINF(intl, intlOpts);
+    }
+  }
+  format(i5) {
+    if (this.inf) {
+      const fixed = this.floor ? Math.floor(i5) : i5;
+      return this.inf.format(fixed);
+    } else {
+      const fixed = this.floor ? Math.floor(i5) : roundTo(i5, 3);
+      return padStart(fixed, this.padTo);
+    }
+  }
+};
+var PolyDateFormatter = class {
+  constructor(dt, intl, opts) {
+    this.opts = opts;
+    this.originalZone = void 0;
+    let z2 = void 0;
+    if (this.opts.timeZone) {
+      this.dt = dt;
+    } else if (dt.zone.type === "fixed") {
+      const gmtOffset = -1 * (dt.offset / 60);
+      const offsetZ = gmtOffset >= 0 ? `Etc/GMT+${gmtOffset}` : `Etc/GMT${gmtOffset}`;
+      if (dt.offset !== 0 && IANAZone.create(offsetZ).valid) {
+        z2 = offsetZ;
+        this.dt = dt;
+      } else {
+        z2 = "UTC";
+        this.dt = dt.offset === 0 ? dt : dt.setZone("UTC").plus({ minutes: dt.offset });
+        this.originalZone = dt.zone;
+      }
+    } else if (dt.zone.type === "system") {
+      this.dt = dt;
+    } else if (dt.zone.type === "iana") {
+      this.dt = dt;
+      z2 = dt.zone.name;
+    } else {
+      z2 = "UTC";
+      this.dt = dt.setZone("UTC").plus({ minutes: dt.offset });
+      this.originalZone = dt.zone;
+    }
+    const intlOpts = { ...this.opts };
+    intlOpts.timeZone = intlOpts.timeZone || z2;
+    this.dtf = getCachedDTF(intl, intlOpts);
+  }
+  format() {
+    if (this.originalZone) {
+      return this.formatToParts().map(({ value }) => value).join("");
+    }
+    return this.dtf.format(this.dt.toJSDate());
+  }
+  formatToParts() {
+    const parts = this.dtf.formatToParts(this.dt.toJSDate());
+    if (this.originalZone) {
+      return parts.map((part) => {
+        if (part.type === "timeZoneName") {
+          const offsetName = this.originalZone.offsetName(this.dt.ts, {
+            locale: this.dt.locale,
+            format: this.opts.timeZoneName
+          });
+          return {
+            ...part,
+            value: offsetName
+          };
+        } else {
+          return part;
+        }
+      });
+    }
+    return parts;
+  }
+  resolvedOptions() {
+    return this.dtf.resolvedOptions();
+  }
+};
+var PolyRelFormatter = class {
+  constructor(intl, isEnglish, opts) {
+    this.opts = { style: "long", ...opts };
+    if (!isEnglish && hasRelative()) {
+      this.rtf = getCachedRTF(intl, opts);
+    }
+  }
+  format(count2, unit) {
+    if (this.rtf) {
+      return this.rtf.format(count2, unit);
+    } else {
+      return formatRelativeTime(unit, count2, this.opts.numeric, this.opts.style !== "long");
+    }
+  }
+  formatToParts(count2, unit) {
+    if (this.rtf) {
+      return this.rtf.formatToParts(count2, unit);
+    } else {
+      return [];
+    }
+  }
+};
+var fallbackWeekSettings = {
+  firstDay: 1,
+  minimalDays: 4,
+  weekend: [6, 7]
+};
+var Locale = class _Locale {
+  static fromOpts(opts) {
+    return _Locale.create(
+      opts.locale,
+      opts.numberingSystem,
+      opts.outputCalendar,
+      opts.weekSettings,
+      opts.defaultToEN
+    );
+  }
+  static create(locale, numberingSystem, outputCalendar, weekSettings, defaultToEN = false) {
+    const specifiedLocale = locale || Settings.defaultLocale;
+    const localeR = specifiedLocale || (defaultToEN ? "en-US" : systemLocale());
+    const numberingSystemR = numberingSystem || Settings.defaultNumberingSystem;
+    const outputCalendarR = outputCalendar || Settings.defaultOutputCalendar;
+    const weekSettingsR = validateWeekSettings(weekSettings) || Settings.defaultWeekSettings;
+    return new _Locale(localeR, numberingSystemR, outputCalendarR, weekSettingsR, specifiedLocale);
+  }
+  static resetCache() {
+    sysLocaleCache = null;
+    intlDTCache.clear();
+    intlNumCache.clear();
+    intlRelCache.clear();
+    intlResolvedOptionsCache.clear();
+    weekInfoCache.clear();
+  }
+  static fromObject({ locale, numberingSystem, outputCalendar, weekSettings } = {}) {
+    return _Locale.create(locale, numberingSystem, outputCalendar, weekSettings);
+  }
+  constructor(locale, numbering, outputCalendar, weekSettings, specifiedLocale) {
+    const [parsedLocale, parsedNumberingSystem, parsedOutputCalendar] = parseLocaleString(locale);
+    this.locale = parsedLocale;
+    this.numberingSystem = numbering || parsedNumberingSystem || null;
+    this.outputCalendar = outputCalendar || parsedOutputCalendar || null;
+    this.weekSettings = weekSettings;
+    this.intl = intlConfigString(this.locale, this.numberingSystem, this.outputCalendar);
+    this.weekdaysCache = { format: {}, standalone: {} };
+    this.monthsCache = { format: {}, standalone: {} };
+    this.meridiemCache = null;
+    this.eraCache = {};
+    this.specifiedLocale = specifiedLocale;
+    this.fastNumbersCached = null;
+  }
+  get fastNumbers() {
+    if (this.fastNumbersCached == null) {
+      this.fastNumbersCached = supportsFastNumbers(this);
+    }
+    return this.fastNumbersCached;
+  }
+  listingMode() {
+    const isActuallyEn = this.isEnglish();
+    const hasNoWeirdness = (this.numberingSystem === null || this.numberingSystem === "latn") && (this.outputCalendar === null || this.outputCalendar === "gregory");
+    return isActuallyEn && hasNoWeirdness ? "en" : "intl";
+  }
+  clone(alts) {
+    if (!alts || Object.getOwnPropertyNames(alts).length === 0) {
+      return this;
+    } else {
+      return _Locale.create(
+        alts.locale || this.specifiedLocale,
+        alts.numberingSystem || this.numberingSystem,
+        alts.outputCalendar || this.outputCalendar,
+        validateWeekSettings(alts.weekSettings) || this.weekSettings,
+        alts.defaultToEN || false
+      );
+    }
+  }
+  redefaultToEN(alts = {}) {
+    return this.clone({ ...alts, defaultToEN: true });
+  }
+  redefaultToSystem(alts = {}) {
+    return this.clone({ ...alts, defaultToEN: false });
+  }
+  months(length, format5 = false) {
+    return listStuff(this, length, months, () => {
+      const monthSpecialCase = this.intl === "ja" || this.intl.startsWith("ja-");
+      format5 &= !monthSpecialCase;
+      const intl = format5 ? { month: length, day: "numeric" } : { month: length }, formatStr = format5 ? "format" : "standalone";
+      if (!this.monthsCache[formatStr][length]) {
+        const mapper = !monthSpecialCase ? (dt) => this.extract(dt, intl, "month") : (dt) => this.dtFormatter(dt, intl).format();
+        this.monthsCache[formatStr][length] = mapMonths(mapper);
+      }
+      return this.monthsCache[formatStr][length];
+    });
+  }
+  weekdays(length, format5 = false) {
+    return listStuff(this, length, weekdays, () => {
+      const intl = format5 ? { weekday: length, year: "numeric", month: "long", day: "numeric" } : { weekday: length }, formatStr = format5 ? "format" : "standalone";
+      if (!this.weekdaysCache[formatStr][length]) {
+        this.weekdaysCache[formatStr][length] = mapWeekdays(
+          (dt) => this.extract(dt, intl, "weekday")
+        );
+      }
+      return this.weekdaysCache[formatStr][length];
+    });
+  }
+  meridiems() {
+    return listStuff(
+      this,
+      void 0,
+      () => meridiems,
+      () => {
+        if (!this.meridiemCache) {
+          const intl = { hour: "numeric", hourCycle: "h12" };
+          this.meridiemCache = [DateTime.utc(2016, 11, 13, 9), DateTime.utc(2016, 11, 13, 19)].map(
+            (dt) => this.extract(dt, intl, "dayperiod")
+          );
+        }
+        return this.meridiemCache;
+      }
+    );
+  }
+  eras(length) {
+    return listStuff(this, length, eras, () => {
+      const intl = { era: length };
+      if (!this.eraCache[length]) {
+        this.eraCache[length] = [DateTime.utc(-40, 1, 1), DateTime.utc(2017, 1, 1)].map(
+          (dt) => this.extract(dt, intl, "era")
+        );
+      }
+      return this.eraCache[length];
+    });
+  }
+  extract(dt, intlOpts, field) {
+    const df = this.dtFormatter(dt, intlOpts), results = df.formatToParts(), matching = results.find((m3) => m3.type.toLowerCase() === field);
+    return matching ? matching.value : null;
+  }
+  numberFormatter(opts = {}) {
+    return new PolyNumberFormatter(this.intl, opts.forceSimple || this.fastNumbers, opts);
+  }
+  dtFormatter(dt, intlOpts = {}) {
+    return new PolyDateFormatter(dt, this.intl, intlOpts);
+  }
+  relFormatter(opts = {}) {
+    return new PolyRelFormatter(this.intl, this.isEnglish(), opts);
+  }
+  listFormatter(opts = {}) {
+    return getCachedLF(this.intl, opts);
+  }
+  isEnglish() {
+    return this.locale === "en" || this.locale.toLowerCase() === "en-us" || getCachedIntResolvedOptions(this.intl).locale.startsWith("en-us");
+  }
+  getWeekSettings() {
+    if (this.weekSettings) {
+      return this.weekSettings;
+    } else if (!hasLocaleWeekInfo()) {
+      return fallbackWeekSettings;
+    } else {
+      return getCachedWeekInfo(this.locale);
+    }
+  }
+  getStartOfWeek() {
+    return this.getWeekSettings().firstDay;
+  }
+  getMinDaysInFirstWeek() {
+    return this.getWeekSettings().minimalDays;
+  }
+  getWeekendDays() {
+    return this.getWeekSettings().weekend;
+  }
+  equals(other) {
+    return this.locale === other.locale && this.numberingSystem === other.numberingSystem && this.outputCalendar === other.outputCalendar;
+  }
+  toString() {
+    return `Locale(${this.locale}, ${this.numberingSystem}, ${this.outputCalendar})`;
+  }
+};
+var singleton = null;
+var FixedOffsetZone = class _FixedOffsetZone extends Zone {
+  /**
+   * Get a singleton instance of UTC
+   * @return {FixedOffsetZone}
+   */
+  static get utcInstance() {
+    if (singleton === null) {
+      singleton = new _FixedOffsetZone(0);
+    }
+    return singleton;
+  }
+  /**
+   * Get an instance with a specified offset
+   * @param {number} offset - The offset in minutes
+   * @return {FixedOffsetZone}
+   */
+  static instance(offset2) {
+    return offset2 === 0 ? _FixedOffsetZone.utcInstance : new _FixedOffsetZone(offset2);
+  }
+  /**
+   * Get an instance of FixedOffsetZone from a UTC offset string, like "UTC+6"
+   * @param {string} s - The offset string to parse
+   * @example FixedOffsetZone.parseSpecifier("UTC+6")
+   * @example FixedOffsetZone.parseSpecifier("UTC+06")
+   * @example FixedOffsetZone.parseSpecifier("UTC-6:00")
+   * @return {FixedOffsetZone}
+   */
+  static parseSpecifier(s4) {
+    if (s4) {
+      const r5 = s4.match(/^utc(?:([+-]\d{1,2})(?::(\d{2}))?)?$/i);
+      if (r5) {
+        return new _FixedOffsetZone(signedOffset(r5[1], r5[2]));
+      }
+    }
+    return null;
+  }
+  constructor(offset2) {
+    super();
+    this.fixed = offset2;
+  }
+  /**
+   * The type of zone. `fixed` for all instances of `FixedOffsetZone`.
+   * @override
+   * @type {string}
+   */
+  get type() {
+    return "fixed";
+  }
+  /**
+   * The name of this zone.
+   * All fixed zones' names always start with "UTC" (plus optional offset)
+   * @override
+   * @type {string}
+   */
+  get name() {
+    return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
+  }
+  /**
+   * The IANA name of this zone, i.e. `Etc/UTC` or `Etc/GMT+/-nn`
+   *
+   * @override
+   * @type {string}
+   */
+  get ianaName() {
+    if (this.fixed === 0) {
+      return "Etc/UTC";
+    } else {
+      return `Etc/GMT${formatOffset(-this.fixed, "narrow")}`;
+    }
+  }
+  /**
+   * Returns the offset's common name at the specified timestamp.
+   *
+   * For fixed offset zones this equals to the zone name.
+   * @override
+   */
+  offsetName() {
+    return this.name;
+  }
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */
+  formatOffset(ts, format5) {
+    return formatOffset(this.fixed, format5);
+  }
+  /**
+   * Returns whether the offset is known to be fixed for the whole year:
+   * Always returns true for all fixed offset zones.
+   * @override
+   * @type {boolean}
+   */
+  get isUniversal() {
+    return true;
+  }
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   *
+   * For fixed offset zones, this is constant and does not depend on a timestamp.
+   * @override
+   * @return {number}
+   */
+  offset() {
+    return this.fixed;
+  }
+  /**
+   * Return whether this Zone is equal to another zone (i.e. also fixed and same offset)
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */
+  equals(otherZone) {
+    return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
+  }
+  /**
+   * Return whether this Zone is valid:
+   * All fixed offset zones are valid.
+   * @override
+   * @type {boolean}
+   */
+  get isValid() {
+    return true;
+  }
+};
+var InvalidZone = class extends Zone {
+  constructor(zoneName) {
+    super();
+    this.zoneName = zoneName;
+  }
+  /** @override **/
+  get type() {
+    return "invalid";
+  }
+  /** @override **/
+  get name() {
+    return this.zoneName;
+  }
+  /** @override **/
+  get isUniversal() {
+    return false;
+  }
+  /** @override **/
+  offsetName() {
+    return null;
+  }
+  /** @override **/
+  formatOffset() {
+    return "";
+  }
+  /** @override **/
+  offset() {
+    return NaN;
+  }
+  /** @override **/
+  equals() {
+    return false;
+  }
+  /** @override **/
+  get isValid() {
+    return false;
+  }
+};
+function normalizeZone(input2, defaultZone2) {
+  if (isUndefined(input2) || input2 === null) {
+    return defaultZone2;
+  } else if (input2 instanceof Zone) {
+    return input2;
+  } else if (isString(input2)) {
+    const lowered = input2.toLowerCase();
+    if (lowered === "default") return defaultZone2;
+    else if (lowered === "local" || lowered === "system") return SystemZone.instance;
+    else if (lowered === "utc" || lowered === "gmt") return FixedOffsetZone.utcInstance;
+    else return FixedOffsetZone.parseSpecifier(lowered) || IANAZone.create(input2);
+  } else if (isNumber(input2)) {
+    return FixedOffsetZone.instance(input2);
+  } else if (typeof input2 === "object" && "offset" in input2 && typeof input2.offset === "function") {
+    return input2;
+  } else {
+    return new InvalidZone(input2);
+  }
+}
+var numberingSystems = {
+  arab: "[\u0660-\u0669]",
+  arabext: "[\u06F0-\u06F9]",
+  bali: "[\u1B50-\u1B59]",
+  beng: "[\u09E6-\u09EF]",
+  deva: "[\u0966-\u096F]",
+  fullwide: "[\uFF10-\uFF19]",
+  gujr: "[\u0AE6-\u0AEF]",
+  hanidec: "[\u3007|\u4E00|\u4E8C|\u4E09|\u56DB|\u4E94|\u516D|\u4E03|\u516B|\u4E5D]",
+  khmr: "[\u17E0-\u17E9]",
+  knda: "[\u0CE6-\u0CEF]",
+  laoo: "[\u0ED0-\u0ED9]",
+  limb: "[\u1946-\u194F]",
+  mlym: "[\u0D66-\u0D6F]",
+  mong: "[\u1810-\u1819]",
+  mymr: "[\u1040-\u1049]",
+  orya: "[\u0B66-\u0B6F]",
+  tamldec: "[\u0BE6-\u0BEF]",
+  telu: "[\u0C66-\u0C6F]",
+  thai: "[\u0E50-\u0E59]",
+  tibt: "[\u0F20-\u0F29]",
+  latn: "\\d"
+};
+var numberingSystemsUTF16 = {
+  arab: [1632, 1641],
+  arabext: [1776, 1785],
+  bali: [6992, 7001],
+  beng: [2534, 2543],
+  deva: [2406, 2415],
+  fullwide: [65296, 65303],
+  gujr: [2790, 2799],
+  khmr: [6112, 6121],
+  knda: [3302, 3311],
+  laoo: [3792, 3801],
+  limb: [6470, 6479],
+  mlym: [3430, 3439],
+  mong: [6160, 6169],
+  mymr: [4160, 4169],
+  orya: [2918, 2927],
+  tamldec: [3046, 3055],
+  telu: [3174, 3183],
+  thai: [3664, 3673],
+  tibt: [3872, 3881]
+};
+var hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
+function parseDigits(str) {
+  let value = parseInt(str, 10);
+  if (isNaN(value)) {
+    value = "";
+    for (let i5 = 0; i5 < str.length; i5++) {
+      const code = str.charCodeAt(i5);
+      if (str[i5].search(numberingSystems.hanidec) !== -1) {
+        value += hanidecChars.indexOf(str[i5]);
+      } else {
+        for (const key in numberingSystemsUTF16) {
+          const [min, max] = numberingSystemsUTF16[key];
+          if (code >= min && code <= max) {
+            value += code - min;
+          }
+        }
+      }
+    }
+    return parseInt(value, 10);
+  } else {
+    return value;
+  }
+}
+var digitRegexCache = /* @__PURE__ */ new Map();
+function resetDigitRegexCache() {
+  digitRegexCache.clear();
+}
+function digitRegex({ numberingSystem }, append = "") {
+  const ns = numberingSystem || "latn";
+  let appendCache = digitRegexCache.get(ns);
+  if (appendCache === void 0) {
+    appendCache = /* @__PURE__ */ new Map();
+    digitRegexCache.set(ns, appendCache);
+  }
+  let regex = appendCache.get(append);
+  if (regex === void 0) {
+    regex = new RegExp(`${numberingSystems[ns]}${append}`);
+    appendCache.set(append, regex);
+  }
+  return regex;
+}
+var now = () => Date.now();
+var defaultZone = "system";
+var defaultLocale = null;
+var defaultNumberingSystem = null;
+var defaultOutputCalendar = null;
+var twoDigitCutoffYear = 60;
+var throwOnInvalid;
+var defaultWeekSettings = null;
+var Settings = class {
+  /**
+   * Get the callback for returning the current timestamp.
+   * @type {function}
+   */
+  static get now() {
+    return now;
+  }
+  /**
+   * Set the callback for returning the current timestamp.
+   * The function should return a number, which will be interpreted as an Epoch millisecond count
+   * @type {function}
+   * @example Settings.now = () => Date.now() + 3000 // pretend it is 3 seconds in the future
+   * @example Settings.now = () => 0 // always pretend it's Jan 1, 1970 at midnight in UTC time
+   */
+  static set now(n4) {
+    now = n4;
+  }
+  /**
+   * Set the default time zone to create DateTimes in. Does not affect existing instances.
+   * Use the value "system" to reset this value to the system's time zone.
+   * @type {string}
+   */
+  static set defaultZone(zone) {
+    defaultZone = zone;
+  }
+  /**
+   * Get the default time zone object currently used to create DateTimes. Does not affect existing instances.
+   * The default value is the system's time zone (the one set on the machine that runs this code).
+   * @type {Zone}
+   */
+  static get defaultZone() {
+    return normalizeZone(defaultZone, SystemZone.instance);
+  }
+  /**
+   * Get the default locale to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static get defaultLocale() {
+    return defaultLocale;
+  }
+  /**
+   * Set the default locale to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static set defaultLocale(locale) {
+    defaultLocale = locale;
+  }
+  /**
+   * Get the default numbering system to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static get defaultNumberingSystem() {
+    return defaultNumberingSystem;
+  }
+  /**
+   * Set the default numbering system to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static set defaultNumberingSystem(numberingSystem) {
+    defaultNumberingSystem = numberingSystem;
+  }
+  /**
+   * Get the default output calendar to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static get defaultOutputCalendar() {
+    return defaultOutputCalendar;
+  }
+  /**
+   * Set the default output calendar to create DateTimes with. Does not affect existing instances.
+   * @type {string}
+   */
+  static set defaultOutputCalendar(outputCalendar) {
+    defaultOutputCalendar = outputCalendar;
+  }
+  /**
+   * @typedef {Object} WeekSettings
+   * @property {number} firstDay
+   * @property {number} minimalDays
+   * @property {number[]} weekend
+   */
+  /**
+   * @return {WeekSettings|null}
+   */
+  static get defaultWeekSettings() {
+    return defaultWeekSettings;
+  }
+  /**
+   * Allows overriding the default locale week settings, i.e. the start of the week, the weekend and
+   * how many days are required in the first week of a year.
+   * Does not affect existing instances.
+   *
+   * @param {WeekSettings|null} weekSettings
+   */
+  static set defaultWeekSettings(weekSettings) {
+    defaultWeekSettings = validateWeekSettings(weekSettings);
+  }
+  /**
+   * Get the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
+   * @type {number}
+   */
+  static get twoDigitCutoffYear() {
+    return twoDigitCutoffYear;
+  }
+  /**
+   * Set the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
+   * @type {number}
+   * @example Settings.twoDigitCutoffYear = 0 // all 'yy' are interpreted as 20th century
+   * @example Settings.twoDigitCutoffYear = 99 // all 'yy' are interpreted as 21st century
+   * @example Settings.twoDigitCutoffYear = 50 // '49' -> 2049; '50' -> 1950
+   * @example Settings.twoDigitCutoffYear = 1950 // interpreted as 50
+   * @example Settings.twoDigitCutoffYear = 2050 // ALSO interpreted as 50
+   */
+  static set twoDigitCutoffYear(cutoffYear) {
+    twoDigitCutoffYear = cutoffYear % 100;
+  }
+  /**
+   * Get whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+   * @type {boolean}
+   */
+  static get throwOnInvalid() {
+    return throwOnInvalid;
+  }
+  /**
+   * Set whether Luxon will throw when it encounters invalid DateTimes, Durations, or Intervals
+   * @type {boolean}
+   */
+  static set throwOnInvalid(t) {
+    throwOnInvalid = t;
+  }
+  /**
+   * Reset Luxon's global caches. Should only be necessary in testing scenarios.
+   * @return {void}
+   */
+  static resetCaches() {
+    Locale.resetCache();
+    IANAZone.resetCache();
+    DateTime.resetCache();
+    resetDigitRegexCache();
+  }
+};
+var Invalid = class {
+  constructor(reason, explanation) {
+    this.reason = reason;
+    this.explanation = explanation;
+  }
+  toMessage() {
+    if (this.explanation) {
+      return `${this.reason}: ${this.explanation}`;
+    } else {
+      return this.reason;
+    }
+  }
+};
+var nonLeapLadder = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+var leapLadder = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+function unitOutOfRange(unit, value) {
+  return new Invalid(
+    "unit out of range",
+    `you specified ${value} (of type ${typeof value}) as a ${unit}, which is invalid`
+  );
+}
+function dayOfWeek(year2, month, day) {
+  const d5 = new Date(Date.UTC(year2, month - 1, day));
+  if (year2 < 100 && year2 >= 0) {
+    d5.setUTCFullYear(d5.getUTCFullYear() - 1900);
+  }
+  const js = d5.getUTCDay();
+  return js === 0 ? 7 : js;
+}
+function computeOrdinal(year2, month, day) {
+  return day + (isLeapYear(year2) ? leapLadder : nonLeapLadder)[month - 1];
+}
+function uncomputeOrdinal(year2, ordinal) {
+  const table2 = isLeapYear(year2) ? leapLadder : nonLeapLadder, month0 = table2.findIndex((i5) => i5 < ordinal), day = ordinal - table2[month0];
+  return { month: month0 + 1, day };
+}
+function isoWeekdayToLocal(isoWeekday, startOfWeek) {
+  return (isoWeekday - startOfWeek + 7) % 7 + 1;
+}
+function gregorianToWeek(gregObj, minDaysInFirstWeek = 4, startOfWeek = 1) {
+  const { year: year2, month, day } = gregObj, ordinal = computeOrdinal(year2, month, day), weekday = isoWeekdayToLocal(dayOfWeek(year2, month, day), startOfWeek);
+  let weekNumber = Math.floor((ordinal - weekday + 14 - minDaysInFirstWeek) / 7), weekYear;
+  if (weekNumber < 1) {
+    weekYear = year2 - 1;
+    weekNumber = weeksInWeekYear(weekYear, minDaysInFirstWeek, startOfWeek);
+  } else if (weekNumber > weeksInWeekYear(year2, minDaysInFirstWeek, startOfWeek)) {
+    weekYear = year2 + 1;
+    weekNumber = 1;
+  } else {
+    weekYear = year2;
+  }
+  return { weekYear, weekNumber, weekday, ...timeObject(gregObj) };
+}
+function weekToGregorian(weekData, minDaysInFirstWeek = 4, startOfWeek = 1) {
+  const { weekYear, weekNumber, weekday } = weekData, weekdayOfJan4 = isoWeekdayToLocal(dayOfWeek(weekYear, 1, minDaysInFirstWeek), startOfWeek), yearInDays = daysInYear(weekYear);
+  let ordinal = weekNumber * 7 + weekday - weekdayOfJan4 - 7 + minDaysInFirstWeek, year2;
+  if (ordinal < 1) {
+    year2 = weekYear - 1;
+    ordinal += daysInYear(year2);
+  } else if (ordinal > yearInDays) {
+    year2 = weekYear + 1;
+    ordinal -= daysInYear(weekYear);
+  } else {
+    year2 = weekYear;
+  }
+  const { month, day } = uncomputeOrdinal(year2, ordinal);
+  return { year: year2, month, day, ...timeObject(weekData) };
+}
+function gregorianToOrdinal(gregData) {
+  const { year: year2, month, day } = gregData;
+  const ordinal = computeOrdinal(year2, month, day);
+  return { year: year2, ordinal, ...timeObject(gregData) };
+}
+function ordinalToGregorian(ordinalData) {
+  const { year: year2, ordinal } = ordinalData;
+  const { month, day } = uncomputeOrdinal(year2, ordinal);
+  return { year: year2, month, day, ...timeObject(ordinalData) };
+}
+function usesLocalWeekValues(obj, loc) {
+  const hasLocaleWeekData = !isUndefined(obj.localWeekday) || !isUndefined(obj.localWeekNumber) || !isUndefined(obj.localWeekYear);
+  if (hasLocaleWeekData) {
+    const hasIsoWeekData = !isUndefined(obj.weekday) || !isUndefined(obj.weekNumber) || !isUndefined(obj.weekYear);
+    if (hasIsoWeekData) {
+      throw new ConflictingSpecificationError(
+        "Cannot mix locale-based week fields with ISO-based week fields"
+      );
+    }
+    if (!isUndefined(obj.localWeekday)) obj.weekday = obj.localWeekday;
+    if (!isUndefined(obj.localWeekNumber)) obj.weekNumber = obj.localWeekNumber;
+    if (!isUndefined(obj.localWeekYear)) obj.weekYear = obj.localWeekYear;
+    delete obj.localWeekday;
+    delete obj.localWeekNumber;
+    delete obj.localWeekYear;
+    return {
+      minDaysInFirstWeek: loc.getMinDaysInFirstWeek(),
+      startOfWeek: loc.getStartOfWeek()
+    };
+  } else {
+    return { minDaysInFirstWeek: 4, startOfWeek: 1 };
+  }
+}
+function hasInvalidWeekData(obj, minDaysInFirstWeek = 4, startOfWeek = 1) {
+  const validYear = isInteger(obj.weekYear), validWeek = integerBetween(
+    obj.weekNumber,
+    1,
+    weeksInWeekYear(obj.weekYear, minDaysInFirstWeek, startOfWeek)
+  ), validWeekday = integerBetween(obj.weekday, 1, 7);
+  if (!validYear) {
+    return unitOutOfRange("weekYear", obj.weekYear);
+  } else if (!validWeek) {
+    return unitOutOfRange("week", obj.weekNumber);
+  } else if (!validWeekday) {
+    return unitOutOfRange("weekday", obj.weekday);
+  } else return false;
+}
+function hasInvalidOrdinalData(obj) {
+  const validYear = isInteger(obj.year), validOrdinal = integerBetween(obj.ordinal, 1, daysInYear(obj.year));
+  if (!validYear) {
+    return unitOutOfRange("year", obj.year);
+  } else if (!validOrdinal) {
+    return unitOutOfRange("ordinal", obj.ordinal);
+  } else return false;
+}
+function hasInvalidGregorianData(obj) {
+  const validYear = isInteger(obj.year), validMonth = integerBetween(obj.month, 1, 12), validDay = integerBetween(obj.day, 1, daysInMonth(obj.year, obj.month));
+  if (!validYear) {
+    return unitOutOfRange("year", obj.year);
+  } else if (!validMonth) {
+    return unitOutOfRange("month", obj.month);
+  } else if (!validDay) {
+    return unitOutOfRange("day", obj.day);
+  } else return false;
+}
+function hasInvalidTimeData(obj) {
+  const { hour, minute, second, millisecond } = obj;
+  const validHour = integerBetween(hour, 0, 23) || hour === 24 && minute === 0 && second === 0 && millisecond === 0, validMinute = integerBetween(minute, 0, 59), validSecond = integerBetween(second, 0, 59), validMillisecond = integerBetween(millisecond, 0, 999);
+  if (!validHour) {
+    return unitOutOfRange("hour", hour);
+  } else if (!validMinute) {
+    return unitOutOfRange("minute", minute);
+  } else if (!validSecond) {
+    return unitOutOfRange("second", second);
+  } else if (!validMillisecond) {
+    return unitOutOfRange("millisecond", millisecond);
+  } else return false;
+}
+function isUndefined(o3) {
+  return typeof o3 === "undefined";
+}
+function isNumber(o3) {
+  return typeof o3 === "number";
+}
+function isInteger(o3) {
+  return typeof o3 === "number" && o3 % 1 === 0;
+}
+function isString(o3) {
+  return typeof o3 === "string";
+}
+function isDate(o3) {
+  return Object.prototype.toString.call(o3) === "[object Date]";
+}
+function hasRelative() {
+  try {
+    return typeof Intl !== "undefined" && !!Intl.RelativeTimeFormat;
+  } catch (e5) {
+    return false;
+  }
+}
+function hasLocaleWeekInfo() {
+  try {
+    return typeof Intl !== "undefined" && !!Intl.Locale && ("weekInfo" in Intl.Locale.prototype || "getWeekInfo" in Intl.Locale.prototype);
+  } catch (e5) {
+    return false;
+  }
+}
+function maybeArray(thing) {
+  return Array.isArray(thing) ? thing : [thing];
+}
+function bestBy(arr, by, compare2) {
+  if (arr.length === 0) {
+    return void 0;
+  }
+  return arr.reduce((best, next) => {
+    const pair = [by(next), next];
+    if (!best) {
+      return pair;
+    } else if (compare2(best[0], pair[0]) === best[0]) {
+      return best;
+    } else {
+      return pair;
+    }
+  }, null)[1];
+}
+function pick2(obj, keys) {
+  return keys.reduce((a5, k5) => {
+    a5[k5] = obj[k5];
+    return a5;
+  }, {});
+}
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+function validateWeekSettings(settings) {
+  if (settings == null) {
+    return null;
+  } else if (typeof settings !== "object") {
+    throw new InvalidArgumentError("Week settings must be an object");
+  } else {
+    if (!integerBetween(settings.firstDay, 1, 7) || !integerBetween(settings.minimalDays, 1, 7) || !Array.isArray(settings.weekend) || settings.weekend.some((v) => !integerBetween(v, 1, 7))) {
+      throw new InvalidArgumentError("Invalid week settings");
+    }
+    return {
+      firstDay: settings.firstDay,
+      minimalDays: settings.minimalDays,
+      weekend: Array.from(settings.weekend)
+    };
+  }
+}
+function integerBetween(thing, bottom, top) {
+  return isInteger(thing) && thing >= bottom && thing <= top;
+}
+function floorMod(x, n4) {
+  return x - n4 * Math.floor(x / n4);
+}
+function padStart(input2, n4 = 2) {
+  const isNeg = input2 < 0;
+  let padded;
+  if (isNeg) {
+    padded = "-" + ("" + -input2).padStart(n4, "0");
+  } else {
+    padded = ("" + input2).padStart(n4, "0");
+  }
+  return padded;
+}
+function parseInteger(string4) {
+  if (isUndefined(string4) || string4 === null || string4 === "") {
+    return void 0;
+  } else {
+    return parseInt(string4, 10);
+  }
+}
+function parseFloating(string4) {
+  if (isUndefined(string4) || string4 === null || string4 === "") {
+    return void 0;
+  } else {
+    return parseFloat(string4);
+  }
+}
+function parseMillis(fraction) {
+  if (isUndefined(fraction) || fraction === null || fraction === "") {
+    return void 0;
+  } else {
+    const f5 = parseFloat("0." + fraction) * 1e3;
+    return Math.floor(f5);
+  }
+}
+function roundTo(number4, digits, rounding = "round") {
+  const factor = 10 ** digits;
+  switch (rounding) {
+    case "expand":
+      return number4 > 0 ? Math.ceil(number4 * factor) / factor : Math.floor(number4 * factor) / factor;
+    case "trunc":
+      return Math.trunc(number4 * factor) / factor;
+    case "round":
+      return Math.round(number4 * factor) / factor;
+    case "floor":
+      return Math.floor(number4 * factor) / factor;
+    case "ceil":
+      return Math.ceil(number4 * factor) / factor;
+    default:
+      throw new RangeError(`Value rounding ${rounding} is out of range`);
+  }
+}
+function isLeapYear(year2) {
+  return year2 % 4 === 0 && (year2 % 100 !== 0 || year2 % 400 === 0);
+}
+function daysInYear(year2) {
+  return isLeapYear(year2) ? 366 : 365;
+}
+function daysInMonth(year2, month) {
+  const modMonth = floorMod(month - 1, 12) + 1, modYear = year2 + (month - modMonth) / 12;
+  if (modMonth === 2) {
+    return isLeapYear(modYear) ? 29 : 28;
+  } else {
+    return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][modMonth - 1];
+  }
+}
+function objToLocalTS(obj) {
+  let d5 = Date.UTC(
+    obj.year,
+    obj.month - 1,
+    obj.day,
+    obj.hour,
+    obj.minute,
+    obj.second,
+    obj.millisecond
+  );
+  if (obj.year < 100 && obj.year >= 0) {
+    d5 = new Date(d5);
+    d5.setUTCFullYear(obj.year, obj.month - 1, obj.day);
+  }
+  return +d5;
+}
+function firstWeekOffset(year2, minDaysInFirstWeek, startOfWeek) {
+  const fwdlw = isoWeekdayToLocal(dayOfWeek(year2, 1, minDaysInFirstWeek), startOfWeek);
+  return -fwdlw + minDaysInFirstWeek - 1;
+}
+function weeksInWeekYear(weekYear, minDaysInFirstWeek = 4, startOfWeek = 1) {
+  const weekOffset = firstWeekOffset(weekYear, minDaysInFirstWeek, startOfWeek);
+  const weekOffsetNext = firstWeekOffset(weekYear + 1, minDaysInFirstWeek, startOfWeek);
+  return (daysInYear(weekYear) - weekOffset + weekOffsetNext) / 7;
+}
+function untruncateYear(year2) {
+  if (year2 > 99) {
+    return year2;
+  } else return year2 > Settings.twoDigitCutoffYear ? 1900 + year2 : 2e3 + year2;
+}
+function parseZoneInfo(ts, offsetFormat, locale, timeZone = null) {
+  const date7 = new Date(ts), intlOpts = {
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  };
+  if (timeZone) {
+    intlOpts.timeZone = timeZone;
+  }
+  const modified = { timeZoneName: offsetFormat, ...intlOpts };
+  const parsed = new Intl.DateTimeFormat(locale, modified).formatToParts(date7).find((m3) => m3.type.toLowerCase() === "timezonename");
+  return parsed ? parsed.value : null;
+}
+function signedOffset(offHourStr, offMinuteStr) {
+  let offHour = parseInt(offHourStr, 10);
+  if (Number.isNaN(offHour)) {
+    offHour = 0;
+  }
+  const offMin = parseInt(offMinuteStr, 10) || 0, offMinSigned = offHour < 0 || Object.is(offHour, -0) ? -offMin : offMin;
+  return offHour * 60 + offMinSigned;
+}
+function asNumber(value) {
+  const numericValue = Number(value);
+  if (typeof value === "boolean" || value === "" || !Number.isFinite(numericValue))
+    throw new InvalidArgumentError(`Invalid unit value ${value}`);
+  return numericValue;
+}
+function normalizeObject(obj, normalizer) {
+  const normalized = {};
+  for (const u in obj) {
+    if (hasOwnProperty(obj, u)) {
+      const v = obj[u];
+      if (v === void 0 || v === null) continue;
+      normalized[normalizer(u)] = asNumber(v);
+    }
+  }
+  return normalized;
+}
+function formatOffset(offset2, format5) {
+  const hours = Math.trunc(Math.abs(offset2 / 60)), minutes = Math.trunc(Math.abs(offset2 % 60)), sign3 = offset2 >= 0 ? "+" : "-";
+  switch (format5) {
+    case "short":
+      return `${sign3}${padStart(hours, 2)}:${padStart(minutes, 2)}`;
+    case "narrow":
+      return `${sign3}${hours}${minutes > 0 ? `:${minutes}` : ""}`;
+    case "techie":
+      return `${sign3}${padStart(hours, 2)}${padStart(minutes, 2)}`;
+    default:
+      throw new RangeError(`Value format ${format5} is out of range for property format`);
+  }
+}
+function timeObject(obj) {
+  return pick2(obj, ["hour", "minute", "second", "millisecond"]);
+}
+var monthsLong = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+var monthsShort = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+];
+var monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+function months(length) {
+  switch (length) {
+    case "narrow":
+      return [...monthsNarrow];
+    case "short":
+      return [...monthsShort];
+    case "long":
+      return [...monthsLong];
+    case "numeric":
+      return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+    case "2-digit":
+      return ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+    default:
+      return null;
+  }
+}
+var weekdaysLong = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday"
+];
+var weekdaysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+var weekdaysNarrow = ["M", "T", "W", "T", "F", "S", "S"];
+function weekdays(length) {
+  switch (length) {
+    case "narrow":
+      return [...weekdaysNarrow];
+    case "short":
+      return [...weekdaysShort];
+    case "long":
+      return [...weekdaysLong];
+    case "numeric":
+      return ["1", "2", "3", "4", "5", "6", "7"];
+    default:
+      return null;
+  }
+}
+var meridiems = ["AM", "PM"];
+var erasLong = ["Before Christ", "Anno Domini"];
+var erasShort = ["BC", "AD"];
+var erasNarrow = ["B", "A"];
+function eras(length) {
+  switch (length) {
+    case "narrow":
+      return [...erasNarrow];
+    case "short":
+      return [...erasShort];
+    case "long":
+      return [...erasLong];
+    default:
+      return null;
+  }
+}
+function meridiemForDateTime(dt) {
+  return meridiems[dt.hour < 12 ? 0 : 1];
+}
+function weekdayForDateTime(dt, length) {
+  return weekdays(length)[dt.weekday - 1];
+}
+function monthForDateTime(dt, length) {
+  return months(length)[dt.month - 1];
+}
+function eraForDateTime(dt, length) {
+  return eras(length)[dt.year < 0 ? 0 : 1];
+}
+function formatRelativeTime(unit, count2, numeric2 = "always", narrow = false) {
+  const units = {
+    years: ["year", "yr."],
+    quarters: ["quarter", "qtr."],
+    months: ["month", "mo."],
+    weeks: ["week", "wk."],
+    days: ["day", "day", "days"],
+    hours: ["hour", "hr."],
+    minutes: ["minute", "min."],
+    seconds: ["second", "sec."]
+  };
+  const lastable = ["hours", "minutes", "seconds"].indexOf(unit) === -1;
+  if (numeric2 === "auto" && lastable) {
+    const isDay = unit === "days";
+    switch (count2) {
+      case 1:
+        return isDay ? "tomorrow" : `next ${units[unit][0]}`;
+      case -1:
+        return isDay ? "yesterday" : `last ${units[unit][0]}`;
+      case 0:
+        return isDay ? "today" : `this ${units[unit][0]}`;
+    }
+  }
+  const isInPast = Object.is(count2, -0) || count2 < 0, fmtValue = Math.abs(count2), singular = fmtValue === 1, lilUnits = units[unit], fmtUnit = narrow ? singular ? lilUnits[1] : lilUnits[2] || lilUnits[1] : singular ? units[unit][0] : unit;
+  return isInPast ? `${fmtValue} ${fmtUnit} ago` : `in ${fmtValue} ${fmtUnit}`;
+}
+function stringifyTokens(splits, tokenToString) {
+  let s4 = "";
+  for (const token of splits) {
+    if (token.literal) {
+      s4 += token.val;
+    } else {
+      s4 += tokenToString(token.val);
+    }
+  }
+  return s4;
+}
+var macroTokenToFormatOpts = {
+  D: DATE_SHORT,
+  DD: DATE_MED,
+  DDD: DATE_FULL,
+  DDDD: DATE_HUGE,
+  t: TIME_SIMPLE,
+  tt: TIME_WITH_SECONDS,
+  ttt: TIME_WITH_SHORT_OFFSET,
+  tttt: TIME_WITH_LONG_OFFSET,
+  T: TIME_24_SIMPLE,
+  TT: TIME_24_WITH_SECONDS,
+  TTT: TIME_24_WITH_SHORT_OFFSET,
+  TTTT: TIME_24_WITH_LONG_OFFSET,
+  f: DATETIME_SHORT,
+  ff: DATETIME_MED,
+  fff: DATETIME_FULL,
+  ffff: DATETIME_HUGE,
+  F: DATETIME_SHORT_WITH_SECONDS,
+  FF: DATETIME_MED_WITH_SECONDS,
+  FFF: DATETIME_FULL_WITH_SECONDS,
+  FFFF: DATETIME_HUGE_WITH_SECONDS
+};
+var Formatter = class _Formatter {
+  static create(locale, opts = {}) {
+    return new _Formatter(locale, opts);
+  }
+  static parseFormat(fmt) {
+    let current = null, currentFull = "", bracketed = false;
+    const splits = [];
+    for (let i5 = 0; i5 < fmt.length; i5++) {
+      const c5 = fmt.charAt(i5);
+      if (c5 === "'") {
+        if (currentFull.length > 0 || bracketed) {
+          splits.push({
+            literal: bracketed || /^\s+$/.test(currentFull),
+            val: currentFull === "" ? "'" : currentFull
+          });
+        }
+        current = null;
+        currentFull = "";
+        bracketed = !bracketed;
+      } else if (bracketed) {
+        currentFull += c5;
+      } else if (c5 === current) {
+        currentFull += c5;
+      } else {
+        if (currentFull.length > 0) {
+          splits.push({ literal: /^\s+$/.test(currentFull), val: currentFull });
+        }
+        currentFull = c5;
+        current = c5;
+      }
+    }
+    if (currentFull.length > 0) {
+      splits.push({ literal: bracketed || /^\s+$/.test(currentFull), val: currentFull });
+    }
+    return splits;
+  }
+  static macroTokenToFormatOpts(token) {
+    return macroTokenToFormatOpts[token];
+  }
+  constructor(locale, formatOpts) {
+    this.opts = formatOpts;
+    this.loc = locale;
+    this.systemLoc = null;
+  }
+  formatWithSystemDefault(dt, opts) {
+    if (this.systemLoc === null) {
+      this.systemLoc = this.loc.redefaultToSystem();
+    }
+    const df = this.systemLoc.dtFormatter(dt, { ...this.opts, ...opts });
+    return df.format();
+  }
+  dtFormatter(dt, opts = {}) {
+    return this.loc.dtFormatter(dt, { ...this.opts, ...opts });
+  }
+  formatDateTime(dt, opts) {
+    return this.dtFormatter(dt, opts).format();
+  }
+  formatDateTimeParts(dt, opts) {
+    return this.dtFormatter(dt, opts).formatToParts();
+  }
+  formatInterval(interval2, opts) {
+    const df = this.dtFormatter(interval2.start, opts);
+    return df.dtf.formatRange(interval2.start.toJSDate(), interval2.end.toJSDate());
+  }
+  resolvedOptions(dt, opts) {
+    return this.dtFormatter(dt, opts).resolvedOptions();
+  }
+  num(n4, p3 = 0, signDisplay = void 0) {
+    if (this.opts.forceSimple) {
+      return padStart(n4, p3);
+    }
+    const opts = { ...this.opts };
+    if (p3 > 0) {
+      opts.padTo = p3;
+    }
+    if (signDisplay) {
+      opts.signDisplay = signDisplay;
+    }
+    return this.loc.numberFormatter(opts).format(n4);
+  }
+  formatDateTimeFromString(dt, fmt) {
+    const knownEnglish = this.loc.listingMode() === "en", useDateTimeFormatter = this.loc.outputCalendar && this.loc.outputCalendar !== "gregory", string4 = (opts, extract) => this.loc.extract(dt, opts, extract), formatOffset2 = (opts) => {
+      if (dt.isOffsetFixed && dt.offset === 0 && opts.allowZ) {
+        return "Z";
+      }
+      return dt.isValid ? dt.zone.formatOffset(dt.ts, opts.format) : "";
+    }, meridiem = () => knownEnglish ? meridiemForDateTime(dt) : string4({ hour: "numeric", hourCycle: "h12" }, "dayperiod"), month = (length, standalone) => knownEnglish ? monthForDateTime(dt, length) : string4(standalone ? { month: length } : { month: length, day: "numeric" }, "month"), weekday = (length, standalone) => knownEnglish ? weekdayForDateTime(dt, length) : string4(
+      standalone ? { weekday: length } : { weekday: length, month: "long", day: "numeric" },
+      "weekday"
+    ), maybeMacro = (token) => {
+      const formatOpts = _Formatter.macroTokenToFormatOpts(token);
+      if (formatOpts) {
+        return this.formatWithSystemDefault(dt, formatOpts);
+      } else {
+        return token;
+      }
+    }, era = (length) => knownEnglish ? eraForDateTime(dt, length) : string4({ era: length }, "era"), tokenToString = (token) => {
+      switch (token) {
+        // ms
+        case "S":
+          return this.num(dt.millisecond);
+        case "u":
+        // falls through
+        case "SSS":
+          return this.num(dt.millisecond, 3);
+        // seconds
+        case "s":
+          return this.num(dt.second);
+        case "ss":
+          return this.num(dt.second, 2);
+        // fractional seconds
+        case "uu":
+          return this.num(Math.floor(dt.millisecond / 10), 2);
+        case "uuu":
+          return this.num(Math.floor(dt.millisecond / 100));
+        // minutes
+        case "m":
+          return this.num(dt.minute);
+        case "mm":
+          return this.num(dt.minute, 2);
+        // hours
+        case "h":
+          return this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12);
+        case "hh":
+          return this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12, 2);
+        case "H":
+          return this.num(dt.hour);
+        case "HH":
+          return this.num(dt.hour, 2);
+        // offset
+        case "Z":
+          return formatOffset2({ format: "narrow", allowZ: this.opts.allowZ });
+        case "ZZ":
+          return formatOffset2({ format: "short", allowZ: this.opts.allowZ });
+        case "ZZZ":
+          return formatOffset2({ format: "techie", allowZ: this.opts.allowZ });
+        case "ZZZZ":
+          return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
+        case "ZZZZZ":
+          return dt.zone.offsetName(dt.ts, { format: "long", locale: this.loc.locale });
+        // zone
+        case "z":
+          return dt.zoneName;
+        // meridiems
+        case "a":
+          return meridiem();
+        // dates
+        case "d":
+          return useDateTimeFormatter ? string4({ day: "numeric" }, "day") : this.num(dt.day);
+        case "dd":
+          return useDateTimeFormatter ? string4({ day: "2-digit" }, "day") : this.num(dt.day, 2);
+        // weekdays - standalone
+        case "c":
+          return this.num(dt.weekday);
+        case "ccc":
+          return weekday("short", true);
+        case "cccc":
+          return weekday("long", true);
+        case "ccccc":
+          return weekday("narrow", true);
+        // weekdays - format
+        case "E":
+          return this.num(dt.weekday);
+        case "EEE":
+          return weekday("short", false);
+        case "EEEE":
+          return weekday("long", false);
+        case "EEEEE":
+          return weekday("narrow", false);
+        // months - standalone
+        case "L":
+          return useDateTimeFormatter ? string4({ month: "numeric", day: "numeric" }, "month") : this.num(dt.month);
+        case "LL":
+          return useDateTimeFormatter ? string4({ month: "2-digit", day: "numeric" }, "month") : this.num(dt.month, 2);
+        case "LLL":
+          return month("short", true);
+        case "LLLL":
+          return month("long", true);
+        case "LLLLL":
+          return month("narrow", true);
+        // months - format
+        case "M":
+          return useDateTimeFormatter ? string4({ month: "numeric" }, "month") : this.num(dt.month);
+        case "MM":
+          return useDateTimeFormatter ? string4({ month: "2-digit" }, "month") : this.num(dt.month, 2);
+        case "MMM":
+          return month("short", false);
+        case "MMMM":
+          return month("long", false);
+        case "MMMMM":
+          return month("narrow", false);
+        // years
+        case "y":
+          return useDateTimeFormatter ? string4({ year: "numeric" }, "year") : this.num(dt.year);
+        case "yy":
+          return useDateTimeFormatter ? string4({ year: "2-digit" }, "year") : this.num(dt.year.toString().slice(-2), 2);
+        case "yyyy":
+          return useDateTimeFormatter ? string4({ year: "numeric" }, "year") : this.num(dt.year, 4);
+        case "yyyyyy":
+          return useDateTimeFormatter ? string4({ year: "numeric" }, "year") : this.num(dt.year, 6);
+        // eras
+        case "G":
+          return era("short");
+        case "GG":
+          return era("long");
+        case "GGGGG":
+          return era("narrow");
+        case "kk":
+          return this.num(dt.weekYear.toString().slice(-2), 2);
+        case "kkkk":
+          return this.num(dt.weekYear, 4);
+        case "W":
+          return this.num(dt.weekNumber);
+        case "WW":
+          return this.num(dt.weekNumber, 2);
+        case "n":
+          return this.num(dt.localWeekNumber);
+        case "nn":
+          return this.num(dt.localWeekNumber, 2);
+        case "ii":
+          return this.num(dt.localWeekYear.toString().slice(-2), 2);
+        case "iiii":
+          return this.num(dt.localWeekYear, 4);
+        case "o":
+          return this.num(dt.ordinal);
+        case "ooo":
+          return this.num(dt.ordinal, 3);
+        case "q":
+          return this.num(dt.quarter);
+        case "qq":
+          return this.num(dt.quarter, 2);
+        case "X":
+          return this.num(Math.floor(dt.ts / 1e3));
+        case "x":
+          return this.num(dt.ts);
+        default:
+          return maybeMacro(token);
+      }
+    };
+    return stringifyTokens(_Formatter.parseFormat(fmt), tokenToString);
+  }
+  formatDurationFromString(dur, fmt) {
+    const invertLargest = this.opts.signMode === "negativeLargestOnly" ? -1 : 1;
+    const tokenToField = (token) => {
+      switch (token[0]) {
+        case "S":
+          return "milliseconds";
+        case "s":
+          return "seconds";
+        case "m":
+          return "minutes";
+        case "h":
+          return "hours";
+        case "d":
+          return "days";
+        case "w":
+          return "weeks";
+        case "M":
+          return "months";
+        case "y":
+          return "years";
+        default:
+          return null;
+      }
+    }, tokenToString = (lildur, info2) => (token) => {
+      const mapped = tokenToField(token);
+      if (mapped) {
+        const inversionFactor = info2.isNegativeDuration && mapped !== info2.largestUnit ? invertLargest : 1;
+        let signDisplay;
+        if (this.opts.signMode === "negativeLargestOnly" && mapped !== info2.largestUnit) {
+          signDisplay = "never";
+        } else if (this.opts.signMode === "all") {
+          signDisplay = "always";
+        } else {
+          signDisplay = "auto";
+        }
+        return this.num(lildur.get(mapped) * inversionFactor, token.length, signDisplay);
+      } else {
+        return token;
+      }
+    }, tokens = _Formatter.parseFormat(fmt), realTokens = tokens.reduce(
+      (found, { literal: literal2, val }) => literal2 ? found : found.concat(val),
+      []
+    ), collapsed = dur.shiftTo(...realTokens.map(tokenToField).filter((t) => t)), durationInfo = {
+      isNegativeDuration: collapsed < 0,
+      // this relies on "collapsed" being based on "shiftTo", which builds up the object
+      // in order
+      largestUnit: Object.keys(collapsed.values)[0]
+    };
+    return stringifyTokens(tokens, tokenToString(collapsed, durationInfo));
+  }
+};
+var ianaRegex = /[A-Za-z_+-]{1,256}(?::?\/[A-Za-z0-9_+-]{1,256}(?:\/[A-Za-z0-9_+-]{1,256})?)?/;
+function combineRegexes(...regexes) {
+  const full = regexes.reduce((f5, r5) => f5 + r5.source, "");
+  return RegExp(`^${full}$`);
+}
+function combineExtractors(...extractors) {
+  return (m3) => extractors.reduce(
+    ([mergedVals, mergedZone, cursor], ex) => {
+      const [val, zone, next] = ex(m3, cursor);
+      return [{ ...mergedVals, ...val }, zone || mergedZone, next];
+    },
+    [{}, null, 1]
+  ).slice(0, 2);
+}
+function parse4(s4, ...patterns) {
+  if (s4 == null) {
+    return [null, null];
+  }
+  for (const [regex, extractor] of patterns) {
+    const m3 = regex.exec(s4);
+    if (m3) {
+      return extractor(m3);
+    }
+  }
+  return [null, null];
+}
+function simpleParse(...keys) {
+  return (match3, cursor) => {
+    const ret = {};
+    let i5;
+    for (i5 = 0; i5 < keys.length; i5++) {
+      ret[keys[i5]] = parseInteger(match3[cursor + i5]);
+    }
+    return [ret, null, cursor + i5];
+  };
+}
+var offsetRegex = /(?:([Zz])|([+-]\d\d)(?::?(\d\d))?)/;
+var isoExtendedZone = `(?:${offsetRegex.source}?(?:\\[(${ianaRegex.source})\\])?)?`;
+var isoTimeBaseRegex = /(\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,30}))?)?)?/;
+var isoTimeRegex = RegExp(`${isoTimeBaseRegex.source}${isoExtendedZone}`);
+var isoTimeExtensionRegex = RegExp(`(?:[Tt]${isoTimeRegex.source})?`);
+var isoYmdRegex = /([+-]\d{6}|\d{4})(?:-?(\d\d)(?:-?(\d\d))?)?/;
+var isoWeekRegex = /(\d{4})-?W(\d\d)(?:-?(\d))?/;
+var isoOrdinalRegex = /(\d{4})-?(\d{3})/;
+var extractISOWeekData = simpleParse("weekYear", "weekNumber", "weekDay");
+var extractISOOrdinalData = simpleParse("year", "ordinal");
+var sqlYmdRegex = /(\d{4})-(\d\d)-(\d\d)/;
+var sqlTimeRegex = RegExp(
+  `${isoTimeBaseRegex.source} ?(?:${offsetRegex.source}|(${ianaRegex.source}))?`
+);
+var sqlTimeExtensionRegex = RegExp(`(?: ${sqlTimeRegex.source})?`);
+function int2(match3, pos, fallback2) {
+  const m3 = match3[pos];
+  return isUndefined(m3) ? fallback2 : parseInteger(m3);
+}
+function extractISOYmd(match3, cursor) {
+  const item = {
+    year: int2(match3, cursor),
+    month: int2(match3, cursor + 1, 1),
+    day: int2(match3, cursor + 2, 1)
+  };
+  return [item, null, cursor + 3];
+}
+function extractISOTime(match3, cursor) {
+  const item = {
+    hours: int2(match3, cursor, 0),
+    minutes: int2(match3, cursor + 1, 0),
+    seconds: int2(match3, cursor + 2, 0),
+    milliseconds: parseMillis(match3[cursor + 3])
+  };
+  return [item, null, cursor + 4];
+}
+function extractISOOffset(match3, cursor) {
+  const local = !match3[cursor] && !match3[cursor + 1], fullOffset = signedOffset(match3[cursor + 1], match3[cursor + 2]), zone = local ? null : FixedOffsetZone.instance(fullOffset);
+  return [{}, zone, cursor + 3];
+}
+function extractIANAZone(match3, cursor) {
+  const zone = match3[cursor] ? IANAZone.create(match3[cursor]) : null;
+  return [{}, zone, cursor + 1];
+}
+var isoTimeOnly = RegExp(`^T?${isoTimeBaseRegex.source}$`);
+var isoDuration = /^-?P(?:(?:(-?\d{1,20}(?:\.\d{1,20})?)Y)?(?:(-?\d{1,20}(?:\.\d{1,20})?)M)?(?:(-?\d{1,20}(?:\.\d{1,20})?)W)?(?:(-?\d{1,20}(?:\.\d{1,20})?)D)?(?:T(?:(-?\d{1,20}(?:\.\d{1,20})?)H)?(?:(-?\d{1,20}(?:\.\d{1,20})?)M)?(?:(-?\d{1,20})(?:[.,](-?\d{1,20}))?S)?)?)$/;
+function extractISODuration(match3) {
+  const [s4, yearStr, monthStr, weekStr, dayStr, hourStr, minuteStr, secondStr, millisecondsStr] = match3;
+  const hasNegativePrefix = s4[0] === "-";
+  const negativeSeconds = secondStr && secondStr[0] === "-";
+  const maybeNegate = (num, force = false) => num !== void 0 && (force || num && hasNegativePrefix) ? -num : num;
+  return [
+    {
+      years: maybeNegate(parseFloating(yearStr)),
+      months: maybeNegate(parseFloating(monthStr)),
+      weeks: maybeNegate(parseFloating(weekStr)),
+      days: maybeNegate(parseFloating(dayStr)),
+      hours: maybeNegate(parseFloating(hourStr)),
+      minutes: maybeNegate(parseFloating(minuteStr)),
+      seconds: maybeNegate(parseFloating(secondStr), secondStr === "-0"),
+      milliseconds: maybeNegate(parseMillis(millisecondsStr), negativeSeconds)
+    }
+  ];
+}
+var obsOffsets = {
+  GMT: 0,
+  EDT: -4 * 60,
+  EST: -5 * 60,
+  CDT: -5 * 60,
+  CST: -6 * 60,
+  MDT: -6 * 60,
+  MST: -7 * 60,
+  PDT: -7 * 60,
+  PST: -8 * 60
+};
+function fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+  const result = {
+    year: yearStr.length === 2 ? untruncateYear(parseInteger(yearStr)) : parseInteger(yearStr),
+    month: monthsShort.indexOf(monthStr) + 1,
+    day: parseInteger(dayStr),
+    hour: parseInteger(hourStr),
+    minute: parseInteger(minuteStr)
+  };
+  if (secondStr) result.second = parseInteger(secondStr);
+  if (weekdayStr) {
+    result.weekday = weekdayStr.length > 3 ? weekdaysLong.indexOf(weekdayStr) + 1 : weekdaysShort.indexOf(weekdayStr) + 1;
+  }
+  return result;
+}
+var rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|(?:([+-]\d\d)(\d\d)))$/;
+function extractRFC2822(match3) {
+  const [
+    ,
+    weekdayStr,
+    dayStr,
+    monthStr,
+    yearStr,
+    hourStr,
+    minuteStr,
+    secondStr,
+    obsOffset,
+    milOffset,
+    offHourStr,
+    offMinuteStr
+  ] = match3, result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  let offset2;
+  if (obsOffset) {
+    offset2 = obsOffsets[obsOffset];
+  } else if (milOffset) {
+    offset2 = 0;
+  } else {
+    offset2 = signedOffset(offHourStr, offMinuteStr);
+  }
+  return [result, new FixedOffsetZone(offset2)];
+}
+function preprocessRFC2822(s4) {
+  return s4.replace(/\([^()]*\)|[\n\t]/g, " ").replace(/(\s\s+)/g, " ").trim();
+}
+var rfc1123 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d):(\d\d):(\d\d) GMT$/;
+var rfc850 = /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d) (\d\d):(\d\d):(\d\d) GMT$/;
+var ascii = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( \d|\d\d) (\d\d):(\d\d):(\d\d) (\d{4})$/;
+function extractRFC1123Or850(match3) {
+  const [, weekdayStr, dayStr, monthStr, yearStr, hourStr, minuteStr, secondStr] = match3, result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  return [result, FixedOffsetZone.utcInstance];
+}
+function extractASCII(match3) {
+  const [, weekdayStr, monthStr, dayStr, hourStr, minuteStr, secondStr, yearStr] = match3, result = fromStrings(weekdayStr, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr);
+  return [result, FixedOffsetZone.utcInstance];
+}
+var isoYmdWithTimeExtensionRegex = combineRegexes(isoYmdRegex, isoTimeExtensionRegex);
+var isoWeekWithTimeExtensionRegex = combineRegexes(isoWeekRegex, isoTimeExtensionRegex);
+var isoOrdinalWithTimeExtensionRegex = combineRegexes(isoOrdinalRegex, isoTimeExtensionRegex);
+var isoTimeCombinedRegex = combineRegexes(isoTimeRegex);
+var extractISOYmdTimeAndOffset = combineExtractors(
+  extractISOYmd,
+  extractISOTime,
+  extractISOOffset,
+  extractIANAZone
+);
+var extractISOWeekTimeAndOffset = combineExtractors(
+  extractISOWeekData,
+  extractISOTime,
+  extractISOOffset,
+  extractIANAZone
+);
+var extractISOOrdinalDateAndTime = combineExtractors(
+  extractISOOrdinalData,
+  extractISOTime,
+  extractISOOffset,
+  extractIANAZone
+);
+var extractISOTimeAndOffset = combineExtractors(
+  extractISOTime,
+  extractISOOffset,
+  extractIANAZone
+);
+function parseISODate(s4) {
+  return parse4(
+    s4,
+    [isoYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
+    [isoWeekWithTimeExtensionRegex, extractISOWeekTimeAndOffset],
+    [isoOrdinalWithTimeExtensionRegex, extractISOOrdinalDateAndTime],
+    [isoTimeCombinedRegex, extractISOTimeAndOffset]
+  );
+}
+function parseRFC2822Date(s4) {
+  return parse4(preprocessRFC2822(s4), [rfc2822, extractRFC2822]);
+}
+function parseHTTPDate(s4) {
+  return parse4(
+    s4,
+    [rfc1123, extractRFC1123Or850],
+    [rfc850, extractRFC1123Or850],
+    [ascii, extractASCII]
+  );
+}
+function parseISODuration(s4) {
+  return parse4(s4, [isoDuration, extractISODuration]);
+}
+var extractISOTimeOnly = combineExtractors(extractISOTime);
+function parseISOTimeOnly(s4) {
+  return parse4(s4, [isoTimeOnly, extractISOTimeOnly]);
+}
+var sqlYmdWithTimeExtensionRegex = combineRegexes(sqlYmdRegex, sqlTimeExtensionRegex);
+var sqlTimeCombinedRegex = combineRegexes(sqlTimeRegex);
+var extractISOTimeOffsetAndIANAZone = combineExtractors(
+  extractISOTime,
+  extractISOOffset,
+  extractIANAZone
+);
+function parseSQL(s4) {
+  return parse4(
+    s4,
+    [sqlYmdWithTimeExtensionRegex, extractISOYmdTimeAndOffset],
+    [sqlTimeCombinedRegex, extractISOTimeOffsetAndIANAZone]
+  );
+}
+var INVALID$2 = "Invalid Duration";
+var lowOrderMatrix = {
+  weeks: {
+    days: 7,
+    hours: 7 * 24,
+    minutes: 7 * 24 * 60,
+    seconds: 7 * 24 * 60 * 60,
+    milliseconds: 7 * 24 * 60 * 60 * 1e3
+  },
+  days: {
+    hours: 24,
+    minutes: 24 * 60,
+    seconds: 24 * 60 * 60,
+    milliseconds: 24 * 60 * 60 * 1e3
+  },
+  hours: { minutes: 60, seconds: 60 * 60, milliseconds: 60 * 60 * 1e3 },
+  minutes: { seconds: 60, milliseconds: 60 * 1e3 },
+  seconds: { milliseconds: 1e3 }
+};
+var casualMatrix = {
+  years: {
+    quarters: 4,
+    months: 12,
+    weeks: 52,
+    days: 365,
+    hours: 365 * 24,
+    minutes: 365 * 24 * 60,
+    seconds: 365 * 24 * 60 * 60,
+    milliseconds: 365 * 24 * 60 * 60 * 1e3
+  },
+  quarters: {
+    months: 3,
+    weeks: 13,
+    days: 91,
+    hours: 91 * 24,
+    minutes: 91 * 24 * 60,
+    seconds: 91 * 24 * 60 * 60,
+    milliseconds: 91 * 24 * 60 * 60 * 1e3
+  },
+  months: {
+    weeks: 4,
+    days: 30,
+    hours: 30 * 24,
+    minutes: 30 * 24 * 60,
+    seconds: 30 * 24 * 60 * 60,
+    milliseconds: 30 * 24 * 60 * 60 * 1e3
+  },
+  ...lowOrderMatrix
+};
+var daysInYearAccurate = 146097 / 400;
+var daysInMonthAccurate = 146097 / 4800;
+var accurateMatrix = {
+  years: {
+    quarters: 4,
+    months: 12,
+    weeks: daysInYearAccurate / 7,
+    days: daysInYearAccurate,
+    hours: daysInYearAccurate * 24,
+    minutes: daysInYearAccurate * 24 * 60,
+    seconds: daysInYearAccurate * 24 * 60 * 60,
+    milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1e3
+  },
+  quarters: {
+    months: 3,
+    weeks: daysInYearAccurate / 28,
+    days: daysInYearAccurate / 4,
+    hours: daysInYearAccurate * 24 / 4,
+    minutes: daysInYearAccurate * 24 * 60 / 4,
+    seconds: daysInYearAccurate * 24 * 60 * 60 / 4,
+    milliseconds: daysInYearAccurate * 24 * 60 * 60 * 1e3 / 4
+  },
+  months: {
+    weeks: daysInMonthAccurate / 7,
+    days: daysInMonthAccurate,
+    hours: daysInMonthAccurate * 24,
+    minutes: daysInMonthAccurate * 24 * 60,
+    seconds: daysInMonthAccurate * 24 * 60 * 60,
+    milliseconds: daysInMonthAccurate * 24 * 60 * 60 * 1e3
+  },
+  ...lowOrderMatrix
+};
+var orderedUnits$1 = [
+  "years",
+  "quarters",
+  "months",
+  "weeks",
+  "days",
+  "hours",
+  "minutes",
+  "seconds",
+  "milliseconds"
+];
+var reverseUnits = orderedUnits$1.slice(0).reverse();
+function clone$1(dur, alts, clear = false) {
+  const conf = {
+    values: clear ? alts.values : { ...dur.values, ...alts.values || {} },
+    loc: dur.loc.clone(alts.loc),
+    conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy,
+    matrix: alts.matrix || dur.matrix
+  };
+  return new Duration(conf);
+}
+function durationToMillis(matrix, vals) {
+  let sum = vals.milliseconds ?? 0;
+  for (const unit of reverseUnits.slice(1)) {
+    if (vals[unit]) {
+      sum += vals[unit] * matrix[unit]["milliseconds"];
+    }
+  }
+  return sum;
+}
+function normalizeValues(matrix, vals) {
+  const factor = durationToMillis(matrix, vals) < 0 ? -1 : 1;
+  orderedUnits$1.reduceRight((previous, current) => {
+    if (!isUndefined(vals[current])) {
+      if (previous) {
+        const previousVal = vals[previous] * factor;
+        const conv = matrix[current][previous];
+        const rollUp = Math.floor(previousVal / conv);
+        vals[current] += rollUp * factor;
+        vals[previous] -= rollUp * conv * factor;
+      }
+      return current;
+    } else {
+      return previous;
+    }
+  }, null);
+  orderedUnits$1.reduce((previous, current) => {
+    if (!isUndefined(vals[current])) {
+      if (previous) {
+        const fraction = vals[previous] % 1;
+        vals[previous] -= fraction;
+        vals[current] += fraction * matrix[previous][current];
+      }
+      return current;
+    } else {
+      return previous;
+    }
+  }, null);
+}
+function removeZeroes(vals) {
+  const newVals = {};
+  for (const [key, value] of Object.entries(vals)) {
+    if (value !== 0) {
+      newVals[key] = value;
+    }
+  }
+  return newVals;
+}
+var Duration = class _Duration {
+  /**
+   * @private
+   */
+  constructor(config5) {
+    const accurate = config5.conversionAccuracy === "longterm" || false;
+    let matrix = accurate ? accurateMatrix : casualMatrix;
+    if (config5.matrix) {
+      matrix = config5.matrix;
+    }
+    this.values = config5.values;
+    this.loc = config5.loc || Locale.create();
+    this.conversionAccuracy = accurate ? "longterm" : "casual";
+    this.invalid = config5.invalid || null;
+    this.matrix = matrix;
+    this.isLuxonDuration = true;
+  }
+  /**
+   * Create Duration from a number of milliseconds.
+   * @param {number} count of milliseconds
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  static fromMillis(count2, opts) {
+    return _Duration.fromObject({ milliseconds: count2 }, opts);
+  }
+  /**
+   * Create a Duration from a JavaScript object with keys like 'years' and 'hours'.
+   * If this object is empty then a zero milliseconds duration is returned.
+   * @param {Object} obj - the object to create the DateTime from
+   * @param {number} obj.years
+   * @param {number} obj.quarters
+   * @param {number} obj.months
+   * @param {number} obj.weeks
+   * @param {number} obj.days
+   * @param {number} obj.hours
+   * @param {number} obj.minutes
+   * @param {number} obj.seconds
+   * @param {number} obj.milliseconds
+   * @param {Object} [opts=[]] - options for creating this Duration
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.matrix=Object] - the custom conversion system to use
+   * @return {Duration}
+   */
+  static fromObject(obj, opts = {}) {
+    if (obj == null || typeof obj !== "object") {
+      throw new InvalidArgumentError(
+        `Duration.fromObject: argument expected to be an object, got ${obj === null ? "null" : typeof obj}`
+      );
+    }
+    return new _Duration({
+      values: normalizeObject(obj, _Duration.normalizeUnit),
+      loc: Locale.fromObject(opts),
+      conversionAccuracy: opts.conversionAccuracy,
+      matrix: opts.matrix
+    });
+  }
+  /**
+   * Create a Duration from DurationLike.
+   *
+   * @param {Object | number | Duration} durationLike
+   * One of:
+   * - object with keys like 'years' and 'hours'.
+   * - number representing milliseconds
+   * - Duration instance
+   * @return {Duration}
+   */
+  static fromDurationLike(durationLike) {
+    if (isNumber(durationLike)) {
+      return _Duration.fromMillis(durationLike);
+    } else if (_Duration.isDuration(durationLike)) {
+      return durationLike;
+    } else if (typeof durationLike === "object") {
+      return _Duration.fromObject(durationLike);
+    } else {
+      throw new InvalidArgumentError(
+        `Unknown duration argument ${durationLike} of type ${typeof durationLike}`
+      );
+    }
+  }
+  /**
+   * Create a Duration from an ISO 8601 duration string.
+   * @param {string} text - text to parse
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.matrix=Object] - the preset conversion system to use
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
+   * @example Duration.fromISO('P3Y6M1W4DT12H30M5S').toObject() //=> { years: 3, months: 6, weeks: 1, days: 4, hours: 12, minutes: 30, seconds: 5 }
+   * @example Duration.fromISO('PT23H').toObject() //=> { hours: 23 }
+   * @example Duration.fromISO('P5Y3M').toObject() //=> { years: 5, months: 3 }
+   * @return {Duration}
+   */
+  static fromISO(text2, opts) {
+    const [parsed] = parseISODuration(text2);
+    if (parsed) {
+      return _Duration.fromObject(parsed, opts);
+    } else {
+      return _Duration.invalid("unparsable", `the input "${text2}" can't be parsed as ISO 8601`);
+    }
+  }
+  /**
+   * Create a Duration from an ISO 8601 time string.
+   * @param {string} text - text to parse
+   * @param {Object} opts - options for parsing
+   * @param {string} [opts.locale='en-US'] - the locale to use
+   * @param {string} opts.numberingSystem - the numbering system to use
+   * @param {string} [opts.conversionAccuracy='casual'] - the preset conversion system to use
+   * @param {string} [opts.matrix=Object] - the conversion system to use
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Times
+   * @example Duration.fromISOTime('11:22:33.444').toObject() //=> { hours: 11, minutes: 22, seconds: 33, milliseconds: 444 }
+   * @example Duration.fromISOTime('11:00').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('T11:00').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('1100').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @example Duration.fromISOTime('T1100').toObject() //=> { hours: 11, minutes: 0, seconds: 0 }
+   * @return {Duration}
+   */
+  static fromISOTime(text2, opts) {
+    const [parsed] = parseISOTimeOnly(text2);
+    if (parsed) {
+      return _Duration.fromObject(parsed, opts);
+    } else {
+      return _Duration.invalid("unparsable", `the input "${text2}" can't be parsed as ISO 8601`);
+    }
+  }
+  /**
+   * Create an invalid Duration.
+   * @param {string} reason - simple string of why this datetime is invalid. Should not contain parameters or anything else data-dependent
+   * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
+   * @return {Duration}
+   */
+  static invalid(reason, explanation = null) {
+    if (!reason) {
+      throw new InvalidArgumentError("need to specify a reason the Duration is invalid");
+    }
+    const invalid2 = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+    if (Settings.throwOnInvalid) {
+      throw new InvalidDurationError(invalid2);
+    } else {
+      return new _Duration({ invalid: invalid2 });
+    }
+  }
+  /**
+   * @private
+   */
+  static normalizeUnit(unit) {
+    const normalized = {
+      year: "years",
+      years: "years",
+      quarter: "quarters",
+      quarters: "quarters",
+      month: "months",
+      months: "months",
+      week: "weeks",
+      weeks: "weeks",
+      day: "days",
+      days: "days",
+      hour: "hours",
+      hours: "hours",
+      minute: "minutes",
+      minutes: "minutes",
+      second: "seconds",
+      seconds: "seconds",
+      millisecond: "milliseconds",
+      milliseconds: "milliseconds"
+    }[unit ? unit.toLowerCase() : unit];
+    if (!normalized) throw new InvalidUnitError(unit);
+    return normalized;
+  }
+  /**
+   * Check if an object is a Duration. Works across context boundaries
+   * @param {object} o
+   * @return {boolean}
+   */
+  static isDuration(o3) {
+    return o3 && o3.isLuxonDuration || false;
+  }
+  /**
+   * Get  the locale of a Duration, such 'en-GB'
+   * @type {string}
+   */
+  get locale() {
+    return this.isValid ? this.loc.locale : null;
+  }
+  /**
+   * Get the numbering system of a Duration, such 'beng'. The numbering system is used when formatting the Duration
+   *
+   * @type {string}
+   */
+  get numberingSystem() {
+    return this.isValid ? this.loc.numberingSystem : null;
+  }
+  /**
+   * Returns a string representation of this Duration formatted according to the specified format string. You may use these tokens:
+   * * `S` for milliseconds
+   * * `s` for seconds
+   * * `m` for minutes
+   * * `h` for hours
+   * * `d` for days
+   * * `w` for weeks
+   * * `M` for months
+   * * `y` for years
+   * Notes:
+   * * Add padding by repeating the token, e.g. "yy" pads the years to two digits, "hhhh" pads the hours out to four digits
+   * * Tokens can be escaped by wrapping with single quotes.
+   * * The duration will be converted to the set of units in the format string using {@link Duration#shiftTo} and the Durations's conversion accuracy setting.
+   * @param {string} fmt - the format string
+   * @param {Object} opts - options
+   * @param {boolean} [opts.floor=true] - floor numerical values
+   * @param {'negative'|'all'|'negativeLargestOnly'} [opts.signMode=negative] - How to handle signs
+   * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("y d s") //=> "1 6 2"
+   * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("yy dd sss") //=> "01 06 002"
+   * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toFormat("M S") //=> "12 518402000"
+   * @example Duration.fromObject({ days: 6, seconds: 2 }).toFormat("d s", { signMode: "all" }) //=> "+6 +2"
+   * @example Duration.fromObject({ days: -6, seconds: -2 }).toFormat("d s", { signMode: "all" }) //=> "-6 -2"
+   * @example Duration.fromObject({ days: -6, seconds: -2 }).toFormat("d s", { signMode: "negativeLargestOnly" }) //=> "-6 2"
+   * @return {string}
+   */
+  toFormat(fmt, opts = {}) {
+    const fmtOpts = {
+      ...opts,
+      floor: opts.round !== false && opts.floor !== false
+    };
+    return this.isValid ? Formatter.create(this.loc, fmtOpts).formatDurationFromString(this, fmt) : INVALID$2;
+  }
+  /**
+   * Returns a string representation of a Duration with all units included.
+   * To modify its behavior, use `listStyle` and any Intl.NumberFormat option, though `unitDisplay` is especially relevant.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
+   * @param {Object} opts - Formatting options. Accepts the same keys as the options parameter of the native `Intl.NumberFormat` constructor, as well as `listStyle`.
+   * @param {string} [opts.listStyle='narrow'] - How to format the merged list. Corresponds to the `style` property of the options parameter of the native `Intl.ListFormat` constructor.
+   * @param {boolean} [opts.showZeros=true] - Show all units previously used by the duration even if they are zero
+   * @example
+   * ```js
+   * var dur = Duration.fromObject({ months: 1, weeks: 0, hours: 5, minutes: 6 })
+   * dur.toHuman() //=> '1 month, 0 weeks, 5 hours, 6 minutes'
+   * dur.toHuman({ listStyle: "long" }) //=> '1 month, 0 weeks, 5 hours, and 6 minutes'
+   * dur.toHuman({ unitDisplay: "short" }) //=> '1 mth, 0 wks, 5 hr, 6 min'
+   * dur.toHuman({ showZeros: false }) //=> '1 month, 5 hours, 6 minutes'
+   * ```
+   */
+  toHuman(opts = {}) {
+    if (!this.isValid) return INVALID$2;
+    const showZeros = opts.showZeros !== false;
+    const l4 = orderedUnits$1.map((unit) => {
+      const val = this.values[unit];
+      if (isUndefined(val) || val === 0 && !showZeros) {
+        return null;
+      }
+      return this.loc.numberFormatter({ style: "unit", unitDisplay: "long", ...opts, unit: unit.slice(0, -1) }).format(val);
+    }).filter((n4) => n4);
+    return this.loc.listFormatter({ type: "conjunction", style: opts.listStyle || "narrow", ...opts }).format(l4);
+  }
+  /**
+   * Returns a JavaScript object with this Duration's values.
+   * @example Duration.fromObject({ years: 1, days: 6, seconds: 2 }).toObject() //=> { years: 1, days: 6, seconds: 2 }
+   * @return {Object}
+   */
+  toObject() {
+    if (!this.isValid) return {};
+    return { ...this.values };
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of this Duration.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Durations
+   * @example Duration.fromObject({ years: 3, seconds: 45 }).toISO() //=> 'P3YT45S'
+   * @example Duration.fromObject({ months: 4, seconds: 45 }).toISO() //=> 'P4MT45S'
+   * @example Duration.fromObject({ months: 5 }).toISO() //=> 'P5M'
+   * @example Duration.fromObject({ minutes: 5 }).toISO() //=> 'PT5M'
+   * @example Duration.fromObject({ milliseconds: 6 }).toISO() //=> 'PT0.006S'
+   * @return {string}
+   */
+  toISO() {
+    if (!this.isValid) return null;
+    let s4 = "P";
+    if (this.years !== 0) s4 += this.years + "Y";
+    if (this.months !== 0 || this.quarters !== 0) s4 += this.months + this.quarters * 3 + "M";
+    if (this.weeks !== 0) s4 += this.weeks + "W";
+    if (this.days !== 0) s4 += this.days + "D";
+    if (this.hours !== 0 || this.minutes !== 0 || this.seconds !== 0 || this.milliseconds !== 0)
+      s4 += "T";
+    if (this.hours !== 0) s4 += this.hours + "H";
+    if (this.minutes !== 0) s4 += this.minutes + "M";
+    if (this.seconds !== 0 || this.milliseconds !== 0)
+      s4 += roundTo(this.seconds + this.milliseconds / 1e3, 3) + "S";
+    if (s4 === "P") s4 += "T0S";
+    return s4;
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of this Duration, formatted as a time of day.
+   * Note that this will return null if the duration is invalid, negative, or equal to or greater than 24 hours.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Times
+   * @param {Object} opts - options
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+   * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
+   * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @example Duration.fromObject({ hours: 11 }).toISOTime() //=> '11:00:00.000'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressMilliseconds: true }) //=> '11:00:00'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ suppressSeconds: true }) //=> '11:00'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ includePrefix: true }) //=> 'T11:00:00.000'
+   * @example Duration.fromObject({ hours: 11 }).toISOTime({ format: 'basic' }) //=> '110000.000'
+   * @return {string}
+   */
+  toISOTime(opts = {}) {
+    if (!this.isValid) return null;
+    const millis = this.toMillis();
+    if (millis < 0 || millis >= 864e5) return null;
+    opts = {
+      suppressMilliseconds: false,
+      suppressSeconds: false,
+      includePrefix: false,
+      format: "extended",
+      ...opts,
+      includeOffset: false
+    };
+    const dateTime = DateTime.fromMillis(millis, { zone: "UTC" });
+    return dateTime.toISOTime(opts);
+  }
+  /**
+   * Returns an ISO 8601 representation of this Duration appropriate for use in JSON.
+   * @return {string}
+   */
+  toJSON() {
+    return this.toISO();
+  }
+  /**
+   * Returns an ISO 8601 representation of this Duration appropriate for use in debugging.
+   * @return {string}
+   */
+  toString() {
+    return this.toISO();
+  }
+  /**
+   * Returns a string representation of this Duration appropriate for the REPL.
+   * @return {string}
+   */
+  [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
+    if (this.isValid) {
+      return `Duration { values: ${JSON.stringify(this.values)} }`;
+    } else {
+      return `Duration { Invalid, reason: ${this.invalidReason} }`;
+    }
+  }
+  /**
+   * Returns an milliseconds value of this Duration.
+   * @return {number}
+   */
+  toMillis() {
+    if (!this.isValid) return NaN;
+    return durationToMillis(this.matrix, this.values);
+  }
+  /**
+   * Returns an milliseconds value of this Duration. Alias of {@link toMillis}
+   * @return {number}
+   */
+  valueOf() {
+    return this.toMillis();
+  }
+  /**
+   * Make this Duration longer by the specified amount. Return a newly-constructed Duration.
+   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @return {Duration}
+   */
+  plus(duration3) {
+    if (!this.isValid) return this;
+    const dur = _Duration.fromDurationLike(duration3), result = {};
+    for (const k5 of orderedUnits$1) {
+      if (hasOwnProperty(dur.values, k5) || hasOwnProperty(this.values, k5)) {
+        result[k5] = dur.get(k5) + this.get(k5);
+      }
+    }
+    return clone$1(this, { values: result }, true);
+  }
+  /**
+   * Make this Duration shorter by the specified amount. Return a newly-constructed Duration.
+   * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @return {Duration}
+   */
+  minus(duration3) {
+    if (!this.isValid) return this;
+    const dur = _Duration.fromDurationLike(duration3);
+    return this.plus(dur.negate());
+  }
+  /**
+   * Scale this Duration by the specified amount. Return a newly-constructed Duration.
+   * @param {function} fn - The function to apply to each unit. Arity is 1 or 2: the value of the unit and, optionally, the unit name. Must return a number.
+   * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnits(x => x * 2) //=> { hours: 2, minutes: 60 }
+   * @example Duration.fromObject({ hours: 1, minutes: 30 }).mapUnits((x, u) => u === "hours" ? x * 2 : x) //=> { hours: 2, minutes: 30 }
+   * @return {Duration}
+   */
+  mapUnits(fn) {
+    if (!this.isValid) return this;
+    const result = {};
+    for (const k5 of Object.keys(this.values)) {
+      result[k5] = asNumber(fn(this.values[k5], k5));
+    }
+    return clone$1(this, { values: result }, true);
+  }
+  /**
+   * Get the value of unit.
+   * @param {string} unit - a unit such as 'minute' or 'day'
+   * @example Duration.fromObject({years: 2, days: 3}).get('years') //=> 2
+   * @example Duration.fromObject({years: 2, days: 3}).get('months') //=> 0
+   * @example Duration.fromObject({years: 2, days: 3}).get('days') //=> 3
+   * @return {number}
+   */
+  get(unit) {
+    return this[_Duration.normalizeUnit(unit)];
+  }
+  /**
+   * "Set" the values of specified units. Return a newly-constructed Duration.
+   * @param {Object} values - a mapping of units to numbers
+   * @example dur.set({ years: 2017 })
+   * @example dur.set({ hours: 8, minutes: 30 })
+   * @return {Duration}
+   */
+  set(values) {
+    if (!this.isValid) return this;
+    const mixed = { ...this.values, ...normalizeObject(values, _Duration.normalizeUnit) };
+    return clone$1(this, { values: mixed });
+  }
+  /**
+   * "Set" the locale and/or numberingSystem.  Returns a newly-constructed Duration.
+   * @example dur.reconfigure({ locale: 'en-GB' })
+   * @return {Duration}
+   */
+  reconfigure({ locale, numberingSystem, conversionAccuracy, matrix } = {}) {
+    const loc = this.loc.clone({ locale, numberingSystem });
+    const opts = { loc, matrix, conversionAccuracy };
+    return clone$1(this, opts);
+  }
+  /**
+   * Return the length of the duration in the specified unit.
+   * @param {string} unit - a unit such as 'minutes' or 'days'
+   * @example Duration.fromObject({years: 1}).as('days') //=> 365
+   * @example Duration.fromObject({years: 1}).as('months') //=> 12
+   * @example Duration.fromObject({hours: 60}).as('days') //=> 2.5
+   * @return {number}
+   */
+  as(unit) {
+    return this.isValid ? this.shiftTo(unit).get(unit) : NaN;
+  }
+  /**
+   * Reduce this Duration to its canonical representation in its current units.
+   * Assuming the overall value of the Duration is positive, this means:
+   * - excessive values for lower-order units are converted to higher-order units (if possible, see first and second example)
+   * - negative lower-order units are converted to higher order units (there must be such a higher order unit, otherwise
+   *   the overall value would be negative, see third example)
+   * - fractional values for higher-order units are converted to lower-order units (if possible, see fourth example)
+   *
+   * If the overall value is negative, the result of this method is equivalent to `this.negate().normalize().negate()`.
+   * @example Duration.fromObject({ years: 2, days: 5000 }).normalize().toObject() //=> { years: 15, days: 255 }
+   * @example Duration.fromObject({ days: 5000 }).normalize().toObject() //=> { days: 5000 }
+   * @example Duration.fromObject({ hours: 12, minutes: -45 }).normalize().toObject() //=> { hours: 11, minutes: 15 }
+   * @example Duration.fromObject({ years: 2.5, days: 0, hours: 0 }).normalize().toObject() //=> { years: 2, days: 182, hours: 12 }
+   * @return {Duration}
+   */
+  normalize() {
+    if (!this.isValid) return this;
+    const vals = this.toObject();
+    normalizeValues(this.matrix, vals);
+    return clone$1(this, { values: vals }, true);
+  }
+  /**
+   * Rescale units to its largest representation
+   * @example Duration.fromObject({ milliseconds: 90000 }).rescale().toObject() //=> { minutes: 1, seconds: 30 }
+   * @return {Duration}
+   */
+  rescale() {
+    if (!this.isValid) return this;
+    const vals = removeZeroes(this.normalize().shiftToAll().toObject());
+    return clone$1(this, { values: vals }, true);
+  }
+  /**
+   * Convert this Duration into its representation in a different set of units.
+   * @example Duration.fromObject({ hours: 1, seconds: 30 }).shiftTo('minutes', 'milliseconds').toObject() //=> { minutes: 60, milliseconds: 30000 }
+   * @return {Duration}
+   */
+  shiftTo(...units) {
+    if (!this.isValid) return this;
+    if (units.length === 0) {
+      return this;
+    }
+    units = units.map((u) => _Duration.normalizeUnit(u));
+    const built = {}, accumulated = {}, vals = this.toObject();
+    let lastUnit;
+    for (const k5 of orderedUnits$1) {
+      if (units.indexOf(k5) >= 0) {
+        lastUnit = k5;
+        let own2 = 0;
+        for (const ak in accumulated) {
+          own2 += this.matrix[ak][k5] * accumulated[ak];
+          accumulated[ak] = 0;
+        }
+        if (isNumber(vals[k5])) {
+          own2 += vals[k5];
+        }
+        const i5 = Math.trunc(own2);
+        built[k5] = i5;
+        accumulated[k5] = (own2 * 1e3 - i5 * 1e3) / 1e3;
+      } else if (isNumber(vals[k5])) {
+        accumulated[k5] = vals[k5];
+      }
+    }
+    for (const key in accumulated) {
+      if (accumulated[key] !== 0) {
+        built[lastUnit] += key === lastUnit ? accumulated[key] : accumulated[key] / this.matrix[lastUnit][key];
+      }
+    }
+    normalizeValues(this.matrix, built);
+    return clone$1(this, { values: built }, true);
+  }
+  /**
+   * Shift this Duration to all available units.
+   * Same as shiftTo("years", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds")
+   * @return {Duration}
+   */
+  shiftToAll() {
+    if (!this.isValid) return this;
+    return this.shiftTo(
+      "years",
+      "months",
+      "weeks",
+      "days",
+      "hours",
+      "minutes",
+      "seconds",
+      "milliseconds"
+    );
+  }
+  /**
+   * Return the negative of this Duration.
+   * @example Duration.fromObject({ hours: 1, seconds: 30 }).negate().toObject() //=> { hours: -1, seconds: -30 }
+   * @return {Duration}
+   */
+  negate() {
+    if (!this.isValid) return this;
+    const negated = {};
+    for (const k5 of Object.keys(this.values)) {
+      negated[k5] = this.values[k5] === 0 ? 0 : -this.values[k5];
+    }
+    return clone$1(this, { values: negated }, true);
+  }
+  /**
+   * Removes all units with values equal to 0 from this Duration.
+   * @example Duration.fromObject({ years: 2, days: 0, hours: 0, minutes: 0 }).removeZeros().toObject() //=> { years: 2 }
+   * @return {Duration}
+   */
+  removeZeros() {
+    if (!this.isValid) return this;
+    const vals = removeZeroes(this.values);
+    return clone$1(this, { values: vals }, true);
+  }
+  /**
+   * Get the years.
+   * @type {number}
+   */
+  get years() {
+    return this.isValid ? this.values.years || 0 : NaN;
+  }
+  /**
+   * Get the quarters.
+   * @type {number}
+   */
+  get quarters() {
+    return this.isValid ? this.values.quarters || 0 : NaN;
+  }
+  /**
+   * Get the months.
+   * @type {number}
+   */
+  get months() {
+    return this.isValid ? this.values.months || 0 : NaN;
+  }
+  /**
+   * Get the weeks
+   * @type {number}
+   */
+  get weeks() {
+    return this.isValid ? this.values.weeks || 0 : NaN;
+  }
+  /**
+   * Get the days.
+   * @type {number}
+   */
+  get days() {
+    return this.isValid ? this.values.days || 0 : NaN;
+  }
+  /**
+   * Get the hours.
+   * @type {number}
+   */
+  get hours() {
+    return this.isValid ? this.values.hours || 0 : NaN;
+  }
+  /**
+   * Get the minutes.
+   * @type {number}
+   */
+  get minutes() {
+    return this.isValid ? this.values.minutes || 0 : NaN;
+  }
+  /**
+   * Get the seconds.
+   * @return {number}
+   */
+  get seconds() {
+    return this.isValid ? this.values.seconds || 0 : NaN;
+  }
+  /**
+   * Get the milliseconds.
+   * @return {number}
+   */
+  get milliseconds() {
+    return this.isValid ? this.values.milliseconds || 0 : NaN;
+  }
+  /**
+   * Returns whether the Duration is invalid. Invalid durations are returned by diff operations
+   * on invalid DateTimes or Intervals.
+   * @return {boolean}
+   */
+  get isValid() {
+    return this.invalid === null;
+  }
+  /**
+   * Returns an error code if this Duration became invalid, or null if the Duration is valid
+   * @return {string}
+   */
+  get invalidReason() {
+    return this.invalid ? this.invalid.reason : null;
+  }
+  /**
+   * Returns an explanation of why this Duration became invalid, or null if the Duration is valid
+   * @type {string}
+   */
+  get invalidExplanation() {
+    return this.invalid ? this.invalid.explanation : null;
+  }
+  /**
+   * Equality check
+   * Two Durations are equal iff they have the same units and the same values for each unit.
+   * @param {Duration} other
+   * @return {boolean}
+   */
+  equals(other) {
+    if (!this.isValid || !other.isValid) {
+      return false;
+    }
+    if (!this.loc.equals(other.loc)) {
+      return false;
+    }
+    function eq2(v1, v2) {
+      if (v1 === void 0 || v1 === 0) return v2 === void 0 || v2 === 0;
+      return v1 === v2;
+    }
+    for (const u of orderedUnits$1) {
+      if (!eq2(this.values[u], other.values[u])) {
+        return false;
+      }
+    }
+    return true;
+  }
+};
+var INVALID$1 = "Invalid Interval";
+function validateStartEnd(start, end) {
+  if (!start || !start.isValid) {
+    return Interval.invalid("missing or invalid start");
+  } else if (!end || !end.isValid) {
+    return Interval.invalid("missing or invalid end");
+  } else if (end < start) {
+    return Interval.invalid(
+      "end before start",
+      `The end of an interval must be after its start, but you had start=${start.toISO()} and end=${end.toISO()}`
+    );
+  } else {
+    return null;
+  }
+}
+var Interval = class _Interval {
+  /**
+   * @private
+   */
+  constructor(config5) {
+    this.s = config5.start;
+    this.e = config5.end;
+    this.invalid = config5.invalid || null;
+    this.isLuxonInterval = true;
+  }
+  /**
+   * Create an invalid Interval.
+   * @param {string} reason - simple string of why this Interval is invalid. Should not contain parameters or anything else data-dependent
+   * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
+   * @return {Interval}
+   */
+  static invalid(reason, explanation = null) {
+    if (!reason) {
+      throw new InvalidArgumentError("need to specify a reason the Interval is invalid");
+    }
+    const invalid2 = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+    if (Settings.throwOnInvalid) {
+      throw new InvalidIntervalError(invalid2);
+    } else {
+      return new _Interval({ invalid: invalid2 });
+    }
+  }
+  /**
+   * Create an Interval from a start DateTime and an end DateTime. Inclusive of the start but not the end.
+   * @param {DateTime|Date|Object} start
+   * @param {DateTime|Date|Object} end
+   * @return {Interval}
+   */
+  static fromDateTimes(start, end) {
+    const builtStart = friendlyDateTime(start), builtEnd = friendlyDateTime(end);
+    const validateError = validateStartEnd(builtStart, builtEnd);
+    if (validateError == null) {
+      return new _Interval({
+        start: builtStart,
+        end: builtEnd
+      });
+    } else {
+      return validateError;
+    }
+  }
+  /**
+   * Create an Interval from a start DateTime and a Duration to extend to.
+   * @param {DateTime|Date|Object} start
+   * @param {Duration|Object|number} duration - the length of the Interval.
+   * @return {Interval}
+   */
+  static after(start, duration3) {
+    const dur = Duration.fromDurationLike(duration3), dt = friendlyDateTime(start);
+    return _Interval.fromDateTimes(dt, dt.plus(dur));
+  }
+  /**
+   * Create an Interval from an end DateTime and a Duration to extend backwards to.
+   * @param {DateTime|Date|Object} end
+   * @param {Duration|Object|number} duration - the length of the Interval.
+   * @return {Interval}
+   */
+  static before(end, duration3) {
+    const dur = Duration.fromDurationLike(duration3), dt = friendlyDateTime(end);
+    return _Interval.fromDateTimes(dt.minus(dur), dt);
+  }
+  /**
+   * Create an Interval from an ISO 8601 string.
+   * Accepts `<start>/<end>`, `<start>/<duration>`, and `<duration>/<end>` formats.
+   * @param {string} text - the ISO string to parse
+   * @param {Object} [opts] - options to pass {@link DateTime#fromISO} and optionally {@link Duration#fromISO}
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+   * @return {Interval}
+   */
+  static fromISO(text2, opts) {
+    const [s4, e5] = (text2 || "").split("/", 2);
+    if (s4 && e5) {
+      let start, startIsValid;
+      try {
+        start = DateTime.fromISO(s4, opts);
+        startIsValid = start.isValid;
+      } catch (e6) {
+        startIsValid = false;
+      }
+      let end, endIsValid;
+      try {
+        end = DateTime.fromISO(e5, opts);
+        endIsValid = end.isValid;
+      } catch (e6) {
+        endIsValid = false;
+      }
+      if (startIsValid && endIsValid) {
+        return _Interval.fromDateTimes(start, end);
+      }
+      if (startIsValid) {
+        const dur = Duration.fromISO(e5, opts);
+        if (dur.isValid) {
+          return _Interval.after(start, dur);
+        }
+      } else if (endIsValid) {
+        const dur = Duration.fromISO(s4, opts);
+        if (dur.isValid) {
+          return _Interval.before(end, dur);
+        }
+      }
+    }
+    return _Interval.invalid("unparsable", `the input "${text2}" can't be parsed as ISO 8601`);
+  }
+  /**
+   * Check if an object is an Interval. Works across context boundaries
+   * @param {object} o
+   * @return {boolean}
+   */
+  static isInterval(o3) {
+    return o3 && o3.isLuxonInterval || false;
+  }
+  /**
+   * Returns the start of the Interval
+   * @type {DateTime}
+   */
+  get start() {
+    return this.isValid ? this.s : null;
+  }
+  /**
+   * Returns the end of the Interval. This is the first instant which is not part of the interval
+   * (Interval is half-open).
+   * @type {DateTime}
+   */
+  get end() {
+    return this.isValid ? this.e : null;
+  }
+  /**
+   * Returns the last DateTime included in the interval (since end is not part of the interval)
+   * @type {DateTime}
+   */
+  get lastDateTime() {
+    return this.isValid ? this.e ? this.e.minus(1) : null : null;
+  }
+  /**
+   * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
+   * @type {boolean}
+   */
+  get isValid() {
+    return this.invalidReason === null;
+  }
+  /**
+   * Returns an error code if this Interval is invalid, or null if the Interval is valid
+   * @type {string}
+   */
+  get invalidReason() {
+    return this.invalid ? this.invalid.reason : null;
+  }
+  /**
+   * Returns an explanation of why this Interval became invalid, or null if the Interval is valid
+   * @type {string}
+   */
+  get invalidExplanation() {
+    return this.invalid ? this.invalid.explanation : null;
+  }
+  /**
+   * Returns the length of the Interval in the specified unit.
+   * @param {string} unit - the unit (such as 'hours' or 'days') to return the length in.
+   * @return {number}
+   */
+  length(unit = "milliseconds") {
+    return this.isValid ? this.toDuration(...[unit]).get(unit) : NaN;
+  }
+  /**
+   * Returns the count of minutes, hours, days, months, or years included in the Interval, even in part.
+   * Unlike {@link Interval#length} this counts sections of the calendar, not periods of time, e.g. specifying 'day'
+   * asks 'what dates are included in this interval?', not 'how many days long is this interval?'
+   * @param {string} [unit='milliseconds'] - the unit of time to count.
+   * @param {Object} opts - options
+   * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week; this operation will always use the locale of the start DateTime
+   * @return {number}
+   */
+  count(unit = "milliseconds", opts) {
+    if (!this.isValid) return NaN;
+    const start = this.start.startOf(unit, opts);
+    let end;
+    if (opts?.useLocaleWeeks) {
+      end = this.end.reconfigure({ locale: start.locale });
+    } else {
+      end = this.end;
+    }
+    end = end.startOf(unit, opts);
+    return Math.floor(end.diff(start, unit).get(unit)) + (end.valueOf() !== this.end.valueOf());
+  }
+  /**
+   * Returns whether this Interval's start and end are both in the same unit of time
+   * @param {string} unit - the unit of time to check sameness on
+   * @return {boolean}
+   */
+  hasSame(unit) {
+    return this.isValid ? this.isEmpty() || this.e.minus(1).hasSame(this.s, unit) : false;
+  }
+  /**
+   * Return whether this Interval has the same start and end DateTimes.
+   * @return {boolean}
+   */
+  isEmpty() {
+    return this.s.valueOf() === this.e.valueOf();
+  }
+  /**
+   * Return whether this Interval's start is after the specified DateTime.
+   * @param {DateTime} dateTime
+   * @return {boolean}
+   */
+  isAfter(dateTime) {
+    if (!this.isValid) return false;
+    return this.s > dateTime;
+  }
+  /**
+   * Return whether this Interval's end is before the specified DateTime.
+   * @param {DateTime} dateTime
+   * @return {boolean}
+   */
+  isBefore(dateTime) {
+    if (!this.isValid) return false;
+    return this.e <= dateTime;
+  }
+  /**
+   * Return whether this Interval contains the specified DateTime.
+   * @param {DateTime} dateTime
+   * @return {boolean}
+   */
+  contains(dateTime) {
+    if (!this.isValid) return false;
+    return this.s <= dateTime && this.e > dateTime;
+  }
+  /**
+   * "Sets" the start and/or end dates. Returns a newly-constructed Interval.
+   * @param {Object} values - the values to set
+   * @param {DateTime} values.start - the starting DateTime
+   * @param {DateTime} values.end - the ending DateTime
+   * @return {Interval}
+   */
+  set({ start, end } = {}) {
+    if (!this.isValid) return this;
+    return _Interval.fromDateTimes(start || this.s, end || this.e);
+  }
+  /**
+   * Split this Interval at each of the specified DateTimes
+   * @param {...DateTime} dateTimes - the unit of time to count.
+   * @return {Array}
+   */
+  splitAt(...dateTimes) {
+    if (!this.isValid) return [];
+    const sorted = dateTimes.map(friendlyDateTime).filter((d5) => this.contains(d5)).sort((a5, b5) => a5.toMillis() - b5.toMillis()), results = [];
+    let { s: s4 } = this, i5 = 0;
+    while (s4 < this.e) {
+      const added = sorted[i5] || this.e, next = +added > +this.e ? this.e : added;
+      results.push(_Interval.fromDateTimes(s4, next));
+      s4 = next;
+      i5 += 1;
+    }
+    return results;
+  }
+  /**
+   * Split this Interval into smaller Intervals, each of the specified length.
+   * Left over time is grouped into a smaller interval
+   * @param {Duration|Object|number} duration - The length of each resulting interval.
+   * @return {Array}
+   */
+  splitBy(duration3) {
+    const dur = Duration.fromDurationLike(duration3);
+    if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
+      return [];
+    }
+    let { s: s4 } = this, idx = 1, next;
+    const results = [];
+    while (s4 < this.e) {
+      const added = this.start.plus(dur.mapUnits((x) => x * idx));
+      next = +added > +this.e ? this.e : added;
+      results.push(_Interval.fromDateTimes(s4, next));
+      s4 = next;
+      idx += 1;
+    }
+    return results;
+  }
+  /**
+   * Split this Interval into the specified number of smaller intervals.
+   * @param {number} numberOfParts - The number of Intervals to divide the Interval into.
+   * @return {Array}
+   */
+  divideEqually(numberOfParts) {
+    if (!this.isValid) return [];
+    return this.splitBy(this.length() / numberOfParts).slice(0, numberOfParts);
+  }
+  /**
+   * Return whether this Interval overlaps with the specified Interval
+   * @param {Interval} other
+   * @return {boolean}
+   */
+  overlaps(other) {
+    return this.e > other.s && this.s < other.e;
+  }
+  /**
+   * Return whether this Interval's end is adjacent to the specified Interval's start.
+   * @param {Interval} other
+   * @return {boolean}
+   */
+  abutsStart(other) {
+    if (!this.isValid) return false;
+    return +this.e === +other.s;
+  }
+  /**
+   * Return whether this Interval's start is adjacent to the specified Interval's end.
+   * @param {Interval} other
+   * @return {boolean}
+   */
+  abutsEnd(other) {
+    if (!this.isValid) return false;
+    return +other.e === +this.s;
+  }
+  /**
+   * Returns true if this Interval fully contains the specified Interval, specifically if the intersect (of this Interval and the other Interval) is equal to the other Interval; false otherwise.
+   * @param {Interval} other
+   * @return {boolean}
+   */
+  engulfs(other) {
+    if (!this.isValid) return false;
+    return this.s <= other.s && this.e >= other.e;
+  }
+  /**
+   * Return whether this Interval has the same start and end as the specified Interval.
+   * @param {Interval} other
+   * @return {boolean}
+   */
+  equals(other) {
+    if (!this.isValid || !other.isValid) {
+      return false;
+    }
+    return this.s.equals(other.s) && this.e.equals(other.e);
+  }
+  /**
+   * Return an Interval representing the intersection of this Interval and the specified Interval.
+   * Specifically, the resulting Interval has the maximum start time and the minimum end time of the two Intervals.
+   * Returns null if the intersection is empty, meaning, the intervals don't intersect.
+   * @param {Interval} other
+   * @return {Interval}
+   */
+  intersection(other) {
+    if (!this.isValid) return this;
+    const s4 = this.s > other.s ? this.s : other.s, e5 = this.e < other.e ? this.e : other.e;
+    if (s4 >= e5) {
+      return null;
+    } else {
+      return _Interval.fromDateTimes(s4, e5);
+    }
+  }
+  /**
+   * Return an Interval representing the union of this Interval and the specified Interval.
+   * Specifically, the resulting Interval has the minimum start time and the maximum end time of the two Intervals.
+   * @param {Interval} other
+   * @return {Interval}
+   */
+  union(other) {
+    if (!this.isValid) return this;
+    const s4 = this.s < other.s ? this.s : other.s, e5 = this.e > other.e ? this.e : other.e;
+    return _Interval.fromDateTimes(s4, e5);
+  }
+  /**
+   * Merge an array of Intervals into an equivalent minimal set of Intervals.
+   * Combines overlapping and adjacent Intervals.
+   * The resulting array will contain the Intervals in ascending order, that is, starting with the earliest Interval
+   * and ending with the latest.
+   *
+   * @param {Array} intervals
+   * @return {Array}
+   */
+  static merge(intervals) {
+    const [found, final] = intervals.sort((a5, b5) => a5.s - b5.s).reduce(
+      ([sofar, current], item) => {
+        if (!current) {
+          return [sofar, item];
+        } else if (current.overlaps(item) || current.abutsStart(item)) {
+          return [sofar, current.union(item)];
+        } else {
+          return [sofar.concat([current]), item];
+        }
+      },
+      [[], null]
+    );
+    if (final) {
+      found.push(final);
+    }
+    return found;
+  }
+  /**
+   * Return an array of Intervals representing the spans of time that only appear in one of the specified Intervals.
+   * @param {Array} intervals
+   * @return {Array}
+   */
+  static xor(intervals) {
+    let start = null, currentCount = 0;
+    const results = [], ends = intervals.map((i5) => [
+      { time: i5.s, type: "s" },
+      { time: i5.e, type: "e" }
+    ]), flattened = Array.prototype.concat(...ends), arr = flattened.sort((a5, b5) => a5.time - b5.time);
+    for (const i5 of arr) {
+      currentCount += i5.type === "s" ? 1 : -1;
+      if (currentCount === 1) {
+        start = i5.time;
+      } else {
+        if (start && +start !== +i5.time) {
+          results.push(_Interval.fromDateTimes(start, i5.time));
+        }
+        start = null;
+      }
+    }
+    return _Interval.merge(results);
+  }
+  /**
+   * Return an Interval representing the span of time in this Interval that doesn't overlap with any of the specified Intervals.
+   * @param {...Interval} intervals
+   * @return {Array}
+   */
+  difference(...intervals) {
+    return _Interval.xor([this].concat(intervals)).map((i5) => this.intersection(i5)).filter((i5) => i5 && !i5.isEmpty());
+  }
+  /**
+   * Returns a string representation of this Interval appropriate for debugging.
+   * @return {string}
+   */
+  toString() {
+    if (!this.isValid) return INVALID$1;
+    return `[${this.s.toISO()} \u2013 ${this.e.toISO()})`;
+  }
+  /**
+   * Returns a string representation of this Interval appropriate for the REPL.
+   * @return {string}
+   */
+  [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
+    if (this.isValid) {
+      return `Interval { start: ${this.s.toISO()}, end: ${this.e.toISO()} }`;
+    } else {
+      return `Interval { Invalid, reason: ${this.invalidReason} }`;
+    }
+  }
+  /**
+   * Returns a localized string representing this Interval. Accepts the same options as the
+   * Intl.DateTimeFormat constructor and any presets defined by Luxon, such as
+   * {@link DateTime.DATE_FULL} or {@link DateTime.TIME_SIMPLE}. The exact behavior of this method
+   * is browser-specific, but in general it will return an appropriate representation of the
+   * Interval in the assigned locale. Defaults to the system's locale if no locale has been
+   * specified.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param {Object} [formatOpts=DateTime.DATE_SHORT] - Either a DateTime preset or
+   * Intl.DateTimeFormat constructor options.
+   * @param {Object} opts - Options to override the configuration of the start DateTime.
+   * @example Interval.fromISO('2022-11-07T09:00Z/2022-11-08T09:00Z').toLocaleString(); //=> 11/7/2022 – 11/8/2022
+   * @example Interval.fromISO('2022-11-07T09:00Z/2022-11-08T09:00Z').toLocaleString(DateTime.DATE_FULL); //=> November 7 – 8, 2022
+   * @example Interval.fromISO('2022-11-07T09:00Z/2022-11-08T09:00Z').toLocaleString(DateTime.DATE_FULL, { locale: 'fr-FR' }); //=> 7–8 novembre 2022
+   * @example Interval.fromISO('2022-11-07T17:00Z/2022-11-07T19:00Z').toLocaleString(DateTime.TIME_SIMPLE); //=> 6:00 – 8:00 PM
+   * @example Interval.fromISO('2022-11-07T17:00Z/2022-11-07T19:00Z').toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }); //=> Mon, Nov 07, 6:00 – 8:00 p
+   * @return {string}
+   */
+  toLocaleString(formatOpts = DATE_SHORT, opts = {}) {
+    return this.isValid ? Formatter.create(this.s.loc.clone(opts), formatOpts).formatInterval(this) : INVALID$1;
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of this Interval.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+   * @param {Object} opts - The same options as {@link DateTime#toISO}
+   * @return {string}
+   */
+  toISO(opts) {
+    if (!this.isValid) return INVALID$1;
+    return `${this.s.toISO(opts)}/${this.e.toISO(opts)}`;
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of date of this Interval.
+   * The time components are ignored.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+   * @return {string}
+   */
+  toISODate() {
+    if (!this.isValid) return INVALID$1;
+    return `${this.s.toISODate()}/${this.e.toISODate()}`;
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of time of this Interval.
+   * The date components are ignored.
+   * @see https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+   * @param {Object} opts - The same options as {@link DateTime#toISO}
+   * @return {string}
+   */
+  toISOTime(opts) {
+    if (!this.isValid) return INVALID$1;
+    return `${this.s.toISOTime(opts)}/${this.e.toISOTime(opts)}`;
+  }
+  /**
+   * Returns a string representation of this Interval formatted according to the specified format
+   * string. **You may not want this.** See {@link Interval#toLocaleString} for a more flexible
+   * formatting tool.
+   * @param {string} dateFormat - The format string. This string formats the start and end time.
+   * See {@link DateTime#toFormat} for details.
+   * @param {Object} opts - Options.
+   * @param {string} [opts.separator =  ' – '] - A separator to place between the start and end
+   * representations.
+   * @return {string}
+   */
+  toFormat(dateFormat, { separator = " \u2013 " } = {}) {
+    if (!this.isValid) return INVALID$1;
+    return `${this.s.toFormat(dateFormat)}${separator}${this.e.toFormat(dateFormat)}`;
+  }
+  /**
+   * Return a Duration representing the time spanned by this interval.
+   * @param {string|string[]} [unit=['milliseconds']] - the unit or units (such as 'hours' or 'days') to include in the duration.
+   * @param {Object} opts - options that affect the creation of the Duration
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration().toObject() //=> { milliseconds: 88489257 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration('days').toObject() //=> { days: 1.0241812152777778 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration(['hours', 'minutes']).toObject() //=> { hours: 24, minutes: 34.82095 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration(['hours', 'minutes', 'seconds']).toObject() //=> { hours: 24, minutes: 34, seconds: 49.257 }
+   * @example Interval.fromDateTimes(dt1, dt2).toDuration('seconds').toObject() //=> { seconds: 88489.257 }
+   * @return {Duration}
+   */
+  toDuration(unit, opts) {
+    if (!this.isValid) {
+      return Duration.invalid(this.invalidReason);
+    }
+    return this.e.diff(this.s, unit, opts);
+  }
+  /**
+   * Run mapFn on the interval start and end, returning a new Interval from the resulting DateTimes
+   * @param {function} mapFn
+   * @return {Interval}
+   * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.toUTC())
+   * @example Interval.fromDateTimes(dt1, dt2).mapEndpoints(endpoint => endpoint.plus({ hours: 2 }))
+   */
+  mapEndpoints(mapFn) {
+    return _Interval.fromDateTimes(mapFn(this.s), mapFn(this.e));
+  }
+};
+var Info = class {
+  /**
+   * Return whether the specified zone contains a DST.
+   * @param {string|Zone} [zone='local'] - Zone to check. Defaults to the environment's local zone.
+   * @return {boolean}
+   */
+  static hasDST(zone = Settings.defaultZone) {
+    const proto = DateTime.now().setZone(zone).set({ month: 12 });
+    return !zone.isUniversal && proto.offset !== proto.set({ month: 6 }).offset;
+  }
+  /**
+   * Return whether the specified zone is a valid IANA specifier.
+   * @param {string} zone - Zone to check
+   * @return {boolean}
+   */
+  static isValidIANAZone(zone) {
+    return IANAZone.isValidZone(zone);
+  }
+  /**
+   * Converts the input into a {@link Zone} instance.
+   *
+   * * If `input` is already a Zone instance, it is returned unchanged.
+   * * If `input` is a string containing a valid time zone name, a Zone instance
+   *   with that name is returned.
+   * * If `input` is a string that doesn't refer to a known time zone, a Zone
+   *   instance with {@link Zone#isValid} == false is returned.
+   * * If `input is a number, a Zone instance with the specified fixed offset
+   *   in minutes is returned.
+   * * If `input` is `null` or `undefined`, the default zone is returned.
+   * @param {string|Zone|number} [input] - the value to be converted
+   * @return {Zone}
+   */
+  static normalizeZone(input2) {
+    return normalizeZone(input2, Settings.defaultZone);
+  }
+  /**
+   * Get the weekday on which the week starts according to the given locale.
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @returns {number} the start of the week, 1 for Monday through 7 for Sunday
+   */
+  static getStartOfWeek({ locale = null, locObj = null } = {}) {
+    return (locObj || Locale.create(locale)).getStartOfWeek();
+  }
+  /**
+   * Get the minimum number of days necessary in a week before it is considered part of the next year according
+   * to the given locale.
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @returns {number}
+   */
+  static getMinimumDaysInFirstWeek({ locale = null, locObj = null } = {}) {
+    return (locObj || Locale.create(locale)).getMinDaysInFirstWeek();
+  }
+  /**
+   * Get the weekdays, which are considered the weekend according to the given locale
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @returns {number[]} an array of weekdays, 1 for Monday through 7 for Sunday
+   */
+  static getWeekendWeekdays({ locale = null, locObj = null } = {}) {
+    return (locObj || Locale.create(locale)).getWeekendDays().slice();
+  }
+  /**
+   * Return an array of standalone month names.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @param {string} [opts.outputCalendar='gregory'] - the calendar
+   * @example Info.months()[0] //=> 'January'
+   * @example Info.months('short')[0] //=> 'Jan'
+   * @example Info.months('numeric')[0] //=> '1'
+   * @example Info.months('short', { locale: 'fr-CA' } )[0] //=> 'janv.'
+   * @example Info.months('numeric', { locale: 'ar' })[0] //=> '١'
+   * @example Info.months('long', { outputCalendar: 'islamic' })[0] //=> 'Rabiʻ I'
+   * @return {Array}
+   */
+  static months(length = "long", { locale = null, numberingSystem = null, locObj = null, outputCalendar = "gregory" } = {}) {
+    return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length);
+  }
+  /**
+   * Return an array of format month names.
+   * Format months differ from standalone months in that they're meant to appear next to the day of the month. In some languages, that
+   * changes the string.
+   * See {@link Info#months}
+   * @param {string} [length='long'] - the length of the month representation, such as "numeric", "2-digit", "narrow", "short", "long"
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @param {string} [opts.outputCalendar='gregory'] - the calendar
+   * @return {Array}
+   */
+  static monthsFormat(length = "long", { locale = null, numberingSystem = null, locObj = null, outputCalendar = "gregory" } = {}) {
+    return (locObj || Locale.create(locale, numberingSystem, outputCalendar)).months(length, true);
+  }
+  /**
+   * Return an array of standalone week names.
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param {string} [length='long'] - the length of the weekday representation, such as "narrow", "short", "long".
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @example Info.weekdays()[0] //=> 'Monday'
+   * @example Info.weekdays('short')[0] //=> 'Mon'
+   * @example Info.weekdays('short', { locale: 'fr-CA' })[0] //=> 'lun.'
+   * @example Info.weekdays('short', { locale: 'ar' })[0] //=> 'الاثنين'
+   * @return {Array}
+   */
+  static weekdays(length = "long", { locale = null, numberingSystem = null, locObj = null } = {}) {
+    return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length);
+  }
+  /**
+   * Return an array of format week names.
+   * Format weekdays differ from standalone weekdays in that they're meant to appear next to more date information. In some languages, that
+   * changes the string.
+   * See {@link Info#weekdays}
+   * @param {string} [length='long'] - the length of the month representation, such as "narrow", "short", "long".
+   * @param {Object} opts - options
+   * @param {string} [opts.locale=null] - the locale code
+   * @param {string} [opts.numberingSystem=null] - the numbering system
+   * @param {string} [opts.locObj=null] - an existing locale object to use
+   * @return {Array}
+   */
+  static weekdaysFormat(length = "long", { locale = null, numberingSystem = null, locObj = null } = {}) {
+    return (locObj || Locale.create(locale, numberingSystem, null)).weekdays(length, true);
+  }
+  /**
+   * Return an array of meridiems.
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @example Info.meridiems() //=> [ 'AM', 'PM' ]
+   * @example Info.meridiems({ locale: 'my' }) //=> [ 'နံနက်', 'ညနေ' ]
+   * @return {Array}
+   */
+  static meridiems({ locale = null } = {}) {
+    return Locale.create(locale).meridiems();
+  }
+  /**
+   * Return an array of eras, such as ['BC', 'AD']. The locale can be specified, but the calendar system is always Gregorian.
+   * @param {string} [length='short'] - the length of the era representation, such as "short" or "long".
+   * @param {Object} opts - options
+   * @param {string} [opts.locale] - the locale code
+   * @example Info.eras() //=> [ 'BC', 'AD' ]
+   * @example Info.eras('long') //=> [ 'Before Christ', 'Anno Domini' ]
+   * @example Info.eras('long', { locale: 'fr' }) //=> [ 'avant Jésus-Christ', 'après Jésus-Christ' ]
+   * @return {Array}
+   */
+  static eras(length = "short", { locale = null } = {}) {
+    return Locale.create(locale, null, "gregory").eras(length);
+  }
+  /**
+   * Return the set of available features in this environment.
+   * Some features of Luxon are not available in all environments. For example, on older browsers, relative time formatting support is not available. Use this function to figure out if that's the case.
+   * Keys:
+   * * `relative`: whether this environment supports relative time formatting
+   * * `localeWeek`: whether this environment supports different weekdays for the start of the week based on the locale
+   * @example Info.features() //=> { relative: false, localeWeek: true }
+   * @return {Object}
+   */
+  static features() {
+    return { relative: hasRelative(), localeWeek: hasLocaleWeekInfo() };
+  }
+};
+function dayDiff(earlier, later) {
+  const utcDayStart = (dt) => dt.toUTC(0, { keepLocalTime: true }).startOf("day").valueOf(), ms = utcDayStart(later) - utcDayStart(earlier);
+  return Math.floor(Duration.fromMillis(ms).as("days"));
+}
+function highOrderDiffs(cursor, later, units) {
+  const differs = [
+    ["years", (a5, b5) => b5.year - a5.year],
+    ["quarters", (a5, b5) => b5.quarter - a5.quarter + (b5.year - a5.year) * 4],
+    ["months", (a5, b5) => b5.month - a5.month + (b5.year - a5.year) * 12],
+    [
+      "weeks",
+      (a5, b5) => {
+        const days = dayDiff(a5, b5);
+        return (days - days % 7) / 7;
+      }
+    ],
+    ["days", dayDiff]
+  ];
+  const results = {};
+  const earlier = cursor;
+  let lowestOrder, highWater;
+  for (const [unit, differ] of differs) {
+    if (units.indexOf(unit) >= 0) {
+      lowestOrder = unit;
+      results[unit] = differ(cursor, later);
+      highWater = earlier.plus(results);
+      if (highWater > later) {
+        results[unit]--;
+        cursor = earlier.plus(results);
+        if (cursor > later) {
+          highWater = cursor;
+          results[unit]--;
+          cursor = earlier.plus(results);
+        }
+      } else {
+        cursor = highWater;
+      }
+    }
+  }
+  return [cursor, results, highWater, lowestOrder];
+}
+function diff(earlier, later, units, opts) {
+  let [cursor, results, highWater, lowestOrder] = highOrderDiffs(earlier, later, units);
+  const remainingMillis = later - cursor;
+  const lowerOrderUnits = units.filter(
+    (u) => ["hours", "minutes", "seconds", "milliseconds"].indexOf(u) >= 0
+  );
+  if (lowerOrderUnits.length === 0) {
+    if (highWater < later) {
+      highWater = cursor.plus({ [lowestOrder]: 1 });
+    }
+    if (highWater !== cursor) {
+      results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
+    }
+  }
+  const duration3 = Duration.fromObject(results, opts);
+  if (lowerOrderUnits.length > 0) {
+    return Duration.fromMillis(remainingMillis, opts).shiftTo(...lowerOrderUnits).plus(duration3);
+  } else {
+    return duration3;
+  }
+}
+var MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
+function intUnit(regex, post = (i5) => i5) {
+  return { regex, deser: ([s4]) => post(parseDigits(s4)) };
+}
+var NBSP = String.fromCharCode(160);
+var spaceOrNBSP = `[ ${NBSP}]`;
+var spaceOrNBSPRegExp = new RegExp(spaceOrNBSP, "g");
+function fixListRegex(s4) {
+  return s4.replace(/\./g, "\\.?").replace(spaceOrNBSPRegExp, spaceOrNBSP);
+}
+function stripInsensitivities(s4) {
+  return s4.replace(/\./g, "").replace(spaceOrNBSPRegExp, " ").toLowerCase();
+}
+function oneOf(strings, startIndex) {
+  if (strings === null) {
+    return null;
+  } else {
+    return {
+      regex: RegExp(strings.map(fixListRegex).join("|")),
+      deser: ([s4]) => strings.findIndex((i5) => stripInsensitivities(s4) === stripInsensitivities(i5)) + startIndex
+    };
+  }
+}
+function offset(regex, groups) {
+  return { regex, deser: ([, h5, m3]) => signedOffset(h5, m3), groups };
+}
+function simple(regex) {
+  return { regex, deser: ([s4]) => s4 };
+}
+function escapeToken(value) {
+  return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+}
+function unitForToken(token, loc) {
+  const one = digitRegex(loc), two = digitRegex(loc, "{2}"), three = digitRegex(loc, "{3}"), four = digitRegex(loc, "{4}"), six = digitRegex(loc, "{6}"), oneOrTwo = digitRegex(loc, "{1,2}"), oneToThree = digitRegex(loc, "{1,3}"), oneToSix = digitRegex(loc, "{1,6}"), oneToNine = digitRegex(loc, "{1,9}"), twoToFour = digitRegex(loc, "{2,4}"), fourToSix = digitRegex(loc, "{4,6}"), literal2 = (t) => ({ regex: RegExp(escapeToken(t.val)), deser: ([s4]) => s4, literal: true }), unitate = (t) => {
+    if (token.literal) {
+      return literal2(t);
+    }
+    switch (t.val) {
+      // era
+      case "G":
+        return oneOf(loc.eras("short"), 0);
+      case "GG":
+        return oneOf(loc.eras("long"), 0);
+      // years
+      case "y":
+        return intUnit(oneToSix);
+      case "yy":
+        return intUnit(twoToFour, untruncateYear);
+      case "yyyy":
+        return intUnit(four);
+      case "yyyyy":
+        return intUnit(fourToSix);
+      case "yyyyyy":
+        return intUnit(six);
+      // months
+      case "M":
+        return intUnit(oneOrTwo);
+      case "MM":
+        return intUnit(two);
+      case "MMM":
+        return oneOf(loc.months("short", true), 1);
+      case "MMMM":
+        return oneOf(loc.months("long", true), 1);
+      case "L":
+        return intUnit(oneOrTwo);
+      case "LL":
+        return intUnit(two);
+      case "LLL":
+        return oneOf(loc.months("short", false), 1);
+      case "LLLL":
+        return oneOf(loc.months("long", false), 1);
+      // dates
+      case "d":
+        return intUnit(oneOrTwo);
+      case "dd":
+        return intUnit(two);
+      // ordinals
+      case "o":
+        return intUnit(oneToThree);
+      case "ooo":
+        return intUnit(three);
+      // time
+      case "HH":
+        return intUnit(two);
+      case "H":
+        return intUnit(oneOrTwo);
+      case "hh":
+        return intUnit(two);
+      case "h":
+        return intUnit(oneOrTwo);
+      case "mm":
+        return intUnit(two);
+      case "m":
+        return intUnit(oneOrTwo);
+      case "q":
+        return intUnit(oneOrTwo);
+      case "qq":
+        return intUnit(two);
+      case "s":
+        return intUnit(oneOrTwo);
+      case "ss":
+        return intUnit(two);
+      case "S":
+        return intUnit(oneToThree);
+      case "SSS":
+        return intUnit(three);
+      case "u":
+        return simple(oneToNine);
+      case "uu":
+        return simple(oneOrTwo);
+      case "uuu":
+        return intUnit(one);
+      // meridiem
+      case "a":
+        return oneOf(loc.meridiems(), 0);
+      // weekYear (k)
+      case "kkkk":
+        return intUnit(four);
+      case "kk":
+        return intUnit(twoToFour, untruncateYear);
+      // weekNumber (W)
+      case "W":
+        return intUnit(oneOrTwo);
+      case "WW":
+        return intUnit(two);
+      // weekdays
+      case "E":
+      case "c":
+        return intUnit(one);
+      case "EEE":
+        return oneOf(loc.weekdays("short", false), 1);
+      case "EEEE":
+        return oneOf(loc.weekdays("long", false), 1);
+      case "ccc":
+        return oneOf(loc.weekdays("short", true), 1);
+      case "cccc":
+        return oneOf(loc.weekdays("long", true), 1);
+      // offset/zone
+      case "Z":
+      case "ZZ":
+        return offset(new RegExp(`([+-]${oneOrTwo.source})(?::(${two.source}))?`), 2);
+      case "ZZZ":
+        return offset(new RegExp(`([+-]${oneOrTwo.source})(${two.source})?`), 2);
+      // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
+      // because we don't have any way to figure out what they are
+      case "z":
+        return simple(/[a-z_+-/]{1,256}?/i);
+      // this special-case "token" represents a place where a macro-token expanded into a white-space literal
+      // in this case we accept any non-newline white-space
+      case " ":
+        return simple(/[^\S\n\r]/);
+      default:
+        return literal2(t);
+    }
+  };
+  const unit = unitate(token) || {
+    invalidReason: MISSING_FTP
+  };
+  unit.token = token;
+  return unit;
+}
+var partTypeStyleToTokenVal = {
+  year: {
+    "2-digit": "yy",
+    numeric: "yyyyy"
+  },
+  month: {
+    numeric: "M",
+    "2-digit": "MM",
+    short: "MMM",
+    long: "MMMM"
+  },
+  day: {
+    numeric: "d",
+    "2-digit": "dd"
+  },
+  weekday: {
+    short: "EEE",
+    long: "EEEE"
+  },
+  dayperiod: "a",
+  dayPeriod: "a",
+  hour12: {
+    numeric: "h",
+    "2-digit": "hh"
+  },
+  hour24: {
+    numeric: "H",
+    "2-digit": "HH"
+  },
+  minute: {
+    numeric: "m",
+    "2-digit": "mm"
+  },
+  second: {
+    numeric: "s",
+    "2-digit": "ss"
+  },
+  timeZoneName: {
+    long: "ZZZZZ",
+    short: "ZZZ"
+  }
+};
+function tokenForPart(part, formatOpts, resolvedOpts) {
+  const { type, value } = part;
+  if (type === "literal") {
+    const isSpace = /^\s+$/.test(value);
+    return {
+      literal: !isSpace,
+      val: isSpace ? " " : value
+    };
+  }
+  const style = formatOpts[type];
+  let actualType = type;
+  if (type === "hour") {
+    if (formatOpts.hour12 != null) {
+      actualType = formatOpts.hour12 ? "hour12" : "hour24";
+    } else if (formatOpts.hourCycle != null) {
+      if (formatOpts.hourCycle === "h11" || formatOpts.hourCycle === "h12") {
+        actualType = "hour12";
+      } else {
+        actualType = "hour24";
+      }
+    } else {
+      actualType = resolvedOpts.hour12 ? "hour12" : "hour24";
+    }
+  }
+  let val = partTypeStyleToTokenVal[actualType];
+  if (typeof val === "object") {
+    val = val[style];
+  }
+  if (val) {
+    return {
+      literal: false,
+      val
+    };
+  }
+  return void 0;
+}
+function buildRegex(units) {
+  const re = units.map((u) => u.regex).reduce((f5, r5) => `${f5}(${r5.source})`, "");
+  return [`^${re}$`, units];
+}
+function match2(input2, regex, handlers) {
+  const matches = input2.match(regex);
+  if (matches) {
+    const all = {};
+    let matchIndex = 1;
+    for (const i5 in handlers) {
+      if (hasOwnProperty(handlers, i5)) {
+        const h5 = handlers[i5], groups = h5.groups ? h5.groups + 1 : 1;
+        if (!h5.literal && h5.token) {
+          all[h5.token.val[0]] = h5.deser(matches.slice(matchIndex, matchIndex + groups));
+        }
+        matchIndex += groups;
+      }
+    }
+    return [matches, all];
+  } else {
+    return [matches, {}];
+  }
+}
+function dateTimeFromMatches(matches) {
+  const toField = (token) => {
+    switch (token) {
+      case "S":
+        return "millisecond";
+      case "s":
+        return "second";
+      case "m":
+        return "minute";
+      case "h":
+      case "H":
+        return "hour";
+      case "d":
+        return "day";
+      case "o":
+        return "ordinal";
+      case "L":
+      case "M":
+        return "month";
+      case "y":
+        return "year";
+      case "E":
+      case "c":
+        return "weekday";
+      case "W":
+        return "weekNumber";
+      case "k":
+        return "weekYear";
+      case "q":
+        return "quarter";
+      default:
+        return null;
+    }
+  };
+  let zone = null;
+  let specificOffset;
+  if (!isUndefined(matches.z)) {
+    zone = IANAZone.create(matches.z);
+  }
+  if (!isUndefined(matches.Z)) {
+    if (!zone) {
+      zone = new FixedOffsetZone(matches.Z);
+    }
+    specificOffset = matches.Z;
+  }
+  if (!isUndefined(matches.q)) {
+    matches.M = (matches.q - 1) * 3 + 1;
+  }
+  if (!isUndefined(matches.h)) {
+    if (matches.h < 12 && matches.a === 1) {
+      matches.h += 12;
+    } else if (matches.h === 12 && matches.a === 0) {
+      matches.h = 0;
+    }
+  }
+  if (matches.G === 0 && matches.y) {
+    matches.y = -matches.y;
+  }
+  if (!isUndefined(matches.u)) {
+    matches.S = parseMillis(matches.u);
+  }
+  const vals = Object.keys(matches).reduce((r5, k5) => {
+    const f5 = toField(k5);
+    if (f5) {
+      r5[f5] = matches[k5];
+    }
+    return r5;
+  }, {});
+  return [vals, zone, specificOffset];
+}
+var dummyDateTimeCache = null;
+function getDummyDateTime() {
+  if (!dummyDateTimeCache) {
+    dummyDateTimeCache = DateTime.fromMillis(1555555555555);
+  }
+  return dummyDateTimeCache;
+}
+function maybeExpandMacroToken(token, locale) {
+  if (token.literal) {
+    return token;
+  }
+  const formatOpts = Formatter.macroTokenToFormatOpts(token.val);
+  const tokens = formatOptsToTokens(formatOpts, locale);
+  if (tokens == null || tokens.includes(void 0)) {
+    return token;
+  }
+  return tokens;
+}
+function expandMacroTokens(tokens, locale) {
+  return Array.prototype.concat(...tokens.map((t) => maybeExpandMacroToken(t, locale)));
+}
+var TokenParser = class {
+  constructor(locale, format5) {
+    this.locale = locale;
+    this.format = format5;
+    this.tokens = expandMacroTokens(Formatter.parseFormat(format5), locale);
+    this.units = this.tokens.map((t) => unitForToken(t, locale));
+    this.disqualifyingUnit = this.units.find((t) => t.invalidReason);
+    if (!this.disqualifyingUnit) {
+      const [regexString, handlers] = buildRegex(this.units);
+      this.regex = RegExp(regexString, "i");
+      this.handlers = handlers;
+    }
+  }
+  explainFromTokens(input2) {
+    if (!this.isValid) {
+      return { input: input2, tokens: this.tokens, invalidReason: this.invalidReason };
+    } else {
+      const [rawMatches, matches] = match2(input2, this.regex, this.handlers), [result, zone, specificOffset] = matches ? dateTimeFromMatches(matches) : [null, null, void 0];
+      if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
+        throw new ConflictingSpecificationError(
+          "Can't include meridiem when specifying 24-hour format"
+        );
+      }
+      return {
+        input: input2,
+        tokens: this.tokens,
+        regex: this.regex,
+        rawMatches,
+        matches,
+        result,
+        zone,
+        specificOffset
+      };
+    }
+  }
+  get isValid() {
+    return !this.disqualifyingUnit;
+  }
+  get invalidReason() {
+    return this.disqualifyingUnit ? this.disqualifyingUnit.invalidReason : null;
+  }
+};
+function explainFromTokens(locale, input2, format5) {
+  const parser = new TokenParser(locale, format5);
+  return parser.explainFromTokens(input2);
+}
+function parseFromTokens(locale, input2, format5) {
+  const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale, input2, format5);
+  return [result, zone, specificOffset, invalidReason];
+}
+function formatOptsToTokens(formatOpts, locale) {
+  if (!formatOpts) {
+    return null;
+  }
+  const formatter = Formatter.create(locale, formatOpts);
+  const df = formatter.dtFormatter(getDummyDateTime());
+  const parts = df.formatToParts();
+  const resolvedOpts = df.resolvedOptions();
+  return parts.map((p3) => tokenForPart(p3, formatOpts, resolvedOpts));
+}
+var INVALID2 = "Invalid DateTime";
+var MAX_DATE = 864e13;
+function unsupportedZone(zone) {
+  return new Invalid("unsupported zone", `the zone "${zone.name}" is not supported`);
+}
+function possiblyCachedWeekData(dt) {
+  if (dt.weekData === null) {
+    dt.weekData = gregorianToWeek(dt.c);
+  }
+  return dt.weekData;
+}
+function possiblyCachedLocalWeekData(dt) {
+  if (dt.localWeekData === null) {
+    dt.localWeekData = gregorianToWeek(
+      dt.c,
+      dt.loc.getMinDaysInFirstWeek(),
+      dt.loc.getStartOfWeek()
+    );
+  }
+  return dt.localWeekData;
+}
+function clone2(inst, alts) {
+  const current = {
+    ts: inst.ts,
+    zone: inst.zone,
+    c: inst.c,
+    o: inst.o,
+    loc: inst.loc,
+    invalid: inst.invalid
+  };
+  return new DateTime({ ...current, ...alts, old: current });
+}
+function fixOffset(localTS, o3, tz) {
+  let utcGuess = localTS - o3 * 60 * 1e3;
+  const o22 = tz.offset(utcGuess);
+  if (o3 === o22) {
+    return [utcGuess, o3];
+  }
+  utcGuess -= (o22 - o3) * 60 * 1e3;
+  const o32 = tz.offset(utcGuess);
+  if (o22 === o32) {
+    return [utcGuess, o22];
+  }
+  return [localTS - Math.min(o22, o32) * 60 * 1e3, Math.max(o22, o32)];
+}
+function tsToObj(ts, offset2) {
+  ts += offset2 * 60 * 1e3;
+  const d5 = new Date(ts);
+  return {
+    year: d5.getUTCFullYear(),
+    month: d5.getUTCMonth() + 1,
+    day: d5.getUTCDate(),
+    hour: d5.getUTCHours(),
+    minute: d5.getUTCMinutes(),
+    second: d5.getUTCSeconds(),
+    millisecond: d5.getUTCMilliseconds()
+  };
+}
+function objToTS(obj, offset2, zone) {
+  return fixOffset(objToLocalTS(obj), offset2, zone);
+}
+function adjustTime(inst, dur) {
+  const oPre = inst.o, year2 = inst.c.year + Math.trunc(dur.years), month = inst.c.month + Math.trunc(dur.months) + Math.trunc(dur.quarters) * 3, c5 = {
+    ...inst.c,
+    year: year2,
+    month,
+    day: Math.min(inst.c.day, daysInMonth(year2, month)) + Math.trunc(dur.days) + Math.trunc(dur.weeks) * 7
+  }, millisToAdd = Duration.fromObject({
+    years: dur.years - Math.trunc(dur.years),
+    quarters: dur.quarters - Math.trunc(dur.quarters),
+    months: dur.months - Math.trunc(dur.months),
+    weeks: dur.weeks - Math.trunc(dur.weeks),
+    days: dur.days - Math.trunc(dur.days),
+    hours: dur.hours,
+    minutes: dur.minutes,
+    seconds: dur.seconds,
+    milliseconds: dur.milliseconds
+  }).as("milliseconds"), localTS = objToLocalTS(c5);
+  let [ts, o3] = fixOffset(localTS, oPre, inst.zone);
+  if (millisToAdd !== 0) {
+    ts += millisToAdd;
+    o3 = inst.zone.offset(ts);
+  }
+  return { ts, o: o3 };
+}
+function parseDataToDateTime(parsed, parsedZone, opts, format5, text2, specificOffset) {
+  const { setZone, zone } = opts;
+  if (parsed && Object.keys(parsed).length !== 0 || parsedZone) {
+    const interpretationZone = parsedZone || zone, inst = DateTime.fromObject(parsed, {
+      ...opts,
+      zone: interpretationZone,
+      specificOffset
+    });
+    return setZone ? inst : inst.setZone(zone);
+  } else {
+    return DateTime.invalid(
+      new Invalid("unparsable", `the input "${text2}" can't be parsed as ${format5}`)
+    );
+  }
+}
+function toTechFormat(dt, format5, allowZ = true) {
+  return dt.isValid ? Formatter.create(Locale.create("en-US"), {
+    allowZ,
+    forceSimple: true
+  }).formatDateTimeFromString(dt, format5) : null;
+}
+function toISODate(o3, extended2, precision) {
+  const longFormat = o3.c.year > 9999 || o3.c.year < 0;
+  let c5 = "";
+  if (longFormat && o3.c.year >= 0) c5 += "+";
+  c5 += padStart(o3.c.year, longFormat ? 6 : 4);
+  if (precision === "year") return c5;
+  if (extended2) {
+    c5 += "-";
+    c5 += padStart(o3.c.month);
+    if (precision === "month") return c5;
+    c5 += "-";
+  } else {
+    c5 += padStart(o3.c.month);
+    if (precision === "month") return c5;
+  }
+  c5 += padStart(o3.c.day);
+  return c5;
+}
+function toISOTime(o3, extended2, suppressSeconds, suppressMilliseconds, includeOffset, extendedZone, precision) {
+  let showSeconds = !suppressSeconds || o3.c.millisecond !== 0 || o3.c.second !== 0, c5 = "";
+  switch (precision) {
+    case "day":
+    case "month":
+    case "year":
+      break;
+    default:
+      c5 += padStart(o3.c.hour);
+      if (precision === "hour") break;
+      if (extended2) {
+        c5 += ":";
+        c5 += padStart(o3.c.minute);
+        if (precision === "minute") break;
+        if (showSeconds) {
+          c5 += ":";
+          c5 += padStart(o3.c.second);
+        }
+      } else {
+        c5 += padStart(o3.c.minute);
+        if (precision === "minute") break;
+        if (showSeconds) {
+          c5 += padStart(o3.c.second);
+        }
+      }
+      if (precision === "second") break;
+      if (showSeconds && (!suppressMilliseconds || o3.c.millisecond !== 0)) {
+        c5 += ".";
+        c5 += padStart(o3.c.millisecond, 3);
+      }
+  }
+  if (includeOffset) {
+    if (o3.isOffsetFixed && o3.offset === 0 && !extendedZone) {
+      c5 += "Z";
+    } else if (o3.o < 0) {
+      c5 += "-";
+      c5 += padStart(Math.trunc(-o3.o / 60));
+      c5 += ":";
+      c5 += padStart(Math.trunc(-o3.o % 60));
+    } else {
+      c5 += "+";
+      c5 += padStart(Math.trunc(o3.o / 60));
+      c5 += ":";
+      c5 += padStart(Math.trunc(o3.o % 60));
+    }
+  }
+  if (extendedZone) {
+    c5 += "[" + o3.zone.ianaName + "]";
+  }
+  return c5;
+}
+var defaultUnitValues = {
+  month: 1,
+  day: 1,
+  hour: 0,
+  minute: 0,
+  second: 0,
+  millisecond: 0
+};
+var defaultWeekUnitValues = {
+  weekNumber: 1,
+  weekday: 1,
+  hour: 0,
+  minute: 0,
+  second: 0,
+  millisecond: 0
+};
+var defaultOrdinalUnitValues = {
+  ordinal: 1,
+  hour: 0,
+  minute: 0,
+  second: 0,
+  millisecond: 0
+};
+var orderedUnits = ["year", "month", "day", "hour", "minute", "second", "millisecond"];
+var orderedWeekUnits = [
+  "weekYear",
+  "weekNumber",
+  "weekday",
+  "hour",
+  "minute",
+  "second",
+  "millisecond"
+];
+var orderedOrdinalUnits = ["year", "ordinal", "hour", "minute", "second", "millisecond"];
+function normalizeUnit(unit) {
+  const normalized = {
+    year: "year",
+    years: "year",
+    month: "month",
+    months: "month",
+    day: "day",
+    days: "day",
+    hour: "hour",
+    hours: "hour",
+    minute: "minute",
+    minutes: "minute",
+    quarter: "quarter",
+    quarters: "quarter",
+    second: "second",
+    seconds: "second",
+    millisecond: "millisecond",
+    milliseconds: "millisecond",
+    weekday: "weekday",
+    weekdays: "weekday",
+    weeknumber: "weekNumber",
+    weeksnumber: "weekNumber",
+    weeknumbers: "weekNumber",
+    weekyear: "weekYear",
+    weekyears: "weekYear",
+    ordinal: "ordinal"
+  }[unit.toLowerCase()];
+  if (!normalized) throw new InvalidUnitError(unit);
+  return normalized;
+}
+function normalizeUnitWithLocalWeeks(unit) {
+  switch (unit.toLowerCase()) {
+    case "localweekday":
+    case "localweekdays":
+      return "localWeekday";
+    case "localweeknumber":
+    case "localweeknumbers":
+      return "localWeekNumber";
+    case "localweekyear":
+    case "localweekyears":
+      return "localWeekYear";
+    default:
+      return normalizeUnit(unit);
+  }
+}
+function guessOffsetForZone(zone) {
+  if (zoneOffsetTs === void 0) {
+    zoneOffsetTs = Settings.now();
+  }
+  if (zone.type !== "iana") {
+    return zone.offset(zoneOffsetTs);
+  }
+  const zoneName = zone.name;
+  let offsetGuess = zoneOffsetGuessCache.get(zoneName);
+  if (offsetGuess === void 0) {
+    offsetGuess = zone.offset(zoneOffsetTs);
+    zoneOffsetGuessCache.set(zoneName, offsetGuess);
+  }
+  return offsetGuess;
+}
+function quickDT(obj, opts) {
+  const zone = normalizeZone(opts.zone, Settings.defaultZone);
+  if (!zone.isValid) {
+    return DateTime.invalid(unsupportedZone(zone));
+  }
+  const loc = Locale.fromObject(opts);
+  let ts, o3;
+  if (!isUndefined(obj.year)) {
+    for (const u of orderedUnits) {
+      if (isUndefined(obj[u])) {
+        obj[u] = defaultUnitValues[u];
+      }
+    }
+    const invalid2 = hasInvalidGregorianData(obj) || hasInvalidTimeData(obj);
+    if (invalid2) {
+      return DateTime.invalid(invalid2);
+    }
+    const offsetProvis = guessOffsetForZone(zone);
+    [ts, o3] = objToTS(obj, offsetProvis, zone);
+  } else {
+    ts = Settings.now();
+  }
+  return new DateTime({ ts, zone, loc, o: o3 });
+}
+function diffRelative(start, end, opts) {
+  const round = isUndefined(opts.round) ? true : opts.round, rounding = isUndefined(opts.rounding) ? "trunc" : opts.rounding, format5 = (c5, unit) => {
+    c5 = roundTo(c5, round || opts.calendary ? 0 : 2, opts.calendary ? "round" : rounding);
+    const formatter = end.loc.clone(opts).relFormatter(opts);
+    return formatter.format(c5, unit);
+  }, differ = (unit) => {
+    if (opts.calendary) {
+      if (!end.hasSame(start, unit)) {
+        return end.startOf(unit).diff(start.startOf(unit), unit).get(unit);
+      } else return 0;
+    } else {
+      return end.diff(start, unit).get(unit);
+    }
+  };
+  if (opts.unit) {
+    return format5(differ(opts.unit), opts.unit);
+  }
+  for (const unit of opts.units) {
+    const count2 = differ(unit);
+    if (Math.abs(count2) >= 1) {
+      return format5(count2, unit);
+    }
+  }
+  return format5(start > end ? -0 : 0, opts.units[opts.units.length - 1]);
+}
+function lastOpts(argList) {
+  let opts = {}, args;
+  if (argList.length > 0 && typeof argList[argList.length - 1] === "object") {
+    opts = argList[argList.length - 1];
+    args = Array.from(argList).slice(0, argList.length - 1);
+  } else {
+    args = Array.from(argList);
+  }
+  return [opts, args];
+}
+var zoneOffsetTs;
+var zoneOffsetGuessCache = /* @__PURE__ */ new Map();
+var DateTime = class _DateTime {
+  /**
+   * @access private
+   */
+  constructor(config5) {
+    const zone = config5.zone || Settings.defaultZone;
+    let invalid2 = config5.invalid || (Number.isNaN(config5.ts) ? new Invalid("invalid input") : null) || (!zone.isValid ? unsupportedZone(zone) : null);
+    this.ts = isUndefined(config5.ts) ? Settings.now() : config5.ts;
+    let c5 = null, o3 = null;
+    if (!invalid2) {
+      const unchanged = config5.old && config5.old.ts === this.ts && config5.old.zone.equals(zone);
+      if (unchanged) {
+        [c5, o3] = [config5.old.c, config5.old.o];
+      } else {
+        const ot = isNumber(config5.o) && !config5.old ? config5.o : zone.offset(this.ts);
+        c5 = tsToObj(this.ts, ot);
+        invalid2 = Number.isNaN(c5.year) ? new Invalid("invalid input") : null;
+        c5 = invalid2 ? null : c5;
+        o3 = invalid2 ? null : ot;
+      }
+    }
+    this._zone = zone;
+    this.loc = config5.loc || Locale.create();
+    this.invalid = invalid2;
+    this.weekData = null;
+    this.localWeekData = null;
+    this.c = c5;
+    this.o = o3;
+    this.isLuxonDateTime = true;
+  }
+  // CONSTRUCT
+  /**
+   * Create a DateTime for the current instant, in the system's time zone.
+   *
+   * Use Settings to override these default values if needed.
+   * @example DateTime.now().toISO() //~> now in the ISO format
+   * @return {DateTime}
+   */
+  static now() {
+    return new _DateTime({});
+  }
+  /**
+   * Create a local DateTime
+   * @param {number} [year] - The calendar year. If omitted (as in, call `local()` with no arguments), the current time will be used
+   * @param {number} [month=1] - The month, 1-indexed
+   * @param {number} [day=1] - The day of the month, 1-indexed
+   * @param {number} [hour=0] - The hour of the day, in 24-hour time
+   * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+   * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+   * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
+   * @example DateTime.local()                                  //~> now
+   * @example DateTime.local({ zone: "America/New_York" })      //~> now, in US east coast time
+   * @example DateTime.local(2017)                              //~> 2017-01-01T00:00:00
+   * @example DateTime.local(2017, 3)                           //~> 2017-03-01T00:00:00
+   * @example DateTime.local(2017, 3, 12, { locale: "fr" })     //~> 2017-03-12T00:00:00, with a French locale
+   * @example DateTime.local(2017, 3, 12, 5)                    //~> 2017-03-12T05:00:00
+   * @example DateTime.local(2017, 3, 12, 5, { zone: "utc" })   //~> 2017-03-12T05:00:00, in UTC
+   * @example DateTime.local(2017, 3, 12, 5, 45)                //~> 2017-03-12T05:45:00
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10)            //~> 2017-03-12T05:45:10
+   * @example DateTime.local(2017, 3, 12, 5, 45, 10, 765)       //~> 2017-03-12T05:45:10.765
+   * @return {DateTime}
+   */
+  static local() {
+    const [opts, args] = lastOpts(arguments), [year2, month, day, hour, minute, second, millisecond] = args;
+    return quickDT({ year: year2, month, day, hour, minute, second, millisecond }, opts);
+  }
+  /**
+   * Create a DateTime in UTC
+   * @param {number} [year] - The calendar year. If omitted (as in, call `utc()` with no arguments), the current time will be used
+   * @param {number} [month=1] - The month, 1-indexed
+   * @param {number} [day=1] - The day of the month
+   * @param {number} [hour=0] - The hour of the day, in 24-hour time
+   * @param {number} [minute=0] - The minute of the hour, meaning a number between 0 and 59
+   * @param {number} [second=0] - The second of the minute, meaning a number between 0 and 59
+   * @param {number} [millisecond=0] - The millisecond of the second, meaning a number between 0 and 999
+   * @param {Object} options - configuration options for the DateTime
+   * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
+   * @param {string} [options.outputCalendar] - the output calendar to set on the resulting DateTime instance
+   * @param {string} [options.numberingSystem] - the numbering system to set on the resulting DateTime instance
+   * @param {string} [options.weekSettings] - the week settings to set on the resulting DateTime instance
+   * @example DateTime.utc()                                              //~> now
+   * @example DateTime.utc(2017)                                          //~> 2017-01-01T00:00:00Z
+   * @example DateTime.utc(2017, 3)                                       //~> 2017-03-01T00:00:00Z
+   * @example DateTime.utc(2017, 3, 12)                                   //~> 2017-03-12T00:00:00Z
+   * @example DateTime.utc(2017, 3, 12, 5)                                //~> 2017-03-12T05:00:00Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45)                            //~> 2017-03-12T05:45:00Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, { locale: "fr" })          //~> 2017-03-12T05:45:00Z with a French locale
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10)                        //~> 2017-03-12T05:45:10Z
+   * @example DateTime.utc(2017, 3, 12, 5, 45, 10, 765, { locale: "fr" }) //~> 2017-03-12T05:45:10.765Z with a French locale
+   * @return {DateTime}
+   */
+  static utc() {
+    const [opts, args] = lastOpts(arguments), [year2, month, day, hour, minute, second, millisecond] = args;
+    opts.zone = FixedOffsetZone.utcInstance;
+    return quickDT({ year: year2, month, day, hour, minute, second, millisecond }, opts);
+  }
+  /**
+   * Create a DateTime from a JavaScript Date object. Uses the default zone.
+   * @param {Date} date - a JavaScript Date object
+   * @param {Object} options - configuration options for the DateTime
+   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+   * @return {DateTime}
+   */
+  static fromJSDate(date7, options = {}) {
+    const ts = isDate(date7) ? date7.valueOf() : NaN;
+    if (Number.isNaN(ts)) {
+      return _DateTime.invalid("invalid input");
+    }
+    const zoneToUse = normalizeZone(options.zone, Settings.defaultZone);
+    if (!zoneToUse.isValid) {
+      return _DateTime.invalid(unsupportedZone(zoneToUse));
+    }
+    return new _DateTime({
+      ts,
+      zone: zoneToUse,
+      loc: Locale.fromObject(options)
+    });
+  }
+  /**
+   * Create a DateTime from a number of milliseconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
+   * @param {number} milliseconds - a number of milliseconds since 1970 UTC
+   * @param {Object} options - configuration options for the DateTime
+   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+   * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
+   * @return {DateTime}
+   */
+  static fromMillis(milliseconds, options = {}) {
+    if (!isNumber(milliseconds)) {
+      throw new InvalidArgumentError(
+        `fromMillis requires a numerical input, but received a ${typeof milliseconds} with value ${milliseconds}`
+      );
+    } else if (milliseconds < -MAX_DATE || milliseconds > MAX_DATE) {
+      return _DateTime.invalid("Timestamp out of range");
+    } else {
+      return new _DateTime({
+        ts: milliseconds,
+        zone: normalizeZone(options.zone, Settings.defaultZone),
+        loc: Locale.fromObject(options)
+      });
+    }
+  }
+  /**
+   * Create a DateTime from a number of seconds since the epoch (meaning since 1 January 1970 00:00:00 UTC). Uses the default zone.
+   * @param {number} seconds - a number of seconds since 1970 UTC
+   * @param {Object} options - configuration options for the DateTime
+   * @param {string|Zone} [options.zone='local'] - the zone to place the DateTime into
+   * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
+   * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
+   * @return {DateTime}
+   */
+  static fromSeconds(seconds, options = {}) {
+    if (!isNumber(seconds)) {
+      throw new InvalidArgumentError("fromSeconds requires a numerical input");
+    } else {
+      return new _DateTime({
+        ts: seconds * 1e3,
+        zone: normalizeZone(options.zone, Settings.defaultZone),
+        loc: Locale.fromObject(options)
+      });
+    }
+  }
+  /**
+   * Create a DateTime from a JavaScript object with keys like 'year' and 'hour' with reasonable defaults.
+   * @param {Object} obj - the object to create the DateTime from
+   * @param {number} obj.year - a year, such as 1987
+   * @param {number} obj.month - a month, 1-12
+   * @param {number} obj.day - a day of the month, 1-31, depending on the month
+   * @param {number} obj.ordinal - day of the year, 1-365 or 366
+   * @param {number} obj.weekYear - an ISO week year
+   * @param {number} obj.weekNumber - an ISO week number, between 1 and 52 or 53, depending on the year
+   * @param {number} obj.weekday - an ISO weekday, 1-7, where 1 is Monday and 7 is Sunday
+   * @param {number} obj.localWeekYear - a week year, according to the locale
+   * @param {number} obj.localWeekNumber - a week number, between 1 and 52 or 53, depending on the year, according to the locale
+   * @param {number} obj.localWeekday - a weekday, 1-7, where 1 is the first and 7 is the last day of the week, according to the locale
+   * @param {number} obj.hour - hour of the day, 0-23
+   * @param {number} obj.minute - minute of the hour, 0-59
+   * @param {number} obj.second - second of the minute, 0-59
+   * @param {number} obj.millisecond - millisecond of the second, 0-999
+   * @param {Object} opts - options for creating this DateTime
+   * @param {string|Zone} [opts.zone='local'] - interpret the numbers in the context of a particular zone. Can take any value taken as the first argument to setZone()
+   * @param {string} [opts.locale='system\'s locale'] - a locale to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
+   * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
+   * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }, { zone: 'utc' }),
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }, { zone: 'local' })
+   * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }, { zone: 'America/New_York' })
+   * @example DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate() //=> '2016-01-13'
+   * @example DateTime.fromObject({ localWeekYear: 2022, localWeekNumber: 1, localWeekday: 1 }, { locale: "en-US" }).toISODate() //=> '2021-12-26'
+   * @return {DateTime}
+   */
+  static fromObject(obj, opts = {}) {
+    obj = obj || {};
+    const zoneToUse = normalizeZone(opts.zone, Settings.defaultZone);
+    if (!zoneToUse.isValid) {
+      return _DateTime.invalid(unsupportedZone(zoneToUse));
+    }
+    const loc = Locale.fromObject(opts);
+    const normalized = normalizeObject(obj, normalizeUnitWithLocalWeeks);
+    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, loc);
+    const tsNow = Settings.now(), offsetProvis = !isUndefined(opts.specificOffset) ? opts.specificOffset : zoneToUse.offset(tsNow), containsOrdinal = !isUndefined(normalized.ordinal), containsGregorYear = !isUndefined(normalized.year), containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day), containsGregor = containsGregorYear || containsGregorMD, definiteWeekDef = normalized.weekYear || normalized.weekNumber;
+    if ((containsGregor || containsOrdinal) && definiteWeekDef) {
+      throw new ConflictingSpecificationError(
+        "Can't mix weekYear/weekNumber units with year/month/day or ordinals"
+      );
+    }
+    if (containsGregorMD && containsOrdinal) {
+      throw new ConflictingSpecificationError("Can't mix ordinal dates with month/day");
+    }
+    const useWeekData = definiteWeekDef || normalized.weekday && !containsGregor;
+    let units, defaultValues, objNow = tsToObj(tsNow, offsetProvis);
+    if (useWeekData) {
+      units = orderedWeekUnits;
+      defaultValues = defaultWeekUnitValues;
+      objNow = gregorianToWeek(objNow, minDaysInFirstWeek, startOfWeek);
+    } else if (containsOrdinal) {
+      units = orderedOrdinalUnits;
+      defaultValues = defaultOrdinalUnitValues;
+      objNow = gregorianToOrdinal(objNow);
+    } else {
+      units = orderedUnits;
+      defaultValues = defaultUnitValues;
+    }
+    let foundFirst = false;
+    for (const u of units) {
+      const v = normalized[u];
+      if (!isUndefined(v)) {
+        foundFirst = true;
+      } else if (foundFirst) {
+        normalized[u] = defaultValues[u];
+      } else {
+        normalized[u] = objNow[u];
+      }
+    }
+    const higherOrderInvalid = useWeekData ? hasInvalidWeekData(normalized, minDaysInFirstWeek, startOfWeek) : containsOrdinal ? hasInvalidOrdinalData(normalized) : hasInvalidGregorianData(normalized), invalid2 = higherOrderInvalid || hasInvalidTimeData(normalized);
+    if (invalid2) {
+      return _DateTime.invalid(invalid2);
+    }
+    const gregorian = useWeekData ? weekToGregorian(normalized, minDaysInFirstWeek, startOfWeek) : containsOrdinal ? ordinalToGregorian(normalized) : normalized, [tsFinal, offsetFinal] = objToTS(gregorian, offsetProvis, zoneToUse), inst = new _DateTime({
+      ts: tsFinal,
+      zone: zoneToUse,
+      o: offsetFinal,
+      loc
+    });
+    if (normalized.weekday && containsGregor && obj.weekday !== inst.weekday) {
+      return _DateTime.invalid(
+        "mismatched weekday",
+        `you can't specify both a weekday of ${normalized.weekday} and a date of ${inst.toISO()}`
+      );
+    }
+    if (!inst.isValid) {
+      return _DateTime.invalid(inst.invalid);
+    }
+    return inst;
+  }
+  /**
+   * Create a DateTime from an ISO 8601 string
+   * @param {string} text - the ISO string
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the time to this zone
+   * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
+   * @param {string} [opts.outputCalendar] - the output calendar to set on the resulting DateTime instance
+   * @param {string} [opts.numberingSystem] - the numbering system to set on the resulting DateTime instance
+   * @param {string} [opts.weekSettings] - the week settings to set on the resulting DateTime instance
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123')
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
+   * @example DateTime.fromISO('2016-05-25T09:08:34.123', {zone: 'utc'})
+   * @example DateTime.fromISO('2016-W05-4')
+   * @return {DateTime}
+   */
+  static fromISO(text2, opts = {}) {
+    const [vals, parsedZone] = parseISODate(text2);
+    return parseDataToDateTime(vals, parsedZone, opts, "ISO 8601", text2);
+  }
+  /**
+   * Create a DateTime from an RFC 2822 string
+   * @param {string} text - the RFC 2822 string
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since the offset is always specified in the string itself, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {boolean} [opts.setZone=false] - override the zone with a fixed-offset zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
+   * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
+   * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
+   * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
+   * @return {DateTime}
+   */
+  static fromRFC2822(text2, opts = {}) {
+    const [vals, parsedZone] = parseRFC2822Date(text2);
+    return parseDataToDateTime(vals, parsedZone, opts, "RFC 2822", text2);
+  }
+  /**
+   * Create a DateTime from an HTTP header date
+   * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+   * @param {string} text - the HTTP header date
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - convert the time to this zone. Since HTTP dates are always in UTC, this has no effect on the interpretation of string, merely the zone the resulting DateTime is expressed in.
+   * @param {boolean} [opts.setZone=false] - override the zone with the fixed-offset zone specified in the string. For HTTP dates, this is always UTC, so this option is equivalent to setting the `zone` option to 'utc', but this option is included for consistency with similar methods.
+   * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
+   * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
+   * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
+   * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
+   * @return {DateTime}
+   */
+  static fromHTTP(text2, opts = {}) {
+    const [vals, parsedZone] = parseHTTPDate(text2);
+    return parseDataToDateTime(vals, parsedZone, opts, "HTTP", opts);
+  }
+  /**
+   * Create a DateTime from an input string and format string.
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale. For a table of tokens and their interpretations, see [here](https://moment.github.io/luxon/#/parsing?id=table-of-tokens).
+   * @param {string} text - the string to parse
+   * @param {string} fmt - the format the string is expected to be in (see the link below for the formats)
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+   * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @return {DateTime}
+   */
+  static fromFormat(text2, fmt, opts = {}) {
+    if (isUndefined(text2) || isUndefined(fmt)) {
+      throw new InvalidArgumentError("fromFormat requires an input string and a format");
+    }
+    const { locale = null, numberingSystem = null } = opts, localeToUse = Locale.fromOpts({
+      locale,
+      numberingSystem,
+      defaultToEN: true
+    }), [vals, parsedZone, specificOffset, invalid2] = parseFromTokens(localeToUse, text2, fmt);
+    if (invalid2) {
+      return _DateTime.invalid(invalid2);
+    } else {
+      return parseDataToDateTime(vals, parsedZone, opts, `format ${fmt}`, text2, specificOffset);
+    }
+  }
+  /**
+   * @deprecated use fromFormat instead
+   */
+  static fromString(text2, fmt, opts = {}) {
+    return _DateTime.fromFormat(text2, fmt, opts);
+  }
+  /**
+   * Create a DateTime from a SQL date, time, or datetime
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale
+   * @param {string} text - the string to parse
+   * @param {Object} opts - options to affect the creation
+   * @param {string|Zone} [opts.zone='local'] - use this zone if no offset is specified in the input string itself. Will also convert the DateTime to this zone
+   * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
+   * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
+   * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
+   * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
+   * @example DateTime.fromSQL('2017-05-15')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342+06:00')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342 America/Los_Angeles')
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342 America/Los_Angeles', { setZone: true })
+   * @example DateTime.fromSQL('2017-05-15 09:12:34.342', { zone: 'America/Los_Angeles' })
+   * @example DateTime.fromSQL('09:12:34.342')
+   * @return {DateTime}
+   */
+  static fromSQL(text2, opts = {}) {
+    const [vals, parsedZone] = parseSQL(text2);
+    return parseDataToDateTime(vals, parsedZone, opts, "SQL", text2);
+  }
+  /**
+   * Create an invalid DateTime.
+   * @param {string} reason - simple string of why this DateTime is invalid. Should not contain parameters or anything else data-dependent.
+   * @param {string} [explanation=null] - longer explanation, may include parameters and other useful debugging information
+   * @return {DateTime}
+   */
+  static invalid(reason, explanation = null) {
+    if (!reason) {
+      throw new InvalidArgumentError("need to specify a reason the DateTime is invalid");
+    }
+    const invalid2 = reason instanceof Invalid ? reason : new Invalid(reason, explanation);
+    if (Settings.throwOnInvalid) {
+      throw new InvalidDateTimeError(invalid2);
+    } else {
+      return new _DateTime({ invalid: invalid2 });
+    }
+  }
+  /**
+   * Check if an object is an instance of DateTime. Works across context boundaries
+   * @param {object} o
+   * @return {boolean}
+   */
+  static isDateTime(o3) {
+    return o3 && o3.isLuxonDateTime || false;
+  }
+  /**
+   * Produce the format string for a set of options
+   * @param formatOpts
+   * @param localeOpts
+   * @returns {string}
+   */
+  static parseFormatForOpts(formatOpts, localeOpts = {}) {
+    const tokenList = formatOptsToTokens(formatOpts, Locale.fromObject(localeOpts));
+    return !tokenList ? null : tokenList.map((t) => t ? t.val : null).join("");
+  }
+  /**
+   * Produce the the fully expanded format token for the locale
+   * Does NOT quote characters, so quoted tokens will not round trip correctly
+   * @param fmt
+   * @param localeOpts
+   * @returns {string}
+   */
+  static expandFormat(fmt, localeOpts = {}) {
+    const expanded = expandMacroTokens(Formatter.parseFormat(fmt), Locale.fromObject(localeOpts));
+    return expanded.map((t) => t.val).join("");
+  }
+  static resetCache() {
+    zoneOffsetTs = void 0;
+    zoneOffsetGuessCache.clear();
+  }
+  // INFO
+  /**
+   * Get the value of unit.
+   * @param {string} unit - a unit such as 'minute' or 'day'
+   * @example DateTime.local(2017, 7, 4).get('month'); //=> 7
+   * @example DateTime.local(2017, 7, 4).get('day'); //=> 4
+   * @return {number}
+   */
+  get(unit) {
+    return this[unit];
+  }
+  /**
+   * Returns whether the DateTime is valid. Invalid DateTimes occur when:
+   * * The DateTime was created from invalid calendar information, such as the 13th month or February 30
+   * * The DateTime was created by an operation on another invalid date
+   * @type {boolean}
+   */
+  get isValid() {
+    return this.invalid === null;
+  }
+  /**
+   * Returns an error code if this DateTime is invalid, or null if the DateTime is valid
+   * @type {string}
+   */
+  get invalidReason() {
+    return this.invalid ? this.invalid.reason : null;
+  }
+  /**
+   * Returns an explanation of why this DateTime became invalid, or null if the DateTime is valid
+   * @type {string}
+   */
+  get invalidExplanation() {
+    return this.invalid ? this.invalid.explanation : null;
+  }
+  /**
+   * Get the locale of a DateTime, such 'en-GB'. The locale is used when formatting the DateTime
+   *
+   * @type {string}
+   */
+  get locale() {
+    return this.isValid ? this.loc.locale : null;
+  }
+  /**
+   * Get the numbering system of a DateTime, such 'beng'. The numbering system is used when formatting the DateTime
+   *
+   * @type {string}
+   */
+  get numberingSystem() {
+    return this.isValid ? this.loc.numberingSystem : null;
+  }
+  /**
+   * Get the output calendar of a DateTime, such 'islamic'. The output calendar is used when formatting the DateTime
+   *
+   * @type {string}
+   */
+  get outputCalendar() {
+    return this.isValid ? this.loc.outputCalendar : null;
+  }
+  /**
+   * Get the time zone associated with this DateTime.
+   * @type {Zone}
+   */
+  get zone() {
+    return this._zone;
+  }
+  /**
+   * Get the name of the time zone.
+   * @type {string}
+   */
+  get zoneName() {
+    return this.isValid ? this.zone.name : null;
+  }
+  /**
+   * Get the year
+   * @example DateTime.local(2017, 5, 25).year //=> 2017
+   * @type {number}
+   */
+  get year() {
+    return this.isValid ? this.c.year : NaN;
+  }
+  /**
+   * Get the quarter
+   * @example DateTime.local(2017, 5, 25).quarter //=> 2
+   * @type {number}
+   */
+  get quarter() {
+    return this.isValid ? Math.ceil(this.c.month / 3) : NaN;
+  }
+  /**
+   * Get the month (1-12).
+   * @example DateTime.local(2017, 5, 25).month //=> 5
+   * @type {number}
+   */
+  get month() {
+    return this.isValid ? this.c.month : NaN;
+  }
+  /**
+   * Get the day of the month (1-30ish).
+   * @example DateTime.local(2017, 5, 25).day //=> 25
+   * @type {number}
+   */
+  get day() {
+    return this.isValid ? this.c.day : NaN;
+  }
+  /**
+   * Get the hour of the day (0-23).
+   * @example DateTime.local(2017, 5, 25, 9).hour //=> 9
+   * @type {number}
+   */
+  get hour() {
+    return this.isValid ? this.c.hour : NaN;
+  }
+  /**
+   * Get the minute of the hour (0-59).
+   * @example DateTime.local(2017, 5, 25, 9, 30).minute //=> 30
+   * @type {number}
+   */
+  get minute() {
+    return this.isValid ? this.c.minute : NaN;
+  }
+  /**
+   * Get the second of the minute (0-59).
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52).second //=> 52
+   * @type {number}
+   */
+  get second() {
+    return this.isValid ? this.c.second : NaN;
+  }
+  /**
+   * Get the millisecond of the second (0-999).
+   * @example DateTime.local(2017, 5, 25, 9, 30, 52, 654).millisecond //=> 654
+   * @type {number}
+   */
+  get millisecond() {
+    return this.isValid ? this.c.millisecond : NaN;
+  }
+  /**
+   * Get the week year
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @example DateTime.local(2014, 12, 31).weekYear //=> 2015
+   * @type {number}
+   */
+  get weekYear() {
+    return this.isValid ? possiblyCachedWeekData(this).weekYear : NaN;
+  }
+  /**
+   * Get the week number of the week year (1-52ish).
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @example DateTime.local(2017, 5, 25).weekNumber //=> 21
+   * @type {number}
+   */
+  get weekNumber() {
+    return this.isValid ? possiblyCachedWeekData(this).weekNumber : NaN;
+  }
+  /**
+   * Get the day of the week.
+   * 1 is Monday and 7 is Sunday
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @example DateTime.local(2014, 11, 31).weekday //=> 4
+   * @type {number}
+   */
+  get weekday() {
+    return this.isValid ? possiblyCachedWeekData(this).weekday : NaN;
+  }
+  /**
+   * Returns true if this date is on a weekend according to the locale, false otherwise
+   * @returns {boolean}
+   */
+  get isWeekend() {
+    return this.isValid && this.loc.getWeekendDays().includes(this.weekday);
+  }
+  /**
+   * Get the day of the week according to the locale.
+   * 1 is the first day of the week and 7 is the last day of the week.
+   * If the locale assigns Sunday as the first day of the week, then a date which is a Sunday will return 1,
+   * @returns {number}
+   */
+  get localWeekday() {
+    return this.isValid ? possiblyCachedLocalWeekData(this).weekday : NaN;
+  }
+  /**
+   * Get the week number of the week year according to the locale. Different locales assign week numbers differently,
+   * because the week can start on different days of the week (see localWeekday) and because a different number of days
+   * is required for a week to count as the first week of a year.
+   * @returns {number}
+   */
+  get localWeekNumber() {
+    return this.isValid ? possiblyCachedLocalWeekData(this).weekNumber : NaN;
+  }
+  /**
+   * Get the week year according to the locale. Different locales assign week numbers (and therefor week years)
+   * differently, see localWeekNumber.
+   * @returns {number}
+   */
+  get localWeekYear() {
+    return this.isValid ? possiblyCachedLocalWeekData(this).weekYear : NaN;
+  }
+  /**
+   * Get the ordinal (meaning the day of the year)
+   * @example DateTime.local(2017, 5, 25).ordinal //=> 145
+   * @type {number|DateTime}
+   */
+  get ordinal() {
+    return this.isValid ? gregorianToOrdinal(this.c).ordinal : NaN;
+  }
+  /**
+   * Get the human readable short month name, such as 'Oct'.
+   * Defaults to the system's locale if no locale has been specified
+   * @example DateTime.local(2017, 10, 30).monthShort //=> Oct
+   * @type {string}
+   */
+  get monthShort() {
+    return this.isValid ? Info.months("short", { locObj: this.loc })[this.month - 1] : null;
+  }
+  /**
+   * Get the human readable long month name, such as 'October'.
+   * Defaults to the system's locale if no locale has been specified
+   * @example DateTime.local(2017, 10, 30).monthLong //=> October
+   * @type {string}
+   */
+  get monthLong() {
+    return this.isValid ? Info.months("long", { locObj: this.loc })[this.month - 1] : null;
+  }
+  /**
+   * Get the human readable short weekday, such as 'Mon'.
+   * Defaults to the system's locale if no locale has been specified
+   * @example DateTime.local(2017, 10, 30).weekdayShort //=> Mon
+   * @type {string}
+   */
+  get weekdayShort() {
+    return this.isValid ? Info.weekdays("short", { locObj: this.loc })[this.weekday - 1] : null;
+  }
+  /**
+   * Get the human readable long weekday, such as 'Monday'.
+   * Defaults to the system's locale if no locale has been specified
+   * @example DateTime.local(2017, 10, 30).weekdayLong //=> Monday
+   * @type {string}
+   */
+  get weekdayLong() {
+    return this.isValid ? Info.weekdays("long", { locObj: this.loc })[this.weekday - 1] : null;
+  }
+  /**
+   * Get the UTC offset of this DateTime in minutes
+   * @example DateTime.now().offset //=> -240
+   * @example DateTime.utc().offset //=> 0
+   * @type {number}
+   */
+  get offset() {
+    return this.isValid ? +this.o : NaN;
+  }
+  /**
+   * Get the short human name for the zone's current offset, for example "EST" or "EDT".
+   * Defaults to the system's locale if no locale has been specified
+   * @type {string}
+   */
+  get offsetNameShort() {
+    if (this.isValid) {
+      return this.zone.offsetName(this.ts, {
+        format: "short",
+        locale: this.locale
+      });
+    } else {
+      return null;
+    }
+  }
+  /**
+   * Get the long human name for the zone's current offset, for example "Eastern Standard Time" or "Eastern Daylight Time".
+   * Defaults to the system's locale if no locale has been specified
+   * @type {string}
+   */
+  get offsetNameLong() {
+    if (this.isValid) {
+      return this.zone.offsetName(this.ts, {
+        format: "long",
+        locale: this.locale
+      });
+    } else {
+      return null;
+    }
+  }
+  /**
+   * Get whether this zone's offset ever changes, as in a DST.
+   * @type {boolean}
+   */
+  get isOffsetFixed() {
+    return this.isValid ? this.zone.isUniversal : null;
+  }
+  /**
+   * Get whether the DateTime is in a DST.
+   * @type {boolean}
+   */
+  get isInDST() {
+    if (this.isOffsetFixed) {
+      return false;
+    } else {
+      return this.offset > this.set({ month: 1, day: 1 }).offset || this.offset > this.set({ month: 5 }).offset;
+    }
+  }
+  /**
+   * Get those DateTimes which have the same local time as this DateTime, but a different offset from UTC
+   * in this DateTime's zone. During DST changes local time can be ambiguous, for example
+   * `2023-10-29T02:30:00` in `Europe/Berlin` can have offset `+01:00` or `+02:00`.
+   * This method will return both possible DateTimes if this DateTime's local time is ambiguous.
+   * @returns {DateTime[]}
+   */
+  getPossibleOffsets() {
+    if (!this.isValid || this.isOffsetFixed) {
+      return [this];
+    }
+    const dayMs = 864e5;
+    const minuteMs = 6e4;
+    const localTS = objToLocalTS(this.c);
+    const oEarlier = this.zone.offset(localTS - dayMs);
+    const oLater = this.zone.offset(localTS + dayMs);
+    const o1 = this.zone.offset(localTS - oEarlier * minuteMs);
+    const o22 = this.zone.offset(localTS - oLater * minuteMs);
+    if (o1 === o22) {
+      return [this];
+    }
+    const ts1 = localTS - o1 * minuteMs;
+    const ts2 = localTS - o22 * minuteMs;
+    const c1 = tsToObj(ts1, o1);
+    const c22 = tsToObj(ts2, o22);
+    if (c1.hour === c22.hour && c1.minute === c22.minute && c1.second === c22.second && c1.millisecond === c22.millisecond) {
+      return [clone2(this, { ts: ts1 }), clone2(this, { ts: ts2 })];
+    }
+    return [this];
+  }
+  /**
+   * Returns true if this DateTime is in a leap year, false otherwise
+   * @example DateTime.local(2016).isInLeapYear //=> true
+   * @example DateTime.local(2013).isInLeapYear //=> false
+   * @type {boolean}
+   */
+  get isInLeapYear() {
+    return isLeapYear(this.year);
+  }
+  /**
+   * Returns the number of days in this DateTime's month
+   * @example DateTime.local(2016, 2).daysInMonth //=> 29
+   * @example DateTime.local(2016, 3).daysInMonth //=> 31
+   * @type {number}
+   */
+  get daysInMonth() {
+    return daysInMonth(this.year, this.month);
+  }
+  /**
+   * Returns the number of days in this DateTime's year
+   * @example DateTime.local(2016).daysInYear //=> 366
+   * @example DateTime.local(2013).daysInYear //=> 365
+   * @type {number}
+   */
+  get daysInYear() {
+    return this.isValid ? daysInYear(this.year) : NaN;
+  }
+  /**
+   * Returns the number of weeks in this DateTime's year
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   * @example DateTime.local(2004).weeksInWeekYear //=> 53
+   * @example DateTime.local(2013).weeksInWeekYear //=> 52
+   * @type {number}
+   */
+  get weeksInWeekYear() {
+    return this.isValid ? weeksInWeekYear(this.weekYear) : NaN;
+  }
+  /**
+   * Returns the number of weeks in this DateTime's local week year
+   * @example DateTime.local(2020, 6, {locale: 'en-US'}).weeksInLocalWeekYear //=> 52
+   * @example DateTime.local(2020, 6, {locale: 'de-DE'}).weeksInLocalWeekYear //=> 53
+   * @type {number}
+   */
+  get weeksInLocalWeekYear() {
+    return this.isValid ? weeksInWeekYear(
+      this.localWeekYear,
+      this.loc.getMinDaysInFirstWeek(),
+      this.loc.getStartOfWeek()
+    ) : NaN;
+  }
+  /**
+   * Returns the resolved Intl options for this DateTime.
+   * This is useful in understanding the behavior of formatting methods
+   * @param {Object} opts - the same options as toLocaleString
+   * @return {Object}
+   */
+  resolvedLocaleOptions(opts = {}) {
+    const { locale, numberingSystem, calendar } = Formatter.create(
+      this.loc.clone(opts),
+      opts
+    ).resolvedOptions(this);
+    return { locale, numberingSystem, outputCalendar: calendar };
+  }
+  // TRANSFORM
+  /**
+   * "Set" the DateTime's zone to UTC. Returns a newly-constructed DateTime.
+   *
+   * Equivalent to {@link DateTime#setZone}('utc')
+   * @param {number} [offset=0] - optionally, an offset from UTC in minutes
+   * @param {Object} [opts={}] - options to pass to `setZone()`
+   * @return {DateTime}
+   */
+  toUTC(offset2 = 0, opts = {}) {
+    return this.setZone(FixedOffsetZone.instance(offset2), opts);
+  }
+  /**
+   * "Set" the DateTime's zone to the host's local zone. Returns a newly-constructed DateTime.
+   *
+   * Equivalent to `setZone('local')`
+   * @return {DateTime}
+   */
+  toLocal() {
+    return this.setZone(Settings.defaultZone);
+  }
+  /**
+   * "Set" the DateTime's zone to specified zone. Returns a newly-constructed DateTime.
+   *
+   * By default, the setter keeps the underlying time the same (as in, the same timestamp), but the new instance will report different local times and consider DSTs when making computations, as with {@link DateTime#plus}. You may wish to use {@link DateTime#toLocal} and {@link DateTime#toUTC} which provide simple convenience wrappers for commonly used zones.
+   * @param {string|Zone} [zone='local'] - a zone identifier. As a string, that can be any IANA zone supported by the host environment, or a fixed-offset name of the form 'UTC+3', or the strings 'local' or 'utc'. You may also supply an instance of a {@link DateTime#Zone} class.
+   * @param {Object} opts - options
+   * @param {boolean} [opts.keepLocalTime=false] - If true, adjust the underlying time so that the local time stays the same, but in the target zone. You should rarely need this.
+   * @return {DateTime}
+   */
+  setZone(zone, { keepLocalTime = false, keepCalendarTime = false } = {}) {
+    zone = normalizeZone(zone, Settings.defaultZone);
+    if (zone.equals(this.zone)) {
+      return this;
+    } else if (!zone.isValid) {
+      return _DateTime.invalid(unsupportedZone(zone));
+    } else {
+      let newTS = this.ts;
+      if (keepLocalTime || keepCalendarTime) {
+        const offsetGuess = zone.offset(this.ts);
+        const asObj = this.toObject();
+        [newTS] = objToTS(asObj, offsetGuess, zone);
+      }
+      return clone2(this, { ts: newTS, zone });
+    }
+  }
+  /**
+   * "Set" the locale, numberingSystem, or outputCalendar. Returns a newly-constructed DateTime.
+   * @param {Object} properties - the properties to set
+   * @example DateTime.local(2017, 5, 25).reconfigure({ locale: 'en-GB' })
+   * @return {DateTime}
+   */
+  reconfigure({ locale, numberingSystem, outputCalendar } = {}) {
+    const loc = this.loc.clone({ locale, numberingSystem, outputCalendar });
+    return clone2(this, { loc });
+  }
+  /**
+   * "Set" the locale. Returns a newly-constructed DateTime.
+   * Just a convenient alias for reconfigure({ locale })
+   * @example DateTime.local(2017, 5, 25).setLocale('en-GB')
+   * @return {DateTime}
+   */
+  setLocale(locale) {
+    return this.reconfigure({ locale });
+  }
+  /**
+   * "Set" the values of specified units. Returns a newly-constructed DateTime.
+   * You can only set units with this method; for "setting" metadata, see {@link DateTime#reconfigure} and {@link DateTime#setZone}.
+   *
+   * This method also supports setting locale-based week units, i.e. `localWeekday`, `localWeekNumber` and `localWeekYear`.
+   * They cannot be mixed with ISO-week units like `weekday`.
+   * @param {Object} values - a mapping of units to numbers
+   * @example dt.set({ year: 2017 })
+   * @example dt.set({ hour: 8, minute: 30 })
+   * @example dt.set({ weekday: 5 })
+   * @example dt.set({ year: 2005, ordinal: 234 })
+   * @return {DateTime}
+   */
+  set(values) {
+    if (!this.isValid) return this;
+    const normalized = normalizeObject(values, normalizeUnitWithLocalWeeks);
+    const { minDaysInFirstWeek, startOfWeek } = usesLocalWeekValues(normalized, this.loc);
+    const settingWeekStuff = !isUndefined(normalized.weekYear) || !isUndefined(normalized.weekNumber) || !isUndefined(normalized.weekday), containsOrdinal = !isUndefined(normalized.ordinal), containsGregorYear = !isUndefined(normalized.year), containsGregorMD = !isUndefined(normalized.month) || !isUndefined(normalized.day), containsGregor = containsGregorYear || containsGregorMD, definiteWeekDef = normalized.weekYear || normalized.weekNumber;
+    if ((containsGregor || containsOrdinal) && definiteWeekDef) {
+      throw new ConflictingSpecificationError(
+        "Can't mix weekYear/weekNumber units with year/month/day or ordinals"
+      );
+    }
+    if (containsGregorMD && containsOrdinal) {
+      throw new ConflictingSpecificationError("Can't mix ordinal dates with month/day");
+    }
+    let mixed;
+    if (settingWeekStuff) {
+      mixed = weekToGregorian(
+        { ...gregorianToWeek(this.c, minDaysInFirstWeek, startOfWeek), ...normalized },
+        minDaysInFirstWeek,
+        startOfWeek
+      );
+    } else if (!isUndefined(normalized.ordinal)) {
+      mixed = ordinalToGregorian({ ...gregorianToOrdinal(this.c), ...normalized });
+    } else {
+      mixed = { ...this.toObject(), ...normalized };
+      if (isUndefined(normalized.day)) {
+        mixed.day = Math.min(daysInMonth(mixed.year, mixed.month), mixed.day);
+      }
+    }
+    const [ts, o3] = objToTS(mixed, this.o, this.zone);
+    return clone2(this, { ts, o: o3 });
+  }
+  /**
+   * Add a period of time to this DateTime and return the resulting DateTime
+   *
+   * Adding hours, minutes, seconds, or milliseconds increases the timestamp by the right number of milliseconds. Adding days, months, or years shifts the calendar, accounting for DSTs and leap years along the way. Thus, `dt.plus({ hours: 24 })` may result in a different time than `dt.plus({ days: 1 })` if there's a DST shift in between.
+   * @param {Duration|Object|number} duration - The amount to add. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   * @example DateTime.now().plus(123) //~> in 123 milliseconds
+   * @example DateTime.now().plus({ minutes: 15 }) //~> in 15 minutes
+   * @example DateTime.now().plus({ days: 1 }) //~> this time tomorrow
+   * @example DateTime.now().plus({ days: -1 }) //~> this time yesterday
+   * @example DateTime.now().plus({ hours: 3, minutes: 13 }) //~> in 3 hr, 13 min
+   * @example DateTime.now().plus(Duration.fromObject({ hours: 3, minutes: 13 })) //~> in 3 hr, 13 min
+   * @return {DateTime}
+   */
+  plus(duration3) {
+    if (!this.isValid) return this;
+    const dur = Duration.fromDurationLike(duration3);
+    return clone2(this, adjustTime(this, dur));
+  }
+  /**
+   * Subtract a period of time to this DateTime and return the resulting DateTime
+   * See {@link DateTime#plus}
+   * @param {Duration|Object|number} duration - The amount to subtract. Either a Luxon Duration, a number of milliseconds, the object argument to Duration.fromObject()
+   @return {DateTime}
+   */
+  minus(duration3) {
+    if (!this.isValid) return this;
+    const dur = Duration.fromDurationLike(duration3).negate();
+    return clone2(this, adjustTime(this, dur));
+  }
+  /**
+   * "Set" this DateTime to the beginning of a unit of time.
+   * @param {string} unit - The unit to go to the beginning of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {Object} opts - options
+   * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week
+   * @example DateTime.local(2014, 3, 3).startOf('month').toISODate(); //=> '2014-03-01'
+   * @example DateTime.local(2014, 3, 3).startOf('year').toISODate(); //=> '2014-01-01'
+   * @example DateTime.local(2014, 3, 3).startOf('week').toISODate(); //=> '2014-03-03', weeks always start on Mondays
+   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('day').toISOTime(); //=> '00:00.000-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).startOf('hour').toISOTime(); //=> '05:00:00.000-05:00'
+   * @return {DateTime}
+   */
+  startOf(unit, { useLocaleWeeks = false } = {}) {
+    if (!this.isValid) return this;
+    const o3 = {}, normalizedUnit = Duration.normalizeUnit(unit);
+    switch (normalizedUnit) {
+      case "years":
+        o3.month = 1;
+      // falls through
+      case "quarters":
+      case "months":
+        o3.day = 1;
+      // falls through
+      case "weeks":
+      case "days":
+        o3.hour = 0;
+      // falls through
+      case "hours":
+        o3.minute = 0;
+      // falls through
+      case "minutes":
+        o3.second = 0;
+      // falls through
+      case "seconds":
+        o3.millisecond = 0;
+        break;
+    }
+    if (normalizedUnit === "weeks") {
+      if (useLocaleWeeks) {
+        const startOfWeek = this.loc.getStartOfWeek();
+        const { weekday } = this;
+        if (weekday < startOfWeek) {
+          o3.weekNumber = this.weekNumber - 1;
+        }
+        o3.weekday = startOfWeek;
+      } else {
+        o3.weekday = 1;
+      }
+    }
+    if (normalizedUnit === "quarters") {
+      const q3 = Math.ceil(this.month / 3);
+      o3.month = (q3 - 1) * 3 + 1;
+    }
+    return this.set(o3);
+  }
+  /**
+   * "Set" this DateTime to the end (meaning the last millisecond) of a unit of time
+   * @param {string} unit - The unit to go to the end of. Can be 'year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', or 'millisecond'.
+   * @param {Object} opts - options
+   * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week
+   * @example DateTime.local(2014, 3, 3).endOf('month').toISO(); //=> '2014-03-31T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3).endOf('year').toISO(); //=> '2014-12-31T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3).endOf('week').toISO(); // => '2014-03-09T23:59:59.999-05:00', weeks start on Mondays
+   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('day').toISO(); //=> '2014-03-03T23:59:59.999-05:00'
+   * @example DateTime.local(2014, 3, 3, 5, 30).endOf('hour').toISO(); //=> '2014-03-03T05:59:59.999-05:00'
+   * @return {DateTime}
+   */
+  endOf(unit, opts) {
+    return this.isValid ? this.plus({ [unit]: 1 }).startOf(unit, opts).minus(1) : this;
+  }
+  // OUTPUT
+  /**
+   * Returns a string representation of this DateTime formatted according to the specified format string.
+   * **You may not want this.** See {@link DateTime#toLocaleString} for a more flexible formatting tool. For a table of tokens and their interpretations, see [here](https://moment.github.io/luxon/#/formatting?id=table-of-tokens).
+   * Defaults to en-US if no locale has been specified, regardless of the system's locale.
+   * @param {string} fmt - the format string
+   * @param {Object} opts - opts to override the configuration options on this DateTime
+   * @example DateTime.now().toFormat('yyyy LLL dd') //=> '2017 Apr 22'
+   * @example DateTime.now().setLocale('fr').toFormat('yyyy LLL dd') //=> '2017 avr. 22'
+   * @example DateTime.now().toFormat('yyyy LLL dd', { locale: "fr" }) //=> '2017 avr. 22'
+   * @example DateTime.now().toFormat("HH 'hours and' mm 'minutes'") //=> '20 hours and 55 minutes'
+   * @return {string}
+   */
+  toFormat(fmt, opts = {}) {
+    return this.isValid ? Formatter.create(this.loc.redefaultToEN(opts)).formatDateTimeFromString(this, fmt) : INVALID2;
+  }
+  /**
+   * Returns a localized string representing this date. Accepts the same options as the Intl.DateTimeFormat constructor and any presets defined by Luxon, such as `DateTime.DATE_FULL` or `DateTime.TIME_SIMPLE`.
+   * The exact behavior of this method is browser-specific, but in general it will return an appropriate representation
+   * of the DateTime in the assigned locale.
+   * Defaults to the system's locale if no locale has been specified
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+   * @param formatOpts {Object} - Intl.DateTimeFormat constructor options and configuration options
+   * @param {Object} opts - opts to override the configuration options on this DateTime
+   * @example DateTime.now().toLocaleString(); //=> 4/20/2017
+   * @example DateTime.now().setLocale('en-gb').toLocaleString(); //=> '20/04/2017'
+   * @example DateTime.now().toLocaleString(DateTime.DATE_FULL); //=> 'April 20, 2017'
+   * @example DateTime.now().toLocaleString(DateTime.DATE_FULL, { locale: 'fr' }); //=> '28 août 2022'
+   * @example DateTime.now().toLocaleString(DateTime.TIME_SIMPLE); //=> '11:32 AM'
+   * @example DateTime.now().toLocaleString(DateTime.DATETIME_SHORT); //=> '4/20/2017, 11:32 AM'
+   * @example DateTime.now().toLocaleString({ weekday: 'long', month: 'long', day: '2-digit' }); //=> 'Thursday, April 20'
+   * @example DateTime.now().toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }); //=> 'Thu, Apr 20, 11:27 AM'
+   * @example DateTime.now().toLocaleString({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }); //=> '11:32'
+   * @return {string}
+   */
+  toLocaleString(formatOpts = DATE_SHORT, opts = {}) {
+    return this.isValid ? Formatter.create(this.loc.clone(opts), formatOpts).formatDateTime(this) : INVALID2;
+  }
+  /**
+   * Returns an array of format "parts", meaning individual tokens along with metadata. This is allows callers to post-process individual sections of the formatted output.
+   * Defaults to the system's locale if no locale has been specified
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat/formatToParts
+   * @param opts {Object} - Intl.DateTimeFormat constructor options, same as `toLocaleString`.
+   * @example DateTime.now().toLocaleParts(); //=> [
+   *                                   //=>   { type: 'day', value: '25' },
+   *                                   //=>   { type: 'literal', value: '/' },
+   *                                   //=>   { type: 'month', value: '05' },
+   *                                   //=>   { type: 'literal', value: '/' },
+   *                                   //=>   { type: 'year', value: '1982' }
+   *                                   //=> ]
+   */
+  toLocaleParts(opts = {}) {
+    return this.isValid ? Formatter.create(this.loc.clone(opts), opts).formatDateTimeParts(this) : [];
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime
+   * @param {Object} opts - options
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+   * @param {boolean} [opts.extendedZone=false] - add the time zone format extension
+   * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'years', 'months', 'days', 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
+   * @example DateTime.utc(1983, 5, 25).toISO() //=> '1982-05-25T00:00:00.000Z'
+   * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
+   * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
+   * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
+   * @example DateTime.now().toISO({ precision: 'day' }) //=> '2017-04-22Z'
+   * @example DateTime.now().toISO({ precision: 'minute' }) //=> '2017-04-22T20:47Z'
+   * @return {string|null}
+   */
+  toISO({
+    format: format5 = "extended",
+    suppressSeconds = false,
+    suppressMilliseconds = false,
+    includeOffset = true,
+    extendedZone = false,
+    precision = "milliseconds"
+  } = {}) {
+    if (!this.isValid) {
+      return null;
+    }
+    precision = normalizeUnit(precision);
+    const ext = format5 === "extended";
+    let c5 = toISODate(this, ext, precision);
+    if (orderedUnits.indexOf(precision) >= 3) c5 += "T";
+    c5 += toISOTime(
+      this,
+      ext,
+      suppressSeconds,
+      suppressMilliseconds,
+      includeOffset,
+      extendedZone,
+      precision
+    );
+    return c5;
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime's date component
+   * @param {Object} opts - options
+   * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='day'] - truncate output to desired precision: 'years', 'months', or 'days'.
+   * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
+   * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
+   * @example DateTime.utc(1982, 5, 25).toISODate({ precision: 'month' }) //=> '1982-05'
+   * @return {string|null}
+   */
+  toISODate({ format: format5 = "extended", precision = "day" } = {}) {
+    if (!this.isValid) {
+      return null;
+    }
+    return toISODate(this, format5 === "extended", normalizeUnit(precision));
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime's week date
+   * @example DateTime.utc(1982, 5, 25).toISOWeekDate() //=> '1982-W21-2'
+   * @return {string}
+   */
+  toISOWeekDate() {
+    return toTechFormat(this, "kkkk-'W'WW-c");
+  }
+  /**
+   * Returns an ISO 8601-compliant string representation of this DateTime's time component
+   * @param {Object} opts - options
+   * @param {boolean} [opts.suppressMilliseconds=false] - exclude milliseconds from the format if they're 0
+   * @param {boolean} [opts.suppressSeconds=false] - exclude seconds from the format if they're 0
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+   * @param {boolean} [opts.extendedZone=true] - add the time zone format extension
+   * @param {boolean} [opts.includePrefix=false] - include the `T` prefix
+   * @param {string} [opts.format='extended'] - choose between the basic and extended format
+   * @param {string} [opts.precision='milliseconds'] - truncate output to desired presicion: 'hours', 'minutes', 'seconds' or 'milliseconds'. When precision and suppressSeconds or suppressMilliseconds are used together, precision sets the maximum unit shown in the output, however seconds or milliseconds will still be suppressed if they are 0.
+   * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime() //=> '07:34:19.361Z'
+   * @example DateTime.utc().set({ hour: 7, minute: 34, seconds: 0, milliseconds: 0 }).toISOTime({ suppressSeconds: true }) //=> '07:34Z'
+   * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ format: 'basic' }) //=> '073419.361Z'
+   * @example DateTime.utc().set({ hour: 7, minute: 34 }).toISOTime({ includePrefix: true }) //=> 'T07:34:19.361Z'
+   * @example DateTime.utc().set({ hour: 7, minute: 34, second: 56 }).toISOTime({ precision: 'minute' }) //=> '07:34Z'
+   * @return {string}
+   */
+  toISOTime({
+    suppressMilliseconds = false,
+    suppressSeconds = false,
+    includeOffset = true,
+    includePrefix = false,
+    extendedZone = false,
+    format: format5 = "extended",
+    precision = "milliseconds"
+  } = {}) {
+    if (!this.isValid) {
+      return null;
+    }
+    precision = normalizeUnit(precision);
+    let c5 = includePrefix && orderedUnits.indexOf(precision) >= 3 ? "T" : "";
+    return c5 + toISOTime(
+      this,
+      format5 === "extended",
+      suppressSeconds,
+      suppressMilliseconds,
+      includeOffset,
+      extendedZone,
+      precision
+    );
+  }
+  /**
+   * Returns an RFC 2822-compatible string representation of this DateTime
+   * @example DateTime.utc(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 +0000'
+   * @example DateTime.local(2014, 7, 13).toRFC2822() //=> 'Sun, 13 Jul 2014 00:00:00 -0400'
+   * @return {string}
+   */
+  toRFC2822() {
+    return toTechFormat(this, "EEE, dd LLL yyyy HH:mm:ss ZZZ", false);
+  }
+  /**
+   * Returns a string representation of this DateTime appropriate for use in HTTP headers. The output is always expressed in GMT.
+   * Specifically, the string conforms to RFC 1123.
+   * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+   * @example DateTime.utc(2014, 7, 13).toHTTP() //=> 'Sun, 13 Jul 2014 00:00:00 GMT'
+   * @example DateTime.utc(2014, 7, 13, 19).toHTTP() //=> 'Sun, 13 Jul 2014 19:00:00 GMT'
+   * @return {string}
+   */
+  toHTTP() {
+    return toTechFormat(this.toUTC(), "EEE, dd LLL yyyy HH:mm:ss 'GMT'");
+  }
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Date
+   * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
+   * @return {string|null}
+   */
+  toSQLDate() {
+    if (!this.isValid) {
+      return null;
+    }
+    return toISODate(this, true);
+  }
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL Time
+   * @param {Object} opts - options
+   * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+   * @param {boolean} [opts.includeOffsetSpace=true] - include the space between the time and the offset, such as '05:15:16.345 -04:00'
+   * @example DateTime.utc().toSQL() //=> '05:15:16.345'
+   * @example DateTime.now().toSQL() //=> '05:15:16.345 -04:00'
+   * @example DateTime.now().toSQL({ includeOffset: false }) //=> '05:15:16.345'
+   * @example DateTime.now().toSQL({ includeZone: false }) //=> '05:15:16.345 America/New_York'
+   * @return {string}
+   */
+  toSQLTime({ includeOffset = true, includeZone = false, includeOffsetSpace = true } = {}) {
+    let fmt = "HH:mm:ss.SSS";
+    if (includeZone || includeOffset) {
+      if (includeOffsetSpace) {
+        fmt += " ";
+      }
+      if (includeZone) {
+        fmt += "z";
+      } else if (includeOffset) {
+        fmt += "ZZ";
+      }
+    }
+    return toTechFormat(this, fmt, true);
+  }
+  /**
+   * Returns a string representation of this DateTime appropriate for use in SQL DateTime
+   * @param {Object} opts - options
+   * @param {boolean} [opts.includeZone=false] - include the zone, such as 'America/New_York'. Overrides includeOffset.
+   * @param {boolean} [opts.includeOffset=true] - include the offset, such as 'Z' or '-04:00'
+   * @param {boolean} [opts.includeOffsetSpace=true] - include the space between the time and the offset, such as '05:15:16.345 -04:00'
+   * @example DateTime.utc(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 Z'
+   * @example DateTime.local(2014, 7, 13).toSQL() //=> '2014-07-13 00:00:00.000 -04:00'
+   * @example DateTime.local(2014, 7, 13).toSQL({ includeOffset: false }) //=> '2014-07-13 00:00:00.000'
+   * @example DateTime.local(2014, 7, 13).toSQL({ includeZone: true }) //=> '2014-07-13 00:00:00.000 America/New_York'
+   * @return {string}
+   */
+  toSQL(opts = {}) {
+    if (!this.isValid) {
+      return null;
+    }
+    return `${this.toSQLDate()} ${this.toSQLTime(opts)}`;
+  }
+  /**
+   * Returns a string representation of this DateTime appropriate for debugging
+   * @return {string}
+   */
+  toString() {
+    return this.isValid ? this.toISO() : INVALID2;
+  }
+  /**
+   * Returns a string representation of this DateTime appropriate for the REPL.
+   * @return {string}
+   */
+  [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
+    if (this.isValid) {
+      return `DateTime { ts: ${this.toISO()}, zone: ${this.zone.name}, locale: ${this.locale} }`;
+    } else {
+      return `DateTime { Invalid, reason: ${this.invalidReason} }`;
+    }
+  }
+  /**
+   * Returns the epoch milliseconds of this DateTime. Alias of {@link DateTime#toMillis}
+   * @return {number}
+   */
+  valueOf() {
+    return this.toMillis();
+  }
+  /**
+   * Returns the epoch milliseconds of this DateTime.
+   * @return {number}
+   */
+  toMillis() {
+    return this.isValid ? this.ts : NaN;
+  }
+  /**
+   * Returns the epoch seconds (including milliseconds in the fractional part) of this DateTime.
+   * @return {number}
+   */
+  toSeconds() {
+    return this.isValid ? this.ts / 1e3 : NaN;
+  }
+  /**
+   * Returns the epoch seconds (as a whole number) of this DateTime.
+   * @return {number}
+   */
+  toUnixInteger() {
+    return this.isValid ? Math.floor(this.ts / 1e3) : NaN;
+  }
+  /**
+   * Returns an ISO 8601 representation of this DateTime appropriate for use in JSON.
+   * @return {string}
+   */
+  toJSON() {
+    return this.toISO();
+  }
+  /**
+   * Returns a BSON serializable equivalent to this DateTime.
+   * @return {Date}
+   */
+  toBSON() {
+    return this.toJSDate();
+  }
+  /**
+   * Returns a JavaScript object with this DateTime's year, month, day, and so on.
+   * @param opts - options for generating the object
+   * @param {boolean} [opts.includeConfig=false] - include configuration attributes in the output
+   * @example DateTime.now().toObject() //=> { year: 2017, month: 4, day: 22, hour: 20, minute: 49, second: 42, millisecond: 268 }
+   * @return {Object}
+   */
+  toObject(opts = {}) {
+    if (!this.isValid) return {};
+    const base = { ...this.c };
+    if (opts.includeConfig) {
+      base.outputCalendar = this.outputCalendar;
+      base.numberingSystem = this.loc.numberingSystem;
+      base.locale = this.loc.locale;
+    }
+    return base;
+  }
+  /**
+   * Returns a JavaScript Date equivalent to this DateTime.
+   * @return {Date}
+   */
+  toJSDate() {
+    return new Date(this.isValid ? this.ts : NaN);
+  }
+  // COMPARE
+  /**
+   * Return the difference between two DateTimes as a Duration.
+   * @param {DateTime} otherDateTime - the DateTime to compare this one to
+   * @param {string|string[]} [unit=['milliseconds']] - the unit or array of units (such as 'hours' or 'days') to include in the duration.
+   * @param {Object} opts - options that affect the creation of the Duration
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @example
+   * var i1 = DateTime.fromISO('1982-05-25T09:45'),
+   *     i2 = DateTime.fromISO('1983-10-14T10:30');
+   * i2.diff(i1).toObject() //=> { milliseconds: 43807500000 }
+   * i2.diff(i1, 'hours').toObject() //=> { hours: 12168.75 }
+   * i2.diff(i1, ['months', 'days']).toObject() //=> { months: 16, days: 19.03125 }
+   * i2.diff(i1, ['months', 'days', 'hours']).toObject() //=> { months: 16, days: 19, hours: 0.75 }
+   * @return {Duration}
+   */
+  diff(otherDateTime, unit = "milliseconds", opts = {}) {
+    if (!this.isValid || !otherDateTime.isValid) {
+      return Duration.invalid("created by diffing an invalid DateTime");
+    }
+    const durOpts = { locale: this.locale, numberingSystem: this.numberingSystem, ...opts };
+    const units = maybeArray(unit).map(Duration.normalizeUnit), otherIsLater = otherDateTime.valueOf() > this.valueOf(), earlier = otherIsLater ? this : otherDateTime, later = otherIsLater ? otherDateTime : this, diffed = diff(earlier, later, units, durOpts);
+    return otherIsLater ? diffed.negate() : diffed;
+  }
+  /**
+   * Return the difference between this DateTime and right now.
+   * See {@link DateTime#diff}
+   * @param {string|string[]} [unit=['milliseconds']] - the unit or units units (such as 'hours' or 'days') to include in the duration
+   * @param {Object} opts - options that affect the creation of the Duration
+   * @param {string} [opts.conversionAccuracy='casual'] - the conversion system to use
+   * @return {Duration}
+   */
+  diffNow(unit = "milliseconds", opts = {}) {
+    return this.diff(_DateTime.now(), unit, opts);
+  }
+  /**
+   * Return an Interval spanning between this DateTime and another DateTime
+   * @param {DateTime} otherDateTime - the other end point of the Interval
+   * @return {Interval|DateTime}
+   */
+  until(otherDateTime) {
+    return this.isValid ? Interval.fromDateTimes(this, otherDateTime) : this;
+  }
+  /**
+   * Return whether this DateTime is in the same unit of time as another DateTime.
+   * Higher-order units must also be identical for this function to return `true`.
+   * Note that time zones are **ignored** in this comparison, which compares the **local** calendar time. Use {@link DateTime#setZone} to convert one of the dates if needed.
+   * @param {DateTime} otherDateTime - the other DateTime
+   * @param {string} unit - the unit of time to check sameness on
+   * @param {Object} opts - options
+   * @param {boolean} [opts.useLocaleWeeks=false] - If true, use weeks based on the locale, i.e. use the locale-dependent start of the week; only the locale of this DateTime is used
+   * @example DateTime.now().hasSame(otherDT, 'day'); //~> true if otherDT is in the same current calendar day
+   * @return {boolean}
+   */
+  hasSame(otherDateTime, unit, opts) {
+    if (!this.isValid) return false;
+    const inputMs = otherDateTime.valueOf();
+    const adjustedToZone = this.setZone(otherDateTime.zone, { keepLocalTime: true });
+    return adjustedToZone.startOf(unit, opts) <= inputMs && inputMs <= adjustedToZone.endOf(unit, opts);
+  }
+  /**
+   * Equality check
+   * Two DateTimes are equal if and only if they represent the same millisecond, have the same zone and location, and are both valid.
+   * To compare just the millisecond values, use `+dt1 === +dt2`.
+   * @param {DateTime} other - the other DateTime
+   * @return {boolean}
+   */
+  equals(other) {
+    return this.isValid && other.isValid && this.valueOf() === other.valueOf() && this.zone.equals(other.zone) && this.loc.equals(other.loc);
+  }
+  /**
+   * Returns a string representation of a this time relative to now, such as "in two days". Can only internationalize if your
+   * platform supports Intl.RelativeTimeFormat. Rounds towards zero by default.
+   * @param {Object} options - options that affect the output
+   * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {string} [options.style="long"] - the style of units, must be "long", "short", or "narrow"
+   * @param {string|string[]} options.unit - use a specific unit or array of units; if omitted, or an array, the method will pick the best unit. Use an array or one of "years", "quarters", "months", "weeks", "days", "hours", "minutes", or "seconds"
+   * @param {boolean} [options.round=true] - whether to round the numbers in the output.
+   * @param {string} [options.rounding="trunc"] - rounding method to use when rounding the numbers in the output. Can be "trunc" (toward zero), "expand" (away from zero), "round", "floor", or "ceil".
+   * @param {number} [options.padding=0] - padding in milliseconds. This allows you to round up the result if it fits inside the threshold. Don't use in combination with {round: false} because the decimal output will include the padding.
+   * @param {string} options.locale - override the locale of this DateTime
+   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @example DateTime.now().plus({ days: 1 }).toRelative() //=> "in 1 day"
+   * @example DateTime.now().setLocale("es").toRelative({ days: 1 }) //=> "dentro de 1 día"
+   * @example DateTime.now().plus({ days: 1 }).toRelative({ locale: "fr" }) //=> "dans 23 heures"
+   * @example DateTime.now().minus({ days: 2 }).toRelative() //=> "2 days ago"
+   * @example DateTime.now().minus({ days: 2 }).toRelative({ unit: "hours" }) //=> "48 hours ago"
+   * @example DateTime.now().minus({ hours: 36 }).toRelative({ round: false }) //=> "1.5 days ago"
+   */
+  toRelative(options = {}) {
+    if (!this.isValid) return null;
+    const base = options.base || _DateTime.fromObject({}, { zone: this.zone }), padding = options.padding ? this < base ? -options.padding : options.padding : 0;
+    let units = ["years", "months", "days", "hours", "minutes", "seconds"];
+    let unit = options.unit;
+    if (Array.isArray(options.unit)) {
+      units = options.unit;
+      unit = void 0;
+    }
+    return diffRelative(base, this.plus(padding), {
+      ...options,
+      numeric: "always",
+      units,
+      unit
+    });
+  }
+  /**
+   * Returns a string representation of this date relative to today, such as "yesterday" or "next month".
+   * Only internationalizes on platforms that supports Intl.RelativeTimeFormat.
+   * @param {Object} options - options that affect the output
+   * @param {DateTime} [options.base=DateTime.now()] - the DateTime to use as the basis to which this time is compared. Defaults to now.
+   * @param {string} options.locale - override the locale of this DateTime
+   * @param {string} options.unit - use a specific unit; if omitted, the method will pick the unit. Use one of "years", "quarters", "months", "weeks", or "days"
+   * @param {string} options.numberingSystem - override the numberingSystem of this DateTime. The Intl system may choose not to honor this
+   * @example DateTime.now().plus({ days: 1 }).toRelativeCalendar() //=> "tomorrow"
+   * @example DateTime.now().setLocale("es").plus({ days: 1 }).toRelative() //=> ""mañana"
+   * @example DateTime.now().plus({ days: 1 }).toRelativeCalendar({ locale: "fr" }) //=> "demain"
+   * @example DateTime.now().minus({ days: 2 }).toRelativeCalendar() //=> "2 days ago"
+   */
+  toRelativeCalendar(options = {}) {
+    if (!this.isValid) return null;
+    return diffRelative(options.base || _DateTime.fromObject({}, { zone: this.zone }), this, {
+      ...options,
+      numeric: "auto",
+      units: ["years", "months", "days"],
+      calendary: true
+    });
+  }
+  /**
+   * Return the min of several date times
+   * @param {...DateTime} dateTimes - the DateTimes from which to choose the minimum
+   * @return {DateTime} the min DateTime, or undefined if called with no argument
+   */
+  static min(...dateTimes) {
+    if (!dateTimes.every(_DateTime.isDateTime)) {
+      throw new InvalidArgumentError("min requires all arguments be DateTimes");
+    }
+    return bestBy(dateTimes, (i5) => i5.valueOf(), Math.min);
+  }
+  /**
+   * Return the max of several date times
+   * @param {...DateTime} dateTimes - the DateTimes from which to choose the maximum
+   * @return {DateTime} the max DateTime, or undefined if called with no argument
+   */
+  static max(...dateTimes) {
+    if (!dateTimes.every(_DateTime.isDateTime)) {
+      throw new InvalidArgumentError("max requires all arguments be DateTimes");
+    }
+    return bestBy(dateTimes, (i5) => i5.valueOf(), Math.max);
+  }
+  // MISC
+  /**
+   * Explain how a string would be parsed by fromFormat()
+   * @param {string} text - the string to parse
+   * @param {string} fmt - the format the string is expected to be in (see description)
+   * @param {Object} options - options taken by fromFormat()
+   * @return {Object}
+   */
+  static fromFormatExplain(text2, fmt, options = {}) {
+    const { locale = null, numberingSystem = null } = options, localeToUse = Locale.fromOpts({
+      locale,
+      numberingSystem,
+      defaultToEN: true
+    });
+    return explainFromTokens(localeToUse, text2, fmt);
+  }
+  /**
+   * @deprecated use fromFormatExplain instead
+   */
+  static fromStringExplain(text2, fmt, options = {}) {
+    return _DateTime.fromFormatExplain(text2, fmt, options);
+  }
+  /**
+   * Build a parser for `fmt` using the given locale. This parser can be passed
+   * to {@link DateTime.fromFormatParser} to a parse a date in this format. This
+   * can be used to optimize cases where many dates need to be parsed in a
+   * specific format.
+   *
+   * @param {String} fmt - the format the string is expected to be in (see
+   * description)
+   * @param {Object} options - options used to set locale and numberingSystem
+   * for parser
+   * @returns {TokenParser} - opaque object to be used
+   */
+  static buildFormatParser(fmt, options = {}) {
+    const { locale = null, numberingSystem = null } = options, localeToUse = Locale.fromOpts({
+      locale,
+      numberingSystem,
+      defaultToEN: true
+    });
+    return new TokenParser(localeToUse, fmt);
+  }
+  /**
+   * Create a DateTime from an input string and format parser.
+   *
+   * The format parser must have been created with the same locale as this call.
+   *
+   * @param {String} text - the string to parse
+   * @param {TokenParser} formatParser - parser from {@link DateTime.buildFormatParser}
+   * @param {Object} opts - options taken by fromFormat()
+   * @returns {DateTime}
+   */
+  static fromFormatParser(text2, formatParser, opts = {}) {
+    if (isUndefined(text2) || isUndefined(formatParser)) {
+      throw new InvalidArgumentError(
+        "fromFormatParser requires an input string and a format parser"
+      );
+    }
+    const { locale = null, numberingSystem = null } = opts, localeToUse = Locale.fromOpts({
+      locale,
+      numberingSystem,
+      defaultToEN: true
+    });
+    if (!localeToUse.equals(formatParser.locale)) {
+      throw new InvalidArgumentError(
+        `fromFormatParser called with a locale of ${localeToUse}, but the format parser was created for ${formatParser.locale}`
+      );
+    }
+    const { result, zone, specificOffset, invalidReason } = formatParser.explainFromTokens(text2);
+    if (invalidReason) {
+      return _DateTime.invalid(invalidReason);
+    } else {
+      return parseDataToDateTime(
+        result,
+        zone,
+        opts,
+        `format ${formatParser.format}`,
+        text2,
+        specificOffset
+      );
+    }
+  }
+  // FORMAT PRESETS
+  /**
+   * {@link DateTime#toLocaleString} format like 10/14/1983
+   * @type {Object}
+   */
+  static get DATE_SHORT() {
+    return DATE_SHORT;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Oct 14, 1983'
+   * @type {Object}
+   */
+  static get DATE_MED() {
+    return DATE_MED;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Fri, Oct 14, 1983'
+   * @type {Object}
+   */
+  static get DATE_MED_WITH_WEEKDAY() {
+    return DATE_MED_WITH_WEEKDAY;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'October 14, 1983'
+   * @type {Object}
+   */
+  static get DATE_FULL() {
+    return DATE_FULL;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Tuesday, October 14, 1983'
+   * @type {Object}
+   */
+  static get DATE_HUGE() {
+    return DATE_HUGE;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get TIME_SIMPLE() {
+    return TIME_SIMPLE;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30:23 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get TIME_WITH_SECONDS() {
+    return TIME_WITH_SECONDS;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30:23 AM EDT'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get TIME_WITH_SHORT_OFFSET() {
+    return TIME_WITH_SHORT_OFFSET;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30:23 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get TIME_WITH_LONG_OFFSET() {
+    return TIME_WITH_LONG_OFFSET;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30', always 24-hour.
+   * @type {Object}
+   */
+  static get TIME_24_SIMPLE() {
+    return TIME_24_SIMPLE;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30:23', always 24-hour.
+   * @type {Object}
+   */
+  static get TIME_24_WITH_SECONDS() {
+    return TIME_24_WITH_SECONDS;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30:23 EDT', always 24-hour.
+   * @type {Object}
+   */
+  static get TIME_24_WITH_SHORT_OFFSET() {
+    return TIME_24_WITH_SHORT_OFFSET;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '09:30:23 Eastern Daylight Time', always 24-hour.
+   * @type {Object}
+   */
+  static get TIME_24_WITH_LONG_OFFSET() {
+    return TIME_24_WITH_LONG_OFFSET;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '10/14/1983, 9:30 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_SHORT() {
+    return DATETIME_SHORT;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like '10/14/1983, 9:30:33 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_SHORT_WITH_SECONDS() {
+    return DATETIME_SHORT_WITH_SECONDS;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Oct 14, 1983, 9:30 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_MED() {
+    return DATETIME_MED;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Oct 14, 1983, 9:30:33 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_MED_WITH_SECONDS() {
+    return DATETIME_MED_WITH_SECONDS;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Fri, 14 Oct 1983, 9:30 AM'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_MED_WITH_WEEKDAY() {
+    return DATETIME_MED_WITH_WEEKDAY;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'October 14, 1983, 9:30 AM EDT'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_FULL() {
+    return DATETIME_FULL;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'October 14, 1983, 9:30:33 AM EDT'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_FULL_WITH_SECONDS() {
+    return DATETIME_FULL_WITH_SECONDS;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Friday, October 14, 1983, 9:30 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_HUGE() {
+    return DATETIME_HUGE;
+  }
+  /**
+   * {@link DateTime#toLocaleString} format like 'Friday, October 14, 1983, 9:30:33 AM Eastern Daylight Time'. Only 12-hour if the locale is.
+   * @type {Object}
+   */
+  static get DATETIME_HUGE_WITH_SECONDS() {
+    return DATETIME_HUGE_WITH_SECONDS;
+  }
+};
+function friendlyDateTime(dateTimeish) {
+  if (DateTime.isDateTime(dateTimeish)) {
+    return dateTimeish;
+  } else if (dateTimeish && dateTimeish.valueOf && isNumber(dateTimeish.valueOf())) {
+    return DateTime.fromJSDate(dateTimeish);
+  } else if (dateTimeish && typeof dateTimeish === "object") {
+    return DateTime.fromObject(dateTimeish);
+  } else {
+    throw new InvalidArgumentError(
+      `Unknown datetime argument: ${dateTimeish}, of type ${typeof dateTimeish}`
+    );
+  }
+}
+
+// packages/domain/src/recurrence.ts
 var rruleModule = rruleImport;
 var RRule = rruleModule.RRule ?? rruleModule.default?.RRule ?? rruleModule.rrule?.RRule;
 if (!RRule) throw new Error("rrule \u6A21\u5757\u672A\u63D0\u4F9B RRule");
 var JS_TO_RRULE_WEEKDAY = [RRule.SU, RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA];
-function startOfWeekMonday(date7) {
-  const value = new Date(date7.getFullYear(), date7.getMonth(), date7.getDate(), 0, 0, 0, 0);
-  const day = value.getDay();
-  value.setDate(value.getDate() - (day === 0 ? 6 : day - 1));
-  return value;
+function itemTimezone(item) {
+  return item.timezone || "Asia/Shanghai";
 }
-function academicWeekNumber(date7, semesterStartDate) {
-  const target = startOfWeekMonday(date7);
-  const anchor2 = startOfWeekMonday(semesterStartDate);
-  return Math.floor((Date.UTC(target.getFullYear(), target.getMonth(), target.getDate()) - Date.UTC(anchor2.getFullYear(), anchor2.getMonth(), anchor2.getDate())) / (7 * 864e5)) + 1;
+function mondayDateTime(value) {
+  return value.minus({ days: value.weekday - 1 }).startOf("day");
+}
+function academicWeekNumber(dateKey, semesterStartDate) {
+  const target = DateTime.fromISO(dateKey, { zone: "utc" });
+  const anchor2 = DateTime.fromObject({
+    year: semesterStartDate.getFullYear(),
+    month: semesterStartDate.getMonth() + 1,
+    day: semesterStartDate.getDate()
+  }, { zone: "utc" });
+  return Math.floor(mondayDateTime(target).diff(mondayDateTime(anchor2), "days").days / 7) + 1;
 }
 function frequencyToRRule(frequency) {
   const map5 = { daily: 3, weekly: 2, monthly: 1, yearly: 0 };
@@ -136772,55 +143287,58 @@ function defaultDuration(item) {
   if (item.isAllDay) return 24 * 60 * 60 * 1e3;
   return 60 * 60 * 1e3;
 }
-function localDateKey(date7) {
-  return `${date7.getFullYear()}-${String(date7.getMonth() + 1).padStart(2, "0")}-${String(date7.getDate()).padStart(2, "0")}`;
+function dateTimeAt(dateKey, time6, timezone) {
+  const value = DateTime.fromISO(`${dateKey}T${time6}`, { zone: timezone });
+  if (!value.isValid) throw new Error(`\u65E0\u6CD5\u89E3\u6790\u8BFE\u7A0B\u65F6\u95F4\uFF1A${dateKey} ${time6} ${timezone}`);
+  return value;
 }
-function expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate) {
+function itemSemesterStart(item, fallback2, semesterStarts) {
+  if (item.timetableId && semesterStarts?.has(item.timetableId)) return semesterStarts.get(item.timetableId) ?? null;
+  return fallback2 ?? null;
+}
+function expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate, semesterStartByTimetable) {
   if (item.status === "deleted" || item.status === "cancelled" || !item.startAt) return [];
+  const timezone = itemTimezone(item);
+  const activeSemesterStart = itemSemesterStart(item, semesterStartDate, semesterStartByTimetable);
   const baseStart = new Date(item.startAt);
   const duration3 = defaultDuration(item);
   const exceptionByKey = new Map((item.recurrenceExceptions ?? []).map((exception) => [exception.occurrenceKey, exception]));
   if (item.courseSlots.length > 0) {
     const expanded2 = [];
-    const cursor = new Date(rangeStart);
-    cursor.setHours(0, 0, 0, 0);
-    const endCursor = new Date(rangeEnd);
-    endCursor.setHours(23, 59, 59, 999);
+    let cursor = DateTime.fromJSDate(rangeStart, { zone: timezone }).startOf("day");
+    const endCursor = DateTime.fromJSDate(rangeEnd, { zone: timezone }).endOf("day");
     while (cursor <= endCursor) {
-      const dateKey = localDateKey(cursor);
+      const dateKey = cursor.toFormat("yyyy-MM-dd");
       if (item.courseStartDate && dateKey < item.courseStartDate) {
-        cursor.setDate(cursor.getDate() + 1);
+        cursor = cursor.plus({ days: 1 });
         continue;
       }
       if (item.courseEndDate && dateKey > item.courseEndDate) {
-        cursor.setDate(cursor.getDate() + 1);
+        cursor = cursor.plus({ days: 1 });
         continue;
       }
       for (const slot of item.courseSlots) {
-        if (cursor.getDay() !== slot.weekday) continue;
+        const slotWeekday = slot.weekday === 0 ? 7 : slot.weekday;
+        if (cursor.weekday !== slotWeekday) continue;
         const parity = slot.weekParity ?? "all";
-        if (parity !== "all" && semesterStartDate) {
-          const week = academicWeekNumber(cursor, semesterStartDate);
+        if (parity !== "all" && activeSemesterStart) {
+          const week = academicWeekNumber(dateKey, activeSemesterStart);
           if (parity === "odd" && week % 2 === 0 || parity === "even" && week % 2 === 1) continue;
         }
-        const start = new Date(cursor);
-        const [startHour, startMinute] = slot.startTime.split(":").map(Number);
-        start.setHours(startHour ?? 0, startMinute ?? 0, 0, 0);
-        const end = new Date(cursor);
-        const [endHour, endMinute] = slot.endTime.split(":").map(Number);
-        end.setHours(endHour ?? 0, endMinute ?? 0, 0, 0);
-        if (end <= start) end.setDate(end.getDate() + 1);
-        if (end < rangeStart || start > rangeEnd) continue;
+        const start = dateTimeAt(dateKey, slot.startTime, timezone);
+        let end = dateTimeAt(dateKey, slot.endTime, timezone);
+        if (end <= start) end = end.plus({ days: 1 });
+        if (end.toJSDate() < rangeStart || start.toJSDate() > rangeEnd) continue;
         const slotKey = slot.id ?? `${slot.weekday}-${slot.startTime}-${slot.endTime}`;
-        const key = `${item.id}:${slotKey}:${localDateKey(cursor)}`;
+        const key = `${item.id}:${slotKey}:${dateKey}`;
         const exception = exceptionByKey.get(key);
         if (exception?.action === "cancelled") continue;
         const effectiveItem = exception?.override ? applyOverride(item, exception.override) : item;
-        const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : start;
-        const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : end;
+        const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : start.toJSDate();
+        const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : end.toJSDate();
         expanded2.push(occurrenceFromItem(effectiveItem, effectiveStart, effectiveEnd, true, key, Boolean(exception?.override)));
       }
-      cursor.setDate(cursor.getDate() + 1);
+      cursor = cursor.plus({ days: 1 });
     }
     return expanded2.sort((left, right) => left.start.getTime() - right.start.getTime());
   }
@@ -136843,8 +143361,9 @@ function expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate) {
   const expanded = [];
   for (const originalStart of occurrences) {
     const parity = item.recurrence.weekParity ?? "all";
-    if (item.recurrence.frequency === "weekly" && parity !== "all" && semesterStartDate) {
-      const week = academicWeekNumber(originalStart, semesterStartDate);
+    if (item.recurrence.frequency === "weekly" && parity !== "all" && activeSemesterStart) {
+      const dateKey = DateTime.fromJSDate(originalStart, { zone: timezone }).toFormat("yyyy-MM-dd");
+      const week = academicWeekNumber(dateKey, activeSemesterStart);
       if (parity === "odd" && week % 2 === 0 || parity === "even" && week % 2 === 1) continue;
     }
     const key = `${item.id}:${originalStart.toISOString()}`;
@@ -136859,8 +143378,8 @@ function expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate) {
   }
   return expanded;
 }
-function expandItems(items2, rangeStart, rangeEnd, semesterStartDate) {
-  return items2.flatMap((item) => expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate)).sort((left, right) => left.start.getTime() - right.start.getTime());
+function expandItems(items2, rangeStart, rangeEnd, semesterStartDate, semesterStartByTimetable) {
+  return items2.flatMap((item) => expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate, semesterStartByTimetable)).sort((left, right) => left.start.getTime() - right.start.getTime());
 }
 
 // packages/domain/src/conflicts.ts
@@ -136969,16 +143488,16 @@ function unfoldIcs(input2) {
 }
 function parseIcsDate(value) {
   if (/^\d{8}$/.test(value)) return new Date(Date.UTC(Number(value.slice(0, 4)), Number(value.slice(4, 6)) - 1, Number(value.slice(6, 8)))).toISOString();
-  const match2 = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
-  if (!match2) return void 0;
-  const [, year2, month, day, hour, minute, second, zulu] = match2;
+  const match3 = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
+  if (!match3) return void 0;
+  const [, year2, month, day, hour, minute, second, zulu] = match3;
   if (zulu) return new Date(Date.UTC(Number(year2), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second))).toISOString();
   return new Date(Number(year2), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second)).toISOString();
 }
 function parseTrigger(value) {
-  const match2 = value.replace(/^-/, "").match(/^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?$/);
-  if (!match2) return void 0;
-  return Number(match2[1] ?? 0) * 1440 + Number(match2[2] ?? 0) * 60 + Number(match2[3] ?? 0);
+  const match3 = value.replace(/^-/, "").match(/^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?$/);
+  if (!match3) return void 0;
+  return Number(match3[1] ?? 0) * 1440 + Number(match3[2] ?? 0) * 60 + Number(match3[3] ?? 0);
 }
 function icsToItems(input2) {
   const lines = unfoldIcs(input2);
@@ -136991,7 +143510,7 @@ function icsToItems(input2) {
     const title = unescapeIcs(properties.get("SUMMARY") ?? "");
     if (title) {
       const triggerMinutes = alarmTrigger ? parseTrigger(alarmTrigger) : void 0;
-      const offset = triggerMinutes === void 0 ? void 0 : [0, 5, 15, 30, 60, 1440].includes(triggerMinutes) ? triggerMinutes : 15;
+      const offset2 = triggerMinutes === void 0 ? void 0 : [0, 5, 15, 30, 60, 1440].includes(triggerMinutes) ? triggerMinutes : 15;
       items2.push({
         uid: properties.get("UID"),
         kind: component === "VTODO" ? "task" : "event",
@@ -137013,7 +143532,7 @@ function icsToItems(input2) {
         parentId: null,
         recurrence: properties.get("RRULE") ? parseRRule(properties.get("RRULE")) ?? null : null,
         tagIds: [],
-        reminders: offset === void 0 ? [] : [{ trigger: "before_start", offsetMinutes: offset, channels: ["in_app"], enabled: true }]
+        reminders: offset2 === void 0 ? [] : [{ trigger: "before_start", offsetMinutes: offset2, channels: ["in_app"], enabled: true }]
       });
     }
     component = null;
@@ -137152,6 +143671,8 @@ function csvToItems(input2) {
 
 // packages/domain/src/ai.ts
 init_zod();
+var aiImportTargetSchema = external_exports.enum(["calendar", "timetable"]);
+var aiPeriodMatchSchema = external_exports.enum(["exact", "mapped", "uncertain"]);
 var aiDraftSchema = external_exports.object({
   kind: itemKindSchema.default("task"),
   title: external_exports.string().trim().min(1).max(300),
@@ -137168,30 +143689,28 @@ var aiDraftSchema = external_exports.object({
   suggestedTagNames: external_exports.array(external_exports.string().trim().min(1).max(60)).max(20).default([]),
   confidence: external_exports.number().min(0).max(1).default(0.5),
   evidence: external_exports.string().max(2e3).default(""),
-  warnings: external_exports.array(external_exports.string().max(300)).max(20).default([])
+  warnings: external_exports.array(external_exports.string().max(300)).max(20).default([]),
+  importTarget: aiImportTargetSchema.default("calendar"),
+  timetableId: external_exports.string().uuid().nullable().default(null),
+  courseStartDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+  courseEndDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+  courseSlots: external_exports.array(courseSlotSchema).max(20).default([]),
+  periodMatch: aiPeriodMatchSchema.default("exact")
 });
 var aiProviderResponseSchema = external_exports.object({
   items: external_exports.array(aiDraftSchema).max(20).default([]),
   transcript: external_exports.string().max(5e4).default("")
-});
-var aiUsageSchema = external_exports.object({
-  date: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  used: external_exports.number().int().nonnegative(),
-  limit: external_exports.number().int().positive(),
-  remaining: external_exports.number().int().nonnegative()
 });
 var aiStatusSchema = external_exports.object({
   enabled: external_exports.boolean(),
   configured: external_exports.boolean(),
   provider: external_exports.string(),
   textModel: external_exports.string(),
-  visionModel: external_exports.string(),
-  usage: aiUsageSchema
+  visionModel: external_exports.string()
 });
 var aiExtractResponseSchema = external_exports.object({
   drafts: external_exports.array(aiDraftSchema),
   transcript: external_exports.string().default(""),
-  usage: aiUsageSchema,
   provider: external_exports.string(),
   model: external_exports.string()
 });
@@ -137227,6 +143746,16 @@ var DEFAULT_SCHEDULE_PERIODS = [
   { name: "9", startTime: "16:10", endTime: "16:55", sortOrder: 8 },
   { name: "10", startTime: "18:30", endTime: "19:15", sortOrder: 9 }
 ];
+var timetableSchema = external_exports.object({
+  id: external_exports.string().uuid(),
+  name: external_exports.string().trim().min(1).max(30),
+  sortOrder: external_exports.number().int().min(0).max(99),
+  semesterStartDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null)
+});
+var timetableInputSchema = timetableSchema.omit({ id: true });
+var timetableWithPeriodsSchema = timetableSchema.extend({
+  periods: external_exports.array(schedulePeriodSchema.safeExtend({ id: external_exports.string().uuid() }))
+});
 
 // packages/domain/src/email.ts
 async function sendBrevoEmail(input2) {
@@ -137294,17 +143823,17 @@ function transform2(pattern, separator = true) {
   const optionalSeparator = separator ? `${separatorMatcher}*?` : "";
   const segments = separator ? pattern.split(separatorSplitter) : [pattern];
   let result = "";
-  for (let s2 = 0; s2 < segments.length; s2++) {
-    const segment = segments[s2];
-    const nextSegment = segments[s2 + 1];
+  for (let s4 = 0; s4 < segments.length; s4++) {
+    const segment = segments[s4];
+    const nextSegment = segments[s4 + 1];
     let currentSeparator = "";
-    if (!segment && s2 > 0) continue;
-    if (separator) if (s2 === segments.length - 1) currentSeparator = optionalSeparator;
+    if (!segment && s4 > 0) continue;
+    if (separator) if (s4 === segments.length - 1) currentSeparator = optionalSeparator;
     else if (nextSegment !== "**") currentSeparator = requiredSeparator;
     else currentSeparator = "";
     if (separator && segment === "**") {
       if (currentSeparator) {
-        result += s2 === 0 ? "" : currentSeparator;
+        result += s4 === 0 ? "" : currentSeparator;
         result += `(?:${wildcard}*?${currentSeparator})*?`;
       }
       continue;
@@ -137518,12 +144047,12 @@ function isBytes(a5) {
   return a5 instanceof Uint8Array || ArrayBuffer.isView(a5) && a5.constructor.name === "Uint8Array" && "BYTES_PER_ELEMENT" in a5 && a5.BYTES_PER_ELEMENT === 1;
 }
 var atitle = (title) => title ? `"${title}" ` : "";
-function anumber(n3, title = "") {
-  if (typeof n3 !== "number")
-    throw new TypeError(atitle(title) + "expected number, got " + typeof n3);
-  if (!Number.isSafeInteger(n3) || n3 < 0)
-    throw new RangeError(atitle(title) + "expected integer >= 0, got " + n3);
-  return n3;
+function anumber(n4, title = "") {
+  if (typeof n4 !== "number")
+    throw new TypeError(atitle(title) + "expected number, got " + typeof n4);
+  if (!Number.isSafeInteger(n4) || n4 < 0)
+    throw new RangeError(atitle(title) + "expected integer >= 0, got " + n4);
+  return n4;
 }
 function abytes(value, length, title = "") {
   if (isBytes(value) && (length === void 0 || value.length === length))
@@ -137747,13 +144276,13 @@ var hkdf = (hash2, ikm, salt, info2, length) => {
 };
 
 // node_modules/.pnpm/@noble+hashes@2.4.0/node_modules/@noble/hashes/_u64.js
-var fromNumH = (n3) => n3 / 2 ** 32 | 0;
-var fromNumL = (n3) => n3 >>> 0;
-function setU64FromNum(view, byteOffset, n3, isLE2) {
-  const h5 = fromNumH(n3);
-  const l3 = fromNumL(n3);
-  view.setUint32(byteOffset, isLE2 ? l3 : h5, isLE2);
-  view.setUint32(byteOffset + 4, isLE2 ? h5 : l3, isLE2);
+var fromNumH = (n4) => n4 / 2 ** 32 | 0;
+var fromNumL = (n4) => n4 >>> 0;
+function setU64FromNum(view, byteOffset, n4, isLE2) {
+  const h5 = fromNumH(n4);
+  const l4 = fromNumL(n4);
+  view.setUint32(byteOffset, isLE2 ? l4 : h5, isLE2);
+  view.setUint32(byteOffset + 4, isLE2 ? h5 : l4, isLE2);
 }
 
 // node_modules/.pnpm/@noble+hashes@2.4.0/node_modules/@noble/hashes/_md.js
@@ -137980,9 +144509,9 @@ var SHA2_32B = class extends HashMD {
     (to ||= new this.constructor()).set(...this.get());
     return this._cloneIntoMeta(to);
   }
-  process(view, offset) {
-    for (let i5 = 0; i5 < 16; i5++, offset += 4)
-      SHA256_W[i5] = view.getUint32(offset, false);
+  process(view, offset2) {
+    for (let i5 = 0; i5 < 16; i5++, offset2 += 4)
+      SHA256_W[i5] = view.getUint32(offset2, false);
     for (let i5 = 16; i5 < 64; i5++) {
       const W15 = SHA256_W[i5 - 15];
       const W2 = SHA256_W[i5 - 2];
@@ -138046,10 +144575,10 @@ function concat(...buffers) {
     buf.set(buffer, i5), i5 += buffer.length;
   return buf;
 }
-function writeUInt32BE(buf, value, offset) {
+function writeUInt32BE(buf, value, offset2) {
   if (value < 0 || value >= MAX_INT32)
     throw new RangeError(`value must be >= 0 and <= ${MAX_INT32 - 1}. Received ${value}`);
-  buf.set([value >>> 24, value >>> 16, value >>> 8, value & 255], offset);
+  buf.set([value >>> 24, value >>> 16, value >>> 8, value & 255], offset2);
 }
 function uint64be(value) {
   const high = Math.floor(value / MAX_INT32), low = value % MAX_INT32, buf = new Uint8Array(8);
@@ -138271,7 +144800,7 @@ function parseJoseHeader(b64, ErrorClass, message2) {
 var JWS_RECOGNIZED = { __proto__: null, b64: true };
 var JWE_RECOGNIZED = { __proto__: null };
 function validateAlgorithms(option, algorithms) {
-  if (algorithms !== void 0 && (!Array.isArray(algorithms) || algorithms.some((s2) => typeof s2 != "string")))
+  if (algorithms !== void 0 && (!Array.isArray(algorithms) || algorithms.some((s4) => typeof s4 != "string")))
     throw new TypeError(`"${option}" option must be an array of strings`);
   return algorithms === void 0 ? void 0 : new Set(algorithms);
 }
@@ -139268,14 +145797,14 @@ function validateClaimsSet(protectedHeader, encodedPayload, options = {}) {
     tolerance = clockTolerance;
   }
   validateInput("clockTolerance option", tolerance);
-  const { currentDate } = options, now2 = validateInput("currentDate option", epoch(currentDate === void 0 ? /* @__PURE__ */ new Date() : currentDate)), iat = validateNumericDate(payload, "iat", maxTokenAge !== void 0), nbf = validateNumericDate(payload, "nbf");
-  if (nbf !== void 0 && nbf > now2 + tolerance)
+  const { currentDate } = options, now3 = validateInput("currentDate option", epoch(currentDate === void 0 ? /* @__PURE__ */ new Date() : currentDate)), iat = validateNumericDate(payload, "iat", maxTokenAge !== void 0), nbf = validateNumericDate(payload, "nbf");
+  if (nbf !== void 0 && nbf > now3 + tolerance)
     throw new JWTClaimValidationFailed('"nbf" claim timestamp check failed', payload, "nbf", checkFailed);
   const exp = validateNumericDate(payload, "exp");
-  if (exp !== void 0 && exp <= now2 - tolerance)
+  if (exp !== void 0 && exp <= now3 - tolerance)
     throw new JWTExpired('"exp" claim timestamp check failed', payload, "exp", checkFailed);
   if (maxTokenAge !== void 0) {
-    const age = now2 - iat, max = validateInput("maxTokenAge option", typeof maxTokenAge == "number" ? maxTokenAge : secs(maxTokenAge));
+    const age = now3 - iat, max = validateInput("maxTokenAge option", typeof maxTokenAge == "number" ? maxTokenAge : secs(maxTokenAge));
     if (age - tolerance > max)
       throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', payload, "iat", checkFailed);
     if (age < -tolerance)
@@ -139786,7 +146315,7 @@ var info = new Uint8Array([
   101,
   121
 ]);
-var now = () => Date.now() / 1e3 | 0;
+var now2 = () => Date.now() / 1e3 | 0;
 var alg = "dir";
 var enc = "A256CBC-HS512";
 function deriveEncryptionSecret(secret, salt) {
@@ -139808,7 +146337,7 @@ function getAllSecrets(secret) {
     version: version4,
     value
   });
-  if (secret.legacySecret && !result.some((s2) => s2.value === secret.legacySecret)) result.push({
+  if (secret.legacySecret && !result.some((s4) => s4.value === secret.legacySecret)) result.push({
     version: -1,
     value: secret.legacySecret
   });
@@ -139824,7 +146353,7 @@ async function symmetricEncodeJWT(payload, secret, salt, expiresIn = 3600) {
     alg,
     enc,
     kid: thumbprint
-  }).setIssuedAt().setExpirationTime(now() + expiresIn).setJti(crypto.randomUUID()).encrypt(encryptionSecret);
+  }).setIssuedAt().setExpirationTime(now2() + expiresIn).setJti(crypto.randomUUID()).encrypt(encryptionSecret);
 }
 var jwtDecryptOpts = {
   clockTolerance: 15,
@@ -139844,8 +146373,8 @@ async function symmetricDecodeJWT(token, secret, salt) {
     const { payload } = await jwtDecrypt(token, async (protectedHeader) => {
       const kid = protectedHeader.kid;
       if (kid !== void 0) {
-        for (const s2 of secrets) {
-          const encryptionSecret = deriveEncryptionSecret(s2.value, salt);
+        for (const s4 of secrets) {
+          const encryptionSecret = deriveEncryptionSecret(s4.value, salt);
           if (kid === await calculateJwkThumbprint({
             kty: "oct",
             k: base64url_exports.encode(encryptionSecret)
@@ -139862,8 +146391,8 @@ async function symmetricDecodeJWT(token, secret, salt) {
     const secrets = getAllSecrets(secret);
     if (secrets.length <= 1) return null;
     for (let i5 = 1; i5 < secrets.length; i5++) try {
-      const s2 = secrets[i5];
-      const { payload } = await jwtDecrypt(token, deriveEncryptionSecret(s2.value, salt), jwtDecryptOpts);
+      const s4 = secrets[i5];
+      const { payload } = await jwtDecrypt(token, deriveEncryptionSecret(s4.value, salt), jwtDecryptOpts);
       return payload;
     } catch {
       continue;
@@ -140054,12 +146583,12 @@ function abool(value, title = "") {
     throw new TypeError(atitle2(title) + "expected boolean, got type=" + typeof value);
   return value;
 }
-function anumber2(n3, title = "") {
-  if (typeof n3 !== "number")
-    throw new TypeError(atitle2(title) + "expected number, got " + typeof n3);
-  if (!Number.isSafeInteger(n3) || n3 < 0)
-    throw new RangeError(atitle2(title) + "expected integer >= 0, got " + n3);
-  return n3;
+function anumber2(n4, title = "") {
+  if (typeof n4 !== "number")
+    throw new TypeError(atitle2(title) + "expected number, got " + typeof n4);
+  if (!Number.isSafeInteger(n4) || n4 < 0)
+    throw new RangeError(atitle2(title) + "expected integer >= 0, got " + n4);
+  return n4;
 }
 function abytes2(value, length, title = "") {
   if (isBytes2(value) && (length === void 0 || value.length === length))
@@ -140201,10 +146730,10 @@ function equalBytes(a5, b5) {
   b5 = abytes2(b5);
   if (a5.length !== b5.length)
     return false;
-  let diff = 0;
+  let diff2 = 0;
   for (let i5 = 0; i5 < a5.length; i5++)
-    diff |= a5[i5] ^ b5[i5];
-  return diff === 0;
+    diff2 |= a5[i5] ^ b5[i5];
+  return diff2 === 0;
 }
 function wrapMacConstructor(keyLen, macCons, fromMsg) {
   const mac3 = macCons;
@@ -140411,13 +146940,13 @@ function createCipher(core, opts) {
     if (counter < 0 || counter >= MAX_COUNTER)
       throw new Error("arx: counter overflow");
     const toClean = [];
-    let l3 = key.length;
+    let l4 = key.length;
     let k5;
     let sigma;
-    if (l3 === 32) {
+    if (l4 === 32) {
       toClean.push(k5 = copyBytes(key));
       sigma = sigma32_32;
-    } else if (l3 === 16 && allowShortKeys) {
+    } else if (l4 === 16 && allowShortKeys) {
       k5 = new Uint8Array(32);
       k5.set(key);
       k5.set(key, 16);
@@ -140503,7 +147032,7 @@ var Poly1305 = class {
     for (let i5 = 0; i5 < 8; i5++)
       this.pad[i5] = u8to16(key, 16 + 2 * i5);
   }
-  process(data, offset, isLast = false) {
+  process(data, offset2, isLast = false) {
     const hibit = isLast ? 0 : 1 << 11;
     const { h: h5, r: r5 } = this;
     const r0 = r5[0];
@@ -140516,14 +147045,14 @@ var Poly1305 = class {
     const r7 = r5[7];
     const r8 = r5[8];
     const r9 = r5[9];
-    const t02 = u8to16(data, offset + 0);
-    const t12 = u8to16(data, offset + 2);
-    const t22 = u8to16(data, offset + 4);
-    const t32 = u8to16(data, offset + 6);
-    const t42 = u8to16(data, offset + 8);
-    const t52 = u8to16(data, offset + 10);
-    const t62 = u8to16(data, offset + 12);
-    const t72 = u8to16(data, offset + 14);
+    const t02 = u8to16(data, offset2 + 0);
+    const t12 = u8to16(data, offset2 + 2);
+    const t22 = u8to16(data, offset2 + 4);
+    const t32 = u8to16(data, offset2 + 6);
+    const t42 = u8to16(data, offset2 + 8);
+    const t52 = u8to16(data, offset2 + 10);
+    const t62 = u8to16(data, offset2 + 12);
+    const t72 = u8to16(data, offset2 + 14);
     let h0 = h5[0] + (t02 & 8191);
     let h1 = h5[1] + ((t02 >>> 13 | t12 << 3) & 8191);
     let h22 = h5[2] + ((t12 >>> 10 | t22 << 6) & 8191);
@@ -140716,8 +147245,8 @@ var Poly1305 = class {
 var poly1305 = /* @__PURE__ */ wrapMacConstructor(32, (key) => new Poly1305(key));
 
 // node_modules/.pnpm/@noble+ciphers@2.4.0/node_modules/@noble/ciphers/chacha.js
-function chachaCore(s2, k5, n3, out, cnt, rounds = 20) {
-  let y00 = s2[0], y01 = s2[1], y02 = s2[2], y03 = s2[3], y04 = k5[0], y05 = k5[1], y06 = k5[2], y07 = k5[3], y08 = k5[4], y09 = k5[5], y10 = k5[6], y11 = k5[7], y12 = cnt, y13 = n3[0], y14 = n3[1], y15 = n3[2];
+function chachaCore(s4, k5, n4, out, cnt, rounds = 20) {
+  let y00 = s4[0], y01 = s4[1], y02 = s4[2], y03 = s4[3], y04 = k5[0], y05 = k5[1], y06 = k5[2], y07 = k5[3], y08 = k5[4], y09 = k5[5], y10 = k5[6], y11 = k5[7], y12 = cnt, y13 = n4[0], y14 = n4[1], y15 = n4[2];
   let x00 = y00, x01 = y01, x02 = y02, x03 = y03, x04 = y04, x05 = y05, x06 = y06, x07 = y07, x08 = y08, x09 = y09, x10 = y10, x11 = y11, x12 = y12, x13 = y13, x14 = y14, x15 = y15;
   for (let r5 = 0; r5 < rounds; r5 += 2) {
     x00 = x00 + x04 | 0;
@@ -140803,8 +147332,8 @@ function chachaCore(s2, k5, n3, out, cnt, rounds = 20) {
   out[oi++] = y14 + x14 | 0;
   out[oi++] = y15 + x15 | 0;
 }
-function hchacha(s2, k5, i5, out) {
-  const s22 = isLE ? s2 : swap32IfBE(s2.slice(0, 4));
+function hchacha(s4, k5, i5, out) {
+  const s22 = isLE ? s4 : swap32IfBE(s4.slice(0, 4));
   const k22 = isLE ? k5 : swap32IfBE(k5.slice(0, 8));
   const i22 = isLE ? i5 : swap32IfBE(i5.slice(0, 4));
   const t = new Uint32Array(16);
@@ -141216,11 +147745,11 @@ var WEEK = DAY * 7;
 var MONTH = DAY * 30;
 var YEAR = DAY * 365.25;
 var REGEX2 = /^(\+|\-)? ?(\d+|\d+\.\d+) ?(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|months?|mo|years?|yrs?|y)(?: (ago|from now))?$/i;
-function parse4(value) {
-  const match2 = REGEX2.exec(value);
-  if (!match2 || match2[4] && match2[1]) throw new TypeError(`Invalid time string format: "${value}". Use formats like "7d", "30m", "1 hour", etc.`);
-  const n3 = parseFloat(match2[2]);
-  const unit = match2[3].toLowerCase();
+function parse5(value) {
+  const match3 = REGEX2.exec(value);
+  if (!match3 || match3[4] && match3[1]) throw new TypeError(`Invalid time string format: "${value}". Use formats like "7d", "30m", "1 hour", etc.`);
+  const n4 = parseFloat(match3[2]);
+  const unit = match3[3].toLowerCase();
   let result;
   switch (unit) {
     case "years":
@@ -141228,52 +147757,52 @@ function parse4(value) {
     case "yrs":
     case "yr":
     case "y":
-      result = n3 * YEAR;
+      result = n4 * YEAR;
       break;
     case "months":
     case "month":
     case "mo":
-      result = n3 * MONTH;
+      result = n4 * MONTH;
       break;
     case "weeks":
     case "week":
     case "w":
-      result = n3 * WEEK;
+      result = n4 * WEEK;
       break;
     case "days":
     case "day":
     case "d":
-      result = n3 * DAY;
+      result = n4 * DAY;
       break;
     case "hours":
     case "hour":
     case "hrs":
     case "hr":
     case "h":
-      result = n3 * HOUR;
+      result = n4 * HOUR;
       break;
     case "minutes":
     case "minute":
     case "mins":
     case "min":
     case "m":
-      result = n3 * MIN;
+      result = n4 * MIN;
       break;
     case "seconds":
     case "second":
     case "secs":
     case "sec":
     case "s":
-      result = n3 * SEC;
+      result = n4 * SEC;
       break;
     default:
       throw new TypeError(`Unknown time unit: "${unit}"`);
   }
-  if (match2[1] === "-" || match2[4] === "ago") return -result;
+  if (match3[1] === "-" || match3[4] === "ago") return -result;
   return result;
 }
 function sec(value) {
-  return Math.round(parse4(value) / 1e3);
+  return Math.round(parse5(value) / 1e3);
 }
 
 // node_modules/.pnpm/better-auth@1.7.4_drizzle-k_ea2b04a29534e000cad1f28b0dbf5cf2/node_modules/better-auth/dist/cookies/cache.mjs
@@ -141348,20 +147877,20 @@ function unquoteCookieValue(value) {
   if (value.length < 2 || !value.startsWith('"') || !value.endsWith('"')) return value;
   return value.slice(1, -1);
 }
-function trimOWS(s2) {
+function trimOWS(s4) {
   let start = 0;
-  let end = s2.length;
+  let end = s4.length;
   while (start < end) {
-    const c5 = s2.charCodeAt(start);
+    const c5 = s4.charCodeAt(start);
     if (c5 !== 32 && c5 !== 9) break;
     start++;
   }
   while (end > start) {
-    const c5 = s2.charCodeAt(end - 1);
+    const c5 = s4.charCodeAt(end - 1);
     if (c5 !== 32 && c5 !== 9) break;
     end--;
   }
-  return start === 0 && end === s2.length ? s2 : s2.slice(start, end);
+  return start === 0 && end === s4.length ? s4 : s4.slice(start, end);
 }
 function parseCookies(cookie) {
   const cookieMap = /* @__PURE__ */ new Map();
@@ -142313,21 +148842,21 @@ function expandModifiers(segments) {
 function normalizePath(path2) {
   if (!path2.includes("/.")) return path2;
   const r5 = [];
-  for (const s2 of path2.split("/")) if (s2 === ".") continue;
-  else if (s2 === ".." && r5.length > 1) r5.pop();
-  else r5.push(s2);
+  for (const s4 of path2.split("/")) if (s4 === ".") continue;
+  else if (s4 === ".." && r5.length > 1) r5.pop();
+  else r5.push(s4);
   return r5.join("/") || "/";
 }
 function splitPath2(path2) {
-  const s2 = path2.split("/");
-  s2.shift();
-  if (s2[s2.length - 1] === "") s2.pop();
-  return s2;
+  const s4 = path2.split("/");
+  s4.shift();
+  if (s4[s4.length - 1] === "") s4.pop();
+  return s4;
 }
 function splitRoute(path2) {
-  const s2 = splitPath2(path2);
-  while (s2[s2.length - 1] === "") s2.pop();
-  return s2;
+  const s4 = splitPath2(path2);
+  while (s4[s4.length - 1] === "") s4.pop();
+  return s4;
 }
 function getMatchParams(segments, paramsMap) {
   const params = new NullProtoObj();
@@ -142335,8 +148864,8 @@ function getMatchParams(segments, paramsMap) {
     const segment = index2 < 0 ? segments.slice(-(index2 + 1)).join("/") : segments[index2];
     if (typeof name === "string") params[name] = segment;
     else {
-      const match2 = segment.match(name);
-      if (match2) for (const key in match2.groups) params[fromGroupName(key)] = match2.groups[key];
+      const match3 = segment.match(name);
+      if (match3) for (const key in match3.groups) params[fromGroupName(key)] = match3.groups[key];
     }
   }
   return params;
@@ -142425,9 +148954,9 @@ function getParamRegexp(segment, unnamedStart = 0) {
     if (c5 === 40) _d++;
     else if (c5 === 41 && _d > 0) _d--;
     else if (c5 === 92 && _d === 0 && j5 + 1 < segment.length) {
-      const n3 = segment[j5 + 1];
-      if (n3 !== ":" && n3 !== "(" && n3 !== "*" && n3 !== "\\") {
-        _s5 += "\uFFFE" + n3;
+      const n4 = segment[j5 + 1];
+      if (n4 !== ":" && n4 !== "(" && n4 !== "*" && n4 !== "\\") {
+        _s5 += "\uFFFE" + n4;
         j5++;
         continue;
       }
@@ -142450,19 +148979,19 @@ function findRoute(ctx, method = "", path2, opts) {
     if (staticMatch !== void 0) return staticMatch[0];
   }
   const segments = splitPath2(path2);
-  const match2 = _lookupTree(ctx.root, method, segments, 0);
-  if (match2 === void 0) return;
-  if (opts?.params === false) return match2;
+  const match3 = _lookupTree(ctx.root, method, segments, 0);
+  if (match3 === void 0) return;
+  if (opts?.params === false) return match3;
   return {
-    data: match2.data,
-    params: match2.paramsMap ? getMatchParams(segments, match2.paramsMap) : void 0
+    data: match3.data,
+    params: match3.paramsMap ? getMatchParams(segments, match3.paramsMap) : void 0
   };
 }
 function _lookupTree(node2, method, segments, index2) {
   if (index2 === segments.length) {
     if (node2.methods) {
-      const match2 = _selectMatcher(node2.methods, method, segments, node2.key === "*", false);
-      if (match2) return match2;
+      const match3 = _selectMatcher(node2.methods, method, segments, node2.key === "*", false);
+      if (match3) return match3;
     }
     return node2.param?.methods && _selectMatcher(node2.param.methods, method, segments, true, true) || node2.wildcard?.methods && _selectMatcher(node2.wildcard.methods, method, segments, true, true) || void 0;
   }
@@ -142470,28 +148999,28 @@ function _lookupTree(node2, method, segments, index2) {
   if (node2.static) {
     const staticChild = node2.static[segment];
     if (staticChild) {
-      const match2 = _lookupTree(staticChild, method, segments, index2 + 1);
-      if (match2) return match2;
+      const match3 = _lookupTree(staticChild, method, segments, index2 + 1);
+      if (match3) return match3;
     }
   }
   if (node2.param) {
-    const match2 = _lookupTree(node2.param, method, segments, index2 + 1);
-    if (match2) return match2;
+    const match3 = _lookupTree(node2.param, method, segments, index2 + 1);
+    if (match3) return match3;
   }
   if (node2.wildcard && node2.wildcard.methods) return _selectMatcher(node2.wildcard.methods, method, segments, true, false);
 }
 function _selectMatcher(methods2, method, segments, dynamicTerminal, optionalOnly) {
-  const match2 = methods2[method] || methods2[""];
-  if (!match2) return;
-  const first = match2[0];
-  if (match2.length === 1 && first.paramsRegexp.length === 0) {
+  const match3 = methods2[method] || methods2[""];
+  if (!match3) return;
+  const first = match3[0];
+  if (match3.length === 1 && first.paramsRegexp.length === 0) {
     if (!optionalOnly) return first;
     const pMap = first.paramsMap;
     return pMap?.[pMap.length - 1]?.[2] ? first : void 0;
   }
   let best;
   let bestWeight = -1;
-  for (const m3 of match2) {
+  for (const m3 of match3) {
     const pMap = m3.paramsMap;
     const lastOptional = pMap?.[pMap.length - 1]?.[2];
     if (optionalOnly && !lastOptional) continue;
@@ -142527,11 +149056,11 @@ function findAllRoutes(ctx, method = "", path2, opts) {
 function _findAll(node2, method, segments, index2, matches = []) {
   const segment = segments[index2];
   if (node2.wildcard && node2.wildcard.methods) {
-    const match2 = node2.wildcard.methods[method] || node2.wildcard.methods[""];
-    if (match2) if (index2 < segments.length) pushSorted(matches, match2, true);
+    const match3 = node2.wildcard.methods[method] || node2.wildcard.methods[""];
+    if (match3) if (index2 < segments.length) pushSorted(matches, match3, true);
     else {
       const optional2 = [];
-      for (const m3 of match2) {
+      for (const m3 of match3) {
         const pMap = m3.paramsMap;
         if (pMap?.[pMap.length - 1]?.[2]) optional2.push(m3);
       }
@@ -142546,10 +149075,10 @@ function _findAll(node2, method, segments, index2, matches = []) {
         for (let r5 = matches.length - 1; r5 >= start; r5--) if (matches[r5].paramsRegexp[index2]?.test(segment) === false) matches.splice(r5, 1);
       }
     } else if (node2.param.methods) {
-      const match2 = node2.param.methods[method] || node2.param.methods[""];
-      if (match2) {
+      const match3 = node2.param.methods[method] || node2.param.methods[""];
+      if (match3) {
         const optional2 = [];
-        for (const m3 of match2) {
+        for (const m3 of match3) {
           const pMap = m3.paramsMap;
           if (pMap?.[pMap.length - 1]?.[2]) optional2.push(m3);
         }
@@ -142562,20 +149091,20 @@ function _findAll(node2, method, segments, index2, matches = []) {
     if (staticChild) _findAll(staticChild, method, segments, index2 + 1, matches);
   }
   if (index2 === segments.length && node2.methods) {
-    const match2 = node2.methods[method] || node2.methods[""];
-    if (match2) pushSorted(matches, match2, node2.key === "*");
+    const match3 = node2.methods[method] || node2.methods[""];
+    if (match3) pushSorted(matches, match3, node2.key === "*");
   }
   return matches;
 }
-function pushSorted(matches, match2, dynamicTerminal) {
-  if (match2.length > 1) match2 = match2.map((m3) => {
+function pushSorted(matches, match3, dynamicTerminal) {
+  if (match3.length > 1) match3 = match3.map((m3) => {
     let w = 0;
     const { paramsRegexp: rx, paramsMap: pm } = m3;
     for (let i5 = 0; i5 < rx.length; i5++) if (rx[i5]) w++;
     if (dynamicTerminal && pm && !pm[pm.length - 1][2]) w++;
     return [m3, w];
   }).sort((a5, b5) => a5[1] - b5[1]).map((e5) => e5[0]);
-  for (const m3 of match2) matches.push(m3);
+  for (const m3 of match3) matches.push(m3);
 }
 
 // node_modules/.pnpm/better-call@1.4.0_zod@4.6.5/node_modules/better-call/dist/router.mjs
@@ -144071,8 +150600,8 @@ function createRateLimitKey(ip, path2) {
 var memory = /* @__PURE__ */ new Map();
 var MEMORY_STORE_MAX_ENTRIES = 1e5;
 function pruneMemoryStore() {
-  const now2 = Date.now();
-  for (const [key, entry] of memory) if (now2 >= entry.expiresAt) memory.delete(key);
+  const now3 = Date.now();
+  for (const [key, entry] of memory) if (now3 >= entry.expiresAt) memory.delete(key);
   if (memory.size <= MEMORY_STORE_MAX_ENTRIES) return;
   const overflow = memory.size - MEMORY_STORE_MAX_ENTRIES;
   let removed = 0;
@@ -144081,23 +150610,23 @@ function pruneMemoryStore() {
     if (++removed >= overflow) break;
   }
 }
-function decideConsume(data, rule, now2) {
+function decideConsume(data, rule, now3) {
   const windowInMs = rule.window * 1e3;
   if (!data) return {
     next: {
       key: "",
       count: 1,
-      lastRequest: now2
+      lastRequest: now3
     },
     update: false,
     allowed: true,
     retryAfter: null
   };
-  if (now2 - data.lastRequest >= windowInMs) return {
+  if (now3 - data.lastRequest >= windowInMs) return {
     next: {
       ...data,
       count: 1,
-      lastRequest: now2
+      lastRequest: now3
     },
     update: true,
     allowed: true,
@@ -144113,7 +150642,7 @@ function decideConsume(data, rule, now2) {
     next: {
       ...data,
       count: data.count + 1,
-      lastRequest: now2
+      lastRequest: now3
     },
     update: true,
     allowed: true,
@@ -144128,9 +150657,9 @@ function rateLimitResponse(retryAfter) {
   });
 }
 function getRetryAfter(lastRequest, window2) {
-  const now2 = Date.now();
+  const now3 = Date.now();
   const windowInMs = window2 * 1e3;
-  return Math.ceil((lastRequest + windowInMs - now2) / 1e3);
+  return Math.ceil((lastRequest + windowInMs - now3) / 1e3);
 }
 function createDatabaseStorageWrapper(ctx) {
   const model = "rateLimit";
@@ -144151,14 +150680,14 @@ function createDatabaseStorageWrapper(ctx) {
     if (rule.window > longestObservedWindow) longestObservedWindow = rule.window;
     const windowInMs = rule.window * 1e3;
     const data = await readRow(key);
-    const now2 = Date.now();
+    const now3 = Date.now();
     if (!data) try {
       await db3.create({
         model,
         data: {
           key,
           count: 1,
-          lastRequest: now2
+          lastRequest: now3
         }
       });
       return {
@@ -144169,7 +150698,7 @@ function createDatabaseStorageWrapper(ctx) {
       if (!await readRow(key)) throw error64;
       return consume(key, rule);
     }
-    if (now2 - data.lastRequest >= windowInMs) {
+    if (now3 - data.lastRequest >= windowInMs) {
       if (await db3.incrementOne({
         model,
         where: [{
@@ -144183,10 +150712,10 @@ function createDatabaseStorageWrapper(ctx) {
         increment: {},
         set: {
           count: 1,
-          lastRequest: now2
+          lastRequest: now3
         }
       })) {
-        await deleteExpiredRows(now2);
+        await deleteExpiredRows(now3);
         return {
           allowed: true,
           retryAfter: null
@@ -144194,7 +150723,7 @@ function createDatabaseStorageWrapper(ctx) {
       }
       return consume(key, rule);
     }
-    const windowStart = now2 - windowInMs;
+    const windowStart = now3 - windowInMs;
     if (await db3.incrementOne({
       model,
       where: [
@@ -144214,21 +150743,21 @@ function createDatabaseStorageWrapper(ctx) {
         }
       ],
       increment: { count: 1 },
-      set: { lastRequest: now2 }
+      set: { lastRequest: now3 }
     })) return {
       allowed: true,
       retryAfter: null
     };
     const fresh = await readRow(key);
     if (!fresh) return consume(key, rule);
-    if (now2 - fresh.lastRequest >= windowInMs) return consume(key, rule);
+    if (now3 - fresh.lastRequest >= windowInMs) return consume(key, rule);
     return {
       allowed: false,
       retryAfter: getRetryAfter(fresh.lastRequest, rule.window)
     };
   };
-  const deleteExpiredRows = async (now2) => {
-    const cutoff = now2 - longestObservedWindow * 1e3;
+  const deleteExpiredRows = async (now3) => {
+    const cutoff = now3 - longestObservedWindow * 1e3;
     await ctx.runInBackgroundOrAwait(db3.deleteMany({
       model,
       where: [{
@@ -144270,15 +150799,15 @@ function getRateLimitStorage(ctx, rateLimitSettings) {
     const ttlFor = (window2) => window2 ?? ctx.options.rateLimit?.window ?? 10;
     return { async consume(key, rule) {
       pruneMemoryStore();
-      const now2 = Date.now();
+      const now3 = Date.now();
       const entry = memory.get(key);
-      const decision = decideConsume(entry && now2 < entry.expiresAt ? entry.data : void 0, rule, now2);
+      const decision = decideConsume(entry && now3 < entry.expiresAt ? entry.data : void 0, rule, now3);
       if (decision.allowed) memory.set(key, {
         data: {
           ...decision.next,
           key
         },
-        expiresAt: now2 + ttlFor(rule.window) * 1e3
+        expiresAt: now3 + ttlFor(rule.window) * 1e3
       });
       return {
         allowed: decision.allowed,
@@ -144430,9 +150959,9 @@ var getSession = () => createAuthEndpoint("/get-session", {
         shouldExpireCookieCache = (session3.version || "1") !== expectedVersion;
       }
       if (!shouldExpireCookieCache) {
-        const now2 = Date.now();
+        const now3 = Date.now();
         const cachedSessionExpiresAt = new Date(session3.session.expiresAt).getTime();
-        shouldExpireCookieCache = sessionDataPayload.expiresAt < now2 || !Number.isFinite(cachedSessionExpiresAt) || cachedSessionExpiresAt < now2;
+        shouldExpireCookieCache = sessionDataPayload.expiresAt < now3 || !Number.isFinite(cachedSessionExpiresAt) || cachedSessionExpiresAt < now3;
       }
       if (shouldExpireCookieCache) expireCookie(ctx, ctx.context.authCookies.sessionData);
       else {
@@ -145083,9 +151612,9 @@ function getWithHooks(adapter, ctx) {
 init_error2();
 init_id2();
 init_json();
-function getTTLSeconds(expiresAt, now2 = Date.now()) {
+function getTTLSeconds(expiresAt, now3 = Date.now()) {
   const expiresMs = typeof expiresAt === "number" ? expiresAt : expiresAt.getTime();
-  return Math.max(Math.floor((expiresMs - now2) / 1e3), 0);
+  return Math.max(Math.floor((expiresMs - now3) / 1e3), 0);
 }
 var createInternalAdapter = (adapter, ctx) => {
   const logger4 = ctx.logger;
@@ -145115,14 +151644,14 @@ var createInternalAdapter = (adapter, ctx) => {
     if (!secondaryStorage) return;
     const listRaw = await secondaryStorage.get(`active-sessions-${user2.id}`);
     if (!listRaw) return;
-    const now2 = Date.now();
-    const validSessions = (safeJSONParse(listRaw) || []).filter((s2) => s2.expiresAt > now2);
+    const now3 = Date.now();
+    const validSessions = (safeJSONParse(listRaw) || []).filter((s4) => s4.expiresAt > now3);
     await Promise.all(validSessions.map(async ({ token }) => {
       const cached2 = await secondaryStorage.get(token);
       if (!cached2) return;
       const parsed = safeJSONParse(cached2);
       if (!parsed) return;
-      const sessionTTL = getTTLSeconds(parsed.session.expiresAt, now2);
+      const sessionTTL = getTTLSeconds(parsed.session.expiresAt, now3);
       await secondaryStorage.set(token, JSON.stringify({
         session: parsed.session,
         user: user2
@@ -145140,12 +151669,12 @@ var createInternalAdapter = (adapter, ctx) => {
     for (const { token } of sessionReferences) await secondaryStorage.delete(token);
     const activeSessionsKey = `active-sessions-${userId}`;
     const currentSessionReferences = await getActiveSessionReferences(userId);
-    const now2 = Date.now();
-    const remainingSessionReferences = currentSessionReferences.filter((session2) => session2.expiresAt > now2 && !deletedTokens.has(session2.token));
+    const now3 = Date.now();
+    const remainingSessionReferences = currentSessionReferences.filter((session2) => session2.expiresAt > now3 && !deletedTokens.has(session2.token));
     remainingSessionReferences.sort((a5, b5) => a5.expiresAt - b5.expiresAt);
     const furthestExpiration = remainingSessionReferences.at(-1)?.expiresAt;
     if (furthestExpiration) {
-      await secondaryStorage.set(activeSessionsKey, JSON.stringify(remainingSessionReferences), getTTLSeconds(furthestExpiration, now2));
+      await secondaryStorage.set(activeSessionsKey, JSON.stringify(remainingSessionReferences), getTTLSeconds(furthestExpiration, now3));
       return;
     }
     await secondaryStorage.delete(activeSessionsKey);
@@ -145238,11 +151767,11 @@ var createInternalAdapter = (adapter, ctx) => {
         const currentList = await secondaryStorage.get(`active-sessions-${userId}`);
         if (!currentList) return [];
         const list2 = safeJSONParse(currentList) || [];
-        const now2 = Date.now();
+        const now3 = Date.now();
         const seenTokens = /* @__PURE__ */ new Set();
         const sessions = [];
         for (const { token, expiresAt } of list2) {
-          if (expiresAt <= now2 || seenTokens.has(token)) continue;
+          if (expiresAt <= now3 || seenTokens.has(token)) continue;
           seenTokens.add(token);
           const data = await secondaryStorage.get(token);
           if (!data) continue;
@@ -145271,11 +151800,11 @@ var createInternalAdapter = (adapter, ctx) => {
         }] : []]
       });
     },
-    listUsers: async (limit, offset, sortBy, where) => {
+    listUsers: async (limit, offset2, sortBy, where) => {
       return await (await getCurrentAdapter(adapter)).findMany({
         model: "user",
         limit,
-        offset,
+        offset: offset2,
         sortBy,
         where
       });
@@ -145339,16 +151868,16 @@ var createInternalAdapter = (adapter, ctx) => {
         if (!secondaryStorage) return sessionData;
         const currentList = await secondaryStorage.get(`active-sessions-${userId}`);
         let list2 = [];
-        const now2 = Date.now();
+        const now3 = Date.now();
         if (currentList) {
           list2 = safeJSONParse(currentList) || [];
-          list2 = list2.filter((session2) => session2.expiresAt > now2 && session2.token !== data.token);
+          list2 = list2.filter((session2) => session2.expiresAt > now3 && session2.token !== data.token);
         }
         const sorted = [...list2, {
           token: data.token,
           expiresAt: data.expiresAt.getTime()
         }].sort((a5, b5) => a5.expiresAt - b5.expiresAt);
-        const furthestSessionTTL = getTTLSeconds(sorted.at(-1)?.expiresAt ?? data.expiresAt.getTime(), now2);
+        const furthestSessionTTL = getTTLSeconds(sorted.at(-1)?.expiresAt ?? data.expiresAt.getTime(), now3);
         if (furthestSessionTTL > 0) await secondaryStorage.set(`active-sessions-${userId}`, JSON.stringify(sorted), furthestSessionTTL);
         const user2 = await (await getCurrentAdapter(adapter)).findOne({
           model: "user",
@@ -145357,7 +151886,7 @@ var createInternalAdapter = (adapter, ctx) => {
             value: userId
           }]
         });
-        const sessionTTL = getTTLSeconds(data.expiresAt, now2);
+        const sessionTTL = getTTLSeconds(data.expiresAt, now3);
         if (sessionTTL > 0) await secondaryStorage.set(data.token, JSON.stringify({
           session: sessionData,
           user: user2
@@ -145382,19 +151911,19 @@ var createInternalAdapter = (adapter, ctx) => {
         const sessionStringified = await secondaryStorage.get(token);
         if (!sessionStringified && (!options.session?.storeSessionInDatabase || ctx.options.session?.preserveSessionInDatabase)) return null;
         if (sessionStringified) {
-          const s2 = safeJSONParse(sessionStringified);
-          if (!s2) return null;
+          const s4 = safeJSONParse(sessionStringified);
+          if (!s4) return null;
           return {
             session: parseSessionOutput(ctx.options, {
-              ...s2.session,
-              expiresAt: new Date(s2.session.expiresAt),
-              createdAt: new Date(s2.session.createdAt),
-              updatedAt: new Date(s2.session.updatedAt)
+              ...s4.session,
+              expiresAt: new Date(s4.session.expiresAt),
+              createdAt: new Date(s4.session.createdAt),
+              updatedAt: new Date(s4.session.updatedAt)
             }),
             user: parseUserOutput(ctx.options, {
-              ...s2.user,
-              createdAt: new Date(s2.user.createdAt),
-              updatedAt: new Date(s2.user.updatedAt)
+              ...s4.user,
+              createdAt: new Date(s4.user.createdAt),
+              updatedAt: new Date(s4.user.updatedAt)
             })
           };
         }
@@ -145421,19 +151950,19 @@ var createInternalAdapter = (adapter, ctx) => {
         for (const sessionToken of sessionTokens) {
           const sessionStringified = await secondaryStorage.get(sessionToken);
           if (sessionStringified) try {
-            const s2 = typeof sessionStringified === "string" ? JSON.parse(sessionStringified) : sessionStringified;
-            if (!s2) continue;
-            const expiresAt = new Date(s2.session.expiresAt);
+            const s4 = typeof sessionStringified === "string" ? JSON.parse(sessionStringified) : sessionStringified;
+            if (!s4) continue;
+            const expiresAt = new Date(s4.session.expiresAt);
             if (options2?.onlyActiveSessions && expiresAt <= /* @__PURE__ */ new Date()) continue;
             const session2 = {
               session: {
-                ...s2.session,
-                expiresAt: new Date(s2.session.expiresAt)
+                ...s4.session,
+                expiresAt: new Date(s4.session.expiresAt)
               },
               user: {
-                ...s2.user,
-                createdAt: new Date(s2.user.createdAt),
-                updatedAt: new Date(s2.user.updatedAt)
+                ...s4.user,
+                createdAt: new Date(s4.user.createdAt),
+                updatedAt: new Date(s4.user.updatedAt)
               }
             };
             sessions2.push(session2);
@@ -145484,9 +152013,9 @@ var createInternalAdapter = (adapter, ctx) => {
             updatedAt: new Date(data.updatedAt ?? parsedSession.session.updatedAt)
           };
           const updatedSession = parseSessionOutput(ctx.options, mergedSession);
-          const now2 = Date.now();
+          const now3 = Date.now();
           const expiresMs = new Date(updatedSession.expiresAt).getTime();
-          const sessionTTL = getTTLSeconds(expiresMs, now2);
+          const sessionTTL = getTTLSeconds(expiresMs, now3);
           if (sessionTTL > 0) {
             await secondaryStorage.set(sessionToken, JSON.stringify({
               session: updatedSession,
@@ -145494,12 +152023,12 @@ var createInternalAdapter = (adapter, ctx) => {
             }), sessionTTL);
             const listKey = `active-sessions-${updatedSession.userId}`;
             const listRaw = await secondaryStorage.get(listKey);
-            const sorted = (listRaw ? safeJSONParse(listRaw) || [] : []).filter((s2) => s2.token !== sessionToken && s2.expiresAt > now2).concat([{
+            const sorted = (listRaw ? safeJSONParse(listRaw) || [] : []).filter((s4) => s4.token !== sessionToken && s4.expiresAt > now3).concat([{
               token: sessionToken,
               expiresAt: expiresMs
             }]).sort((a5, b5) => a5.expiresAt - b5.expiresAt);
             const furthestSessionExp = sorted.at(-1)?.expiresAt;
-            if (furthestSessionExp && furthestSessionExp > now2) await secondaryStorage.set(listKey, JSON.stringify(sorted), getTTLSeconds(furthestSessionExp, now2));
+            if (furthestSessionExp && furthestSessionExp > now3) await secondaryStorage.set(listKey, JSON.stringify(sorted), getTTLSeconds(furthestSessionExp, now3));
             else await secondaryStorage.delete(listKey);
           }
           return updatedSession;
@@ -145520,10 +152049,10 @@ var createInternalAdapter = (adapter, ctx) => {
           const currentList = await secondaryStorage.get(`active-sessions-${userId}`);
           if (currentList) {
             const list2 = safeJSONParse(currentList) || [];
-            const now2 = Date.now();
-            const filtered = list2.filter((session3) => session3.expiresAt > now2 && session3.token !== token);
+            const now3 = Date.now();
+            const filtered = list2.filter((session3) => session3.expiresAt > now3 && session3.token !== token);
             const furthestSessionExp = filtered.sort((a5, b5) => a5.expiresAt - b5.expiresAt).at(-1)?.expiresAt;
-            if (filtered.length > 0 && furthestSessionExp && furthestSessionExp > Date.now()) await secondaryStorage.set(`active-sessions-${userId}`, JSON.stringify(filtered), getTTLSeconds(furthestSessionExp, now2));
+            if (filtered.length > 0 && furthestSessionExp && furthestSessionExp > Date.now()) await secondaryStorage.set(`active-sessions-${userId}`, JSON.stringify(filtered), getTTLSeconds(furthestSessionExp, now3));
             else await secondaryStorage.delete(`active-sessions-${userId}`);
           } else logger4.error("Active sessions list not found in secondary storage");
         }
@@ -146125,28 +152654,28 @@ function inIPv4Range(value, prefix, length) {
 function classifyIPv4(ip) {
   if (ip === "0.0.0.0") return "unspecified";
   if (ip === "255.255.255.255") return "broadcast";
-  const n3 = ipv4ToUint32(ip);
-  if (inIPv4Range(n3, ipv4ToUint32("127.0.0.0"), 8)) return "loopback";
-  if (inIPv4Range(n3, ipv4ToUint32("10.0.0.0"), 8)) return "private";
-  if (inIPv4Range(n3, ipv4ToUint32("172.16.0.0"), 12)) return "private";
-  if (inIPv4Range(n3, ipv4ToUint32("192.168.0.0"), 16)) return "private";
-  if (inIPv4Range(n3, ipv4ToUint32("169.254.0.0"), 16)) return "linkLocal";
-  if (inIPv4Range(n3, ipv4ToUint32("100.64.0.0"), 10)) return "sharedAddressSpace";
-  if (inIPv4Range(n3, ipv4ToUint32("192.0.2.0"), 24)) return "documentation";
-  if (inIPv4Range(n3, ipv4ToUint32("198.51.100.0"), 24)) return "documentation";
-  if (inIPv4Range(n3, ipv4ToUint32("203.0.113.0"), 24)) return "documentation";
-  if (inIPv4Range(n3, ipv4ToUint32("198.18.0.0"), 15)) return "benchmarking";
-  if (inIPv4Range(n3, ipv4ToUint32("224.0.0.0"), 4)) return "multicast";
-  if (inIPv4Range(n3, ipv4ToUint32("0.0.0.0"), 8)) return "reserved";
-  if (inIPv4Range(n3, ipv4ToUint32("192.0.0.0"), 24)) return "reserved";
-  if (inIPv4Range(n3, ipv4ToUint32("192.88.99.0"), 24)) return "reserved";
-  if (inIPv4Range(n3, ipv4ToUint32("240.0.0.0"), 4)) return "reserved";
+  const n4 = ipv4ToUint32(ip);
+  if (inIPv4Range(n4, ipv4ToUint32("127.0.0.0"), 8)) return "loopback";
+  if (inIPv4Range(n4, ipv4ToUint32("10.0.0.0"), 8)) return "private";
+  if (inIPv4Range(n4, ipv4ToUint32("172.16.0.0"), 12)) return "private";
+  if (inIPv4Range(n4, ipv4ToUint32("192.168.0.0"), 16)) return "private";
+  if (inIPv4Range(n4, ipv4ToUint32("169.254.0.0"), 16)) return "linkLocal";
+  if (inIPv4Range(n4, ipv4ToUint32("100.64.0.0"), 10)) return "sharedAddressSpace";
+  if (inIPv4Range(n4, ipv4ToUint32("192.0.2.0"), 24)) return "documentation";
+  if (inIPv4Range(n4, ipv4ToUint32("198.51.100.0"), 24)) return "documentation";
+  if (inIPv4Range(n4, ipv4ToUint32("203.0.113.0"), 24)) return "documentation";
+  if (inIPv4Range(n4, ipv4ToUint32("198.18.0.0"), 15)) return "benchmarking";
+  if (inIPv4Range(n4, ipv4ToUint32("224.0.0.0"), 4)) return "multicast";
+  if (inIPv4Range(n4, ipv4ToUint32("0.0.0.0"), 8)) return "reserved";
+  if (inIPv4Range(n4, ipv4ToUint32("192.0.0.0"), 24)) return "reserved";
+  if (inIPv4Range(n4, ipv4ToUint32("192.88.99.0"), 24)) return "reserved";
+  if (inIPv4Range(n4, ipv4ToUint32("240.0.0.0"), 4)) return "reserved";
   return "public";
 }
 function extractEmbeddedIPv4(expanded, startGroup, options = {}) {
-  const offset = startGroup * 5;
-  const g1 = Number.parseInt(expanded.slice(offset, offset + 4), 16);
-  const g22 = Number.parseInt(expanded.slice(offset + 5, offset + 9), 16);
+  const offset2 = startGroup * 5;
+  const g1 = Number.parseInt(expanded.slice(offset2, offset2 + 4), 16);
+  const g22 = Number.parseInt(expanded.slice(offset2 + 5, offset2 + 9), 16);
   if (!Number.isFinite(g1) || !Number.isFinite(g22)) return null;
   let combined = (g1 << 16 | g22) >>> 0;
   if (options.xor) combined = (combined ^ 4294967295) >>> 0;
@@ -146258,7 +152787,7 @@ async function runPluginInit(context) {
   if (pluginTrustedOrigins.length > 0) {
     const allSources = [...options.trustedOrigins ? [options.trustedOrigins] : [], ...pluginTrustedOrigins];
     const staticOrigins = allSources.filter(Array.isArray).flat();
-    const dynamicOrigins = allSources.filter((s2) => typeof s2 === "function");
+    const dynamicOrigins = allSources.filter((s4) => typeof s4 === "function");
     if (dynamicOrigins.length > 0) options.trustedOrigins = async (request) => {
       const resolved = await Promise.all(dynamicOrigins.map((fn) => fn(request)));
       return [...staticOrigins, ...resolved.flat()].filter((v) => typeof v === "string" && v !== "");
@@ -147052,7 +153581,7 @@ init_error2();
 
 // node_modules/.pnpm/@better-auth+core@1.7.4_@be_0e1f9ec44b2dfbb37e7acb65fd62e3b9/node_modules/@better-auth/core/dist/oauth2/utils.mjs
 function parseScopeField(scope) {
-  if (Array.isArray(scope)) return scope.map((s2) => typeof s2 === "string" ? s2.trim() : "").filter(Boolean);
+  if (Array.isArray(scope)) return scope.map((s4) => typeof s4 === "string" ? s4.trim() : "").filter(Boolean);
   if (typeof scope === "string") return scope.trim().split(/\s+/).filter(Boolean);
   return [];
 }
@@ -150966,7 +157495,7 @@ var SocialProviderListEnum = _enum2(socialProviderList).or(string2());
 init_zod();
 function parseStoredScopes(scope) {
   if (!scope) return [];
-  return scope.split(",").map((s2) => s2.trim()).filter(Boolean);
+  return scope.split(",").map((s4) => s4.trim()).filter(Boolean);
 }
 var listUserAccounts = createAuthEndpoint("/list-accounts", {
   method: "GET",
@@ -153013,15 +159542,15 @@ var signUpEmail = () => createAuthEndpoint("/sign-up/email", {
     const additionalUserFields = parseUserInput(ctx.context.options, rest, "create");
     const normalizedEmail = email3.toLowerCase();
     const buildGenericDuplicateResponse = () => {
-      const now2 = /* @__PURE__ */ new Date();
+      const now3 = /* @__PURE__ */ new Date();
       const generatedId = ctx.context.generateId({ model: "user" }) || generateId();
       const coreFields = {
         name,
         email: normalizedEmail,
         emailVerified: false,
         image: image ?? null,
-        createdAt: now2,
-        updatedAt: now2
+        createdAt: now3,
+        updatedAt: now3
       };
       const customSyntheticUser = ctx.context.options.emailAndPassword?.customSyntheticUser;
       let syntheticUser;
@@ -154878,10 +161407,10 @@ function parseSecretsEnv(envValue) {
 function validateSecretsArray(secrets, logger4) {
   if (secrets.length === 0) throw new BetterAuthError("`secrets` array must contain at least one entry.");
   const seen = /* @__PURE__ */ new Set();
-  for (const s2 of secrets) {
-    const version4 = parseInt(String(s2.version), 10);
-    if (!Number.isInteger(version4) || version4 < 0 || String(version4) !== String(s2.version).trim()) throw new BetterAuthError(`Invalid version ${s2.version} in \`secrets\`. Version must be a non-negative integer.`);
-    if (!s2.value) throw new BetterAuthError(`Empty secret value for version ${version4} in \`secrets\`.`);
+  for (const s4 of secrets) {
+    const version4 = parseInt(String(s4.version), 10);
+    if (!Number.isInteger(version4) || version4 < 0 || String(version4) !== String(s4.version).trim()) throw new BetterAuthError(`Invalid version ${s4.version} in \`secrets\`. Version must be a non-negative integer.`);
+    if (!s4.value) throw new BetterAuthError(`Empty secret value for version ${version4} in \`secrets\`.`);
     if (seen.has(version4)) throw new BetterAuthError(`Duplicate version ${version4} in \`secrets\`. Each version must be unique.`);
     seen.add(version4);
   }
@@ -154891,7 +161420,7 @@ function validateSecretsArray(secrets, logger4) {
 }
 function buildSecretConfig(secrets, legacySecret) {
   const keys = /* @__PURE__ */ new Map();
-  for (const s2 of secrets) keys.set(parseInt(String(s2.version), 10), s2.value);
+  for (const s4 of secrets) keys.set(parseInt(String(s4.version), 10), s4.value);
   return {
     keys,
     currentVersion: parseInt(String(secrets[0].version), 10),
@@ -156061,7 +162590,7 @@ var drizzleAdapter = (db3, config5) => {
         if (!res.length) return null;
         return res[0];
       },
-      async findMany({ model, where, sortBy, limit, select, offset, join: join6 }) {
+      async findMany({ model, where, sortBy, limit, select, offset: offset2, join: join6 }) {
         const schemaModel = getSchema2(model);
         const clause = where ? convertWhereClause(where, model) : [];
         const sortFn = sortBy?.direction === "desc" ? desc : asc;
@@ -156102,7 +162631,7 @@ var drizzleAdapter = (db3, config5) => {
                 return acc;
               }, {}) : void 0,
               limit: limit ?? 100,
-              offset: offset ?? 0,
+              offset: offset2 ?? 0,
               orderBy
             });
             if (res) for (const item of res) for (const { key, target } of renamedJoinResults) {
@@ -156123,7 +162652,7 @@ var drizzleAdapter = (db3, config5) => {
           };
         }, {}) : void 0).from(schemaModel);
         const effectiveLimit = limit;
-        const effectiveOffset = offset;
+        const effectiveOffset = offset2;
         if (typeof effectiveLimit !== "undefined") builder = builder.limit(effectiveLimit);
         if (typeof effectiveOffset !== "undefined") builder = builder.offset(effectiveOffset);
         if (sortBy?.field) builder = builder.orderBy(sortFn(schemaModel[getFieldName({
@@ -157140,7 +163669,7 @@ var __exportAll = (all, no_symbols) => {
   return target;
 };
 var __copyProps2 = (to, from, except2, desc2) => {
-  if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames2(from), i5 = 0, n3 = keys.length, key; i5 < n3; i5++) {
+  if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames2(from), i5 = 0, n4 = keys.length, key; i5 < n4; i5++) {
     key = keys[i5];
     if (!__hasOwnProp3.call(to, key) && key !== except2) __defProp3(to, key, {
       get: ((k5) => from[k5]).bind(null, key),
@@ -158021,7 +164550,7 @@ async function verifyRSA(opts) {
   const { cosePublicKey, signature, data, shaHashOverride } = opts;
   const WebCrypto = await getWebCrypto();
   const alg2 = cosePublicKey.get(COSEKEYS.alg);
-  const n3 = cosePublicKey.get(COSEKEYS.n);
+  const n4 = cosePublicKey.get(COSEKEYS.n);
   const e5 = cosePublicKey.get(COSEKEYS.e);
   if (!alg2) {
     throw new Error("Public key was missing alg (RSA)");
@@ -158029,7 +164558,7 @@ async function verifyRSA(opts) {
   if (!isCOSEAlg(alg2)) {
     throw new Error(`Public key had invalid alg ${alg2} (RSA)`);
   }
-  if (!n3) {
+  if (!n4) {
     throw new Error("Public key was missing n (RSA)");
   }
   if (!e5) {
@@ -158038,7 +164567,7 @@ async function verifyRSA(opts) {
   const keyData = {
     kty: "RSA",
     alg: "",
-    n: isoBase64URL_exports.fromBuffer(n3),
+    n: isoBase64URL_exports.fromBuffer(n4),
     e: isoBase64URL_exports.fromBuffer(e5),
     ext: false
   };
@@ -158244,11 +164773,11 @@ function equal(a5, b5, options = {}) {
     return false;
   }
   const length = Math.max(left.byteLength, right.byteLength);
-  let diff = left.byteLength ^ right.byteLength;
+  let diff2 = left.byteLength ^ right.byteLength;
   for (let i5 = 0; i5 < length; i5++) {
-    diff |= (left[i5] ?? 0) ^ (right[i5] ?? 0);
+    diff2 |= (left[i5] ?? 0) ^ (right[i5] ?? 0);
   }
-  return diff === 0;
+  return diff2 === 0;
 }
 
 // node_modules/.pnpm/@peculiar+utils@2.0.3/node_modules/@peculiar/utils/build/esm/encoding/binary.js
@@ -158289,7 +164818,7 @@ __export(hex_exports, {
   hex: () => hex4,
   is: () => is3,
   normalize: () => normalize,
-  parse: () => parse5
+  parse: () => parse6
 });
 var HEX_CHARACTER_REGEX = /^[0-9a-f]$/i;
 var COMMON_SEPARATORS = [" ", "	", "\n", "\r", ":", "-", "."];
@@ -158321,11 +164850,11 @@ function detectCase(text2) {
   return hasUpper && !hasLower ? "upper" : "lower";
 }
 function detectLineSeparator(text2) {
-  const match2 = /\r\n|\n/.exec(text2);
-  if (!match2) {
+  const match3 = /\r\n|\n/.exec(text2);
+  if (!match3) {
     return void 0;
   }
-  return match2[0] === "\r\n" ? "\r\n" : "\n";
+  return match3[0] === "\r\n" ? "\r\n" : "\n";
 }
 function compactForDetection(text2) {
   return text2.replace(/[^0-9a-f]/gi, "");
@@ -158488,7 +165017,7 @@ function decode5(text2, options = {}) {
   }
   return result;
 }
-function parse5(text2, options = {}) {
+function parse6(text2, options = {}) {
   const normalized = normalize(text2, options);
   return {
     bytes: decode5(normalized),
@@ -158507,7 +165036,7 @@ var formats = {
   groupsOf4: Object.freeze({ group: { size: 4, separator: " " } }),
   prefixed: Object.freeze({ prefix: "0x" })
 };
-var hex4 = { encode: encode7, decode: decode5, format, formats, is: is3, normalize, parse: parse5 };
+var hex4 = { encode: encode7, decode: decode5, format, formats, is: is3, normalize, parse: parse6 };
 
 // node_modules/.pnpm/@peculiar+utils@2.0.3/node_modules/@peculiar/utils/build/esm/encoding/utf8.js
 var utf8_exports = {};
@@ -158667,21 +165196,21 @@ function detectNewline(text2) {
 function collectBlocks(text2, options = {}) {
   const blocks = [];
   const requestedLabel = options.label;
-  let match2;
+  let match3;
   PEM_BLOCK_REGEX.lastIndex = 0;
-  while (match2 = PEM_BLOCK_REGEX.exec(text2)) {
-    const label = match2[1].trim();
+  while (match3 = PEM_BLOCK_REGEX.exec(text2)) {
+    const label = match3[1].trim();
     if (requestedLabel && label !== requestedLabel) {
       continue;
     }
     assertLabel(label);
-    const parsed = parseBody2(match2[2]);
+    const parsed = parseBody2(match3[2]);
     blocks.push({
       label,
       data: base645.decode(parsed.base64Text),
       headers: parsed.headers,
       lineLength: parsed.base64Lines[0]?.length ?? 64,
-      newline: detectNewline(match2[0])
+      newline: detectNewline(match3[0])
     });
   }
   if (options.strict && blocks.length === 0) {
@@ -158714,7 +165243,7 @@ function decodeFirst2(text2, label) {
   const [block] = decode10(text2, { label, strict: true });
   return block.data;
 }
-function parse6(text2, options = {}) {
+function parse7(text2, options = {}) {
   const [block] = collectBlocks(text2, { ...options, strict: true });
   const format5 = {
     label: block.label,
@@ -158742,7 +165271,7 @@ var pemConverter = {
   decode: (text2, options) => decodeFirst2(text2, options?.label),
   format: format2,
   is: (text2) => typeof text2 === "string" && /-----BEGIN [^-]+-----/.test(text2),
-  parse: parse6
+  parse: parse7
 };
 
 // node_modules/.pnpm/@peculiar+utils@2.0.3/node_modules/@peculiar/utils/build/esm/converters/registry.js
@@ -159005,7 +165534,7 @@ function tryDecode5(name, text2, ...args) {
 function normalize4(name, text2, ...args) {
   return defaultConverterRegistry.normalize(name, text2, ...args);
 }
-function parse7(name, text2, ...args) {
+function parse8(name, text2, ...args) {
   return defaultConverterRegistry.parse(name, text2, ...args);
 }
 function format3(name, data, value) {
@@ -159025,7 +165554,7 @@ var convert = {
   decode: decode11,
   tryDecode: tryDecode5,
   normalize: normalize4,
-  parse: parse7,
+  parse: parse8,
   format: format3,
   transcode,
   detect,
@@ -160126,7 +166655,7 @@ var IpConverter = class {
       return value;
     }
     const mask = parseInt(value.slice(8), 16).toString(2).split("").reduce((a5, k5) => a5 + +k5, 0);
-    let ip = value.slice(0, 8).replace(/(.{2})/g, (match2) => `${parseInt(match2, 16)}.`);
+    let ip = value.slice(0, 8).replace(/(.{2})/g, (match3) => `${parseInt(match3, 16)}.`);
     ip = ip.slice(0, -1);
     return `${ip}/${mask}`;
   }
@@ -161736,8 +168265,8 @@ async function isCertRevoked(cert) {
   if (keyIdentifier) {
     const cached2 = cacheRevokedCerts[keyIdentifier];
     if (cached2) {
-      const now2 = /* @__PURE__ */ new Date();
-      if (!cached2.nextUpdate || cached2.nextUpdate > now2) {
+      const now3 = /* @__PURE__ */ new Date();
+      if (!cached2.nextUpdate || cached2.nextUpdate > now3) {
         return cached2.revokedCerts.indexOf(cert.serialNumber) >= 0;
       }
     }
@@ -161990,8 +168519,8 @@ async function assertCertNotRevoked(certificate) {
   }
 }
 function assertCertIsWithinValidTimeWindow(certNotBefore, certNotAfter) {
-  const now2 = new Date(Date.now());
-  if (certNotBefore > now2 || certNotAfter < now2) {
+  const now3 = new Date(Date.now());
+  if (certNotBefore > now3 || certNotAfter < now3) {
     throw new Error("Certificate is not yet valid or expired");
   }
 }
@@ -163480,8 +170009,8 @@ var BaseMetadataService = class {
     }
     if (cachedStatement.url) {
       const mds = this.mdsCache[cachedStatement.url];
-      const now2 = /* @__PURE__ */ new Date();
-      if (now2 > mds.nextUpdate) {
+      const now3 = /* @__PURE__ */ new Date();
+      if (now3 > mds.nextUpdate) {
         try {
           this.setState(SERVICE_STATE.REFRESHING);
           const blob = await this.downloadBlob(mds);
@@ -163713,12 +170242,12 @@ async function verifyAttestationPacked(options) {
     if (version4 !== 2) {
       throw new Error("Certificate version was not `3` (ASN.1 value of 2) (Packed|Full)");
     }
-    let now2 = /* @__PURE__ */ new Date();
-    if (notBefore > now2) {
+    let now3 = /* @__PURE__ */ new Date();
+    if (notBefore > now3) {
       throw new Error(`Certificate not good before "${notBefore.toString()}" (Packed|Full)`);
     }
-    now2 = /* @__PURE__ */ new Date();
-    if (notAfter < now2) {
+    now3 = /* @__PURE__ */ new Date();
+    if (notAfter < now3) {
       throw new Error(`Certificate not good after "${notAfter.toString()}" (Packed|Full)`);
     }
     try {
@@ -163787,13 +170316,13 @@ async function verifyAttestationAndroidSafetyNet(options) {
   const SIGNATURE = jwtParts[2];
   const { nonce, ctsProfileMatch, timestampMs } = PAYLOAD;
   if (verifyTimestampMS) {
-    let now2 = Date.now();
+    let now3 = Date.now();
     if (timestampMs > Date.now()) {
-      throw new Error(`Payload timestamp "${timestampMs}" was later than "${now2}" (SafetyNet)`);
+      throw new Error(`Payload timestamp "${timestampMs}" was later than "${now3}" (SafetyNet)`);
     }
     const timestampPlusDelay = timestampMs + 60 * 1e3;
-    now2 = Date.now();
-    if (timestampPlusDelay < now2) {
+    now3 = Date.now();
+    if (timestampPlusDelay < now3) {
       throw new Error(`Payload timestamp "${timestampPlusDelay}" has expired (SafetyNet)`);
     }
   }
@@ -164117,15 +170646,15 @@ async function verifyAttestationTPM(options) {
     if (!isCOSEPublicKeyRSA(cosePublicKey)) {
       throw new Error(`Credential public key with kty ${cosePublicKey.get(COSEKEYS.kty)} did not match ${pubType}`);
     }
-    const n3 = cosePublicKey.get(COSEKEYS.n);
+    const n4 = cosePublicKey.get(COSEKEYS.n);
     const e5 = cosePublicKey.get(COSEKEYS.e);
-    if (!n3) {
+    if (!n4) {
       throw new Error("COSE public key missing n (TPM|RSA)");
     }
     if (!e5) {
       throw new Error("COSE public key missing e (TPM|RSA)");
     }
-    if (!isoUint8Array_exports.areEqual(unique, n3)) {
+    if (!isoUint8Array_exports.areEqual(unique, n4)) {
       throw new Error("PubArea unique is not same as credentialPublicKey (TPM|RSA)");
     }
     if (!parameters.rsa) {
@@ -164202,12 +170731,12 @@ async function verifyAttestationTPM(options) {
   if (subject.combined.length > 0) {
     throw new Error("Certificate subject was not empty (TPM)");
   }
-  let now2 = /* @__PURE__ */ new Date();
-  if (notBefore > now2) {
+  let now3 = /* @__PURE__ */ new Date();
+  if (notBefore > now3) {
     throw new Error(`Certificate not good before "${notBefore.toString()}" (TPM)`);
   }
-  now2 = /* @__PURE__ */ new Date();
-  if (notAfter < now2) {
+  now3 = /* @__PURE__ */ new Date();
+  if (notAfter < now3) {
     throw new Error(`Certificate not good after "${notAfter.toString()}" (TPM)`);
   }
   const parsedCert = AsnParser.parse(x5c[0], Certificate);
@@ -165856,16 +172385,16 @@ var verifyPasskeyAuthentication = (options) => createAuthEndpoint("/passkey/veri
       }],
       update: { counter: verification2.authenticationInfo.newCounter }
     });
-    const s2 = await ctx.context.internalAdapter.createSession(passkey3.userId);
-    if (!s2) throw APIError2.from("INTERNAL_SERVER_ERROR", PASSKEY_ERROR_CODES.UNABLE_TO_CREATE_SESSION);
+    const s4 = await ctx.context.internalAdapter.createSession(passkey3.userId);
+    if (!s4) throw APIError2.from("INTERNAL_SERVER_ERROR", PASSKEY_ERROR_CODES.UNABLE_TO_CREATE_SESSION);
     const user2 = await ctx.context.internalAdapter.findUserById(passkey3.userId);
     if (!user2) throw new APIError2("INTERNAL_SERVER_ERROR", { message: "User not found" });
     await setSessionCookie(ctx, {
-      session: s2,
+      session: s4,
       user: user2
     });
     return ctx.json({
-      session: s2,
+      session: s4,
       user: user2
     }, { status: 200 });
   } catch (e5) {
@@ -166225,6 +172754,7 @@ function rowToItem(row, tagIds, rules, exceptions) {
     completedAt: row.completedAt?.toISOString() ?? null,
     autoRollover: row.autoRollover,
     showInTimetable: row.showInTimetable,
+    timetableId: row.timetableId,
     courseStartDate: row.courseStartDate,
     courseEndDate: row.courseEndDate,
     courseSlots: row.courseSlots,
@@ -166462,68 +172992,62 @@ init_zod();
 
 // apps/api/src/services/ai.ts
 var AiError = class extends Error {
-  constructor(code, message2, status = 500, usage) {
+  constructor(code, message2, status = 500) {
     super(message2);
     this.code = code;
     this.status = status;
-    this.usage = usage;
     this.name = "AiError";
   }
   code;
   status;
-  usage;
 };
-function shanghaiDate(now2 = /* @__PURE__ */ new Date()) {
-  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now2);
-  const value = (type) => parts.find((part) => part.type === type)?.value ?? "";
-  return `${value("year")}-${value("month")}-${value("day")}`;
-}
-function aiDailyLimit() {
-  return config3.DEMO_MODE ? config3.AI_DEMO_DAILY_LIMIT : config3.AI_PRIVATE_DAILY_LIMIT;
-}
 function aiConfigured() {
   return config3.AI_ENABLED && Boolean(config3.AI_API_KEY);
 }
-function usageValue(used, limit = aiDailyLimit()) {
-  return { date: shanghaiDate(), used, limit, remaining: Math.max(0, limit - used) };
+async function getAiStatus() {
+  return { enabled: config3.AI_ENABLED, configured: aiConfigured(), provider: config3.AI_PROVIDER, textModel: config3.AI_TEXT_MODEL, visionModel: config3.AI_VISION_MODEL };
 }
-async function readUsage(workspaceId) {
-  const [row] = await db.select().from(aiUsage).where(and(eq(aiUsage.workspaceId, workspaceId), eq(aiUsage.usageDate, shanghaiDate()))).limit(1);
-  return usageValue(row?.requestCount ?? 0);
-}
-async function getAiStatus(workspaceId) {
-  return { enabled: config3.AI_ENABLED, configured: aiConfigured(), provider: config3.AI_PROVIDER, textModel: config3.AI_TEXT_MODEL, visionModel: config3.AI_VISION_MODEL, usage: await readUsage(workspaceId) };
-}
-async function reserveAiUsage(workspaceId) {
-  const limit = aiDailyLimit();
-  const date7 = shanghaiDate();
-  const result = await db.execute(sql`
-    insert into ai_usage (workspace_id, usage_date, request_count, updated_at)
-    values (${workspaceId}, ${date7}, 1, now())
-    on conflict (workspace_id, usage_date)
-    do update set request_count = ai_usage.request_count + 1, updated_at = now()
-    where ai_usage.request_count < ${limit}
-    returning request_count
-  `);
-  const rows = result.rows ?? [];
-  const row = rows[0];
-  if (!row) {
-    const usage = await readUsage(workspaceId);
-    throw new AiError("AI_DAILY_LIMIT", `\u4ECA\u65E5 AI \u989D\u5EA6\u5DF2\u7528\u5B8C\uFF08${usage.used}/${usage.limit}\uFF09`, 429, usage);
-  }
-  return usageValue(Number(row.request_count), limit);
-}
-function systemPrompt(timezone, now2, semesterStartDate, tagNames) {
+function systemPrompt(timezone, now3, semesterStartDate, tagNames, timetableContext) {
+  const format5 = {
+    items: [{
+      kind: "event|task|both",
+      title: "",
+      description: "",
+      location: "",
+      startAt: null,
+      endAt: null,
+      dueAt: null,
+      isAllDay: false,
+      timezone,
+      priority: "none|low|medium|high|urgent",
+      recurrence: null,
+      reminderMinutes: [],
+      suggestedTagNames: [],
+      confidence: 0.5,
+      evidence: "",
+      warnings: [],
+      importTarget: "calendar|timetable",
+      timetableId: null,
+      courseStartDate: null,
+      courseEndDate: null,
+      periodMatch: "exact|mapped|uncertain",
+      courseSlots: [{ weekday: 1, startTime: "08:00", endTime: "08:45", weekParity: "all" }]
+    }],
+    transcript: ""
+  };
   return [
-    "\u4F60\u662F\u6821\u56ED\u65E5\u7A0B\u63D0\u53D6\u5668\u3002\u53EA\u8F93\u51FA JSON\uFF0C\u4E0D\u8981 Markdown\u3002",
-    '\u683C\u5F0F\uFF1A{"items":[{"kind":"event|task|both","title":"","description":"","location":"","startAt":null,"endAt":null,"dueAt":null,"isAllDay":false,"timezone":"Asia/Shanghai","priority":"none|low|medium|high|urgent","recurrence":null,"reminderMinutes":[],"suggestedTagNames":[],"confidence":0.5,"evidence":"","warnings":[]}],"transcript":""}',
+    "\u4F60\u662F\u6821\u56ED\u65E5\u7A0B\u548C\u8BFE\u8868\u63D0\u53D6\u5668\u3002\u53EA\u8F93\u51FA JSON\uFF0C\u4E0D\u8981 Markdown\u3002",
+    `\u683C\u5F0F\uFF1A${JSON.stringify(format5)}`,
     "\u89C4\u5219\uFF1A\u65E5\u671F\u4F7F\u7528\u5E26\u65F6\u533A\u7684 ISO 8601\uFF1B\u4E0D\u786E\u5B9A\u7684\u503C\u586B null\uFF1B\u6CA1\u6709\u5F00\u59CB\u65F6\u95F4\u7528 task\uFF1B\u6709\u660E\u786E\u5F00\u59CB\u65F6\u95F4\u7528 event\uFF1B\u540C\u65F6\u6709\u65E5\u7A0B\u548C\u5F85\u529E\u8BED\u4E49\u7528 both\uFF1B\u53EA\u5EFA\u8BAE\u5DF2\u6709\u6807\u7B7E\uFF1B\u4E0D\u8981\u7F16\u9020\u4FE1\u606F\u3002",
-    `\u5F53\u524D\u65F6\u95F4\uFF1A${now2}\uFF1B\u65F6\u533A\uFF1A${timezone}\uFF1B\u5B66\u671F\u7B2C 1 \u5468\u5468\u4E00\uFF1A${semesterStartDate ?? "\u672A\u8BBE\u7F6E"}\u3002`,
-    `\u5DF2\u6709\u6807\u7B7E\uFF1A${tagNames.length > 0 ? tagNames.join("\u3001") : "\u65E0"}\u3002`
+    "\u8BFE\u8868\u56FE\u7247\u6216\u8BFE\u8868\u6587\u5B57\u5FC5\u987B\u4F7F\u7528 importTarget=timetable\uFF0C\u5E76\u6309\u8BFE\u7A0B\u751F\u6210\u8349\u7A3F\uFF1B\u540C\u4E00\u8BFE\u7A0B\u5728\u4E0D\u540C\u661F\u671F\u6216\u591A\u4E2A\u8282\u6B21\u65F6\u5408\u5E76\u4E3A\u4E00\u4E2A\u8349\u7A3F\u5E76\u8FD4\u56DE\u591A\u4E2A courseSlots\u3002",
+    "\u8BFE\u8868\u65F6\u95F4\u5FC5\u987B\u6765\u81EA\u56FE\u4E2D\u660E\u786E\u65F6\u95F4\uFF0C\u6216\u4ECE\u4E0B\u65B9\u8282\u6B21\u8868\u4E2D\u6309\u8282\u6B21\u540D\u79F0\u7CBE\u786E\u5339\u914D\uFF1B\u65E0\u6CD5\u53EF\u9760\u786E\u5B9A\u65F6\u5FC5\u987B\u628A periodMatch \u8BBE\u4E3A uncertain \u5E76\u5199\u5165\u8B66\u544A\uFF0C\u4E0D\u80FD\u7528\u65E5\u671F\u65F6\u95F4\u731C\u9020 courseSlots\u3002",
+    `\u5F53\u524D\u65F6\u95F4\uFF1A${now3}\uFF1B\u65F6\u533A\uFF1A${timezone}\uFF1B\u9ED8\u8BA4\u5B66\u671F\u7B2C 1 \u5468\u5468\u4E00\uFF1A${semesterStartDate ?? "\u672A\u8BBE\u7F6E"}\u3002`,
+    `\u5DF2\u6709\u6807\u7B7E\uFF1A${tagNames.length > 0 ? tagNames.join("\u3001") : "\u65E0"}\u3002`,
+    `\u8BFE\u8868\u9875\u4E0E\u8282\u6B21\uFF1A${JSON.stringify(timetableContext ?? { activeTimetableId: null, timetables: [] })}\u3002`
   ].join("\n");
 }
 function userPrompt(text2, images) {
-  const prompt = text2.trim() || "\u8BF7\u8BC6\u522B\u56FE\u7247\u4E2D\u7684\u65E5\u7A0B\u548C\u4EFB\u52A1\u4FE1\u606F\u3002";
+  const prompt = text2.trim() || "\u8BF7\u8BC6\u522B\u56FE\u7247\u4E2D\u7684\u65E5\u7A0B\u3001\u4EFB\u52A1\u6216\u8BFE\u8868\u4FE1\u606F\u3002";
   if (images.length === 0) return prompt;
   const content = [{ type: "text", text: prompt }];
   for (const image of images) content.push({ type: "image_url", image_url: { url: `data:${image.mimeType};base64,${image.data.toString("base64")}` } });
@@ -166567,7 +173091,46 @@ function isoFrom(value, timezone) {
   const date7 = new Date(text2);
   return Number.isNaN(date7.getTime()) ? null : date7.toISOString();
 }
-function normalizeProviderResponse(value, timezone) {
+function weekdayNumber(value) {
+  const raw2 = Number(value);
+  if (!Number.isFinite(raw2)) {
+    const text2 = String(value ?? "").trim();
+    if (["\u5468\u65E5", "\u661F\u671F\u65E5", "sunday", "sun"].some((name) => text2.toLowerCase().includes(name.toLowerCase()))) return 0;
+    const names = ["\u5468\u4E00", "\u5468\u4E8C", "\u5468\u4E09", "\u5468\u56DB", "\u5468\u4E94", "\u5468\u516D"];
+    const index2 = names.findIndex((name) => text2.includes(name));
+    if (index2 >= 0) return index2 + 1;
+    return null;
+  }
+  if (raw2 === 7) return 0;
+  return raw2 >= 0 && raw2 <= 6 ? Math.trunc(raw2) : null;
+}
+function normalizeSlot(raw2, timetableContext) {
+  const source = raw2 && typeof raw2 === "object" ? raw2 : {};
+  const weekday = weekdayNumber(source.weekday ?? source.day ?? source.dayOfWeek);
+  if (weekday === null) return { slot: null, mapped: false };
+  let startTime = String(source.startTime ?? source.start ?? "").slice(0, 5);
+  let endTime = String(source.endTime ?? source.end ?? "").slice(0, 5);
+  let mapped = false;
+  if ((!startTime || !endTime) && (source.periodName || source.period)) {
+    const requested = String(source.periodName ?? source.period).trim().toLowerCase().replace(/^第/, "").replace(/节$/, "");
+    const periods = timetableContext?.timetables.find((page) => page.id === timetableContext.activeTimetableId)?.periods ?? [];
+    const period = periods.find((candidate) => candidate.name.trim().toLowerCase().replace(/^第/, "").replace(/节$/, "") === requested);
+    if (period) {
+      startTime = period.startTime;
+      endTime = period.endTime;
+      mapped = true;
+    }
+  }
+  const parsed = courseSlotSchema.safeParse({
+    ...typeof source.id === "string" ? { id: source.id } : {},
+    weekday,
+    startTime,
+    endTime,
+    weekParity: source.weekParity === "odd" || source.weekParity === "even" ? source.weekParity : "all"
+  });
+  return { slot: parsed.success ? parsed.data : null, mapped };
+}
+function normalizeProviderResponse(value, timezone, timetableContext) {
   const root5 = value && typeof value === "object" ? value : {};
   const rawItems = Array.isArray(root5.items) ? root5.items : Array.isArray(root5.drafts) ? root5.drafts : [];
   const items2 = [];
@@ -166581,6 +173144,12 @@ function normalizeProviderResponse(value, timezone) {
     const rawReminders = Array.isArray(source.reminderMinutes) ? source.reminderMinutes : Array.isArray(source.reminders) ? source.reminders : typeof source.reminderMinutes === "number" ? [source.reminderMinutes] : [];
     const reminderMinutes = rawReminders.map(Number).filter((value2) => [0, 5, 15, 30, 60, 1440].includes(value2));
     const confidenceValue = Number(source.confidence);
+    const rawSlots = Array.isArray(source.courseSlots) ? source.courseSlots : Array.isArray(source.timetableSlots) ? source.timetableSlots : [];
+    const normalizedSlots = rawSlots.map((slot) => normalizeSlot(slot, timetableContext));
+    const courseSlots = normalizedSlots.map((entry) => entry.slot).filter((slot) => Boolean(slot));
+    const importTarget = source.importTarget === "timetable" || source.target === "timetable" ? "timetable" : "calendar";
+    const timetableIdValue = typeof source.timetableId === "string" && /^[0-9a-f-]{36}$/i.test(source.timetableId) ? source.timetableId : timetableContext?.activeTimetableId ?? null;
+    const periodMatch = source.periodMatch === "exact" || source.periodMatch === "mapped" || source.periodMatch === "uncertain" ? source.periodMatch : normalizedSlots.some((entry) => entry.mapped) ? "mapped" : importTarget === "timetable" && courseSlots.length === 0 ? "uncertain" : "exact";
     const candidate = {
       kind: kindFrom(source.kind),
       title,
@@ -166597,7 +173166,13 @@ function normalizeProviderResponse(value, timezone) {
       suggestedTagNames: Array.isArray(source.suggestedTagNames) ? source.suggestedTagNames.map(String) : Array.isArray(source.tags) ? source.tags.map(String) : [],
       confidence: Number.isFinite(confidenceValue) ? confidenceValue > 1 ? Math.min(1, confidenceValue / 100) : confidenceValue : 0.5,
       evidence: String(source.evidence ?? source.sourceExcerpt ?? ""),
-      warnings
+      warnings,
+      importTarget,
+      timetableId: timetableIdValue,
+      courseStartDate: typeof source.courseStartDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(source.courseStartDate) ? source.courseStartDate : null,
+      courseEndDate: typeof source.courseEndDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(source.courseEndDate) ? source.courseEndDate : null,
+      courseSlots,
+      periodMatch
     };
     const parsed = aiDraftSchema.safeParse(candidate);
     if (parsed.success) items2.push(parsed.data);
@@ -166610,11 +173185,11 @@ async function extractScheduleDrafts(input2) {
   const tagRows = await db.select({ name: tags.name }).from(tags).where(eq(tags.workspaceId, input2.workspaceId));
   const model = input2.images.length > 0 ? config3.AI_VISION_MODEL : config3.AI_TEXT_MODEL;
   const messages = [
-    { role: "system", content: systemPrompt(input2.timezone, (/* @__PURE__ */ new Date()).toISOString(), settings?.semesterStartDate ?? null, tagRows.map((row) => row.name)) },
+    { role: "system", content: systemPrompt(input2.timezone, (/* @__PURE__ */ new Date()).toISOString(), settings?.semesterStartDate ?? null, tagRows.map((row) => row.name), input2.timetableContext) },
     { role: "user", content: userPrompt(input2.text, input2.images) }
   ];
   const endpoint = `${config3.AI_BASE_URL.replace(/\/$/, "")}/chat/completions`;
-  const body = JSON.stringify({ model, messages, temperature: 0.1, max_tokens: 1024 });
+  const body = JSON.stringify({ model, messages, temperature: 0.1, max_tokens: 2048 });
   const fetcher = input2.fetcher ?? fetch;
   let response = null;
   let lastError = null;
@@ -166642,7 +173217,7 @@ async function extractScheduleDrafts(input2) {
   const rawContent = payload.choices?.[0]?.message?.content;
   const content = typeof rawContent === "string" ? rawContent : Array.isArray(rawContent) ? rawContent.map((part) => part.text ?? "").join("") : "";
   if (!content) throw new AiError("AI_INVALID_RESPONSE", "AI \u6CA1\u6709\u8FD4\u56DE\u5185\u5BB9", 502);
-  const parsed = normalizeProviderResponse(parseJsonContent(content), input2.timezone);
+  const parsed = normalizeProviderResponse(parseJsonContent(content), input2.timezone, input2.timetableContext);
   if (parsed.items.length === 0) throw new AiError("AI_INVALID_RESPONSE", "AI \u6CA1\u6709\u8FD4\u56DE\u53EF\u5BFC\u5165\u7684\u65E5\u7A0B\uFF0C\u8BF7\u6362\u4E00\u79CD\u63CF\u8FF0\u91CD\u8BD5", 502);
   return { drafts: parsed.items, transcript: parsed.transcript, model, provider: config3.AI_PROVIDER };
 }
@@ -166653,7 +173228,8 @@ aiRoute.use("*", requireAuth);
 var s3 = new import_client_s3.S3Client({ region: config3.S3_REGION, endpoint: config3.S3_ENDPOINT, forcePathStyle: true, credentials: { accessKeyId: config3.S3_ACCESS_KEY, secretAccessKey: config3.S3_SECRET_KEY } });
 var allowedImageTypes = /* @__PURE__ */ new Set(["image/jpeg", "image/png", "image/webp"]);
 var directUploadSchema = external_exports.object({ uploadToken: external_exports.string().min(1), fileName: external_exports.string().min(1).max(500), mimeType: external_exports.string(), size: external_exports.number().int().positive() });
-var directExtractSchema = external_exports.object({ text: external_exports.string().max(2e4).default(""), timezone: external_exports.string().min(1).max(100).default(config3.DEFAULT_TIMEZONE), images: external_exports.array(directUploadSchema).max(config3.AI_MAX_IMAGES).default([]) });
+var timetableContextSchema = external_exports.object({ activeTimetableId: external_exports.string().uuid().nullable().default(null), timetables: external_exports.array(external_exports.object({ id: external_exports.string().uuid(), name: external_exports.string().min(1).max(30), semesterStartDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null), periods: external_exports.array(external_exports.object({ name: external_exports.string(), startTime: external_exports.string(), endTime: external_exports.string() })).max(30).default([]) })).max(20).default([]) });
+var directExtractSchema = external_exports.object({ text: external_exports.string().max(2e4).default(""), timezone: external_exports.string().min(1).max(100).default(config3.DEFAULT_TIMEZONE), images: external_exports.array(directUploadSchema).max(config3.AI_MAX_IMAGES).default([]), timetableContext: timetableContextSchema.optional() });
 function uploadToken(payload) {
   const encoded = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const signature = (0, import_node_crypto9.createHmac)("sha256", config3.BETTER_AUTH_SECRET).update(encoded).digest("base64url");
@@ -166668,7 +173244,7 @@ function verifyUploadToken(token, workspaceId) {
   if (payload.workspaceId !== workspaceId) throw new Error("\u56FE\u7247\u4E0A\u4F20\u51ED\u8BC1\u65E0\u6548");
   return payload;
 }
-aiRoute.get("/status", async (c5) => c5.json(await getAiStatus(c5.get("auth").workspaceId)));
+aiRoute.get("/status", async (c5) => c5.json(await getAiStatus()));
 aiRoute.post("/uploads/init", async (c5) => {
   const workspaceId = c5.get("auth").workspaceId;
   const input2 = external_exports.object({ fileName: external_exports.string().min(1).max(500), mimeType: external_exports.string(), size: external_exports.number().int().positive() }).parse(await c5.req.json());
@@ -166682,6 +173258,7 @@ aiRoute.post("/extract", async (c5) => {
   const workspaceId = c5.get("auth").workspaceId;
   let text2 = "";
   let timezone = config3.DEFAULT_TIMEZONE;
+  let timetableContext;
   const images = [];
   const cleanup = [];
   const contentType = c5.req.header("content-type") ?? "";
@@ -166690,6 +173267,7 @@ aiRoute.post("/extract", async (c5) => {
       const body = directExtractSchema.parse(await c5.req.json());
       text2 = body.text.trim();
       timezone = body.timezone;
+      timetableContext = body.timetableContext;
       for (const item of body.images) {
         const token = verifyUploadToken(item.uploadToken, workspaceId);
         if (token.size !== item.size || token.mimeType !== item.mimeType) throw new Error("\u56FE\u7247\u5143\u6570\u636E\u4E0D\u5339\u914D");
@@ -166707,6 +173285,11 @@ aiRoute.post("/extract", async (c5) => {
       const rawTimezone = String(form.get("timezone") ?? config3.DEFAULT_TIMEZONE);
       const timezoneCheck = external_exports.string().min(1).max(100).safeParse(rawTimezone);
       timezone = timezoneCheck.success ? timezoneCheck.data : config3.DEFAULT_TIMEZONE;
+      const rawTimetableContext = form.get("timetableContext");
+      if (typeof rawTimetableContext === "string" && rawTimetableContext.trim()) {
+        const parsedContext = timetableContextSchema.safeParse(JSON.parse(rawTimetableContext));
+        if (parsedContext.success) timetableContext = parsedContext.data;
+      }
       const files = form.getAll("images").filter((value) => value instanceof File);
       if (files.length > config3.AI_MAX_IMAGES) return c5.json({ error: "TOO_MANY_IMAGES", message: `\u6700\u591A\u4E0A\u4F20 ${config3.AI_MAX_IMAGES} \u5F20\u56FE\u7247` }, 413);
       for (const file2 of files) {
@@ -166718,13 +173301,11 @@ aiRoute.post("/extract", async (c5) => {
     if (text2.length > 2e4) return c5.json({ error: "TEXT_TOO_LONG", message: "\u6587\u5B57\u6700\u591A 20000 \u5B57" }, 413);
     if (!text2 && images.length === 0) return c5.json({ error: "EMPTY_INPUT", message: "\u8BF7\u8F93\u5165\u6587\u5B57\u6216\u9009\u62E9\u56FE\u7247" }, 400);
     if (!aiConfigured()) return c5.json({ error: "AI_NOT_CONFIGURED", message: "AI \u5C1A\u672A\u914D\u7F6E\uFF0C\u8BF7\u5148\u8BBE\u7F6E AI_API_KEY \u5E76\u542F\u7528 AI_ENABLED" }, 503);
-    let reservedUsage;
     try {
-      reservedUsage = await reserveAiUsage(workspaceId);
-      const result = await extractScheduleDrafts({ workspaceId, text: text2, images, timezone });
-      return c5.json({ ...result, usage: reservedUsage });
+      const result = await extractScheduleDrafts({ workspaceId, text: text2, images, timezone, timetableContext });
+      return c5.json(result);
     } catch (error64) {
-      if (error64 instanceof AiError) return c5.json({ error: error64.code, message: error64.message, usage: error64.usage ?? reservedUsage }, error64.status);
+      if (error64 instanceof AiError) return c5.json({ error: error64.code, message: error64.message }, error64.status);
       return c5.json({ error: "AI_FAILED", message: error64 instanceof Error ? error64.message : "AI \u63D0\u53D6\u5931\u8D25" }, 500);
     }
   } catch (error64) {
@@ -166999,7 +173580,7 @@ async function sendTestPush(workspaceId) {
   return { sent, failed, total: subscriptions.length };
 }
 async function runReminderTick() {
-  const now2 = /* @__PURE__ */ new Date();
+  const now3 = /* @__PURE__ */ new Date();
   const values = await loadExpandedItems();
   const workspaceIds = [...new Set(values.map((item) => item.workspaceId))];
   const semesterRows = workspaceIds.length > 0 ? await db2.select().from(appSettings).where(inArray(appSettings.workspaceId, workspaceIds)) : [];
@@ -167015,8 +173596,8 @@ async function runReminderTick() {
     if (rules.length === 0) continue;
     const occurrences = expandItems(
       [item],
-      new Date(now2.getTime() - 864e5),
-      new Date(now2.getTime() + 1728e5),
+      new Date(now3.getTime() - 864e5),
+      new Date(now3.getTime() + 1728e5),
       semesterByWorkspace.get(item.workspaceId) ?? null
     );
     if (occurrences.length === 0 && item.dueAt)
@@ -167034,7 +173615,7 @@ async function runReminderTick() {
     for (const occurrence of occurrences)
       for (const rule of rules) {
         const scheduledAt = rule.trigger === "before_start" ? new Date(occurrence.start.getTime() - rule.offsetMinutes * 6e4) : rule.trigger === "at_start" ? occurrence.start : occurrence.end;
-        if (scheduledAt < new Date(now2.getTime() - 864e5) || scheduledAt > new Date(now2.getTime() + 864e5))
+        if (scheduledAt < new Date(now3.getTime() - 864e5) || scheduledAt > new Date(now3.getTime() + 864e5))
           continue;
         const inserted = await db2.insert(deliveries).values({
           workspaceId: item.workspaceId,
@@ -167053,9 +173634,9 @@ async function runReminderTick() {
       or(eq(deliveries.status, "pending"), eq(deliveries.status, "failed")),
       or(
         isNull(deliveries.nextAttemptAt),
-        lte(deliveries.nextAttemptAt, now2)
+        lte(deliveries.nextAttemptAt, now3)
       ),
-      lte(deliveries.scheduledAt, now2)
+      lte(deliveries.scheduledAt, now3)
     )
   ).limit(100);
   let delivered = 0;
@@ -167069,19 +173650,19 @@ async function runReminderTick() {
       delivery.id,
       delivery.channel.split(","),
       item.title,
-      item.startAt ?? now2,
+      item.startAt ?? now3,
       item.location
     );
-    const wentMissed = now2.getTime() - delivery.scheduledAt.getTime() > 6e5;
+    const wentMissed = now3.getTime() - delivery.scheduledAt.getTime() > 6e5;
     await db2.update(deliveries).set({
       status: result.delivered ? wentMissed ? "missed" : "delivered" : "failed",
-      deliveredAt: result.delivered ? now2 : null,
+      deliveredAt: result.delivered ? now3 : null,
       attempt: delivery.attempt + 1,
       lastError: result.error ?? null,
       nextAttemptAt: result.delivered ? null : new Date(
-        now2.getTime() + Math.min(60, 2 ** delivery.attempt) * 6e4
+        now3.getTime() + Math.min(60, 2 ** delivery.attempt) * 6e4
       ),
-      updatedAt: now2
+      updatedAt: now3
     }).where(eq(deliveries.id, delivery.id));
     if (result.delivered) {
       delivered += 1;
@@ -167092,7 +173673,7 @@ async function runReminderTick() {
     and(
       eq(deliveries.status, "delivered"),
       isNull(deliveries.acknowledgedAt),
-      lte(deliveries.deliveredAt, new Date(now2.getTime() - 3e5))
+      lte(deliveries.deliveredAt, new Date(now3.getTime() - 3e5))
     )
   ).limit(100);
   for (const delivery of repeated) {
@@ -167102,15 +173683,15 @@ async function runReminderTick() {
     const repeat = rule?.repeatEveryMinutes ?? 5;
     if (repeat <= 0) continue;
     const eventEnd = item.endAt ?? item.startAt;
-    const eventTime = eventEnd ? new Date(eventEnd).getTime() : now2.getTime();
-    const hardStop = item.startAt ? Math.min(new Date(item.startAt).getTime() + 864e5, eventTime) : now2.getTime();
-    if (!delivery.deliveredAt || delivery.deliveredAt.getTime() + repeat * 6e4 > now2.getTime() || now2.getTime() > hardStop)
+    const eventTime = eventEnd ? new Date(eventEnd).getTime() : now3.getTime();
+    const hardStop = item.startAt ? Math.min(new Date(item.startAt).getTime() + 864e5, eventTime) : now3.getTime();
+    if (!delivery.deliveredAt || delivery.deliveredAt.getTime() + repeat * 6e4 > now3.getTime() || now3.getTime() > hardStop)
       continue;
     await db2.update(deliveries).set({
       status: "pending",
-      scheduledAt: now2,
+      scheduledAt: now3,
       deliveredAt: null,
-      updatedAt: now2
+      updatedAt: now3
     }).where(eq(deliveries.id, delivery.id));
   }
   return { generated, delivered, missed };
@@ -167121,8 +173702,8 @@ function searchText(value) {
   return [value.title, value.description, value.location].filter(Boolean).join(" ").normalize("NFKC").toLowerCase();
 }
 async function refreshDueSubscriptions() {
-  const now2 = /* @__PURE__ */ new Date();
-  const subscriptions = (await db2.select().from(externalSubscriptions).where(eq(externalSubscriptions.enabled, true))).filter((subscription) => !subscription.lastFetchedAt || now2.getTime() - subscription.lastFetchedAt.getTime() >= subscription.refreshMinutes * 6e4);
+  const now3 = /* @__PURE__ */ new Date();
+  const subscriptions = (await db2.select().from(externalSubscriptions).where(eq(externalSubscriptions.enabled, true))).filter((subscription) => !subscription.lastFetchedAt || now3.getTime() - subscription.lastFetchedAt.getTime() >= subscription.refreshMinutes * 6e4);
   let refreshed = 0;
   for (const subscription of subscriptions) {
     try {
@@ -167135,7 +173716,7 @@ async function refreshDueSubscriptions() {
       if (!calendarId) continue;
       const response = await fetch(subscription.url, { headers: { ...subscription.etag ? { "If-None-Match": subscription.etag } : {}, ...subscription.lastModified ? { "If-Modified-Since": subscription.lastModified } : {} } });
       if (response.status === 304) {
-        await db2.update(externalSubscriptions).set({ lastFetchedAt: now2, lastError: null }).where(eq(externalSubscriptions.id, subscription.id));
+        await db2.update(externalSubscriptions).set({ lastFetchedAt: now3, lastError: null }).where(eq(externalSubscriptions.id, subscription.id));
         continue;
       }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -167161,10 +173742,10 @@ async function refreshDueSubscriptions() {
           searchText: searchText(valid)
         });
       }
-      await db2.update(externalSubscriptions).set({ etag: response.headers.get("etag"), lastModified: response.headers.get("last-modified"), lastFetchedAt: now2, lastError: null, updatedAt: now2 }).where(eq(externalSubscriptions.id, subscription.id));
+      await db2.update(externalSubscriptions).set({ etag: response.headers.get("etag"), lastModified: response.headers.get("last-modified"), lastFetchedAt: now3, lastError: null, updatedAt: now3 }).where(eq(externalSubscriptions.id, subscription.id));
       refreshed += 1;
     } catch (error64) {
-      await db2.update(externalSubscriptions).set({ lastFetchedAt: now2, lastError: error64 instanceof Error ? error64.message : "\u5237\u65B0\u5931\u8D25", updatedAt: now2 }).where(eq(externalSubscriptions.id, subscription.id));
+      await db2.update(externalSubscriptions).set({ lastFetchedAt: now3, lastError: error64 instanceof Error ? error64.message : "\u5237\u65B0\u5931\u8D25", updatedAt: now3 }).where(eq(externalSubscriptions.id, subscription.id));
     }
   }
   return refreshed;
@@ -167219,10 +173800,10 @@ function passwordMatches(value) {
   return expected.length > 0 && expected.length === actual.length && (0, import_node_crypto10.timingSafeEqual)(expected, actual);
 }
 function rateLimited(key) {
-  const now2 = Date.now();
+  const now3 = Date.now();
   const bucket = attempts.get(key);
-  if (!bucket || bucket.resetAt <= now2) {
-    attempts.set(key, { count: 1, resetAt: now2 + 10 * 6e4 });
+  if (!bucket || bucket.resetAt <= now3) {
+    attempts.set(key, { count: 1, resetAt: now3 + 10 * 6e4 });
     return false;
   }
   bucket.count += 1;
@@ -167268,17 +173849,127 @@ demoRoute.post("/leave", requireAuth, async (c5) => {
 // apps/api/src/routes/reviews.ts
 init_zod();
 
+// apps/api/src/services/timetables.ts
+var MAX_TIMETABLES = 20;
+function toTimetable(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    sortOrder: row.sortOrder,
+    semesterStartDate: row.semesterStartDate ?? null
+  };
+}
+async function seedPeriods(timetableId, workspaceId) {
+  const existing = await db.select({ id: schedulePeriods.id }).from(schedulePeriods).where(eq(schedulePeriods.timetableId, timetableId)).limit(1);
+  if (existing.length > 0) return;
+  await db.insert(schedulePeriods).values(DEFAULT_SCHEDULE_PERIODS.map((period) => ({
+    workspaceId,
+    timetableId,
+    name: period.name,
+    startTime: period.startTime,
+    endTime: period.endTime,
+    sortOrder: period.sortOrder
+  })));
+}
+async function ensureDefaultTimetable(workspaceId) {
+  let [existing] = await db.select().from(timetables).where(eq(timetables.workspaceId, workspaceId)).orderBy(asc(timetables.sortOrder)).limit(1);
+  if (!existing) {
+    const [settings] = await db.select().from(appSettings).where(eq(appSettings.workspaceId, workspaceId)).limit(1);
+    const [created] = await db.insert(timetables).values({
+      workspaceId,
+      name: "\u8BFE\u88681",
+      sortOrder: 0,
+      semesterStartDate: settings?.semesterStartDate ?? null
+    }).onConflictDoNothing().returning();
+    existing = created ?? (await db.select().from(timetables).where(eq(timetables.workspaceId, workspaceId)).orderBy(asc(timetables.sortOrder)).limit(1))[0];
+  }
+  if (!existing) throw new Error("\u65E0\u6CD5\u521B\u5EFA\u9ED8\u8BA4\u8BFE\u8868");
+  await Promise.all([
+    db.update(schedulePeriods).set({ timetableId: existing.id }).where(and(eq(schedulePeriods.workspaceId, workspaceId), isNull(schedulePeriods.timetableId))),
+    db.update(items).set({ timetableId: existing.id }).where(and(eq(items.workspaceId, workspaceId), eq(items.showInTimetable, true), isNull(items.timetableId)))
+  ]);
+  await seedPeriods(existing.id, workspaceId);
+  return toTimetable(existing);
+}
+async function listTimetables(workspaceId) {
+  await ensureDefaultTimetable(workspaceId);
+  const rows = await db.select().from(timetables).where(eq(timetables.workspaceId, workspaceId)).orderBy(asc(timetables.sortOrder), asc(timetables.createdAt));
+  return rows.map(toTimetable);
+}
+async function ownedTimetable(workspaceId, timetableId) {
+  const [row] = await db.select().from(timetables).where(and(eq(timetables.id, timetableId), eq(timetables.workspaceId, workspaceId))).limit(1);
+  return row ?? null;
+}
+async function createTimetable(workspaceId, input2) {
+  const existing = await db.select({ sortOrder: timetables.sortOrder }).from(timetables).where(eq(timetables.workspaceId, workspaceId));
+  if (existing.length >= MAX_TIMETABLES) throw new Error(`\u6700\u591A\u53EA\u80FD\u521B\u5EFA ${MAX_TIMETABLES} \u4E2A\u8BFE\u8868`);
+  const sortOrder = existing.reduce((max, row) => Math.max(max, row.sortOrder), -1) + 1;
+  const [created] = await db.insert(timetables).values({ workspaceId, name: input2.name.trim(), sortOrder, semesterStartDate: input2.semesterStartDate }).returning();
+  if (!created) throw new Error("\u521B\u5EFA\u8BFE\u8868\u5931\u8D25");
+  await seedPeriods(created.id, workspaceId);
+  return toTimetable(created);
+}
+async function updateTimetable(workspaceId, timetableId, input2) {
+  const existing = await ownedTimetable(workspaceId, timetableId);
+  if (!existing) return null;
+  const [updated] = await db.update(timetables).set({
+    ...input2.name !== void 0 ? { name: input2.name.trim() } : {},
+    ...input2.semesterStartDate !== void 0 ? { semesterStartDate: input2.semesterStartDate } : {},
+    ...input2.sortOrder !== void 0 ? { sortOrder: input2.sortOrder } : {},
+    updatedAt: /* @__PURE__ */ new Date()
+  }).where(and(eq(timetables.id, timetableId), eq(timetables.workspaceId, workspaceId))).returning();
+  return updated ? toTimetable(updated) : null;
+}
+async function deleteTimetable(workspaceId, timetableId) {
+  const existing = await ownedTimetable(workspaceId, timetableId);
+  if (!existing) return { deleted: false, courseCount: 0 };
+  const [countRow] = await db.select({ count: sql`count(*)::int` }).from(items).where(and(eq(items.workspaceId, workspaceId), eq(items.timetableId, timetableId)));
+  const courseCount = countRow?.count ?? 0;
+  if (courseCount > 0) return { deleted: false, courseCount };
+  await db.delete(timetables).where(and(eq(timetables.id, timetableId), eq(timetables.workspaceId, workspaceId)));
+  return { deleted: true, courseCount: 0 };
+}
+async function listTimetablePeriods(workspaceId, timetableId) {
+  const existing = await ownedTimetable(workspaceId, timetableId);
+  if (!existing) return null;
+  await seedPeriods(timetableId, workspaceId);
+  const rows = await db.select().from(schedulePeriods).where(eq(schedulePeriods.timetableId, timetableId)).orderBy(asc(schedulePeriods.sortOrder));
+  return rows.map((row) => ({ id: row.id, name: row.name, startTime: row.startTime, endTime: row.endTime, sortOrder: row.sortOrder }));
+}
+async function replaceTimetablePeriods(workspaceId, timetableId, body) {
+  const existing = await ownedTimetable(workspaceId, timetableId);
+  if (!existing) return null;
+  const input2 = schedulePeriodListSchema.parse(body);
+  const rows = await db.transaction(async (tx) => {
+    await tx.delete(schedulePeriods).where(and(eq(schedulePeriods.workspaceId, workspaceId), eq(schedulePeriods.timetableId, timetableId)));
+    return tx.insert(schedulePeriods).values(input2.periods.map((period) => ({
+      workspaceId,
+      timetableId,
+      name: period.name,
+      startTime: period.startTime,
+      endTime: period.endTime,
+      sortOrder: period.sortOrder
+    }))).returning();
+  });
+  return rows.sort((left, right) => left.sortOrder - right.sortOrder).map((row) => ({ id: row.id, name: row.name, startTime: row.startTime, endTime: row.endTime, sortOrder: row.sortOrder }));
+}
+async function timetableSemesterStarts(workspaceId) {
+  await ensureDefaultTimetable(workspaceId);
+  const rows = await db.select().from(timetables).where(eq(timetables.workspaceId, workspaceId));
+  return new Map(rows.map((row) => [row.id, row.semesterStartDate ? /* @__PURE__ */ new Date(`${row.semesterStartDate}T12:00:00`) : null]));
+}
+
 // apps/api/src/services/resolution.ts
 function overlaps(start, end, otherStart, otherEnd) {
   return start < otherEnd && end > otherStart;
 }
-function occurrenceFor(item, occurrenceKey, semesterStartDate) {
+function occurrenceFor(item, occurrenceKey, semesterStartDate, semesterStarts) {
   const start = item.startAt ? new Date(item.startAt) : item.dueAt ? new Date(item.dueAt) : /* @__PURE__ */ new Date();
   const end = item.endAt ? new Date(item.endAt) : new Date(start.getTime() + 36e5);
   if (!item.recurrence || !occurrenceKey) return { start, end, key: item.id };
   const rangeStart = new Date(start.getTime() - 366 * 864e5);
   const rangeEnd = new Date(start.getTime() + 366 * 864e5);
-  return expandItems([item], rangeStart, rangeEnd, semesterStartDate).find((value) => value.occurrenceKey === occurrenceKey) ?? { start, end, key: occurrenceKey };
+  return expandItems([item], rangeStart, rangeEnd, semesterStartDate, semesterStarts).find((value) => value.occurrenceKey === occurrenceKey) ?? { start, end, key: occurrenceKey };
 }
 function suggestionValue(item, start, end) {
   if (item.startAt && item.endAt) return { startAt: start.toISOString(), endAt: end.toISOString(), dueAt: null, label: "\u540C\u65F6\u95F4\u6BB5" };
@@ -167295,10 +173986,11 @@ async function getRolloverSuggestions(workspaceId, itemId, occurrenceKey) {
   if (!item) return [];
   const [settings] = await db.select().from(appSettings).where(eq(appSettings.workspaceId, workspaceId)).limit(1);
   const semesterStartDate = settings?.semesterStartDate ? /* @__PURE__ */ new Date(`${settings.semesterStartDate}T12:00:00`) : null;
-  const occurrence = occurrenceFor(item, occurrenceKey, semesterStartDate);
+  const semesterStarts = await timetableSemesterStarts(workspaceId);
+  const occurrence = occurrenceFor(item, occurrenceKey, semesterStartDate, semesterStarts);
   const duration3 = Math.max(30 * 6e4, occurrence.end.getTime() - occurrence.start.getTime());
   const all = await loadItems(db, workspaceId);
-  const others = expandItems(all.filter((value) => value.id !== item.id), new Date(occurrence.start.getTime() - 366 * 864e5), new Date(occurrence.start.getTime() + 14 * 864e5), semesterStartDate);
+  const others = expandItems(all.filter((value) => value.id !== item.id), new Date(occurrence.start.getTime() - 366 * 864e5), new Date(occurrence.start.getTime() + 14 * 864e5), semesterStartDate, semesterStarts);
   const suggestions = [];
   const add = (start) => {
     const end = new Date(start.getTime() + duration3);
@@ -167307,14 +173999,14 @@ async function getRolloverSuggestions(workspaceId, itemId, occurrenceKey) {
       if (!suggestions.some((entry) => entry.startAt === value.startAt && entry.dueAt === value.dueAt)) suggestions.push(value);
     }
   };
-  for (let offset = 1; offset <= 7 && suggestions.length < 3; offset += 1) {
+  for (let offset2 = 1; offset2 <= 7 && suggestions.length < 3; offset2 += 1) {
     const start = new Date(occurrence.start);
-    start.setDate(start.getDate() + offset);
+    start.setDate(start.getDate() + offset2);
     add(start);
   }
-  for (let offset = 1; offset <= 7 && suggestions.length < 3; offset += 1) {
+  for (let offset2 = 1; offset2 <= 7 && suggestions.length < 3; offset2 += 1) {
     const day = new Date(occurrence.start);
-    day.setDate(day.getDate() + offset);
+    day.setDate(day.getDate() + offset2);
     day.setHours(8, 0, 0, 0);
     const limit = new Date(day);
     limit.setHours(22, 0, 0, 0);
@@ -167410,6 +174102,7 @@ function itemValues(input2, workspaceId) {
     completedAt: input2.completedAt ? new Date(input2.completedAt) : null,
     autoRollover: input2.autoRollover,
     showInTimetable: input2.showInTimetable,
+    timetableId: input2.timetableId ?? null,
     courseStartDate: input2.courseStartDate ?? null,
     courseEndDate: input2.courseEndDate ?? null,
     courseSlots: input2.courseSlots,
@@ -167420,7 +174113,7 @@ function itemValues(input2, workspaceId) {
   };
 }
 function candidateItem(input2, workspaceId, id = (0, import_node_crypto11.randomUUID)()) {
-  const now2 = (/* @__PURE__ */ new Date()).toISOString();
+  const now3 = (/* @__PURE__ */ new Date()).toISOString();
   return {
     ...input2,
     id,
@@ -167433,6 +174126,7 @@ function candidateItem(input2, workspaceId, id = (0, import_node_crypto11.random
     completedAt: input2.completedAt ?? null,
     autoRollover: input2.autoRollover,
     showInTimetable: input2.showInTimetable,
+    timetableId: input2.timetableId ?? null,
     courseStartDate: input2.courseStartDate ?? null,
     courseEndDate: input2.courseEndDate ?? null,
     recurrence: input2.recurrence ?? null,
@@ -167441,8 +174135,8 @@ function candidateItem(input2, workspaceId, id = (0, import_node_crypto11.random
     timetableColor: input2.timetableColor,
     reminders: input2.reminders,
     version: 0,
-    createdAt: now2,
-    updatedAt: now2,
+    createdAt: now3,
+    updatedAt: now3,
     deletedAt: null
   };
 }
@@ -167456,17 +174150,20 @@ async function detectConflicts(workspaceId, candidate) {
     start.getTime() + Math.max(duration3, 864e5) + 366 * 864e5
   );
   const semesterStartDate = await getSemesterStartDate(workspaceId);
+  const semesterStarts = await timetableSemesterStarts(workspaceId);
   const target = expandItems(
     [candidate],
     rangeStart,
     rangeEnd,
-    semesterStartDate
+    semesterStartDate,
+    semesterStarts
   );
   const existing = expandItems(
     all.filter((item) => item.id !== candidate.id),
     rangeStart,
     rangeEnd,
-    semesterStartDate
+    semesterStartDate,
+    semesterStarts
   );
   const seen = /* @__PURE__ */ new Set();
   return target.flatMap(
@@ -167522,7 +174219,8 @@ itemsRoute.get("/occurrences", async (c5) => {
     await loadItems(db, auth2.workspaceId),
     from,
     to,
-    await getSemesterStartDate(auth2.workspaceId)
+    await getSemesterStartDate(auth2.workspaceId),
+    await timetableSemesterStarts(auth2.workspaceId)
   ).map((occurrence) => ({
     id: occurrence.id,
     occurrenceKey: occurrence.occurrenceKey,
@@ -167573,24 +174271,25 @@ var bulkActionSchema = external_exports.object({
       message: "\u8BF7\u9009\u62E9\u987A\u5EF6\u5929\u6570"
     });
 });
-function currentOccurrenceKey(item, semesterStartDate) {
+function currentOccurrenceKey(item, semesterStartDate, semesterStarts) {
   if (!item.recurrence) return null;
-  const now2 = /* @__PURE__ */ new Date();
-  const anchor2 = item.startAt ? new Date(item.startAt) : item.dueAt ? new Date(item.dueAt) : now2;
+  const now3 = /* @__PURE__ */ new Date();
+  const anchor2 = item.startAt ? new Date(item.startAt) : item.dueAt ? new Date(item.dueAt) : now3;
   const rangeStart = new Date(
-    Math.min(now2.getTime(), anchor2.getTime()) - 864e5
+    Math.min(now3.getTime(), anchor2.getTime()) - 864e5
   );
   const rangeEnd = new Date(
-    Math.max(now2.getTime(), anchor2.getTime()) + 31 * 864e5
+    Math.max(now3.getTime(), anchor2.getTime()) + 31 * 864e5
   );
   const occurrences = expandItems(
     [item],
     rangeStart,
     rangeEnd,
-    semesterStartDate
+    semesterStartDate,
+    semesterStarts
   ).sort((left, right) => left.start.getTime() - right.start.getTime());
   return occurrences.find(
-    (occurrence) => occurrence.start.getTime() >= now2.getTime() - 864e5
+    (occurrence) => occurrence.start.getTime() >= now3.getTime() - 864e5
   )?.occurrenceKey ?? occurrences[0]?.occurrenceKey ?? null;
 }
 function shiftedDate(value, days) {
@@ -167621,7 +174320,7 @@ itemsRoute.post("/bulk", async (c5) => {
         if (input2.action === "status") {
           let occurrenceKey = input2.occurrenceKey ?? null;
           if (item.recurrence && !occurrenceKey)
-            occurrenceKey = currentOccurrenceKey(item, semesterStartDate);
+            occurrenceKey = currentOccurrenceKey(item, semesterStartDate, await timetableSemesterStarts(auth2.workspaceId));
           if (item.recurrence && !occurrenceKey) {
             skipped.push({ id, reason: "NO_CURRENT_OCCURRENCE" });
             continue;
@@ -168164,6 +174863,7 @@ function itemDbValues(input2, workspaceId) {
     completedAt: input2.completedAt ? new Date(input2.completedAt) : null,
     autoRollover: input2.autoRollover,
     showInTimetable: input2.showInTimetable,
+    timetableId: input2.timetableId ?? null,
     courseStartDate: input2.courseStartDate ?? null,
     courseEndDate: input2.courseEndDate ?? null,
     courseSlots: input2.courseSlots,
@@ -168295,8 +174995,8 @@ remindersRoute.get("/deliveries", async (c5) => {
 });
 remindersRoute.post("/deliveries/:id/ack", async (c5) => {
   const auth2 = c5.get("auth");
-  const now2 = /* @__PURE__ */ new Date();
-  const [updated] = await db.update(deliveries).set({ status: "acknowledged", acknowledgedAt: now2, updatedAt: now2 }).where(
+  const now3 = /* @__PURE__ */ new Date();
+  const [updated] = await db.update(deliveries).set({ status: "acknowledged", acknowledgedAt: now3, updatedAt: now3 }).where(
     and(
       eq(deliveries.id, c5.req.param("id")),
       eq(deliveries.workspaceId, auth2.workspaceId)
@@ -168319,13 +175019,13 @@ remindersRoute.post("/deliveries/:id/snooze", async (c5) => {
     ])
   }).parse(await c5.req.json());
   const auth2 = c5.get("auth");
-  const now2 = /* @__PURE__ */ new Date();
-  const scheduledAt = new Date(now2.getTime() + input2.minutes * 6e4);
+  const now3 = /* @__PURE__ */ new Date();
+  const scheduledAt = new Date(now3.getTime() + input2.minutes * 6e4);
   const [updated] = await db.update(deliveries).set({
     status: "pending",
     scheduledAt,
     snoozedUntil: scheduledAt,
-    updatedAt: now2,
+    updatedAt: now3,
     nextAttemptAt: null,
     deliveredAt: null,
     lastError: null,
@@ -168385,21 +175085,46 @@ remindersRoute.post("/test-push", async (c5) => {
 // apps/api/src/routes/schedule-periods.ts
 var schedulePeriodsRoute = new Hono2();
 schedulePeriodsRoute.use("*", requireAuth);
-async function ensurePeriods(workspaceId) {
-  const existing = await db.select().from(schedulePeriods).where(eq(schedulePeriods.workspaceId, workspaceId)).orderBy(schedulePeriods.sortOrder);
-  if (existing.length > 0) return existing;
-  const created = await db.insert(schedulePeriods).values(DEFAULT_SCHEDULE_PERIODS.map((period) => ({ ...period, workspaceId }))).returning();
-  return created.sort((left, right) => left.sortOrder - right.sortOrder);
-}
-schedulePeriodsRoute.get("/", async (c5) => c5.json({ periods: await ensurePeriods(c5.get("auth").workspaceId) }));
+schedulePeriodsRoute.get("/", async (c5) => {
+  const timetable = await ensureDefaultTimetable(c5.get("auth").workspaceId);
+  return c5.json({ periods: await listTimetablePeriods(c5.get("auth").workspaceId, timetable.id) ?? [] });
+});
 schedulePeriodsRoute.put("/", async (c5) => {
-  const input2 = schedulePeriodListSchema.parse(await c5.req.json());
-  const workspaceId = c5.get("auth").workspaceId;
-  const periods = await db.transaction(async (tx) => {
-    await tx.delete(schedulePeriods).where(eq(schedulePeriods.workspaceId, workspaceId));
-    return tx.insert(schedulePeriods).values(input2.periods.map((period) => ({ workspaceId, name: period.name, startTime: period.startTime, endTime: period.endTime, sortOrder: period.sortOrder }))).returning();
-  });
-  return c5.json({ periods: periods.sort((left, right) => left.sortOrder - right.sortOrder) });
+  const timetable = await ensureDefaultTimetable(c5.get("auth").workspaceId);
+  const periods = await replaceTimetablePeriods(c5.get("auth").workspaceId, timetable.id, await c5.req.json());
+  return c5.json({ periods: periods ?? [] });
+});
+
+// apps/api/src/routes/timetables.ts
+init_zod();
+var timetablesRoute = new Hono2();
+timetablesRoute.use("*", requireAuth);
+var timetableInput = external_exports.object({
+  name: external_exports.string().trim().min(1).max(30),
+  semesterStartDate: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null)
+});
+timetablesRoute.get("/", async (c5) => c5.json({ timetables: await listTimetables(c5.get("auth").workspaceId) }));
+timetablesRoute.post("/", async (c5) => {
+  const input2 = timetableInput.parse(await c5.req.json());
+  return c5.json({ timetable: await createTimetable(c5.get("auth").workspaceId, input2) }, 201);
+});
+timetablesRoute.patch("/:id", async (c5) => {
+  const input2 = timetableInput.partial().extend({ sortOrder: external_exports.number().int().min(0).max(99).optional() }).parse(await c5.req.json());
+  const timetable = await updateTimetable(c5.get("auth").workspaceId, c5.req.param("id"), input2);
+  return timetable ? c5.json({ timetable }) : c5.json({ error: "NOT_FOUND" }, 404);
+});
+timetablesRoute.delete("/:id", async (c5) => {
+  const result = await deleteTimetable(c5.get("auth").workspaceId, c5.req.param("id"));
+  if (!result.deleted && result.courseCount > 0) return c5.json({ error: "TIMETABLE_NOT_EMPTY", courseCount: result.courseCount, message: "\u8BE5\u8BFE\u8868\u5185\u4ECD\u6709\u8BFE\u7A0B\uFF0C\u8BF7\u5148\u79FB\u52A8\u6216\u5220\u9664\u8BFE\u7A0B" }, 409);
+  return result.deleted ? c5.json({ deleted: true }) : c5.json({ error: "NOT_FOUND" }, 404);
+});
+timetablesRoute.get("/:id/periods", async (c5) => {
+  const periods = await listTimetablePeriods(c5.get("auth").workspaceId, c5.req.param("id"));
+  return periods ? c5.json({ periods }) : c5.json({ error: "NOT_FOUND" }, 404);
+});
+timetablesRoute.put("/:id/periods", async (c5) => {
+  const periods = await replaceTimetablePeriods(c5.get("auth").workspaceId, c5.req.param("id"), await c5.req.json());
+  return periods ? c5.json({ periods }) : c5.json({ error: "NOT_FOUND" }, 404);
 });
 
 // apps/api/src/routes/settings.ts
@@ -168599,6 +175324,7 @@ async function importPortable(workspaceId, portable) {
         completedAt: parsed.completedAt ? new Date(parsed.completedAt) : null,
         autoRollover: parsed.autoRollover,
         showInTimetable: parsed.showInTimetable,
+        timetableId: parsed.timetableId ?? null,
         courseStartDate: parsed.courseStartDate ?? null,
         courseEndDate: parsed.courseEndDate ?? null,
         courseSlots: parsed.courseSlots,
@@ -168671,7 +175397,7 @@ async function refreshSubscription(subscriptionId, workspaceId) {
   let imported = 0;
   for (const value of portable) {
     const parsed = itemInputSchema.parse({ ...value, calendarId });
-    const [created] = await db.insert(items).values({ workspaceId, calendarId, kind: parsed.kind, title: parsed.title, description: parsed.description, location: parsed.location, startAt: parsed.startAt ? new Date(parsed.startAt) : null, endAt: parsed.endAt ? new Date(parsed.endAt) : null, dueAt: parsed.dueAt ? new Date(parsed.dueAt) : null, isAllDay: parsed.isAllDay, timezone: parsed.timezone, priority: parsed.priority, status: parsed.status, completedAt: parsed.completedAt ? new Date(parsed.completedAt) : null, autoRollover: parsed.autoRollover, showInTimetable: parsed.showInTimetable, courseStartDate: parsed.courseStartDate ?? null, courseEndDate: parsed.courseEndDate ?? null, courseSlots: parsed.courseSlots, timetableColor: parsed.timetableColor, recurrence: parsed.recurrence ?? null, searchText: searchableText(parsed) }).returning();
+    const [created] = await db.insert(items).values({ workspaceId, calendarId, kind: parsed.kind, title: parsed.title, description: parsed.description, location: parsed.location, startAt: parsed.startAt ? new Date(parsed.startAt) : null, endAt: parsed.endAt ? new Date(parsed.endAt) : null, dueAt: parsed.dueAt ? new Date(parsed.dueAt) : null, isAllDay: parsed.isAllDay, timezone: parsed.timezone, priority: parsed.priority, status: parsed.status, completedAt: parsed.completedAt ? new Date(parsed.completedAt) : null, autoRollover: parsed.autoRollover, showInTimetable: parsed.showInTimetable, timetableId: parsed.timetableId ?? null, courseStartDate: parsed.courseStartDate ?? null, courseEndDate: parsed.courseEndDate ?? null, courseSlots: parsed.courseSlots, timetableColor: parsed.timetableColor, recurrence: parsed.recurrence ?? null, searchText: searchableText(parsed) }).returning();
     if (created) {
       imported += 1;
       await replaceItemTags(db, created.id, parsed.tagIds);
@@ -168769,6 +175495,7 @@ app.route("/api/v1/sync", syncRoute);
 app.route("/api/v1/reminders", remindersRoute);
 app.route("/api/v1/settings", settingsRoute);
 app.route("/api/v1/schedule-periods", schedulePeriodsRoute);
+app.route("/api/v1/timetables", timetablesRoute);
 app.route("/api/v1", attachmentsRoute);
 app.route("/api/v1/exchange", interchangeRoute);
 app.route("/api/v1/subscriptions", subscriptionsRoute);

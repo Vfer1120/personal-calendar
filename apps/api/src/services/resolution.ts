@@ -3,6 +3,7 @@ import { appSettings, deliveries, items, recurrenceExceptions, reminderRules } f
 import { expandItems, type ExpandedItem, type Item } from "@calendar/domain";
 import { db } from "../context";
 import { loadItems, writeChange } from "./items";
+import { timetableSemesterStarts } from "./timetables";
 
 export type ResolutionOutcome = "completed" | "partial" | "postponed" | "cancelled";
 export interface ResolutionInput { itemId: string; occurrenceKey?: string | null; outcome: ResolutionOutcome; startAt?: string | null; endAt?: string | null; dueAt?: string | null; }
@@ -12,13 +13,13 @@ function overlaps(start: Date, end: Date, otherStart: Date, otherEnd: Date): boo
   return start < otherEnd && end > otherStart;
 }
 
-function occurrenceFor(item: ExpandedItem, occurrenceKey?: string | null, semesterStartDate?: Date | null) {
+function occurrenceFor(item: ExpandedItem, occurrenceKey?: string | null, semesterStartDate?: Date | null, semesterStarts?: ReadonlyMap<string, Date | null>) {
   const start = item.startAt ? new Date(item.startAt) : item.dueAt ? new Date(item.dueAt) : new Date();
   const end = item.endAt ? new Date(item.endAt) : new Date(start.getTime() + 3600000);
   if (!item.recurrence || !occurrenceKey) return { start, end, key: item.id };
   const rangeStart = new Date(start.getTime() - 366 * 86400000);
   const rangeEnd = new Date(start.getTime() + 366 * 86400000);
-  return expandItems([item], rangeStart, rangeEnd, semesterStartDate).find((value) => value.occurrenceKey === occurrenceKey) ?? { start, end, key: occurrenceKey };
+  return expandItems([item], rangeStart, rangeEnd, semesterStartDate, semesterStarts).find((value) => value.occurrenceKey === occurrenceKey) ?? { start, end, key: occurrenceKey };
 }
 
 function suggestionValue(item: ExpandedItem, start: Date, end: Date): RolloverSuggestion {
@@ -34,10 +35,11 @@ export async function getRolloverSuggestions(workspaceId: string, itemId: string
   if (!item) return [];
   const [settings] = await db.select().from(appSettings).where(eq(appSettings.workspaceId, workspaceId)).limit(1);
   const semesterStartDate = settings?.semesterStartDate ? new Date(`${settings.semesterStartDate}T12:00:00`) : null;
-  const occurrence = occurrenceFor(item, occurrenceKey, semesterStartDate);
+  const semesterStarts = await timetableSemesterStarts(workspaceId);
+  const occurrence = occurrenceFor(item, occurrenceKey, semesterStartDate, semesterStarts);
   const duration = Math.max(30 * 60000, occurrence.end.getTime() - occurrence.start.getTime());
   const all = await loadItems(db, workspaceId);
-  const others = expandItems(all.filter((value) => value.id !== item.id), new Date(occurrence.start.getTime() - 366 * 86400000), new Date(occurrence.start.getTime() + 14 * 86400000), semesterStartDate);
+  const others = expandItems(all.filter((value) => value.id !== item.id), new Date(occurrence.start.getTime() - 366 * 86400000), new Date(occurrence.start.getTime() + 14 * 86400000), semesterStartDate, semesterStarts);
   const suggestions: RolloverSuggestion[] = [];
   const add = (start: Date) => { const end = new Date(start.getTime() + duration); if (!others.some((value) => overlaps(start, end, value.start, value.end))) { const value = suggestionValue(item, start, end); if (!suggestions.some((entry) => entry.startAt === value.startAt && entry.dueAt === value.dueAt)) suggestions.push(value); } };
   for (let offset = 1; offset <= 7 && suggestions.length < 3; offset += 1) { const start = new Date(occurrence.start); start.setDate(start.getDate() + offset); add(start); }

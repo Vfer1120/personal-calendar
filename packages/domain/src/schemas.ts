@@ -60,6 +60,7 @@ export const itemFieldsSchema = z.object({
   completedAt: z.string().datetime({ offset: true }).nullable().optional(),
   autoRollover: z.boolean().default(false),
   showInTimetable: z.boolean().default(false),
+  timetableId: z.string().uuid().nullable().optional(),
   timetableColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullable().optional(),
   courseStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   courseEndDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),

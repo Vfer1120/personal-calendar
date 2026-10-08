@@ -32,6 +32,7 @@ export function rowToItem(row: ItemRow, tagIds: string[], rules: RuleRow[], exce
     completedAt: row.completedAt?.toISOString() ?? null,
     autoRollover: row.autoRollover,
     showInTimetable: row.showInTimetable,
+    timetableId: row.timetableId,
     courseStartDate: row.courseStartDate,
     courseEndDate: row.courseEndDate,
     courseSlots: row.courseSlots,

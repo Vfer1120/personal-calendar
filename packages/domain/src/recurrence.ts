@@ -2,6 +2,7 @@ import * as rruleImport from "rrule";
 const rruleModule = rruleImport as unknown as { RRule: any; default?: { RRule: any }; rrule?: { RRule: any } };
 const RRule = rruleModule.RRule ?? rruleModule.default?.RRule ?? rruleModule.rrule?.RRule;
 if (!RRule) throw new Error("rrule 模块未提供 RRule");
+import { DateTime } from "luxon";
 import type { Item, ItemInput, RecurrenceException } from "./schemas";
 
 export interface ExpandedOccurrence {
@@ -22,17 +23,22 @@ export interface ExpandedItem extends Item {
 
 const JS_TO_RRULE_WEEKDAY = [RRule.SU, RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA];
 
-function startOfWeekMonday(date: Date): Date {
-  const value = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
-  const day = value.getDay();
-  value.setDate(value.getDate() - (day === 0 ? 6 : day - 1));
-  return value;
+function itemTimezone(item: Pick<Item, "timezone">): string {
+  return item.timezone || "Asia/Shanghai";
 }
 
-function academicWeekNumber(date: Date, semesterStartDate: Date): number {
-  const target = startOfWeekMonday(date);
-  const anchor = startOfWeekMonday(semesterStartDate);
-  return Math.floor((Date.UTC(target.getFullYear(), target.getMonth(), target.getDate()) - Date.UTC(anchor.getFullYear(), anchor.getMonth(), anchor.getDate())) / (7 * 86_400_000)) + 1;
+function mondayDateTime(value: DateTime): DateTime {
+  return value.minus({ days: value.weekday - 1 }).startOf("day");
+}
+
+function academicWeekNumber(dateKey: string, semesterStartDate: Date): number {
+  const target = DateTime.fromISO(dateKey, { zone: "utc" });
+  const anchor = DateTime.fromObject({
+    year: semesterStartDate.getFullYear(),
+    month: semesterStartDate.getMonth() + 1,
+    day: semesterStartDate.getDate()
+  }, { zone: "utc" });
+  return Math.floor(mondayDateTime(target).diff(mondayDateTime(anchor), "days").days / 7) + 1;
 }
 
 function frequencyToRRule(frequency: NonNullable<Item["recurrence"]>["frequency"]): number {
@@ -74,48 +80,65 @@ function defaultDuration(item: ExpandedItem): number {
   return 60 * 60 * 1000;
 }
 
-function localDateKey(date: Date): string { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; }
+function dateTimeAt(dateKey: string, time: string, timezone: string): DateTime {
+  const value = DateTime.fromISO(`${dateKey}T${time}`, { zone: timezone });
+  if (!value.isValid) throw new Error(`无法解析课程时间：${dateKey} ${time} ${timezone}`);
+  return value;
+}
 
-export function expandItemOccurrences(item: ExpandedItem, rangeStart: Date, rangeEnd: Date, semesterStartDate?: Date | null): ExpandedOccurrence[] {
+function itemSemesterStart(item: ExpandedItem, fallback: Date | null | undefined, semesterStarts?: ReadonlyMap<string, Date | null>): Date | null {
+  if (item.timetableId && semesterStarts?.has(item.timetableId)) return semesterStarts.get(item.timetableId) ?? null;
+  return fallback ?? null;
+}
+
+export function expandItemOccurrences(
+  item: ExpandedItem,
+  rangeStart: Date,
+  rangeEnd: Date,
+  semesterStartDate?: Date | null,
+  semesterStartByTimetable?: ReadonlyMap<string, Date | null>
+): ExpandedOccurrence[] {
   if (item.status === "deleted" || item.status === "cancelled" || !item.startAt) return [];
+  const timezone = itemTimezone(item);
+  const activeSemesterStart = itemSemesterStart(item, semesterStartDate, semesterStartByTimetable);
   const baseStart = new Date(item.startAt);
   const duration = defaultDuration(item);
   const exceptionByKey = new Map((item.recurrenceExceptions ?? []).map((exception) => [exception.occurrenceKey, exception]));
 
   if (item.courseSlots.length > 0) {
     const expanded: ExpandedOccurrence[] = [];
-    const cursor = new Date(rangeStart); cursor.setHours(0, 0, 0, 0);
-    const endCursor = new Date(rangeEnd); endCursor.setHours(23, 59, 59, 999);
+    let cursor = DateTime.fromJSDate(rangeStart, { zone: timezone }).startOf("day");
+    const endCursor = DateTime.fromJSDate(rangeEnd, { zone: timezone }).endOf("day");
     while (cursor <= endCursor) {
-      const dateKey = localDateKey(cursor);
-      if (item.courseStartDate && dateKey < item.courseStartDate) { cursor.setDate(cursor.getDate() + 1); continue; }
-      if (item.courseEndDate && dateKey > item.courseEndDate) { cursor.setDate(cursor.getDate() + 1); continue; }
+      const dateKey = cursor.toFormat("yyyy-MM-dd");
+      if (item.courseStartDate && dateKey < item.courseStartDate) { cursor = cursor.plus({ days: 1 }); continue; }
+      if (item.courseEndDate && dateKey > item.courseEndDate) { cursor = cursor.plus({ days: 1 }); continue; }
       for (const slot of item.courseSlots) {
-        if (cursor.getDay() !== slot.weekday) continue;
+        const slotWeekday = slot.weekday === 0 ? 7 : slot.weekday;
+        if (cursor.weekday !== slotWeekday) continue;
         const parity = slot.weekParity ?? "all";
-        if (parity !== "all" && semesterStartDate) {
-          const week = academicWeekNumber(cursor, semesterStartDate);
+        if (parity !== "all" && activeSemesterStart) {
+          const week = academicWeekNumber(dateKey, activeSemesterStart);
           if ((parity === "odd" && week % 2 === 0) || (parity === "even" && week % 2 === 1)) continue;
         }
-        const start = new Date(cursor); const [startHour, startMinute] = slot.startTime.split(":").map(Number);
-        start.setHours(startHour ?? 0, startMinute ?? 0, 0, 0);
-        const end = new Date(cursor); const [endHour, endMinute] = slot.endTime.split(":").map(Number);
-        end.setHours(endHour ?? 0, endMinute ?? 0, 0, 0);
-        if (end <= start) end.setDate(end.getDate() + 1);
-        if (end < rangeStart || start > rangeEnd) continue;
+        const start = dateTimeAt(dateKey, slot.startTime, timezone);
+        let end = dateTimeAt(dateKey, slot.endTime, timezone);
+        if (end <= start) end = end.plus({ days: 1 });
+        if (end.toJSDate() < rangeStart || start.toJSDate() > rangeEnd) continue;
         const slotKey = slot.id ?? `${slot.weekday}-${slot.startTime}-${slot.endTime}`;
-        const key = `${item.id}:${slotKey}:${localDateKey(cursor)}`;
+        const key = `${item.id}:${slotKey}:${dateKey}`;
         const exception = exceptionByKey.get(key);
         if (exception?.action === "cancelled") continue;
         const effectiveItem = exception?.override ? applyOverride(item, exception.override) : item;
-        const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : start;
-        const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : end;
+        const effectiveStart = exception?.override?.startAt ? new Date(exception.override.startAt) : start.toJSDate();
+        const effectiveEnd = exception?.override?.endAt ? new Date(exception.override.endAt) : end.toJSDate();
         expanded.push(occurrenceFromItem(effectiveItem, effectiveStart, effectiveEnd, true, key, Boolean(exception?.override)));
       }
-      cursor.setDate(cursor.getDate() + 1);
+      cursor = cursor.plus({ days: 1 });
     }
     return expanded.sort((left, right) => left.start.getTime() - right.start.getTime());
   }
+
   if (!item.recurrence) {
     const baseEnd = item.endAt ? new Date(item.endAt) : new Date(baseStart.getTime() + duration);
     if (baseEnd < rangeStart || baseStart > rangeEnd) return [];
@@ -139,8 +162,9 @@ export function expandItemOccurrences(item: ExpandedItem, rangeStart: Date, rang
 
   for (const originalStart of occurrences) {
     const parity = item.recurrence.weekParity ?? "all";
-    if (item.recurrence.frequency === "weekly" && parity !== "all" && semesterStartDate) {
-      const week = academicWeekNumber(originalStart, semesterStartDate);
+    if (item.recurrence.frequency === "weekly" && parity !== "all" && activeSemesterStart) {
+      const dateKey = DateTime.fromJSDate(originalStart, { zone: timezone }).toFormat("yyyy-MM-dd");
+      const week = academicWeekNumber(dateKey, activeSemesterStart);
       if ((parity === "odd" && week % 2 === 0) || (parity === "even" && week % 2 === 1)) continue;
     }
     const key = `${item.id}:${originalStart.toISOString()}`;
@@ -158,8 +182,14 @@ export function expandItemOccurrences(item: ExpandedItem, rangeStart: Date, rang
   return expanded;
 }
 
-export function expandItems(items: ExpandedItem[], rangeStart: Date, rangeEnd: Date, semesterStartDate?: Date | null): ExpandedOccurrence[] {
+export function expandItems(
+  items: ExpandedItem[],
+  rangeStart: Date,
+  rangeEnd: Date,
+  semesterStartDate?: Date | null,
+  semesterStartByTimetable?: ReadonlyMap<string, Date | null>
+): ExpandedOccurrence[] {
   return items
-    .flatMap((item) => expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate))
+    .flatMap((item) => expandItemOccurrences(item, rangeStart, rangeEnd, semesterStartDate, semesterStartByTimetable))
     .sort((left, right) => left.start.getTime() - right.start.getTime());
 }

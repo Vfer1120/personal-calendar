@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from "dexie";
-import type { Item, SchedulePeriod, Tag } from "@calendar/domain";
+import type { Item, SchedulePeriod, Tag, Timetable } from "@calendar/domain";
 import { api, apiJson } from "./api";
 import type { SyncMutation } from "@calendar/domain";
 
@@ -74,8 +74,10 @@ export async function upsertCachedItem(item: Item) { const db = await getDatabas
 export async function removeCachedItem(id: string) { const db = await getDatabase(); await db.items.delete(id); }
 export async function cacheSettings(value: unknown) { const db = await getDatabase(); await db.meta.put({ key: "settings", value }); }
 export async function getCachedSettings<T>() { const db = await getDatabase(); return (await db.meta.get("settings"))?.value as T | undefined; }
-export async function cacheSchedulePeriods(value: SchedulePeriod[]) { const db = await getDatabase(); await db.meta.put({ key: "schedule-periods", value }); }
-export async function getCachedSchedulePeriods() { const db = await getDatabase(); return ((await db.meta.get("schedule-periods"))?.value as SchedulePeriod[] | undefined) ?? []; }
+export async function cacheTimetables(value: Timetable[]) { const db = await getDatabase(); await db.meta.put({ key: "timetables", value }); }
+export async function getCachedTimetables() { const db = await getDatabase(); return ((await db.meta.get("timetables"))?.value as Timetable[] | undefined) ?? []; }
+export async function cacheSchedulePeriods(timetableId: string, value: SchedulePeriod[]) { const db = await getDatabase(); await db.meta.put({ key: `schedule-periods:${timetableId}`, value }); }
+export async function getCachedSchedulePeriods(timetableId: string) { const db = await getDatabase(); return ((await db.meta.get(`schedule-periods:${timetableId}`))?.value as SchedulePeriod[] | undefined) ?? []; }
 export async function clearOfflineData() { const db = await getDatabase(); await db.delete(); database = createScopedDatabase(activeScope); await database.open(); }
 
 export function saveLastSession(session: LastSession) { localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(session)); }

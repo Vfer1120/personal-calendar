@@ -33,6 +33,7 @@ import {
   getRolloverSuggestions,
   resolveItemOutcome,
 } from "../services/resolution";
+import { timetableSemesterStarts } from "../services/timetables";
 
 export const itemsRoute = new Hono<AppEnv>();
 itemsRoute.use("*", requireAuth);
@@ -81,6 +82,7 @@ function itemValues(input: ItemInput, workspaceId: string) {
     completedAt: input.completedAt ? new Date(input.completedAt) : null,
     autoRollover: input.autoRollover,
     showInTimetable: input.showInTimetable,
+    timetableId: input.timetableId ?? null,
     courseStartDate: input.courseStartDate ?? null,
     courseEndDate: input.courseEndDate ?? null,
     courseSlots: input.courseSlots,
@@ -109,6 +111,7 @@ function candidateItem(
     completedAt: input.completedAt ?? null,
     autoRollover: input.autoRollover,
     showInTimetable: input.showInTimetable,
+    timetableId: input.timetableId ?? null,
     courseStartDate: input.courseStartDate ?? null,
     courseEndDate: input.courseEndDate ?? null,
     recurrence: input.recurrence ?? null,
@@ -135,17 +138,20 @@ async function detectConflicts(workspaceId: string, candidate: ExpandedItem) {
     start.getTime() + Math.max(duration, 86400000) + 366 * 86400000,
   );
   const semesterStartDate = await getSemesterStartDate(workspaceId);
+  const semesterStarts = await timetableSemesterStarts(workspaceId);
   const target = expandItems(
     [candidate],
     rangeStart,
     rangeEnd,
     semesterStartDate,
+    semesterStarts,
   );
   const existing = expandItems(
     all.filter((item) => item.id !== candidate.id),
     rangeStart,
     rangeEnd,
     semesterStartDate,
+    semesterStarts,
   );
   const seen = new Set<string>();
   return target
@@ -216,6 +222,7 @@ itemsRoute.get("/occurrences", async (c) => {
     from,
     to,
     await getSemesterStartDate(auth.workspaceId),
+    await timetableSemesterStarts(auth.workspaceId),
   ).map((occurrence) => ({
     id: occurrence.id,
     occurrenceKey: occurrence.occurrenceKey,
@@ -276,6 +283,7 @@ const bulkActionSchema = z
 function currentOccurrenceKey(
   item: ExpandedItem,
   semesterStartDate: Date | null,
+  semesterStarts: ReadonlyMap<string, Date | null>,
 ): string | null {
   if (!item.recurrence) return null;
   const now = new Date();
@@ -295,6 +303,7 @@ function currentOccurrenceKey(
     rangeStart,
     rangeEnd,
     semesterStartDate,
+    semesterStarts,
   ).sort((left, right) => left.start.getTime() - right.start.getTime());
   return (
     occurrences.find(
@@ -335,7 +344,7 @@ itemsRoute.post("/bulk", async (c) => {
         if (input.action === "status") {
           let occurrenceKey = input.occurrenceKey ?? null;
           if (item.recurrence && !occurrenceKey)
-            occurrenceKey = currentOccurrenceKey(item, semesterStartDate);
+            occurrenceKey = currentOccurrenceKey(item, semesterStartDate, await timetableSemesterStarts(auth.workspaceId));
           if (item.recurrence && !occurrenceKey) {
             skipped.push({ id, reason: "NO_CURRENT_OCCURRENCE" });
             continue;

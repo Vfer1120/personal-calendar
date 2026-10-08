@@ -5,7 +5,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { config } from "../config";
 import { requireAuth, type AppEnv } from "../middleware";
-import { AiError, aiConfigured, extractScheduleDrafts, getAiStatus, reserveAiUsage } from "../services/ai";
+import { AiError, aiConfigured, extractScheduleDrafts, getAiStatus } from "../services/ai";
 
 export const aiRoute = new Hono<AppEnv>();
 aiRoute.use("*", requireAuth);
@@ -13,7 +13,8 @@ aiRoute.use("*", requireAuth);
 const s3 = new S3Client({ region: config.S3_REGION, endpoint: config.S3_ENDPOINT, forcePathStyle: true, credentials: { accessKeyId: config.S3_ACCESS_KEY, secretAccessKey: config.S3_SECRET_KEY } });
 const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 const directUploadSchema = z.object({ uploadToken: z.string().min(1), fileName: z.string().min(1).max(500), mimeType: z.string(), size: z.number().int().positive() });
-const directExtractSchema = z.object({ text: z.string().max(20_000).default(""), timezone: z.string().min(1).max(100).default(config.DEFAULT_TIMEZONE), images: z.array(directUploadSchema).max(config.AI_MAX_IMAGES).default([]) });
+const timetableContextSchema = z.object({ activeTimetableId: z.string().uuid().nullable().default(null), timetables: z.array(z.object({ id: z.string().uuid(), name: z.string().min(1).max(30), semesterStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null), periods: z.array(z.object({ name: z.string(), startTime: z.string(), endTime: z.string() })).max(30).default([]) })).max(20).default([]) });
+const directExtractSchema = z.object({ text: z.string().max(20_000).default(""), timezone: z.string().min(1).max(100).default(config.DEFAULT_TIMEZONE), images: z.array(directUploadSchema).max(config.AI_MAX_IMAGES).default([]), timetableContext: timetableContextSchema.optional() });
 
 function uploadToken(payload: { workspaceId: string; objectKey: string; mimeType: string; size: number }) {
   const encoded = Buffer.from(JSON.stringify(payload)).toString("base64url");
@@ -31,7 +32,7 @@ function verifyUploadToken(token: string, workspaceId: string) {
   return payload;
 }
 
-aiRoute.get("/status", async (c) => c.json(await getAiStatus(c.get("auth").workspaceId)));
+aiRoute.get("/status", async (c) => c.json(await getAiStatus()));
 
 aiRoute.post("/uploads/init", async (c) => {
   const workspaceId = c.get("auth").workspaceId;
@@ -45,12 +46,12 @@ aiRoute.post("/uploads/init", async (c) => {
 
 aiRoute.post("/extract", async (c) => {
   const workspaceId = c.get("auth").workspaceId;
-  let text = ""; let timezone = config.DEFAULT_TIMEZONE; const images: Array<{ mimeType: string; fileName: string; data: Buffer }> = []; const cleanup: string[] = [];
+  let text = ""; let timezone = config.DEFAULT_TIMEZONE; let timetableContext: z.infer<typeof timetableContextSchema> | undefined; const images: Array<{ mimeType: string; fileName: string; data: Buffer }> = []; const cleanup: string[] = [];
   const contentType = c.req.header("content-type") ?? "";
   try {
     if (contentType.includes("application/json")) {
       const body = directExtractSchema.parse(await c.req.json());
-      text = body.text.trim(); timezone = body.timezone;
+      text = body.text.trim(); timezone = body.timezone; timetableContext = body.timetableContext;
       for (const item of body.images) {
         const token = verifyUploadToken(item.uploadToken, workspaceId);
         if (token.size !== item.size || token.mimeType !== item.mimeType) throw new Error("图片元数据不匹配");
@@ -66,6 +67,7 @@ aiRoute.post("/extract", async (c) => {
       const form = await c.req.formData();
       text = String(form.get("text") ?? "").trim();
       const rawTimezone = String(form.get("timezone") ?? config.DEFAULT_TIMEZONE); const timezoneCheck = z.string().min(1).max(100).safeParse(rawTimezone); timezone = timezoneCheck.success ? timezoneCheck.data : config.DEFAULT_TIMEZONE;
+      const rawTimetableContext = form.get("timetableContext"); if (typeof rawTimetableContext === "string" && rawTimetableContext.trim()) { const parsedContext = timetableContextSchema.safeParse(JSON.parse(rawTimetableContext)); if (parsedContext.success) timetableContext = parsedContext.data; }
       const files = form.getAll("images").filter((value): value is File => value instanceof File);
       if (files.length > config.AI_MAX_IMAGES) return c.json({ error: "TOO_MANY_IMAGES", message: `最多上传 ${config.AI_MAX_IMAGES} 张图片` }, 413);
       for (const file of files) {
@@ -77,13 +79,11 @@ aiRoute.post("/extract", async (c) => {
     if (text.length > 20_000) return c.json({ error: "TEXT_TOO_LONG", message: "文字最多 20000 字" }, 413);
     if (!text && images.length === 0) return c.json({ error: "EMPTY_INPUT", message: "请输入文字或选择图片" }, 400);
     if (!aiConfigured()) return c.json({ error: "AI_NOT_CONFIGURED", message: "AI 尚未配置，请先设置 AI_API_KEY 并启用 AI_ENABLED" }, 503);
-    let reservedUsage: Awaited<ReturnType<typeof reserveAiUsage>> | undefined;
     try {
-      reservedUsage = await reserveAiUsage(workspaceId);
-      const result = await extractScheduleDrafts({ workspaceId, text, images, timezone });
-      return c.json({ ...result, usage: reservedUsage });
+      const result = await extractScheduleDrafts({ workspaceId, text, images, timezone, timetableContext });
+      return c.json(result);
     } catch (error) {
-      if (error instanceof AiError) return c.json({ error: error.code, message: error.message, usage: error.usage ?? reservedUsage }, error.status as 400);
+      if (error instanceof AiError) return c.json({ error: error.code, message: error.message }, error.status as 400);
       return c.json({ error: "AI_FAILED", message: error instanceof Error ? error.message : "AI 提取失败" }, 500);
     }
   } catch (error) {

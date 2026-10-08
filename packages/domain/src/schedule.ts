@@ -35,3 +35,20 @@ export const DEFAULT_SCHEDULE_PERIODS = [
 
 export type SchedulePeriodInput = z.infer<typeof schedulePeriodSchema>;
 export type SchedulePeriod = SchedulePeriodInput & { id: string };
+
+export const timetableSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().trim().min(1).max(30),
+  sortOrder: z.number().int().min(0).max(99),
+  semesterStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null)
+});
+
+export const timetableInputSchema = timetableSchema.omit({ id: true });
+
+export const timetableWithPeriodsSchema = timetableSchema.extend({
+  periods: z.array(schedulePeriodSchema.safeExtend({ id: z.string().uuid() }))
+});
+
+export type Timetable = z.infer<typeof timetableSchema>;
+export type TimetableInput = z.infer<typeof timetableInputSchema>;
+export type TimetableWithPeriods = z.infer<typeof timetableWithPeriodsSchema>;

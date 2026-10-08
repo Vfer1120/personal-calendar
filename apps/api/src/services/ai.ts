@@ -1,75 +1,60 @@
-import { and, eq, sql } from "drizzle-orm";
-import { aiUsage, appSettings, tags } from "@calendar/db/schema";
-import { aiDraftSchema, type AiDraft, type AiStatus, type AiUsage } from "@calendar/domain";
+import { eq } from "drizzle-orm";
+import { appSettings, tags } from "@calendar/db/schema";
+import { aiDraftSchema, courseSlotSchema, type AiDraft, type AiStatus } from "@calendar/domain";
 import { config } from "../config";
 import { db } from "../context";
 
 export type AiImage = { mimeType: string; data: Buffer; fileName?: string };
 type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+export interface AiTimetableContext {
+  activeTimetableId: string | null;
+  timetables: Array<{
+    id: string;
+    name: string;
+    semesterStartDate: string | null;
+    periods: Array<{ name: string; startTime: string; endTime: string }>;
+  }>;
+}
 
 export class AiError extends Error {
-  constructor(public code: string, message: string, public status = 500, public usage?: AiUsage) { super(message); this.name = "AiError"; }
-}
-
-export function shanghaiDate(now = new Date()): string {
-  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now);
-  const value = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
-  return `${value("year")}-${value("month")}-${value("day")}`;
-}
-
-export function aiDailyLimit(): number {
-  return config.DEMO_MODE ? config.AI_DEMO_DAILY_LIMIT : config.AI_PRIVATE_DAILY_LIMIT;
+  constructor(public code: string, message: string, public status = 500) { super(message); this.name = "AiError"; }
 }
 
 export function aiConfigured(): boolean {
   return config.AI_ENABLED && Boolean(config.AI_API_KEY);
 }
 
-function usageValue(used: number, limit = aiDailyLimit()): AiUsage {
-  return { date: shanghaiDate(), used, limit, remaining: Math.max(0, limit - used) };
+export async function getAiStatus(): Promise<AiStatus> {
+  return { enabled: config.AI_ENABLED, configured: aiConfigured(), provider: config.AI_PROVIDER, textModel: config.AI_TEXT_MODEL, visionModel: config.AI_VISION_MODEL };
 }
 
-async function readUsage(workspaceId: string): Promise<AiUsage> {
-  const [row] = await db.select().from(aiUsage).where(and(eq(aiUsage.workspaceId, workspaceId), eq(aiUsage.usageDate, shanghaiDate()))).limit(1);
-  return usageValue(row?.requestCount ?? 0);
-}
-
-export async function getAiStatus(workspaceId: string): Promise<AiStatus> {
-  return { enabled: config.AI_ENABLED, configured: aiConfigured(), provider: config.AI_PROVIDER, textModel: config.AI_TEXT_MODEL, visionModel: config.AI_VISION_MODEL, usage: await readUsage(workspaceId) };
-}
-
-export async function reserveAiUsage(workspaceId: string): Promise<AiUsage> {
-  const limit = aiDailyLimit();
-  const date = shanghaiDate();
-  const result = await db.execute(sql`
-    insert into ai_usage (workspace_id, usage_date, request_count, updated_at)
-    values (${workspaceId}, ${date}, 1, now())
-    on conflict (workspace_id, usage_date)
-    do update set request_count = ai_usage.request_count + 1, updated_at = now()
-    where ai_usage.request_count < ${limit}
-    returning request_count
-  `);
-  const rows = (result as unknown as { rows?: Array<{ request_count: number }> }).rows ?? [];
-  const row = rows[0];
-  if (!row) {
-    const usage = await readUsage(workspaceId);
-    throw new AiError("AI_DAILY_LIMIT", `今日 AI 额度已用完（${usage.used}/${usage.limit}）`, 429, usage);
-  }
-  return usageValue(Number(row.request_count), limit);
-}
-
-function systemPrompt(timezone: string, now: string, semesterStartDate: string | null, tagNames: string[]): string {
+function systemPrompt(timezone: string, now: string, semesterStartDate: string | null, tagNames: string[], timetableContext?: AiTimetableContext): string {
+  const format = {
+    items: [{
+      kind: "event|task|both", title: "", description: "", location: "",
+      startAt: null, endAt: null, dueAt: null, isAllDay: false, timezone,
+      priority: "none|low|medium|high|urgent", recurrence: null, reminderMinutes: [],
+      suggestedTagNames: [], confidence: 0.5, evidence: "", warnings: [],
+      importTarget: "calendar|timetable", timetableId: null,
+      courseStartDate: null, courseEndDate: null, periodMatch: "exact|mapped|uncertain",
+      courseSlots: [{ weekday: 1, startTime: "08:00", endTime: "08:45", weekParity: "all" }]
+    }],
+    transcript: ""
+  };
   return [
-    "你是校园日程提取器。只输出 JSON，不要 Markdown。",
-    "格式：{\"items\":[{\"kind\":\"event|task|both\",\"title\":\"\",\"description\":\"\",\"location\":\"\",\"startAt\":null,\"endAt\":null,\"dueAt\":null,\"isAllDay\":false,\"timezone\":\"Asia/Shanghai\",\"priority\":\"none|low|medium|high|urgent\",\"recurrence\":null,\"reminderMinutes\":[],\"suggestedTagNames\":[],\"confidence\":0.5,\"evidence\":\"\",\"warnings\":[]}],\"transcript\":\"\"}",
+    "你是校园日程和课表提取器。只输出 JSON，不要 Markdown。",
+    `格式：${JSON.stringify(format)}`,
     "规则：日期使用带时区的 ISO 8601；不确定的值填 null；没有开始时间用 task；有明确开始时间用 event；同时有日程和待办语义用 both；只建议已有标签；不要编造信息。",
-    `当前时间：${now}；时区：${timezone}；学期第 1 周周一：${semesterStartDate ?? "未设置"}。`, 
-    `已有标签：${tagNames.length > 0 ? tagNames.join("、") : "无"}。`
+    "课表图片或课表文字必须使用 importTarget=timetable，并按课程生成草稿；同一课程在不同星期或多个节次时合并为一个草稿并返回多个 courseSlots。",
+    "课表时间必须来自图中明确时间，或从下方节次表中按节次名称精确匹配；无法可靠确定时必须把 periodMatch 设为 uncertain 并写入警告，不能用日期时间猜造 courseSlots。",
+    `当前时间：${now}；时区：${timezone}；默认学期第 1 周周一：${semesterStartDate ?? "未设置"}。`,
+    `已有标签：${tagNames.length > 0 ? tagNames.join("、") : "无"}。`,
+    `课表页与节次：${JSON.stringify(timetableContext ?? { activeTimetableId: null, timetables: [] })}。`
   ].join("\n");
 }
 
 function userPrompt(text: string, images: AiImage[]): string | Array<Record<string, unknown>> {
-  const prompt = text.trim() || "请识别图片中的日程和任务信息。";
+  const prompt = text.trim() || "请识别图片中的日程、任务或课表信息。";
   if (images.length === 0) return prompt;
   const content: Array<Record<string, unknown>> = [{ type: "text", text: prompt }];
   for (const image of images) content.push({ type: "image_url", image_url: { url: `data:${image.mimeType};base64,${image.data.toString("base64")}` } });
@@ -110,7 +95,44 @@ function isoFrom(value: unknown, timezone: string): string | null {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
-function normalizeProviderResponse(value: unknown, timezone: string): { items: AiDraft[]; transcript: string } {
+function weekdayNumber(value: unknown): number | null {
+  const raw = Number(value);
+  if (!Number.isFinite(raw)) {
+    const text = String(value ?? "").trim();
+    if (["周日", "星期日", "sunday", "sun"].some((name) => text.toLowerCase().includes(name.toLowerCase()))) return 0;
+    const names = ["周一", "周二", "周三", "周四", "周五", "周六"];
+    const index = names.findIndex((name) => text.includes(name));
+    if (index >= 0) return index + 1;
+    return null;
+  }
+  if (raw === 7) return 0;
+  return raw >= 0 && raw <= 6 ? Math.trunc(raw) : null;
+}
+
+function normalizeSlot(raw: unknown, timetableContext: AiTimetableContext | undefined): { slot: AiDraft["courseSlots"][number] | null; mapped: boolean } {
+  const source = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
+  const weekday = weekdayNumber(source.weekday ?? source.day ?? source.dayOfWeek);
+  if (weekday === null) return { slot: null, mapped: false };
+  let startTime = String(source.startTime ?? source.start ?? "").slice(0, 5);
+  let endTime = String(source.endTime ?? source.end ?? "").slice(0, 5);
+  let mapped = false;
+  if ((!startTime || !endTime) && (source.periodName || source.period)) {
+    const requested = String(source.periodName ?? source.period).trim().toLowerCase().replace(/^第/, "").replace(/节$/, "");
+    const periods = timetableContext?.timetables.find((page) => page.id === timetableContext.activeTimetableId)?.periods ?? [];
+    const period = periods.find((candidate) => candidate.name.trim().toLowerCase().replace(/^第/, "").replace(/节$/, "") === requested);
+    if (period) { startTime = period.startTime; endTime = period.endTime; mapped = true; }
+  }
+  const parsed = courseSlotSchema.safeParse({
+    ...(typeof source.id === "string" ? { id: source.id } : {}),
+    weekday,
+    startTime,
+    endTime,
+    weekParity: source.weekParity === "odd" || source.weekParity === "even" ? source.weekParity : "all"
+  });
+  return { slot: parsed.success ? parsed.data : null, mapped };
+}
+
+function normalizeProviderResponse(value: unknown, timezone: string, timetableContext?: AiTimetableContext): { items: AiDraft[]; transcript: string } {
   const root = value && typeof value === "object" ? value as Record<string, unknown> : {};
   const rawItems = Array.isArray(root.items) ? root.items : Array.isArray(root.drafts) ? root.drafts : [];
   const items: AiDraft[] = [];
@@ -124,6 +146,14 @@ function normalizeProviderResponse(value: unknown, timezone: string): { items: A
     const rawReminders = Array.isArray(source.reminderMinutes) ? source.reminderMinutes : Array.isArray(source.reminders) ? source.reminders : typeof source.reminderMinutes === "number" ? [source.reminderMinutes] : [];
     const reminderMinutes = rawReminders.map(Number).filter((value): value is number => [0, 5, 15, 30, 60, 1440].includes(value));
     const confidenceValue = Number(source.confidence);
+    const rawSlots = Array.isArray(source.courseSlots) ? source.courseSlots : Array.isArray(source.timetableSlots) ? source.timetableSlots : [];
+    const normalizedSlots = rawSlots.map((slot) => normalizeSlot(slot, timetableContext));
+    const courseSlots = normalizedSlots.map((entry) => entry.slot).filter((slot): slot is AiDraft["courseSlots"][number] => Boolean(slot));
+    const importTarget = source.importTarget === "timetable" || source.target === "timetable" ? "timetable" : "calendar";
+    const timetableIdValue = typeof source.timetableId === "string" && /^[0-9a-f-]{36}$/i.test(source.timetableId) ? source.timetableId : timetableContext?.activeTimetableId ?? null;
+    const periodMatch = source.periodMatch === "exact" || source.periodMatch === "mapped" || source.periodMatch === "uncertain"
+      ? source.periodMatch
+      : normalizedSlots.some((entry) => entry.mapped) ? "mapped" : importTarget === "timetable" && courseSlots.length === 0 ? "uncertain" : "exact";
     const candidate = {
       kind: kindFrom(source.kind), title,
       description: String(source.description ?? ""), location: String(source.location ?? source.place ?? ""),
@@ -132,23 +162,29 @@ function normalizeProviderResponse(value: unknown, timezone: string): { items: A
       priority: priorityFrom(source.priority), recurrence,
       reminderMinutes, suggestedTagNames: Array.isArray(source.suggestedTagNames) ? source.suggestedTagNames.map(String) : Array.isArray(source.tags) ? source.tags.map(String) : [],
       confidence: Number.isFinite(confidenceValue) ? (confidenceValue > 1 ? Math.min(1, confidenceValue / 100) : confidenceValue) : 0.5,
-      evidence: String(source.evidence ?? source.sourceExcerpt ?? ""), warnings
+      evidence: String(source.evidence ?? source.sourceExcerpt ?? ""), warnings,
+      importTarget, timetableId: timetableIdValue,
+      courseStartDate: typeof source.courseStartDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(source.courseStartDate) ? source.courseStartDate : null,
+      courseEndDate: typeof source.courseEndDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(source.courseEndDate) ? source.courseEndDate : null,
+      courseSlots, periodMatch
     };
     const parsed = aiDraftSchema.safeParse(candidate);
     if (parsed.success) items.push(parsed.data);
   }
   return { items, transcript: String(root.transcript ?? root.text ?? "") };
-}export async function extractScheduleDrafts(input: { workspaceId: string; text: string; images: AiImage[]; timezone: string; fetcher?: FetchLike }): Promise<{ drafts: AiDraft[]; transcript: string; model: string; provider: string }> {
+}
+
+export async function extractScheduleDrafts(input: { workspaceId: string; text: string; images: AiImage[]; timezone: string; timetableContext?: AiTimetableContext; fetcher?: FetchLike }): Promise<{ drafts: AiDraft[]; transcript: string; model: string; provider: string }> {
   if (!aiConfigured()) throw new AiError("AI_NOT_CONFIGURED", "AI 尚未配置，请先设置 AI_API_KEY 并启用 AI_ENABLED", 503);
   const [settings] = await db.select().from(appSettings).where(eq(appSettings.workspaceId, input.workspaceId)).limit(1);
   const tagRows = await db.select({ name: tags.name }).from(tags).where(eq(tags.workspaceId, input.workspaceId));
   const model = input.images.length > 0 ? config.AI_VISION_MODEL : config.AI_TEXT_MODEL;
   const messages = [
-    { role: "system", content: systemPrompt(input.timezone, new Date().toISOString(), settings?.semesterStartDate ?? null, tagRows.map((row) => row.name)) },
+    { role: "system", content: systemPrompt(input.timezone, new Date().toISOString(), settings?.semesterStartDate ?? null, tagRows.map((row) => row.name), input.timetableContext) },
     { role: "user", content: userPrompt(input.text, input.images) }
   ];
   const endpoint = `${config.AI_BASE_URL.replace(/\/$/, "")}/chat/completions`;
-  const body = JSON.stringify({ model, messages, temperature: 0.1, max_tokens: 1024 });
+  const body = JSON.stringify({ model, messages, temperature: 0.1, max_tokens: 2048 });
   const fetcher = input.fetcher ?? fetch;
   let response: Response | null = null; let lastError: unknown = null;
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -170,7 +206,7 @@ function normalizeProviderResponse(value: unknown, timezone: string): { items: A
   const rawContent = payload.choices?.[0]?.message?.content;
   const content = typeof rawContent === "string" ? rawContent : Array.isArray(rawContent) ? rawContent.map((part) => part.text ?? "").join("") : "";
   if (!content) throw new AiError("AI_INVALID_RESPONSE", "AI 没有返回内容", 502);
-  const parsed = normalizeProviderResponse(parseJsonContent(content), input.timezone);
+  const parsed = normalizeProviderResponse(parseJsonContent(content), input.timezone, input.timetableContext);
   if (parsed.items.length === 0) throw new AiError("AI_INVALID_RESPONSE", "AI 没有返回可导入的日程，请换一种描述重试", 502);
   return { drafts: parsed.items, transcript: parsed.transcript, model, provider: config.AI_PROVIDER };
 }
