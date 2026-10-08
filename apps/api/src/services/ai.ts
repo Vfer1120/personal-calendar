@@ -433,7 +433,7 @@ export async function extractScheduleDrafts(input: {
     model,
     messages,
     temperature: 0,
-    max_tokens: 2048,
+    max_tokens: input.images.length > 0 ? 1024 : 2048,
     ...(input.images.length === 0 ? { thinking: { type: "disabled" } } : {}),
   });
   const fetcher = input.fetcher ?? fetch;
