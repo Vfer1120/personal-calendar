@@ -172640,7 +172640,7 @@ var envSchema = external_exports.object({
   AI_API_KEY: external_exports.string().optional(),
   AI_BASE_URL: external_exports.string().url().default("https://open.bigmodel.cn/api/paas/v4"),
   AI_TEXT_MODEL: external_exports.string().default("glm-4.5-flash"),
-  AI_VISION_MODEL: external_exports.string().default("glm-4v-flash"),
+  AI_VISION_MODEL: external_exports.string().default("glm-4.6v"),
   AI_REQUEST_TIMEOUT_MS: external_exports.coerce.number().int().positive().default(9e4),
   AI_MAX_IMAGE_MB: external_exports.coerce.number().int().positive().default(10),
   AI_MAX_IMAGES: external_exports.coerce.number().int().positive().max(3).default(3),
@@ -173007,16 +173007,31 @@ function aiConfigured() {
 function effectiveTextModel() {
   return config3.AI_TEXT_MODEL === "glm-4-flash" ? "glm-4.5-flash" : config3.AI_TEXT_MODEL;
 }
+function effectiveVisionModel() {
+  return config3.AI_VISION_MODEL === "glm-4v-flash" ? "glm-4.6v" : config3.AI_VISION_MODEL;
+}
 async function getAiStatus() {
   return {
     enabled: config3.AI_ENABLED,
     configured: aiConfigured(),
     provider: config3.AI_PROVIDER,
     textModel: effectiveTextModel(),
-    visionModel: config3.AI_VISION_MODEL
+    visionModel: effectiveVisionModel()
   };
 }
-function systemPrompt(timezone, now3, semesterStartDate, tagNames, timetableContext) {
+function systemPrompt(timezone, now3, semesterStartDate, tagNames, timetableContext, compactImages = false) {
+  if (compactImages) {
+    return [
+      "\u4F60\u662F\u8BFE\u8868\u56FE\u7247\u8BC6\u522B\u5668\u3002\u53EA\u8F93\u51FA JSON\uFF0C\u4E0D\u8981 Markdown\u3002",
+      '\u683C\u5F0F\uFF1A{"items":[{"t":"\u8BFE\u7A0B\u540D","l":"\u5730\u70B9","slots":[{"d":1,"s":"08:30","e":"09:15","p":"all"}],"w":[]}],"transcript":""}',
+      "d=1,2,3,4,5,6,7 \u5206\u522B\u4EE3\u8868\u5468\u4E00\u5230\u5468\u65E5\uFF1Bp=all/odd/even\uFF1B\u6BCF\u95E8\u8BFE\u7A0B\u4E00\u4E2A item\uFF0C\u540C\u4E00\u8BFE\u7A0B\u591A\u4E2A\u65F6\u95F4\u5408\u5E76\u5230 slots\u3002",
+      "t \u53EA\u586B\u8BFE\u7A0B\u540D\u79F0\uFF0Cl \u53EA\u586B\u5730\u70B9\uFF1B\u4E0D\u8981\u628A\u73ED\u7EA7\u3001\u4EBA\u6570\u3001\u8BFE\u7A0B\u4EE3\u7801\u3001\u6559\u5BA4\u697C\u680B\u6DF7\u5165 t \u6216 l\uFF0C\u4FDD\u7559\u5B8C\u6574\u539F\u59CB\u8BFE\u7A0B\u540D\u3002",
+      "\u51FA\u73B0\u7B2CN\u8282\u65F6\u5FC5\u987B\u4ECE\u4E0B\u65B9\u8282\u6B21\u8868\u7684 N \u4E2D\u53D6 startTime/endTime\uFF1B\u65E0\u6CD5\u786E\u5B9A\u65F6\u4E0D\u8981\u731C\u65F6\u95F4\uFF0C\u5728 w \u4E2D\u5199\u8B66\u544A\u3002",
+      "\u53EA\u8BC6\u522B\u6709\u5B9E\u9645\u8BFE\u7A0B\u7684\u683C\u5B50\uFF0C\u5FFD\u7565\u7A7A\u767D\u3001\u9875\u7709\u3001\u65E5\u671F\u3001\u5468\u6B21\u548C\u5E95\u90E8\u5BFC\u822A\u3002",
+      `\u5F53\u524D\u65F6\u533A\uFF1A${timezone}\uFF1B\u5B66\u671F\u7B2C 1 \u5468\u5468\u4E00\uFF1A${semesterStartDate ?? "\u672A\u8BBE\u7F6E"}\u3002`,
+      `\u8BFE\u8868\u9875\u4E0E\u8282\u6B21\uFF1A${JSON.stringify(timetableContext ?? { activeTimetableId: null, timetables: [] })}\u3002`
+    ].join("\n");
+  }
   const format5 = {
     items: [
       {
@@ -173145,11 +173160,16 @@ function weekdayNumber(value) {
 function normalizeSlot(raw2, timetableContext) {
   const source = raw2 && typeof raw2 === "object" ? raw2 : {};
   const weekday = weekdayNumber(
-    source.weekday ?? source.day ?? source.dayOfWeek
+    source.weekday ?? source.day ?? source.dayOfWeek ?? source.d
   );
   if (weekday === null) return { slot: null, mapped: false };
-  let startTime = String(source.startTime ?? source.start ?? "").slice(0, 5);
-  let endTime = String(source.endTime ?? source.end ?? "").slice(0, 5);
+  let startTime = String(
+    source.startTime ?? source.start ?? source.s ?? ""
+  ).slice(0, 5);
+  let endTime = String(source.endTime ?? source.end ?? source.e ?? "").slice(
+    0,
+    5
+  );
   let mapped = false;
   if ((!startTime || !endTime) && (source.periodName || source.period)) {
     const requested = String(source.periodName ?? source.period).trim().toLowerCase().replace(/^第/, "").replace(/节$/, "");
@@ -173170,7 +173190,7 @@ function normalizeSlot(raw2, timetableContext) {
     weekday,
     startTime,
     endTime,
-    weekParity: source.weekParity === "odd" || source.weekParity === "even" ? source.weekParity : "all"
+    weekParity: source.weekParity === "odd" || source.weekParity === "even" || source.p === "odd" || source.p === "even" ? source.weekParity ?? source.p : "all"
   });
   return { slot: parsed.success ? parsed.data : null, mapped };
 }
@@ -173180,6 +173200,42 @@ function normalizeProviderResponse(value, timezone, timetableContext) {
   const items2 = [];
   for (const raw2 of rawItems) {
     const source = raw2 && typeof raw2 === "object" ? raw2 : {};
+    const compactTitle = String(source.t ?? source.course ?? "").trim();
+    if (compactTitle) {
+      const rawCompactSlots = Array.isArray(source.slots) ? source.slots : [source];
+      const compactSlots = rawCompactSlots.map((slot) => normalizeSlot(slot, timetableContext)).map((entry) => entry.slot).filter(
+        (slot) => Boolean(slot)
+      );
+      const compactWarningsSource = Array.isArray(source.w) ? source.w : Array.isArray(source.warnings) ? source.warnings : [];
+      const compactWarnings = compactWarningsSource.map(String);
+      const compactTimetableId = typeof source.tid === "string" && /^[0-9a-f-]{36}$/i.test(source.tid) ? source.tid : timetableContext?.activeTimetableId ?? null;
+      const parsed2 = aiDraftSchema.safeParse({
+        kind: "event",
+        title: compactTitle,
+        description: String(source.desc ?? ""),
+        location: String(source.l ?? source.location ?? ""),
+        startAt: null,
+        endAt: null,
+        dueAt: null,
+        isAllDay: false,
+        timezone,
+        priority: "none",
+        recurrence: null,
+        reminderMinutes: [],
+        suggestedTagNames: [],
+        confidence: 1,
+        evidence: "",
+        warnings: compactWarnings,
+        importTarget: "timetable",
+        timetableId: compactTimetableId,
+        courseStartDate: null,
+        courseEndDate: null,
+        courseSlots: compactSlots,
+        periodMatch: compactSlots.length > 0 ? "mapped" : "uncertain"
+      });
+      if (parsed2.success) items2.push(parsed2.data);
+      continue;
+    }
     const title = String(source.title ?? source.summary ?? "").trim();
     if (!title) continue;
     const warnings = Array.isArray(source.warnings) ? source.warnings.map(String) : [];
@@ -173236,7 +173292,7 @@ async function extractScheduleDrafts(input2) {
     );
   const [settings] = await db.select().from(appSettings).where(eq(appSettings.workspaceId, input2.workspaceId)).limit(1);
   const tagRows = await db.select({ name: tags.name }).from(tags).where(eq(tags.workspaceId, input2.workspaceId));
-  const model = input2.images.length > 0 ? config3.AI_VISION_MODEL : effectiveTextModel();
+  const model = input2.images.length > 0 ? effectiveVisionModel() : effectiveTextModel();
   const messages = [
     {
       role: "system",
@@ -173245,7 +173301,8 @@ async function extractScheduleDrafts(input2) {
         (/* @__PURE__ */ new Date()).toISOString(),
         settings?.semesterStartDate ?? null,
         tagRows.map((row) => row.name),
-        input2.timetableContext
+        input2.timetableContext,
+        input2.images.length > 0
       )
     },
     { role: "user", content: userPrompt(input2.text, input2.images) }
@@ -173255,8 +173312,8 @@ async function extractScheduleDrafts(input2) {
     model,
     messages,
     temperature: 0,
-    max_tokens: input2.images.length > 0 ? 1024 : 2048,
-    ...input2.images.length === 0 ? { thinking: { type: "disabled" } } : {}
+    max_tokens: model === "glm-4v-flash" ? 1024 : model === "glm-4.6v" ? 4096 : 2048,
+    ...model === "glm-4.5-flash" || model === "glm-4.6v" ? { thinking: { type: "disabled" } } : {}
   });
   const fetcher = input2.fetcher ?? fetch;
   let response = null;

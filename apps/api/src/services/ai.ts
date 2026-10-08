@@ -40,7 +40,14 @@ export function aiConfigured(): boolean {
 }
 
 function effectiveTextModel(): string {
-  return config.AI_TEXT_MODEL === "glm-4-flash" ? "glm-4.5-flash" : config.AI_TEXT_MODEL;
+  return config.AI_TEXT_MODEL === "glm-4-flash"
+    ? "glm-4.5-flash"
+    : config.AI_TEXT_MODEL;
+}
+function effectiveVisionModel(): string {
+  return config.AI_VISION_MODEL === "glm-4v-flash"
+    ? "glm-4.6v"
+    : config.AI_VISION_MODEL;
 }
 export async function getAiStatus(): Promise<AiStatus> {
   return {
@@ -48,7 +55,7 @@ export async function getAiStatus(): Promise<AiStatus> {
     configured: aiConfigured(),
     provider: config.AI_PROVIDER,
     textModel: effectiveTextModel(),
-    visionModel: config.AI_VISION_MODEL,
+    visionModel: effectiveVisionModel(),
   };
 }
 
@@ -58,7 +65,20 @@ function systemPrompt(
   semesterStartDate: string | null,
   tagNames: string[],
   timetableContext?: AiTimetableContext,
+  compactImages = false,
 ): string {
+  if (compactImages) {
+    return [
+      "你是课表图片识别器。只输出 JSON，不要 Markdown。",
+      '格式：{"items":[{"t":"课程名","l":"地点","slots":[{"d":1,"s":"08:30","e":"09:15","p":"all"}],"w":[]}],"transcript":""}',
+      "d=1,2,3,4,5,6,7 分别代表周一到周日；p=all/odd/even；每门课程一个 item，同一课程多个时间合并到 slots。",
+      "t 只填课程名称，l 只填地点；不要把班级、人数、课程代码、教室楼栋混入 t 或 l，保留完整原始课程名。",
+      "出现第N节时必须从下方节次表的 N 中取 startTime/endTime；无法确定时不要猜时间，在 w 中写警告。",
+      "只识别有实际课程的格子，忽略空白、页眉、日期、周次和底部导航。",
+      `当前时区：${timezone}；学期第 1 周周一：${semesterStartDate ?? "未设置"}。`,
+      `课表页与节次：${JSON.stringify(timetableContext ?? { activeTimetableId: null, timetables: [] })}。`,
+    ].join("\n");
+  }
   const format = {
     items: [
       {
@@ -222,11 +242,16 @@ function normalizeSlot(
   const source =
     raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
   const weekday = weekdayNumber(
-    source.weekday ?? source.day ?? source.dayOfWeek,
+    source.weekday ?? source.day ?? source.dayOfWeek ?? source.d,
   );
   if (weekday === null) return { slot: null, mapped: false };
-  let startTime = String(source.startTime ?? source.start ?? "").slice(0, 5);
-  let endTime = String(source.endTime ?? source.end ?? "").slice(0, 5);
+  let startTime = String(
+    source.startTime ?? source.start ?? source.s ?? "",
+  ).slice(0, 5);
+  let endTime = String(source.endTime ?? source.end ?? source.e ?? "").slice(
+    0,
+    5,
+  );
   let mapped = false;
   if ((!startTime || !endTime) && (source.periodName || source.period)) {
     const requested = String(source.periodName ?? source.period)
@@ -258,14 +283,17 @@ function normalizeSlot(
     startTime,
     endTime,
     weekParity:
-      source.weekParity === "odd" || source.weekParity === "even"
-        ? source.weekParity
+      source.weekParity === "odd" ||
+      source.weekParity === "even" ||
+      source.p === "odd" ||
+      source.p === "even"
+        ? (source.weekParity ?? source.p)
         : "all",
   });
   return { slot: parsed.success ? parsed.data : null, mapped };
 }
 
-function normalizeProviderResponse(
+export function normalizeProviderResponse(
   value: unknown,
   timezone: string,
   timetableContext?: AiTimetableContext,
@@ -283,6 +311,54 @@ function normalizeProviderResponse(
   for (const raw of rawItems) {
     const source =
       raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+    const compactTitle = String(source.t ?? source.course ?? "").trim();
+    if (compactTitle) {
+      const rawCompactSlots = Array.isArray(source.slots)
+        ? source.slots
+        : [source];
+      const compactSlots = rawCompactSlots
+        .map((slot) => normalizeSlot(slot, timetableContext))
+        .map((entry) => entry.slot)
+        .filter((slot): slot is AiDraft["courseSlots"][number] =>
+          Boolean(slot),
+        );
+      const compactWarningsSource = Array.isArray(source.w)
+        ? source.w
+        : Array.isArray(source.warnings)
+          ? source.warnings
+          : [];
+      const compactWarnings = compactWarningsSource.map(String);
+      const compactTimetableId =
+        typeof source.tid === "string" && /^[0-9a-f-]{36}$/i.test(source.tid)
+          ? source.tid
+          : (timetableContext?.activeTimetableId ?? null);
+      const parsed = aiDraftSchema.safeParse({
+        kind: "event",
+        title: compactTitle,
+        description: String(source.desc ?? ""),
+        location: String(source.l ?? source.location ?? ""),
+        startAt: null,
+        endAt: null,
+        dueAt: null,
+        isAllDay: false,
+        timezone,
+        priority: "none",
+        recurrence: null,
+        reminderMinutes: [],
+        suggestedTagNames: [],
+        confidence: 1,
+        evidence: "",
+        warnings: compactWarnings,
+        importTarget: "timetable",
+        timetableId: compactTimetableId,
+        courseStartDate: null,
+        courseEndDate: null,
+        courseSlots: compactSlots,
+        periodMatch: compactSlots.length > 0 ? "mapped" : "uncertain",
+      });
+      if (parsed.success) items.push(parsed.data);
+      continue;
+    }
     const title = String(source.title ?? source.summary ?? "").trim();
     if (!title) continue;
     const warnings = Array.isArray(source.warnings)
@@ -414,7 +490,7 @@ export async function extractScheduleDrafts(input: {
     .from(tags)
     .where(eq(tags.workspaceId, input.workspaceId));
   const model =
-    input.images.length > 0 ? config.AI_VISION_MODEL : effectiveTextModel();
+    input.images.length > 0 ? effectiveVisionModel() : effectiveTextModel();
   const messages = [
     {
       role: "system",
@@ -424,6 +500,7 @@ export async function extractScheduleDrafts(input: {
         settings?.semesterStartDate ?? null,
         tagRows.map((row) => row.name),
         input.timetableContext,
+        input.images.length > 0,
       ),
     },
     { role: "user", content: userPrompt(input.text, input.images) },
@@ -433,8 +510,11 @@ export async function extractScheduleDrafts(input: {
     model,
     messages,
     temperature: 0,
-    max_tokens: input.images.length > 0 ? 1024 : 2048,
-    ...(input.images.length === 0 ? { thinking: { type: "disabled" } } : {}),
+    max_tokens:
+      model === "glm-4v-flash" ? 1024 : model === "glm-4.6v" ? 4096 : 2048,
+    ...(model === "glm-4.5-flash" || model === "glm-4.6v"
+      ? { thinking: { type: "disabled" } }
+      : {}),
   });
   const fetcher = input.fetcher ?? fetch;
   let response: Response | null = null;

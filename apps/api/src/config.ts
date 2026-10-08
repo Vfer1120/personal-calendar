@@ -45,7 +45,7 @@ const envSchema = z.object({
   AI_API_KEY: z.string().optional(),
   AI_BASE_URL: z.string().url().default("https://open.bigmodel.cn/api/paas/v4"),
   AI_TEXT_MODEL: z.string().default("glm-4.5-flash"),
-  AI_VISION_MODEL: z.string().default("glm-4v-flash"),
+  AI_VISION_MODEL: z.string().default("glm-4.6v"),
   AI_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(90000),
   AI_MAX_IMAGE_MB: z.coerce.number().int().positive().default(10),
   AI_MAX_IMAGES: z.coerce.number().int().positive().max(3).default(3),
