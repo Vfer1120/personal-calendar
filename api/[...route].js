@@ -173005,42 +173005,61 @@ function aiConfigured() {
   return config3.AI_ENABLED && Boolean(config3.AI_API_KEY);
 }
 async function getAiStatus() {
-  return { enabled: config3.AI_ENABLED, configured: aiConfigured(), provider: config3.AI_PROVIDER, textModel: config3.AI_TEXT_MODEL, visionModel: config3.AI_VISION_MODEL };
+  return {
+    enabled: config3.AI_ENABLED,
+    configured: aiConfigured(),
+    provider: config3.AI_PROVIDER,
+    textModel: config3.AI_TEXT_MODEL,
+    visionModel: config3.AI_VISION_MODEL
+  };
 }
 function systemPrompt(timezone, now3, semesterStartDate, tagNames, timetableContext) {
   const format5 = {
-    items: [{
-      kind: "event|task|both",
-      title: "",
-      description: "",
-      location: "",
-      startAt: null,
-      endAt: null,
-      dueAt: null,
-      isAllDay: false,
-      timezone,
-      priority: "none|low|medium|high|urgent",
-      recurrence: null,
-      reminderMinutes: [],
-      suggestedTagNames: [],
-      confidence: 0.5,
-      evidence: "",
-      warnings: [],
-      importTarget: "calendar|timetable",
-      timetableId: null,
-      courseStartDate: null,
-      courseEndDate: null,
-      periodMatch: "exact|mapped|uncertain",
-      courseSlots: [{ weekday: 1, startTime: "08:00", endTime: "08:45", weekParity: "all" }]
-    }],
+    items: [
+      {
+        kind: "event|task|both",
+        title: "",
+        description: "",
+        location: "",
+        startAt: null,
+        endAt: null,
+        dueAt: null,
+        isAllDay: false,
+        timezone,
+        priority: "none|low|medium|high|urgent",
+        recurrence: null,
+        reminderMinutes: [],
+        suggestedTagNames: [],
+        confidence: 0.5,
+        evidence: "",
+        warnings: [],
+        importTarget: "calendar|timetable",
+        timetableId: null,
+        courseStartDate: null,
+        courseEndDate: null,
+        periodMatch: "exact|mapped|uncertain",
+        courseSlots: [
+          {
+            weekday: 1,
+            startTime: "08:00",
+            endTime: "08:45",
+            weekParity: "all"
+          }
+        ]
+      }
+    ],
     transcript: ""
   };
   return [
     "\u4F60\u662F\u6821\u56ED\u65E5\u7A0B\u548C\u8BFE\u8868\u63D0\u53D6\u5668\u3002\u53EA\u8F93\u51FA JSON\uFF0C\u4E0D\u8981 Markdown\u3002",
     `\u683C\u5F0F\uFF1A${JSON.stringify(format5)}`,
     "\u89C4\u5219\uFF1A\u65E5\u671F\u4F7F\u7528\u5E26\u65F6\u533A\u7684 ISO 8601\uFF1B\u4E0D\u786E\u5B9A\u7684\u503C\u586B null\uFF1B\u6CA1\u6709\u5F00\u59CB\u65F6\u95F4\u7528 task\uFF1B\u6709\u660E\u786E\u5F00\u59CB\u65F6\u95F4\u7528 event\uFF1B\u540C\u65F6\u6709\u65E5\u7A0B\u548C\u5F85\u529E\u8BED\u4E49\u7528 both\uFF1B\u53EA\u5EFA\u8BAE\u5DF2\u6709\u6807\u7B7E\uFF1B\u4E0D\u8981\u7F16\u9020\u4FE1\u606F\u3002",
-    "\u8BFE\u8868\u56FE\u7247\u6216\u8BFE\u8868\u6587\u5B57\u5FC5\u987B\u4F7F\u7528 importTarget=timetable\uFF0C\u5E76\u6309\u8BFE\u7A0B\u751F\u6210\u8349\u7A3F\uFF1B\u540C\u4E00\u8BFE\u7A0B\u5728\u4E0D\u540C\u661F\u671F\u6216\u591A\u4E2A\u8282\u6B21\u65F6\u5408\u5E76\u4E3A\u4E00\u4E2A\u8349\u7A3F\u5E76\u8FD4\u56DE\u591A\u4E2A courseSlots\u3002",
-    "\u8BFE\u8868\u65F6\u95F4\u5FC5\u987B\u6765\u81EA\u56FE\u4E2D\u660E\u786E\u65F6\u95F4\uFF0C\u6216\u4ECE\u4E0B\u65B9\u8282\u6B21\u8868\u4E2D\u6309\u8282\u6B21\u540D\u79F0\u7CBE\u786E\u5339\u914D\uFF1B\u65E0\u6CD5\u53EF\u9760\u786E\u5B9A\u65F6\u5FC5\u987B\u628A periodMatch \u8BBE\u4E3A uncertain \u5E76\u5199\u5165\u8B66\u544A\uFF0C\u4E0D\u80FD\u7528\u65E5\u671F\u65F6\u95F4\u731C\u9020 courseSlots\u3002",
+    "\u8BFE\u8868\u56FE\u7247\u6216\u8BFE\u8868\u6587\u5B57\u5FC5\u987B\u4F7F\u7528 importTarget=timetable\uFF0C\u5E76\u6309\u6BCF\u4E00\u95E8\u8BFE\u7A0B\u5206\u522B\u751F\u6210\u8349\u7A3F\u3002\u4E0D\u540C\u8BFE\u7A0B\u7EDD\u4E0D\u80FD\u5408\u5E76\uFF0C\u4E5F\u4E0D\u80FD\u628A\u8BFE\u7A0B\u6539\u6210\u6982\u62EC\u6027\u540D\u79F0\u3002",
+    "\u540C\u4E00\u95E8\u8BFE\u7A0B\u5728\u4E0D\u540C\u661F\u671F\u6216\u591A\u4E2A\u8282\u6B21\u51FA\u73B0\u65F6\uFF0C\u624D\u5408\u5E76\u4E3A\u4E00\u4E2A\u8349\u7A3F\u5E76\u8FD4\u56DE\u591A\u4E2A courseSlots\u3002",
+    "\u4E2D\u6587\u661F\u671F\u5FC5\u987B\u4E25\u683C\u6620\u5C04\uFF1A\u5468\u4E00=weekday 1\uFF0C\u5468\u4E8C=2\uFF0C\u5468\u4E09=3\uFF0C\u5468\u56DB=4\uFF0C\u5468\u4E94=5\uFF0C\u5468\u516D=6\uFF0C\u5468\u65E5\u6216\u5468\u5929=0\uFF1B\u4E0D\u5F97\u6539\u5199\u6210\u5176\u4ED6\u661F\u671F\u3002",
+    "\u51FA\u73B0\u201C\u7B2CN\u8282\u201D\u65F6\u5FC5\u987B\u5728\u4E0B\u65B9\u7684\u8282\u6B21\u8868\u4E2D\u67E5\u627E\u540D\u79F0\u4E3A N \u7684\u8282\u6B21\uFF0C\u5E76\u4F7F\u7528\u5B83\u7684 startTime/endTime\uFF0CperiodMatch=mapped\uFF1B\u56FE\u7247\u4E2D\u6709\u660E\u786E HH:mm \u65F6\u95F4\u65F6\u4F18\u5148\u4F7F\u7528\u56FE\u7247\u65F6\u95F4\u3002",
+    "\u793A\u4F8B\uFF1A\u8F93\u5165\u201C\u5468\u4E00 \u7B2C3\u8282 \u9AD8\u7B49\u6570\u5B66 \u5FB7\u4E1A\u697C205\uFF1B\u5468\u4E09 \u7B2C5\u8282 \u516C\u5171\u5916\u8BED \u5FB7\u4E1A\u697C202\u201D\u5FC5\u987B\u8F93\u51FA\u4E24\u95E8\u8BFE\u7A0B\uFF0C\u5206\u522B\u4FDD\u7559\u6807\u9898\u3001\u5730\u70B9\u3001weekday 1/3\uFF0C\u5E76\u6309\u8282\u6B21\u8868\u6620\u5C04\u65F6\u95F4\uFF0CperiodMatch \u5747\u4E3A mapped\u3002",
+    "\u65E0\u6CD5\u53EF\u9760\u786E\u5B9A\u7684\u65F6\u95F4\u4E0D\u5F97\u731C\u6D4B\uFF1B\u8BE5\u8BFE\u7A0B\u5E94\u4FDD\u7559\u660E\u786E\u6807\u9898\u548C\u8B66\u544A\uFF0CperiodMatch=uncertain\uFF0C\u4E0D\u80FD\u4F2A\u9020 courseSlots\u3002",
     `\u5F53\u524D\u65F6\u95F4\uFF1A${now3}\uFF1B\u65F6\u533A\uFF1A${timezone}\uFF1B\u9ED8\u8BA4\u5B66\u671F\u7B2C 1 \u5468\u5468\u4E00\uFF1A${semesterStartDate ?? "\u672A\u8BBE\u7F6E"}\u3002`,
     `\u5DF2\u6709\u6807\u7B7E\uFF1A${tagNames.length > 0 ? tagNames.join("\u3001") : "\u65E0"}\u3002`,
     `\u8BFE\u8868\u9875\u4E0E\u8282\u6B21\uFF1A${JSON.stringify(timetableContext ?? { activeTimetableId: null, timetables: [] })}\u3002`
@@ -173049,8 +173068,16 @@ function systemPrompt(timezone, now3, semesterStartDate, tagNames, timetableCont
 function userPrompt(text2, images) {
   const prompt = text2.trim() || "\u8BF7\u8BC6\u522B\u56FE\u7247\u4E2D\u7684\u65E5\u7A0B\u3001\u4EFB\u52A1\u6216\u8BFE\u8868\u4FE1\u606F\u3002";
   if (images.length === 0) return prompt;
-  const content = [{ type: "text", text: prompt }];
-  for (const image of images) content.push({ type: "image_url", image_url: { url: `data:${image.mimeType};base64,${image.data.toString("base64")}` } });
+  const content = [
+    { type: "text", text: prompt }
+  ];
+  for (const image of images)
+    content.push({
+      type: "image_url",
+      image_url: {
+        url: `data:${image.mimeType};base64,${image.data.toString("base64")}`
+      }
+    });
   return content;
 }
 function parseJsonContent(content) {
@@ -173061,7 +173088,8 @@ function parseJsonContent(content) {
   }
   const start = trimmed.indexOf("{");
   const end = trimmed.lastIndexOf("}");
-  if (start < 0 || end <= start) throw new AiError("AI_INVALID_RESPONSE", "AI \u8FD4\u56DE\u5185\u5BB9\u4E0D\u662F\u6709\u6548 JSON", 502);
+  if (start < 0 || end <= start)
+    throw new AiError("AI_INVALID_RESPONSE", "AI \u8FD4\u56DE\u5185\u5BB9\u4E0D\u662F\u6709\u6548 JSON", 502);
   try {
     return JSON.parse(trimmed.slice(start, end + 1));
   } catch {
@@ -173070,9 +173098,12 @@ function parseJsonContent(content) {
 }
 function kindFrom(value) {
   const text2 = String(value ?? "").toLowerCase();
-  if (text2 === "both" || text2.includes("+") || text2.includes("both")) return "both";
-  if (text2.includes("task") || text2.includes("\u4EFB\u52A1") || text2.includes("\u4F5C\u4E1A") || text2.includes("\u5F85\u529E")) return "task";
-  if (text2.includes("event") || text2.includes("\u65E5\u7A0B") || text2.includes("\u4F1A\u8BAE") || text2.includes("\u8BFE\u7A0B") || text2.includes("\u4E0A\u8BFE") || text2.includes("\u6D3B\u52A8")) return "event";
+  if (text2 === "both" || text2.includes("+") || text2.includes("both"))
+    return "both";
+  if (text2.includes("task") || text2.includes("\u4EFB\u52A1") || text2.includes("\u4F5C\u4E1A") || text2.includes("\u5F85\u529E"))
+    return "task";
+  if (text2.includes("event") || text2.includes("\u65E5\u7A0B") || text2.includes("\u4F1A\u8BAE") || text2.includes("\u8BFE\u7A0B") || text2.includes("\u4E0A\u8BFE") || text2.includes("\u6D3B\u52A8"))
+    return "event";
   return "task";
 }
 function priorityFrom(value) {
@@ -173087,7 +173118,8 @@ function isoFrom(value, timezone) {
   if (value === null || value === void 0 || value === "") return null;
   let text2 = String(value).trim();
   if (/^\d{4}-\d{2}-\d{2}$/.test(text2)) text2 += "T00:00:00";
-  if (timezone === "Asia/Shanghai" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?$/.test(text2)) text2 += "+08:00";
+  if (timezone === "Asia/Shanghai" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?$/.test(text2))
+    text2 += "+08:00";
   const date7 = new Date(text2);
   return Number.isNaN(date7.getTime()) ? null : date7.toISOString();
 }
@@ -173095,7 +173127,10 @@ function weekdayNumber(value) {
   const raw2 = Number(value);
   if (!Number.isFinite(raw2)) {
     const text2 = String(value ?? "").trim();
-    if (["\u5468\u65E5", "\u661F\u671F\u65E5", "sunday", "sun"].some((name) => text2.toLowerCase().includes(name.toLowerCase()))) return 0;
+    if (["\u5468\u65E5", "\u661F\u671F\u65E5", "sunday", "sun"].some(
+      (name) => text2.toLowerCase().includes(name.toLowerCase())
+    ))
+      return 0;
     const names = ["\u5468\u4E00", "\u5468\u4E8C", "\u5468\u4E09", "\u5468\u56DB", "\u5468\u4E94", "\u5468\u516D"];
     const index2 = names.findIndex((name) => text2.includes(name));
     if (index2 >= 0) return index2 + 1;
@@ -173106,15 +173141,21 @@ function weekdayNumber(value) {
 }
 function normalizeSlot(raw2, timetableContext) {
   const source = raw2 && typeof raw2 === "object" ? raw2 : {};
-  const weekday = weekdayNumber(source.weekday ?? source.day ?? source.dayOfWeek);
+  const weekday = weekdayNumber(
+    source.weekday ?? source.day ?? source.dayOfWeek
+  );
   if (weekday === null) return { slot: null, mapped: false };
   let startTime = String(source.startTime ?? source.start ?? "").slice(0, 5);
   let endTime = String(source.endTime ?? source.end ?? "").slice(0, 5);
   let mapped = false;
   if ((!startTime || !endTime) && (source.periodName || source.period)) {
     const requested = String(source.periodName ?? source.period).trim().toLowerCase().replace(/^第/, "").replace(/节$/, "");
-    const periods = timetableContext?.timetables.find((page) => page.id === timetableContext.activeTimetableId)?.periods ?? [];
-    const period = periods.find((candidate) => candidate.name.trim().toLowerCase().replace(/^第/, "").replace(/节$/, "") === requested);
+    const periods = timetableContext?.timetables.find(
+      (page) => page.id === timetableContext.activeTimetableId
+    )?.periods ?? [];
+    const period = periods.find(
+      (candidate) => candidate.name.trim().toLowerCase().replace(/^第/, "").replace(/节$/, "") === requested
+    );
     if (period) {
       startTime = period.startTime;
       endTime = period.endTime;
@@ -173142,10 +173183,14 @@ function normalizeProviderResponse(value, timezone, timetableContext) {
     const rawRecurrence = source.recurrence;
     const recurrence = rawRecurrence && typeof rawRecurrence === "object" && !Array.isArray(rawRecurrence) ? rawRecurrence : null;
     const rawReminders = Array.isArray(source.reminderMinutes) ? source.reminderMinutes : Array.isArray(source.reminders) ? source.reminders : typeof source.reminderMinutes === "number" ? [source.reminderMinutes] : [];
-    const reminderMinutes = rawReminders.map(Number).filter((value2) => [0, 5, 15, 30, 60, 1440].includes(value2));
+    const reminderMinutes = rawReminders.map(Number).filter(
+      (value2) => [0, 5, 15, 30, 60, 1440].includes(value2)
+    );
     const confidenceValue = Number(source.confidence);
     const rawSlots = Array.isArray(source.courseSlots) ? source.courseSlots : Array.isArray(source.timetableSlots) ? source.timetableSlots : [];
-    const normalizedSlots = rawSlots.map((slot) => normalizeSlot(slot, timetableContext));
+    const normalizedSlots = rawSlots.map(
+      (slot) => normalizeSlot(slot, timetableContext)
+    );
     const courseSlots = normalizedSlots.map((entry) => entry.slot).filter((slot) => Boolean(slot));
     const importTarget = source.importTarget === "timetable" || source.target === "timetable" ? "timetable" : "calendar";
     const timetableIdValue = typeof source.timetableId === "string" && /^[0-9a-f-]{36}$/i.test(source.timetableId) ? source.timetableId : timetableContext?.activeTimetableId ?? null;
@@ -173180,25 +173225,56 @@ function normalizeProviderResponse(value, timezone, timetableContext) {
   return { items: items2, transcript: String(root5.transcript ?? root5.text ?? "") };
 }
 async function extractScheduleDrafts(input2) {
-  if (!aiConfigured()) throw new AiError("AI_NOT_CONFIGURED", "AI \u5C1A\u672A\u914D\u7F6E\uFF0C\u8BF7\u5148\u8BBE\u7F6E AI_API_KEY \u5E76\u542F\u7528 AI_ENABLED", 503);
+  if (!aiConfigured())
+    throw new AiError(
+      "AI_NOT_CONFIGURED",
+      "AI \u5C1A\u672A\u914D\u7F6E\uFF0C\u8BF7\u5148\u8BBE\u7F6E AI_API_KEY \u5E76\u542F\u7528 AI_ENABLED",
+      503
+    );
   const [settings] = await db.select().from(appSettings).where(eq(appSettings.workspaceId, input2.workspaceId)).limit(1);
   const tagRows = await db.select({ name: tags.name }).from(tags).where(eq(tags.workspaceId, input2.workspaceId));
   const model = input2.images.length > 0 ? config3.AI_VISION_MODEL : config3.AI_TEXT_MODEL;
   const messages = [
-    { role: "system", content: systemPrompt(input2.timezone, (/* @__PURE__ */ new Date()).toISOString(), settings?.semesterStartDate ?? null, tagRows.map((row) => row.name), input2.timetableContext) },
+    {
+      role: "system",
+      content: systemPrompt(
+        input2.timezone,
+        (/* @__PURE__ */ new Date()).toISOString(),
+        settings?.semesterStartDate ?? null,
+        tagRows.map((row) => row.name),
+        input2.timetableContext
+      )
+    },
     { role: "user", content: userPrompt(input2.text, input2.images) }
   ];
   const endpoint = `${config3.AI_BASE_URL.replace(/\/$/, "")}/chat/completions`;
-  const body = JSON.stringify({ model, messages, temperature: 0.1, max_tokens: 2048 });
+  const body = JSON.stringify({
+    model,
+    messages,
+    temperature: 0,
+    max_tokens: 4096
+  });
   const fetcher = input2.fetcher ?? fetch;
   let response = null;
   let lastError = null;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), config3.AI_REQUEST_TIMEOUT_MS);
+    const timer = setTimeout(
+      () => controller.abort(),
+      config3.AI_REQUEST_TIMEOUT_MS
+    );
     try {
-      response = await fetcher(endpoint, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${config3.AI_API_KEY}` }, body, signal: controller.signal });
-      if (response.ok || response.status === 429 || response.status < 500) break;
+      response = await fetcher(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${config3.AI_API_KEY}`
+        },
+        body,
+        signal: controller.signal
+      });
+      if (response.ok || response.status === 429 || response.status < 500)
+        break;
     } catch (error64) {
       lastError = error64;
     } finally {
@@ -173206,8 +173282,18 @@ async function extractScheduleDrafts(input2) {
     }
     if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 400));
   }
-  if (!response) throw new AiError("AI_NETWORK_ERROR", lastError instanceof Error ? lastError.message : "AI \u7F51\u7EDC\u8BF7\u6C42\u5931\u8D25", 502);
-  if (response.status === 429) throw new AiError("AI_PROVIDER_RATE_LIMIT", "AI \u4F9B\u5E94\u5546\u989D\u5EA6\u6216\u9891\u7387\u53D7\u9650\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5", 429);
+  if (!response)
+    throw new AiError(
+      "AI_NETWORK_ERROR",
+      lastError instanceof Error ? lastError.message : "AI \u7F51\u7EDC\u8BF7\u6C42\u5931\u8D25",
+      502
+    );
+  if (response.status === 429)
+    throw new AiError(
+      "AI_PROVIDER_RATE_LIMIT",
+      "AI \u4F9B\u5E94\u5546\u989D\u5EA6\u6216\u9891\u7387\u53D7\u9650\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5",
+      429
+    );
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
     const message2 = detail.slice(0, 300) || `AI \u8BF7\u6C42\u5931\u8D25\uFF08${response.status}\uFF09`;
@@ -173216,10 +173302,25 @@ async function extractScheduleDrafts(input2) {
   const payload = await response.json();
   const rawContent = payload.choices?.[0]?.message?.content;
   const content = typeof rawContent === "string" ? rawContent : Array.isArray(rawContent) ? rawContent.map((part) => part.text ?? "").join("") : "";
-  if (!content) throw new AiError("AI_INVALID_RESPONSE", "AI \u6CA1\u6709\u8FD4\u56DE\u5185\u5BB9", 502);
-  const parsed = normalizeProviderResponse(parseJsonContent(content), input2.timezone, input2.timetableContext);
-  if (parsed.items.length === 0) throw new AiError("AI_INVALID_RESPONSE", "AI \u6CA1\u6709\u8FD4\u56DE\u53EF\u5BFC\u5165\u7684\u65E5\u7A0B\uFF0C\u8BF7\u6362\u4E00\u79CD\u63CF\u8FF0\u91CD\u8BD5", 502);
-  return { drafts: parsed.items, transcript: parsed.transcript, model, provider: config3.AI_PROVIDER };
+  if (!content)
+    throw new AiError("AI_INVALID_RESPONSE", "AI \u6CA1\u6709\u8FD4\u56DE\u5185\u5BB9", 502);
+  const parsed = normalizeProviderResponse(
+    parseJsonContent(content),
+    input2.timezone,
+    input2.timetableContext
+  );
+  if (parsed.items.length === 0)
+    throw new AiError(
+      "AI_INVALID_RESPONSE",
+      "AI \u6CA1\u6709\u8FD4\u56DE\u53EF\u5BFC\u5165\u7684\u65E5\u7A0B\uFF0C\u8BF7\u6362\u4E00\u79CD\u63CF\u8FF0\u91CD\u8BD5",
+      502
+    );
+  return {
+    drafts: parsed.items,
+    transcript: parsed.transcript,
+    model,
+    provider: config3.AI_PROVIDER
+  };
 }
 
 // apps/api/src/routes/ai.ts
