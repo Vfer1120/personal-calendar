@@ -39,6 +39,9 @@ export function aiConfigured(): boolean {
   return config.AI_ENABLED && Boolean(config.AI_API_KEY);
 }
 
+function effectiveTextModel(): string {
+  return config.AI_TEXT_MODEL === "glm-4-flash" ? "glm-4.5-flash" : config.AI_TEXT_MODEL;
+}
 export async function getAiStatus(): Promise<AiStatus> {
   return {
     enabled: config.AI_ENABLED,

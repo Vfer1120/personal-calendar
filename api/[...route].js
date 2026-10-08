@@ -172639,7 +172639,7 @@ var envSchema = external_exports.object({
   AI_PROVIDER: external_exports.string().default("zhipu"),
   AI_API_KEY: external_exports.string().optional(),
   AI_BASE_URL: external_exports.string().url().default("https://open.bigmodel.cn/api/paas/v4"),
-  AI_TEXT_MODEL: external_exports.string().default("glm-4-flash"),
+  AI_TEXT_MODEL: external_exports.string().default("glm-4.5-flash"),
   AI_VISION_MODEL: external_exports.string().default("glm-4v-flash"),
   AI_REQUEST_TIMEOUT_MS: external_exports.coerce.number().int().positive().default(9e4),
   AI_MAX_IMAGE_MB: external_exports.coerce.number().int().positive().default(10),
