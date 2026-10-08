@@ -27,8 +27,8 @@ export function AiImportDialog({ userId, open, onClose, onImported, tags, items,
   const [pagePeriods, setPagePeriods] = useState<Record<string, SchedulePeriod[]>>({});
   const fileInput = useRef<HTMLInputElement>(null);
   const previews = useMemo(() => files.map((file) => ({ file, url: URL.createObjectURL(file) })), [files]);
-  const timetablesQuery = useQuery({ queryKey: ["timetables", userId], queryFn: async () => { try { const value = await api<{ timetables: Timetable[] }>("/api/v1/timetables"); void cacheTimetables(value.timetables).catch(() => undefined); return value.timetables; } catch { return getCachedTimetables(); } } });
-  const timetables = timetablesQuery.data ?? [];
+  const timetablesQuery = useQuery({ queryKey: ["timetables", userId], queryFn: async () => { try { const value = await api<{ timetables: Timetable[] }>("/api/v1/timetables"); void cacheTimetables(value.timetables).catch(() => undefined); return value; } catch { return { timetables: await getCachedTimetables() }; } } });
+  const timetables = timetablesQuery.data?.timetables ?? [];
   const activeTimetable = timetables.find((page) => page.id === targetTimetableId) ?? timetables[0] ?? null;
 
   useEffect(() => () => previews.forEach((preview) => URL.revokeObjectURL(preview.url)), [previews]);
