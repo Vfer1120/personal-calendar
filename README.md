@@ -54,7 +54,7 @@ pnpm dev
 普通 HTTP 局域网访问可以正常登录和编辑；PWA 安装、Web Push 和部分安全认证需要 HTTPS。手机端首次登录建议使用邮箱验证码。
 ## Vercel + Supabase 免费云端部署
 
-仓库已包含单项目 Vercel 部署配置、多用户邀请码认证、Supabase Storage 附件直传、按账号隔离的 PWA 本地缓存和 Supabase Cron 定时任务。详细步骤见 `deploy/vercel-supabase.md`，环境变量模板见 `.env.vercel.example`。
+仓库已包含单项目 Vercel 部署配置、多用户邀请码认证、Supabase Storage 附件直传、按账号隔离的 PWA 本地缓存和 Supabase Cron 定时任务。详细步骤见 `deploy/vercel-supabase.md`，环境变量模板见 `.env.vercel.example`。 跨电脑开发迁移见 `docs/MIGRATION_HANDOFF.md`。
 ## VPS 部署
 
 1. 准备 Linux VPS、域名、Docker Engine 与 Compose，并将域名 A/AAAA 记录指向服务器。

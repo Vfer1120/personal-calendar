@@ -2,7 +2,7 @@
 
 ## 1. Supabase
 1. 创建 Supabase Free 项目，区域优先选择 Singapore。
-2. 在 SQL Editor 中按顺序运行 `packages/db/migrations/0000_init.sql` 至 `0006_course_date_range.sql`。
+2. 在 SQL Editor 中按顺序运行 `packages/db/migrations/0000_init.sql` 至 `0007_timetable_pages.sql`。
 3. 创建私有 Storage bucket `calendar-attachments`。
 4. 给该 bucket 配置允许生产 Vercel 域名执行 `PUT` 和 `GET` 的 CORS。
 5. 在 Project Settings 中复制 Session Pooler 连接串，作为 Vercel 的 `DATABASE_URL`。
@@ -52,10 +52,10 @@ pwsh ./scripts/migrate-supabase.ps1 `
 ## 4. 数据与附件迁移命令示例
 ```bash
 pg_dump "$LOCAL_DATABASE_URL" --no-owner --no-acl --data-only \
-  --table=user --table=account --table=workspaces --table=calendars \
-  --table=items --table=item_tags --table=tags --table=reminder_rules \
-  --table=recurrence_exceptions --table=attachments --table=deliveries \
-  --table=app_settings --table=schedule_periods --table=ai_usage \
+  --table=user --table=account --table=workspaces --table=timetables \
+  --table=calendars --table=tags --table=items --table=item_tags \
+  --table=recurrence_exceptions --table=reminder_rules --table=attachments \
+  --table=deliveries --table=app_settings --table=schedule_periods --table=ai_usage \
   > calendar-data.sql
 psql "$SUPABASE_DIRECT_URL" -v ON_ERROR_STOP=1 -f calendar-data.sql
 ```

@@ -15,10 +15,10 @@ $env:AWS_ACCESS_KEY_ID = $MinioAccessKey
 $env:AWS_SECRET_ACCESS_KEY = $MinioSecretKey
 $dump = Join-Path $env:TEMP "calendar-data.sql"
 & pg_dump $LocalDatabaseUrl --no-owner --no-acl --data-only `
-  --table=user --table=account --table=workspaces --table=calendars `
-  --table=items --table=item_tags --table=tags --table=reminder_rules `
-  --table=recurrence_exceptions --table=attachments --table=deliveries `
-  --table=app_settings --table=schedule_periods --table=ai_usage `
+  --table=user --table=account --table=workspaces --table=timetables `
+  --table=calendars --table=tags --table=items --table=item_tags `
+  --table=recurrence_exceptions --table=reminder_rules --table=attachments `
+  --table=deliveries --table=app_settings --table=schedule_periods --table=ai_usage `
   --file=$dump
 if ($LASTEXITCODE -ne 0) { throw "pg_dump failed" }
 & psql $SupabaseDirectUrl -v ON_ERROR_STOP=1 -f $dump
